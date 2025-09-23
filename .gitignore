@@ -1,0 +1,7 @@
+.idea
+compiler-miniJaJa/target
+interface/target
+interpreter-miniJaJa/target
+interpreter-JaJaCode/target
+analyser-JaJaCode/target
+analyser-miniJaJa/target
