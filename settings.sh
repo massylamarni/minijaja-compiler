@@ -1,13 +1,8 @@
 #!/bin/bash
 
-mkdir -p ~/.m2
-
-if [[ -n "$MAVEN_ENT_PASSWORD" ]]; then
-  export MAVEN_ENT_PASSWORD=$(echo "$MAVEN_ENT_PASSWORD" | base64 -d)
-fi
-
-cat <<EOF > ~/.m2/settings.xml
-<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">
+# Create the settings.xml file from a template
+cat <<EOF > settings.xml
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
   <servers>
     <server>
       <id>nexus-deptinfo</id>
@@ -48,8 +43,12 @@ cat <<EOF > ~/.m2/settings.xml
         <repository>
           <id>nexus-deptinfo-snapshots</id>
           <url>https://disc.univ-fcomte.fr/cr700-nexus/content/groups/public</url>
-          <releases><enabled>true</enabled></releases>
-          <snapshots><enabled>true</enabled></snapshots>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
         </repository>
       </repositories>
     </profile>
@@ -65,3 +64,16 @@ cat <<EOF > ~/.m2/settings.xml
   </profiles>
 </settings>
 EOF
+
+# Move settings.xml to the .m2 directory of the runner's container
+mv settings.xml /root/.m2/settings.xml
+
+# Create the settings-security.xml file from a template
+cat <<EOF > settings-security.xml
+<settingsSecurity>
+  <master>${MAVEN_MASTER_PASSWORD}</master>
+</settingsSecurity>
+EOF
+
+# Move settings-security.xml to the .m2 directory of the runner's container
+mv settings-security.xml /root/.m2/settings-security.xml
