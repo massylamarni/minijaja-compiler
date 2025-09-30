@@ -1,5 +1,5 @@
-parser grammar MiniJaJaParser;
-options { tokenVocab=MiniJaJaLexer; }
+parser grammar MiniJajaParser;
+options { tokenVocab=MiniJajaLexer; }
 
 program : CLASS IDENT LBRACE decls methmain RBRACE ;
 

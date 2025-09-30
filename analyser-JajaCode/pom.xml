@@ -7,10 +7,10 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>compiler-miniJaJa</artifactId>
+    <artifactId>analyser-JajaCode</artifactId>
     <packaging>jar</packaging>
 
-    <name>compiler-miniJaJa</name>
+    <name>analyser-JajaCode</name>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

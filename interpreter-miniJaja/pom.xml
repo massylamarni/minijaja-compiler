@@ -7,10 +7,10 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>interpreter-miniJaJa</artifactId>
+    <artifactId>interpreter-miniJaja</artifactId>
     <packaging>jar</packaging>
 
-    <name>interpreter-miniJaJa</name>
+    <name>interpreter-miniJaja</name>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

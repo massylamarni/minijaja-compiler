@@ -7,12 +7,12 @@
 
     <packaging>pom</packaging>
     <modules>
-        <module>analyser-miniJaJa</module>
-        <module>interpreter-miniJaJa</module>
-        <module>analyser-JaJaCode</module>
+        <module>analyser-miniJaja</module>
+        <module>interpreter-miniJaja</module>
+        <module>analyser-JajaCode</module>
         <module>interface</module>
-        <module>compiler-miniJaJa</module>
-        <module>interpreter-JaJaCode</module>
+        <module>compiler-miniJaja</module>
+        <module>interpreter-JajaCode</module>
     </modules>
     <version>1.0-SNAPSHOT</version>
 

@@ -1,4 +1,4 @@
-lexer grammar MiniJaJaLexer;
+lexer grammar MiniJajaLexer;
 
 // --------- Mots-clés ---------
 CLASS     : 'class' ;

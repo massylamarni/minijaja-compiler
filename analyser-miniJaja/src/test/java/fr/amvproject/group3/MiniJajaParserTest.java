@@ -9,7 +9,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class MiniJaJaParserTest {
+public class MiniJajaParserTest {
 
 
     @Test
@@ -17,15 +17,15 @@ public class MiniJaJaParserTest {
         String input = "1 + 1";
 
         CharStream cs = CharStreams.fromString(input);
-        MiniJaJaLexer lexer = new MiniJaJaLexer(cs);
+        MiniJajaLexer lexer = new MiniJajaLexer(cs);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-        MiniJaJaParser parser = new MiniJaJaParser(tokens);
+        MiniJajaParser parser = new MiniJajaParser(tokens);
 
         ParseTree tree = parser.exp();
         assertNotNull(tree);
-        MiniJaJaParser.ExpAndContext expAnd = (MiniJaJaParser.ExpAndContext) tree.getChild(0);
-        MiniJaJaParser.ExpEqContext expEq = (MiniJaJaParser.ExpEqContext) expAnd.getChild(0);
-        MiniJaJaParser.ExpAddContext expAdd = (MiniJaJaParser.ExpAddContext) expEq.getChild(0);
+        MiniJajaParser.ExpAndContext expAnd = (MiniJajaParser.ExpAndContext) tree.getChild(0);
+        MiniJajaParser.ExpEqContext expEq = (MiniJajaParser.ExpEqContext) expAnd.getChild(0);
+        MiniJajaParser.ExpAddContext expAdd = (MiniJajaParser.ExpAddContext) expEq.getChild(0);
 
         // Vérifie la structure de l'opération + :
         assertEquals(3, expAdd.getChildCount());   // gauche, +, droite

@@ -1,4 +1,4 @@
-// Generated from /home/clonestriker/Bureau/Cours/M1/Projet/code/miniJaja-project/analyser-miniJaJa/src/main/antlr4/MiniJaJaLexer.g4 by ANTLR 4.13.2
+// Generated from /home/clonestriker/Bureau/Cours/M1/Projet/code/miniJaja-project/analyser-miniJaja/src/main/antlr4/MiniJajaLexer.g4 by ANTLR 4.13.2
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
@@ -9,7 +9,7 @@ import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.misc.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue", "this-escape"})
-public class MiniJaJaLexer extends Lexer {
+public class MiniJajaLexer extends Lexer {
 	static { RuntimeMetaData.checkVersion("4.13.2", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
@@ -93,13 +93,13 @@ public class MiniJaJaLexer extends Lexer {
 	}
 
 
-	public MiniJaJaLexer(CharStream input) {
+	public MiniJajaLexer(CharStream input) {
 		super(input);
 		_interp = new LexerATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 
 	@Override
-	public String getGrammarFileName() { return "MiniJaJaLexer.g4"; }
+	public String getGrammarFileName() { return "MiniJajaLexer.g4"; }
 
 	@Override
 	public String[] getRuleNames() { return ruleNames; }
