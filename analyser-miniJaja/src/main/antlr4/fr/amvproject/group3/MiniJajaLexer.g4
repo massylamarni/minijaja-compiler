@@ -14,6 +14,9 @@ INTTYPE   : 'int' ;
 BOOLTYPE  : 'boolean' ;
 TRUE      : 'true' ;
 FALSE     : 'false' ;
+WRITE     : 'write' ;
+WRITELN   : 'writeln' ;
+LENGTH    : 'length' ;
 
 // --------- Opérateurs ---------
 ASSIGN    : '=' ;
@@ -21,6 +24,8 @@ PLUS      : '+' ;
 MINUS     : '-' ;
 MUL       : '*' ;
 DIV       : '/' ;
+INCR      : '++' ;
+PLUSEQ    : '+=' ;
 
 LT        : '<' ;
 LE        : '<=' ;
@@ -44,10 +49,10 @@ COMMA     : ',' ;
 SEMI      : ';' ;
 
 // --------- Identificateurs & Littéraux ---------
-IDENT        : [a-zA-Z_][a-zA-Z0-9_]* ;
+IDENT     : [a-zA-Z][a-zA-Z0-9]* ;
 INT       : [0-9]+ ;
+STRING    : '"' ( ~["\\\r\n] | '\\' . )* '"' ;
 
 // --------- Espaces et commentaires ---------
 WS        : [ \t\r\n]+ -> skip ;
 COMMENT   : '//' ~[\r\n]* -> skip ;
-
