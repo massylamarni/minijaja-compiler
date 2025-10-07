@@ -34,7 +34,7 @@ methode
     ;
 
 typemeth: type | VOID;
-entetes : entete SEMI entetes | entete | ;
+entetes : entete COMMA entetes | entete | ;
 entete  : type IDENT;
 vexp    : ASSIGN exp | ;
 type    : INTTYPE | BOOLTYPE;
