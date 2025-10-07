@@ -55,4 +55,4 @@ STRING    : '"' ( ~["\\\r\n] | '\\' . )* '"' ;
 
 // --------- Espaces et commentaires ---------
 WS        : [ \t\r\n]+ -> skip ;
-COMMENT   : '//' ~[\r\n]* -> skip ;
+COMMENT: '//' (.)*?[\r\n] -> skip;
