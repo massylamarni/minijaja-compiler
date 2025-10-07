@@ -45,17 +45,37 @@
             <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
-                <version>4.13.2</version>
+                <version>4.13.1</version>
                 <executions>
                     <execution>
                         <goals>
                             <goal>antlr4</goal>
                         </goals>
                         <configuration>
-                            <visitor>true</visitor> <!-- Génère les visiteurs -->
-                            <listener>true</listener> <!-- Génère les listeners -->
-                            <packageName>fr.amvproject.group3</packageName>
-                            <sourceDirectory>${project.basedir}/src/main/antlr4</sourceDirectory>
+                            <visitor>true</visitor>
+                            <listener>true</listener>
+                            <outputDirectory>target/generated-sources/antlr4</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.4.0</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>target/generated-sources/antlr4</outputDirectory>
+                            <sources>
+                                <source>target/generated-sources/antlr4</source>
+                            </sources>
                         </configuration>
                     </execution>
                 </executions>

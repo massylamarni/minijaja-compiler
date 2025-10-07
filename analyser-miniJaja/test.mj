@@ -1,0 +1,11 @@
+class Test {
+    main {
+        int x;
+        x = 5;
+        x++;
+        if (x > 3) {
+            x = x + 1;
+        }
+        ;  // ← Ajout ce point-virgule
+    }
+}
