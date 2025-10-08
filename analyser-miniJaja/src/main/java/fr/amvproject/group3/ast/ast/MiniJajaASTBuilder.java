@@ -169,8 +169,28 @@ public class MiniJajaASTBuilder extends MiniJajaParserBaseVisitor<ASTNode> {
 
         // Write / Writeln
         if (ctx.WRITE() != null || ctx.WRITELN() != null) {
-            // Pour simplifier, on ignore write/writeln
-            return null;
+            // Write / Writeln
+            if (ctx.WRITE() != null || ctx.WRITELN() != null) {
+                boolean isLn = ctx.WRITELN() != null;
+                Exp contenu = null;
+
+                // Expression
+                if (ctx.exp() != null) {
+                    contenu = (Exp) visit(ctx.exp());
+                }
+                // Identifiant
+                else if (ctx.ident1() != null) {
+                    contenu = (Exp) visit(ctx.ident1());
+                }
+                // Chaîne de caractères
+                else if (ctx.STRING() != null) {
+                    String str = ctx.STRING().getText();
+                    str = str.substring(1, str.length() - 1); // Enlever les guillemets
+                    contenu = new Chaine(str);  // ✅ Utilise la classe Chaine en français
+                }
+
+                return new Ecrire(contenu, isLn);  // ✅ Utilise la classe Ecrire en français
+            }
         }
 
         // IF

@@ -1,0 +1,33 @@
+// Test des opérations arithmétiques de base
+class Calculs {
+    main {
+        int a;
+        int b;
+        int somme;
+        int diff;
+        int prod;
+        int quot;
+
+        a = 10;
+        b = 3;
+
+        somme = a + b;
+        diff = a - b;
+        prod = a * b;
+        quot = a / b;
+
+        writeln("=== Calculs ===");
+        write("a = ");
+        writeln(a);
+        write("b = ");
+        writeln(b);
+        write("a + b = ");
+        writeln(somme);
+        write("a - b = ");
+        writeln(diff);
+        write("a * b = ");
+        writeln(prod);
+        write("a / b = ");
+        writeln(quot);
+    }
+}

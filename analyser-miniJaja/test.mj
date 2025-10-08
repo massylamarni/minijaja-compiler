@@ -6,6 +6,6 @@ class Test {
         if (x > 3) {
             x = x + 1;
         }
-        ;  // ← Ajout ce point-virgule
+        ;  // ← pour le moment laisser sa pour que sa marche
     }
 }
