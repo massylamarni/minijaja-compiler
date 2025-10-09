@@ -1,12 +1,7 @@
 package fr.amvproject.group3.ast;
 
-import fr.amvproject.group3.ast.nodes.program.*;
-import fr.amvproject.group3.ast.nodes.decls.*;
-import fr.amvproject.group3.ast.nodes.instrs.*;
-import fr.amvproject.group3.ast.nodes.exprs.*;
-
 public interface AstVisitor<T> {
-
+/*
     // --------- Programme ---------
     T visitProgram(ProgramNode node);
     T visitMainMethod(MethmainNode node);
@@ -34,5 +29,5 @@ public interface AstVisitor<T> {
     T visitVarRef(VarRefNode node);
     T visitCallExpr(CallExprNode node);
     T visitLength(LengthNode node);
-
+*/
 }

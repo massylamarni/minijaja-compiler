@@ -8,7 +8,7 @@ import fr.amvproject.group3.ast.nodes.exprs.*;
 import java.util.List;
 
 public class PrintVisitor implements AstVisitor<String> {
-
+/*/
     private int indentLevel = 0;
 
     private String indent() {
@@ -90,7 +90,7 @@ public class PrintVisitor implements AstVisitor<String> {
     // -------- Instrs --------
     @Override
     public String visitAssign(AssignNode node) {
-        return indent() + "Assign(" + node.getIdent() + " = " + node.getExpr().accept(this) + ")";
+        return indent() + "Assign(" + node.getIdent() + " = " + node.getExp().accept(this) + ")";
     }
 
     @Override
@@ -182,4 +182,5 @@ public class PrintVisitor implements AstVisitor<String> {
         
         return sb.toString();
     }
+        */
 }
