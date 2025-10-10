@@ -1,13 +1,14 @@
 package fr.amvproject.group3.ast.nodes.program;
 
 import fr.amvproject.group3.ast.AstNode;
+import fr.amvproject.group3.ast.AstVisitor;
 import fr.amvproject.group3.ast.nodes.abstracts.Ident;
 import fr.amvproject.group3.ast.nodes.decls.MethMainNode;
 
-public class ClasseNode implements AstNode {
-    public final Ident ident;
-    public final DeclsNode decls;
-    public final MethMainNode main;
+public class ClasseNode extends AstNode {
+    private final Ident ident;
+    private final DeclsNode decls;
+    private final MethMainNode main;
 
     public ClasseNode(Ident ident, DeclsNode decls, MethMainNode main) {
         this.ident = ident;
@@ -15,8 +16,20 @@ public class ClasseNode implements AstNode {
         this.main = main;
     }
 
+    public Ident getIdent() {
+        return ident;
+    }
+
+    public DeclsNode getDecls() {
+        return decls;
+    }
+
+    public MethMainNode getMain() {
+        return main;
+    }
+
     @Override
-    public String toString() {
-        return "(CLASSE " + ident + " " + decls + " " + main + ")";
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visitClasse(this);
     }
 }

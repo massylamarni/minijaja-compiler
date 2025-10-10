@@ -1,17 +1,32 @@
 package fr.amvproject.group3.ast.nodes.exprs;
 
-public class BinaryExpNode extends ExpNode {
-    public final String op;
-    public final ExpNode left, right;
+import fr.amvproject.group3.ast.AstVisitor;
+import fr.amvproject.group3.ast.nodes.other.BinaryOpNode;
 
-    public BinaryExpNode(String op, ExpNode left, ExpNode right) {
+public class BinaryExpNode extends ExpNode {
+    private final BinaryOpNode op;
+    private final ExpNode leftExp, rightExp;
+
+    public BinaryExpNode(BinaryOpNode op, ExpNode leftExp, ExpNode rightExp) {
         this.op = op;
-        this.left = left;
-        this.right = right;
+        this.leftExp = leftExp;
+        this.rightExp = rightExp;
+    }
+
+    public BinaryOpNode getOp() {
+        return op;
+    }
+
+    public ExpNode getLeftExp() {
+        return leftExp;
+    }
+
+    public ExpNode getRightExp() {
+        return rightExp;
     }
 
     @Override
-    public String toString() {
-        return "(" + op + " " + left + " " + right + ")";
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visitBinaryExp(this);
     }
 }

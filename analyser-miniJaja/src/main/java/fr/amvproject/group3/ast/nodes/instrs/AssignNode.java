@@ -1,5 +1,6 @@
 package fr.amvproject.group3.ast.nodes.instrs;
 
+import fr.amvproject.group3.ast.AstVisitor;
 import fr.amvproject.group3.ast.nodes.abstracts.Ident;
 import fr.amvproject.group3.ast.nodes.exprs.ArrayAccessNode;
 import fr.amvproject.group3.ast.nodes.exprs.ExpNode;
@@ -8,40 +9,40 @@ import fr.amvproject.group3.ast.nodes.other.LeftValueNode;
 
 public class AssignNode extends InstrNode {
 
-    private LeftValueNode target;   // Variable ou case de tableau
-    private ExpNode exp;           // Expression assignée
+    private final LeftValueNode leftValue;   // Variable ou case de tableau
+    private final ExpNode exp;           // Expression assignée
 
-    public AssignNode(LeftValueNode target, ExpNode exp) {
-        this.target = target;
+    public AssignNode(LeftValueNode leftValue, ExpNode exp) {
+        this.leftValue = leftValue;
         this.exp = exp;
     }
 
-    public LeftValueNode getTarget() {
-        return target;
-    }
-
-    public Ident getIdent() {
-        if (target instanceof VarRefNode) {
-            VarRefNode varRef = (VarRefNode) target;
-            return varRef.getIdent();
-        }
-        return ((ArrayAccessNode) target).getIdent();
-    }
-
-    public ExpNode getIndex() {
-        if (target instanceof ArrayAccessNode) {
-            ArrayAccessNode arrAccess = (ArrayAccessNode) target;
-            return arrAccess.getIndexExpr();
-        }
-        return null; // Pas un accès tableau ou index non constant
+    public LeftValueNode getLeftValue() {
+        return leftValue;
     }
 
     public ExpNode getExp() {
         return exp;
     }
 
+    public Ident getIdent() {
+        if (leftValue instanceof VarRefNode) {
+            VarRefNode varRef = (VarRefNode) leftValue;
+            return varRef.getIdent();
+        }
+        return ((ArrayAccessNode) leftValue).getIdent();
+    }
+
+    public ExpNode getIndex() {
+        if (leftValue instanceof ArrayAccessNode) {
+            ArrayAccessNode arrAccess = (ArrayAccessNode) leftValue;
+            return arrAccess.getIndexExp();
+        }
+        return null; // Pas un accès tableau ou index non constant
+    }
+
     @Override
-    public String toString() {
-        return target + " = " + exp;
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visitAssign(this);
     }
 }

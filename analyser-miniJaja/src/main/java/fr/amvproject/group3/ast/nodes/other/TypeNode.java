@@ -1,39 +1,59 @@
 package fr.amvproject.group3.ast.nodes.other;
 
 import fr.amvproject.group3.ast.AstNode;
+import fr.amvproject.group3.ast.AstVisitor;
 
-public class TypeNode implements AstNode {
+public class TypeNode extends AstNode {
 
-    private String name;  // "int", "boolean" ou "void"
+    public enum TypeName {
+        INT("int"),
+        BOOLEAN("boolean"),
+        VOID("void");
 
-    public TypeNode(String name) {
-        if (!name.equals("int") && !name.equals("boolean") && !name.equals("void")) {
+        private final String name;
+
+        TypeName(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public static TypeName fromString(String name) {
+            for (TypeName type : values()) {
+                if (type.name.equals(name)) {
+                    return type;
+                }
+            }
             throw new IllegalArgumentException("Type non valide : " + name);
         }
-        this.name = name;
     }
 
-    public String getName() {
-        return name;
+    private final TypeName type;
+
+    public TypeNode(String name) {
+        this.type = TypeName.fromString(name);
     }
 
-    // Vérifie si le type est int
+    public TypeName getType() {
+        return type;
+    }
+
     public boolean isInt() {
-        return "int".equals(name);
+        return type == TypeName.INT;
     }
 
-    // Vérifie si le type est boolean
     public boolean isBoolean() {
-        return "boolean".equals(name);
+        return type == TypeName.BOOLEAN;
     }
 
-    // Vérifie si le type est void
     public boolean isVoid() {
-        return "void".equals(name);
+        return type == TypeName.VOID;
     }
 
     @Override
-    public String toString() {
-        return name;
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visitType(this);
     }
 }

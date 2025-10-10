@@ -6,6 +6,7 @@ import fr.amvproject.group3.ast.nodes.abstracts.Ident;
 import fr.amvproject.group3.ast.nodes.abstracts.IdentExp;
 import fr.amvproject.group3.ast.nodes.decls.MethMainNode;
 import fr.amvproject.group3.ast.nodes.decls.VarNode;
+import fr.amvproject.group3.ast.nodes.decls.VarsNode;
 import fr.amvproject.group3.ast.nodes.exprs.BinaryExpNode;
 import fr.amvproject.group3.ast.nodes.exprs.BoolLiteralNode;
 import fr.amvproject.group3.ast.nodes.exprs.ExpNode;
@@ -20,8 +21,10 @@ import fr.amvproject.group3.ast.nodes.instrs.InstrNode;
 import fr.amvproject.group3.ast.nodes.instrs.InstrsNode;
 import fr.amvproject.group3.ast.nodes.instrs.WhileNode;
 import fr.amvproject.group3.ast.nodes.instrs.WriteNode;
+import fr.amvproject.group3.ast.nodes.other.BinaryOpNode;
 import fr.amvproject.group3.ast.nodes.other.LeftValueNode;
 import fr.amvproject.group3.ast.nodes.other.TypeNode;
+import fr.amvproject.group3.ast.nodes.other.UnaryOpNode;
 import fr.amvproject.group3.ast.nodes.program.ClasseNode;
 import fr.amvproject.group3.ast.nodes.program.DeclNode;
 import fr.amvproject.group3.ast.nodes.program.DeclsNode;
@@ -52,7 +55,7 @@ public class MiniJajaAstBuilder extends MiniJajaParserBaseVisitor<AstNode> {
             // Parcourir récursivement le reste
             if (ctx.decls() != null) {
                 DeclsNode restDecls = (DeclsNode) visit(ctx.decls());
-                decls.decls.addAll(restDecls.decls);
+                decls.getDecls().addAll(restDecls.getDecls());
             }
         }
 
@@ -102,26 +105,26 @@ public class MiniJajaAstBuilder extends MiniJajaParserBaseVisitor<AstNode> {
     // ========== MAIN ==========
     @Override
     public AstNode visitMethmain(MiniJajaParser.MethmainContext ctx) {
-        DeclsNode vars = (DeclsNode) visit(ctx.vars());
+        VarsNode vars = (VarsNode) visit(ctx.vars());
         InstrsNode instrs = (InstrsNode) visit(ctx.instrs());
         return new MethMainNode(vars, instrs);
     }
 
     @Override
     public AstNode visitVars(MiniJajaParser.VarsContext ctx) {
-        DeclsNode decls = new DeclsNode();
+        VarsNode vars = new VarsNode();
 
         // Récursif : var SEMI vars | ε
         if (ctx.var() != null) {
-            decls.add((DeclNode) visit(ctx.var()));
+            vars.add((VarNode) visit(ctx.var()));
 
             if (ctx.vars() != null) {
-                DeclsNode restVars = (DeclsNode) visit(ctx.vars());
-                decls.decls.addAll(restVars.decls);
+                VarsNode restVars = (VarsNode) visit(ctx.vars());
+                vars.getList().addAll(restVars.getList());
             }
         }
 
-        return decls;
+        return vars;
     }
 
     // ========== INSTRUCTIONS ==========
@@ -138,7 +141,7 @@ public class MiniJajaAstBuilder extends MiniJajaParserBaseVisitor<AstNode> {
 
             if (ctx.instrs() != null) {
                 InstrsNode restInstrs = (InstrsNode) visit(ctx.instrs());
-                instrs.list.addAll(restInstrs.list);
+                instrs.getList().addAll(restInstrs.getList());
             }
         }
 
@@ -165,7 +168,7 @@ public class MiniJajaAstBuilder extends MiniJajaParserBaseVisitor<AstNode> {
             Ident ident = new Ident(ctx.ident1().IDENT().getText());
             ExpNode exp = (ExpNode) visit(ctx.exp());
             // Transformer en affectation : x = x + exp
-            return new AssignNode(new VarRefNode(ident), new BinaryExpNode("+", new IdentExp(ident), exp));
+            return new AssignNode(new VarRefNode(ident), new BinaryExpNode(new BinaryOpNode("+"), new IdentExp(ident), exp));
         }
 
         // Incrémentation : ident1++
@@ -252,7 +255,7 @@ public class MiniJajaAstBuilder extends MiniJajaParserBaseVisitor<AstNode> {
         ExpNode result = (ExpNode) visit(ctx.expAnd(0));
         for (int i = 1; i < ctx.expAnd().size(); i++) {
             ExpNode right = (ExpNode) visit(ctx.expAnd(i));
-            result = new BinaryExpNode("||", result, right);
+            result = new BinaryExpNode(new BinaryOpNode("||"), result, right);
         }
         return result;
     }
@@ -267,7 +270,7 @@ public class MiniJajaAstBuilder extends MiniJajaParserBaseVisitor<AstNode> {
         ExpNode result = (ExpNode) visit(ctx.expEq(0));
         for (int i = 1; i < ctx.expEq().size(); i++) {
             ExpNode right = (ExpNode) visit(ctx.expEq(i));
-            result = new BinaryExpNode("&&", result, right);
+            result = new BinaryExpNode(new BinaryOpNode("&&"), result, right);
         }
         return result;
     }
@@ -283,7 +286,7 @@ public class MiniJajaAstBuilder extends MiniJajaParserBaseVisitor<AstNode> {
         for (int i = 1; i < ctx.expAdd().size(); i++) {
             String op = ctx.EQ(i-1) != null ? "==" : ">";
             ExpNode right = (ExpNode) visit(ctx.expAdd(i));
-            result = new BinaryExpNode(op, result, right);
+            result = new BinaryExpNode(new BinaryOpNode(op), result, right);
         }
         return result;
     }
@@ -295,7 +298,7 @@ public class MiniJajaAstBuilder extends MiniJajaParserBaseVisitor<AstNode> {
         // Cas unaire : -expAdd
         if (ctx.MINUS() != null && ctx.expAdd() != null) {
             ExpNode exp = (ExpNode) visit(ctx.expAdd());
-            return new UnaryExpNode("-", exp);
+            return new UnaryExpNode(new UnaryOpNode("-"), exp);
         }
 
         // Cas binaire : expNot (+|- expNot)*
@@ -307,7 +310,7 @@ public class MiniJajaAstBuilder extends MiniJajaParserBaseVisitor<AstNode> {
         for (int i = 1; i < ctx.expNot().size(); i++) {
             String op = ctx.PLUS(i-1) != null ? "+" : "-";
             ExpNode right = (ExpNode) visit(ctx.expNot(i));
-            result = new BinaryExpNode(op, result, right);
+            result = new BinaryExpNode(new BinaryOpNode(op), result, right);
         }
         return result;
     }
@@ -317,7 +320,7 @@ public class MiniJajaAstBuilder extends MiniJajaParserBaseVisitor<AstNode> {
         // expNot : NOT expNot | terme
         if (ctx.NOT() != null) {
             ExpNode exp = (ExpNode) visit(ctx.expNot());
-            return new UnaryExpNode("!", exp);
+            return new UnaryExpNode(new UnaryOpNode("!"), exp);
         }
         return visit(ctx.terme());
     }
@@ -333,7 +336,7 @@ public class MiniJajaAstBuilder extends MiniJajaParserBaseVisitor<AstNode> {
         for (int i = 1; i < ctx.fact().size(); i++) {
             String op = ctx.MUL(i-1) != null ? "*" : "/";
             ExpNode right = (ExpNode) visit(ctx.fact(i));
-            result = new BinaryExpNode(op, result, right);
+            result = new BinaryExpNode(new BinaryOpNode(op), result, right);
         }
         return result;
     }

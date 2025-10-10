@@ -1,31 +1,32 @@
 package fr.amvproject.group3.ast.nodes.decls;
 
+import fr.amvproject.group3.ast.AstVisitor;
 import fr.amvproject.group3.ast.nodes.abstracts.Ident;
 import fr.amvproject.group3.ast.nodes.exprs.ExpNode;
 import fr.amvproject.group3.ast.nodes.other.TypeNode;
 import fr.amvproject.group3.ast.nodes.program.DeclNode;
 
 public class VarNode extends DeclNode {
-    private TypeNode type;
-    private ExpNode sizeExpr;     // si tableau, expression donnant la taille (null sinon)
-    private ExpNode initExpr;     // valeur initiale (null si pas d'affectation)
-    private boolean isFinal;      // true si 'final'
+    private final TypeNode type;
+    private final ExpNode sizeExp;     // si tableau, expression donnant la taille (null sinon)
+    private final ExpNode initExp;     // valeur initiale (null si pas d'affectation)
+    private final boolean isFinal;      // true si 'final'
 
     // Constructeur pour variable simple
     public VarNode(TypeNode type, Ident ident) {
       super(ident);
       this.type = type;
-      this.sizeExpr = null;
-      this.initExpr = null;
+      this.sizeExp = null;
+      this.initExp = null;
       this.isFinal = false;
     }
 
     // Constructeur complet
-    public VarNode(TypeNode type, Ident ident, ExpNode sizeExpr, ExpNode initExpr, boolean isFinal) {
+    public VarNode(TypeNode type, Ident ident, ExpNode sizeExp, ExpNode initExp, boolean isFinal) {
       super(ident);
       this.type = type;
-      this.sizeExpr = sizeExpr;
-      this.initExpr = initExpr;
+      this.sizeExp = sizeExp;
+      this.initExp = initExp;
       this.isFinal = isFinal;
     }
 
@@ -33,16 +34,12 @@ public class VarNode extends DeclNode {
         return type;
     }
 
-    public Ident getIdent() {
-        return ident;
+    public ExpNode getSizeExp() {
+        return sizeExp;
     }
 
-    public ExpNode getSizeExpr() {
-        return sizeExpr;
-    }
-
-    public ExpNode getInitExpr() {
-        return initExpr;
+    public ExpNode getInitExp() {
+        return initExp;
     }
 
     public boolean isFinal() {
@@ -50,12 +47,7 @@ public class VarNode extends DeclNode {
     }
 
     @Override
-    public String toString() {
-        String s = "";
-        if (isFinal) s += "final ";
-        s += type + " " + ident;
-        if (sizeExpr != null) s += "[" + sizeExpr + "]";
-        if (initExpr != null) s += " = " + initExpr;
-        return s;
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visitVar(this);
     }
 }

@@ -2,32 +2,13 @@ package fr.amvproject.group3.ast;
 
 import java.util.*;
 
-import fr.amvproject.group3.ast.nodes.abstracts.IdentExp;
-import fr.amvproject.group3.ast.nodes.decls.MethMainNode;
-import fr.amvproject.group3.ast.nodes.decls.MethodeNode;
-import fr.amvproject.group3.ast.nodes.decls.VarNode;
-import fr.amvproject.group3.ast.nodes.exprs.ArrayAccessNode;
-import fr.amvproject.group3.ast.nodes.exprs.BinaryExpNode;
-import fr.amvproject.group3.ast.nodes.exprs.BoolLiteralNode;
-import fr.amvproject.group3.ast.nodes.exprs.ExpNode;
-import fr.amvproject.group3.ast.nodes.exprs.IntLiteralNode;
-import fr.amvproject.group3.ast.nodes.exprs.LengthNode;
-import fr.amvproject.group3.ast.nodes.exprs.MethodCallExpNode;
-import fr.amvproject.group3.ast.nodes.exprs.StringLiteralNode;
-import fr.amvproject.group3.ast.nodes.exprs.UnaryExpNode;
-import fr.amvproject.group3.ast.nodes.instrs.AddAssignNode;
-import fr.amvproject.group3.ast.nodes.instrs.AssignNode;
-import fr.amvproject.group3.ast.nodes.instrs.IfNode;
-import fr.amvproject.group3.ast.nodes.instrs.IncNode;
-import fr.amvproject.group3.ast.nodes.instrs.InstrNode;
-import fr.amvproject.group3.ast.nodes.instrs.MethodCallInstrNode;
-import fr.amvproject.group3.ast.nodes.instrs.RetourNode;
-import fr.amvproject.group3.ast.nodes.instrs.WhileNode;
-import fr.amvproject.group3.ast.nodes.instrs.WriteNode;
-import fr.amvproject.group3.ast.nodes.other.TypeNode;
-import fr.amvproject.group3.ast.nodes.params.EnteteNode;
-import fr.amvproject.group3.ast.nodes.program.ClasseNode;
-import fr.amvproject.group3.ast.nodes.program.DeclNode;
+import fr.amvproject.group3.ast.nodes.abstracts.*;
+import fr.amvproject.group3.ast.nodes.decls.*;
+import fr.amvproject.group3.ast.nodes.exprs.*;
+import fr.amvproject.group3.ast.nodes.instrs.*;
+import fr.amvproject.group3.ast.nodes.other.*;
+import fr.amvproject.group3.ast.nodes.params.*;
+import fr.amvproject.group3.ast.nodes.program.*;
 
 
 public class MiniJajaInterpreter {
@@ -64,27 +45,27 @@ public class MiniJajaInterpreter {
 
     // ========== EXÉCUTION DE LA CLASSE ==========
     private void executeClasse(ClasseNode classe) {
-        debug("=== Exécution de la classe " + classe.ident.name + " ===");
+        debug("=== Exécution de la classe " + classe.getIdent().getName() + " ===");
 
         // 1. Charger les méthodes définies dans la classe
-        for (DeclNode decl : classe.decls.decls) {
+        for (DeclNode decl : classe.getDecls().getDecls()) {
             if (decl instanceof MethodeNode) {
                 MethodeNode method = (MethodeNode) decl;
-                methods.put(method.ident.name, method);
-                debug("Méthode chargée : " + method.ident.name);
+                methods.put(method.getIdent().getName(), method);
+                debug("Méthode chargée : " + method.getIdent().getName());
             }
         }
 
         // 2. Initialiser les variables globales
-        for (DeclNode decl : classe.decls.decls) {
-            if (!(decl instanceof MethodeNode)) {
+        for (DeclNode decl : classe.getDecls().getDecls()) {
+            if (decl instanceof VarNode) {
                 initializeDecl(decl);
             }
         }
 
         // 3. Exécuter le main
         debug("\n=== Exécution du main ===");
-        executeMainBlock(classe.main);
+        executeMainBlock(classe.getMain());
 
         debug("\n=== Fin de l'exécution ===");
     }
@@ -92,12 +73,12 @@ public class MiniJajaInterpreter {
     // ========== EXÉCUTION DU MAIN ==========
     private void executeMainBlock(MethMainNode main) {
         // Initialiser les variables locales du main
-        for (DeclNode decl : main.decls.decls) {
-            initializeDecl(decl);
+        for (VarNode var : main.getVars().getList()) {
+            initializeDecl(var);
         }
 
         // Exécuter les instructions
-        for (InstrNode instr : main.instrs.list) {
+        for (InstrNode instr : main.getInstrs().getList()) {
             executeInstr(instr);
             if (hasReturned) break;  // Si return dans le main
         }
@@ -105,20 +86,20 @@ public class MiniJajaInterpreter {
 
     // ========== INITIALISATION DES DÉCLARATIONS ==========
     private void initializeDecl(DeclNode decl) {
-        String varName = decl.ident.name;
+        String varName = decl.getIdent().getName();
         VarNode var = (VarNode) decl;
 
         // Tableau
-        if (var.getSizeExpr() != null) {
-            int size = (Integer) evaluateExp(var.getSizeExpr());
+        if (var.getSizeExp() != null) {
+            int size = (Integer) evaluateExp(var.getSizeExp());
             arrays.put(varName, new int[size]);
             debug("Tableau créé : " + varName + "[" + size + "]");
             return;
         }
 
         // Variable avec initialisation
-        if (var.getInitExpr() != null) {
-            Object value = evaluateExp(var.getInitExpr());
+        if (var.getInitExp() != null) {
+            Object value = evaluateExp(var.getInitExp());
             memory.put(varName, value);
             debug("Variable initialisée : " + varName + " = " + value);
         } else {
@@ -146,15 +127,15 @@ public class MiniJajaInterpreter {
         if (instr instanceof AssignNode) {
             AssignNode aff = (AssignNode) instr;
             Object value = evaluateExp(aff.getExp());
-            memory.put(aff.getIdent().name, value);
-            debug("Affectation : " + aff.getIdent().name + " = " + value);
+            memory.put(aff.getIdent().getName(), value);
+            debug("Affectation : " + aff.getIdent().getName() + " = " + value);
             return;
         }
 
         // Affectation tableau
         if (instr instanceof AssignNode) {
             AssignNode arrAff = (AssignNode) instr;
-            String arrayName = arrAff.getIdent().name;
+            String arrayName = arrAff.getIdent().getName();
             int index = (Integer) evaluateExp(arrAff.getIndex());
             Object value = evaluateExp(arrAff.getExp());
 
@@ -175,14 +156,14 @@ public class MiniJajaInterpreter {
         // AddAssignNode (équivalent de +=)
         if (instr instanceof AddAssignNode) {
             AddAssignNode somme = (AddAssignNode) instr;
-            String varName = somme.ident.name;
+            String varName = somme.getIdent().getName();
 
             if (!memory.containsKey(varName)) {
                 throw new RuntimeException("Variable '" + varName + "' non déclarée");
             }
 
             int currentValue = (Integer) memory.get(varName);
-            int addValue = (Integer) evaluateExp(somme.exp);
+            int addValue = (Integer) evaluateExp(somme.getExp());
             memory.put(varName, currentValue + addValue);
             debug("AddAssignNode : " + varName + " += " + addValue + " = " + (currentValue + addValue));
             return;
@@ -191,7 +172,7 @@ public class MiniJajaInterpreter {
         // Incrémentation
         if (instr instanceof IncNode) {
             IncNode incr = (IncNode) instr;
-            String varName = incr.ident.name;
+            String varName = incr.getIdent().getName();
 
             if (!memory.containsKey(varName)) {
                 throw new RuntimeException("Variable '" + varName + "' non déclarée");
@@ -206,18 +187,18 @@ public class MiniJajaInterpreter {
         // If
         if (instr instanceof IfNode) {
             IfNode ifInstr = (IfNode) instr;
-            boolean condition = (Boolean) evaluateExp(ifInstr.cond);
+            boolean condition = (Boolean) evaluateExp(ifInstr.getCondExp());
             debug("Condition IF : " + condition);
 
             if (condition) {
                 debug("Exécution du THEN");
-                for (InstrNode i : ifInstr.thenInstrs.list) {
+                for (InstrNode i : ifInstr.getThenInstrs().getList()) {
                     executeInstr(i);
                     if (hasReturned) break;
                 }
-            } else if (!ifInstr.elseInstrs.list.isEmpty()) {
+            } else if (!ifInstr.getElseInstrs().getList().isEmpty()) {
                 debug("Exécution du ELSE");
-                for (InstrNode i : ifInstr.elseInstrs.list) {
+                for (InstrNode i : ifInstr.getElseInstrs().getList()) {
                     executeInstr(i);
                     if (hasReturned) break;
                 }
@@ -230,10 +211,10 @@ public class MiniJajaInterpreter {
             WhileNode whileInstr = (WhileNode) instr;
             int iterations = 0;
 
-            while ((Boolean) evaluateExp(whileInstr.cond)) {
+            while ((Boolean) evaluateExp(whileInstr.getCondExp())) {
                 debug("Itération WHILE #" + (++iterations));
 
-                for (InstrNode i : whileInstr.body.list) {
+                for (InstrNode i : whileInstr.getInstrs().getList()) {
                     executeInstr(i);
                     if (hasReturned) break;
                 }
@@ -252,14 +233,14 @@ public class MiniJajaInterpreter {
         // Appel de méthode (instruction)
         if (instr instanceof MethodCallInstrNode) {
             MethodCallInstrNode call = (MethodCallInstrNode) instr;
-            executeMethodCall(call.methodName.name, call.args);
+            executeMethodCall(call.getIdent().getName(), call.getListExp().getList());
             return;
         }
 
         // Return
         if (instr instanceof RetourNode) {
             RetourNode ret = (RetourNode) instr;
-            returnValue = evaluateExp(ret.exp);
+            returnValue = evaluateExp(ret.getExp());
             hasReturned = true;
             debug("Return : " + returnValue);
             return;
@@ -269,25 +250,25 @@ public class MiniJajaInterpreter {
         if (instr instanceof WriteNode) {
             WriteNode write = (WriteNode) instr;
 
-            if (write.contenu instanceof IdentExp) {
-                IdentExp id = (IdentExp) write.contenu;
-                Object value = memory.get(id.ident.name);
+            if (write.getExp() instanceof IdentExp) {
+                IdentExp id = (IdentExp) write.getExp();
+                Object value = memory.get(id.getIdent().getName());
                 System.out.print(value);
-            } else if (write.contenu instanceof StringLiteralNode) {
-                String str = ((StringLiteralNode) write.contenu).valeur;
+            } else if (write.getExp() instanceof StringLiteralNode) {
+                String str = ((StringLiteralNode) write.getExp()).getValue();
                 System.out.print(str);
-            } else if (write.contenu instanceof ArrayAccessNode) {
-                ArrayAccessNode arr = (ArrayAccessNode) write.contenu;
-                int index = (Integer) evaluateExp(arr.getIndexExpr());
-                int value = arrays.get(arr.getIdent().name)[index];
+            } else if (write.getExp() instanceof ArrayAccessNode) {
+                ArrayAccessNode arr = (ArrayAccessNode) write.getExp();
+                int index = (Integer) evaluateExp(arr.getIndexExp());
+                int value = arrays.get(arr.getIdent().getName())[index];
                 System.out.print(value);
             } else {
                 // Pour les expressions générales (ex: 5 + 3)
-                Object value = evaluateExp(write.contenu);
+                Object value = evaluateExp(write.getExp());
                 System.out.print(value);
             }
 
-            if (write.avecLn) {
+            if (write.isLn()) {
                 System.out.println();
             }
             return;
@@ -298,22 +279,22 @@ public class MiniJajaInterpreter {
     private Object evaluateExp(ExpNode exp) {
         // Entiers
         if (exp instanceof IntLiteralNode) {
-            return ((IntLiteralNode) exp).value;
+            return ((IntLiteralNode) exp).getValue();
         }
 
         // Booléens
         if (exp instanceof BoolLiteralNode) {
-            return ((BoolLiteralNode) exp).value;
+            return ((BoolLiteralNode) exp).getValue();
         }
 
         // Chaines
         if (exp instanceof StringLiteralNode) {
-            return ((StringLiteralNode) exp).valeur;
+            return ((StringLiteralNode) exp).getValue();
         }
 
         // Identifiants (variables)
         if (exp instanceof IdentExp) {
-            String varName = ((IdentExp) exp).ident.name;
+            String varName = ((IdentExp) exp).getIdent().getName();
 
             if (!memory.containsKey(varName)) {
                 throw new RuntimeException("Variable '" + varName + "' non déclarée");
@@ -325,8 +306,8 @@ public class MiniJajaInterpreter {
         // Accès tableau
         if (exp instanceof ArrayAccessNode) {
             ArrayAccessNode arr = (ArrayAccessNode) exp;
-            String arrayName = arr.getIdent().name;
-            int index = (Integer) evaluateExp(arr.getIndexExpr());
+            String arrayName = arr.getIdent().getName();
+            int index = (Integer) evaluateExp(arr.getIndexExp());
 
             if (!arrays.containsKey(arrayName)) {
                 throw new RuntimeException("Tableau '" + arrayName + "' non déclaré");
@@ -342,7 +323,7 @@ public class MiniJajaInterpreter {
 
         // Length (Longueur)
         if (exp instanceof LengthNode) {
-            String arrayName = ((LengthNode) exp).ident.name;
+            String arrayName = ((LengthNode) exp).getIdent().getName();
 
             if (!arrays.containsKey(arrayName)) {
                 throw new RuntimeException("Tableau '" + arrayName + "' non déclaré");
@@ -354,50 +335,51 @@ public class MiniJajaInterpreter {
         // Expressions binaires
         if (exp instanceof BinaryExpNode) {
             BinaryExpNode binExp = (BinaryExpNode) exp;
-            Object left = evaluateExp(binExp.left);
-            Object right = evaluateExp(binExp.right);
+            Object left = evaluateExp(binExp.getLeftExp());
+            Object right = evaluateExp(binExp.getRightExp());
 
-            return evaluateBinaryOp(binExp.op, left, right);
+            return evaluateBinaryOp(binExp.getOp(), left, right);
         }
 
         // Expressions unaires
         if (exp instanceof UnaryExpNode) {
             UnaryExpNode unExp = (UnaryExpNode) exp;
-            Object value = evaluateExp(unExp.exp);
+            Object value = evaluateExp(unExp.getExp());
 
-            return evaluateUnaryOp(unExp.op, value);
+            return evaluateUnaryOp(unExp.getOp(), value);
         }
 
         // Appel de méthode (expression)
         if (exp instanceof MethodCallExpNode) {
             MethodCallExpNode call = (MethodCallExpNode) exp;
-            return executeMethodCall(call.methodName.name, call.args);
+            return executeMethodCall(call.getIdent().getName(), call.getListExp().getList());
         }
 
         throw new RuntimeException("Type d'expression non supporté : " + exp.getClass().getName());
     }
 
     // ========== OPÉRATEURS BINAIRES ==========
-    private Object evaluateBinaryOp(String op, Object left, Object right) {
+    private Object evaluateBinaryOp(BinaryOpNode op, Object left, Object right) {
         // Opérateurs arithmétiques
         if (left instanceof Integer && right instanceof Integer) {
             int l = (Integer) left;
             int r = (Integer) right;
 
-            switch (op) {
-                case "+": return l + r;
-                case "-": return l - r;
-                case "*": return l * r;
-                case "/":
-                    if (r == 0) throw new RuntimeException("Division par zéro");
-                    return l / r;
-                case "%": return l % r;
-                case "<": return l < r;
-                case "<=": return l <= r;
-                case ">": return l > r;
-                case ">=": return l >= r;
-                case "==": return l == r;
-                case "!=": return l != r;
+            if (op.isAdd()) {
+                return l + r;
+            } else if (op.isSub()) {
+                return l - r;
+            } else if (op.isMul()) {
+                return l * r;
+            } else if (op.isDiv()) {
+                if (r == 0) throw new RuntimeException("Division par zéro");
+                return l / r;
+            } else if (op.isGt()) {
+                return l > r;
+            } else if (op.isEq()) {
+                return l == r;
+            } else {
+                throw new RuntimeException("Opérateur arithmetique invalide pour le type: " + op.getOp());
             }
         }
 
@@ -406,19 +388,20 @@ public class MiniJajaInterpreter {
             boolean l = (Boolean) left;
             boolean r = (Boolean) right;
 
-            switch (op) {
-                case "&&": return l && r;
-                case "||": return l || r;
-                case "==": return l == r;
-                case "!=": return l != r;
+            if (op.isAnd()) {
+                return l && r;
+            } else if (op.isOr()) {
+                return l || r;
+            } else {
+                throw new RuntimeException("Opérateur logique invalide pour le type: " + op.getOp());
             }
         }
 
-        throw new RuntimeException("Opération invalide : " + left + " " + op + " " + right);
+        throw new RuntimeException("Types incompatibles pour l'opérateur : " + op.getOp());
     }
 
     // ========== OPÉRATEURS UNAIRES ==========
-    private Object evaluateUnaryOp(String op, Object value) {
+    private Object evaluateUnaryOp(UnaryOpNode op, Object value) {
         if (op.equals("-") && value instanceof Integer) {
             return -(Integer) value;
         }
@@ -441,9 +424,9 @@ public class MiniJajaInterpreter {
         MethodeNode method = methods.get(methodName);
 
         // Vérifier le nombre d'arguments
-        if (args.size() != method.params.size()) {
+        if (args.size() != method.getEntetes().getList().size()) {
             throw new RuntimeException("Méthode '" + methodName + "' : " +
-                    method.params.size() + " arguments attendus, " + args.size() + " fournis");
+                    method.getEntetes().getList().size() + " arguments attendus, " + args.size() + " fournis");
         }
 
         // Sauvegarder le contexte actuel
@@ -454,23 +437,23 @@ public class MiniJajaInterpreter {
         memory.clear();
 
         // Lier les paramètres
-        for (int i = 0; i < method.params.size(); i++) {
-            EnteteNode param = method.params.get(i);
+        for (int i = 0; i < method.getEntetes().getList().size(); i++) {
+            EnteteNode param = method.getEntetes().getList().get(i);
             Object argValue = evaluateExp(args.get(i));
-            memory.put(param.ident.name, argValue);
-            debug("Paramètre : " + param.ident.name + " = " + argValue);
+            memory.put(param.getIdent().getName(), argValue);
+            debug("Paramètre : " + param.getIdent().getName() + " = " + argValue);
         }
 
         // Initialiser les variables locales
-        for (DeclNode decl : method.vars.decls) {
-            initializeDecl(decl);
+        for (DeclNode var : method.getVars().getList()) {
+            initializeDecl(var);
         }
 
         // Exécuter le corps de la méthode
         hasReturned = false;
         returnValue = null;
 
-        for (InstrNode instr : method.instrs.list) {
+        for (InstrNode instr : method.getInstrs().getList()) {
             executeInstr(instr);
             if (hasReturned) break;
         }

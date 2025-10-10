@@ -1,9 +1,20 @@
 package fr.amvproject.group3.ast.nodes.exprs;
 
+import fr.amvproject.group3.ast.AstVisitor;
+
 public class BoolLiteralNode extends ExpNode {
-    public final boolean value;
-    public BoolLiteralNode(boolean value) { this.value = value; }
+    private final boolean value;
+
+    public BoolLiteralNode(boolean value) {
+        this.value = value;
+    }
+
+    public boolean getValue() {
+        return value;
+    }
 
     @Override
-    public String toString() { return value ? "vrai" : "faux"; }
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visitBoolLiteral(this);
+    }
 }

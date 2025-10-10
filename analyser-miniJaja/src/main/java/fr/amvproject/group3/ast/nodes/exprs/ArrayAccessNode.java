@@ -1,5 +1,6 @@
 package fr.amvproject.group3.ast.nodes.exprs;
 
+import fr.amvproject.group3.ast.AstVisitor;
 import fr.amvproject.group3.ast.nodes.abstracts.Ident;
 import fr.amvproject.group3.ast.nodes.other.LeftValueNode;
 
@@ -8,25 +9,24 @@ import fr.amvproject.group3.ast.nodes.other.LeftValueNode;
  * Exemple : tab[i]
  */
 public class ArrayAccessNode extends LeftValueNode {
+    private final Ident ident;
+    private final ExpNode indexExp; // expression d’index (i, 2, etc.)
 
-    private Ident ident;
-    private ExpNode indexExpr; // expression d’index (i, 2, etc.)
-
-    public ArrayAccessNode(Ident ident, ExpNode indexExpr) {
+    public ArrayAccessNode(Ident ident, ExpNode indexExp) {
         this.ident = ident;
-        this.indexExpr = indexExpr;
+        this.indexExp = indexExp;
     }
 
     public Ident getIdent() {
         return ident;
     }
 
-    public ExpNode getIndexExpr() {
-        return indexExpr;
+    public ExpNode getIndexExp() {
+        return indexExp;
     }
 
     @Override
-    public String toString() {
-        return ident + "[" + indexExpr + "]";
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visitArrayAccess(this);
     }
 }

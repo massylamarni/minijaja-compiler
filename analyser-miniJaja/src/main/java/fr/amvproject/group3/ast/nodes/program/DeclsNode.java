@@ -1,19 +1,25 @@
 package fr.amvproject.group3.ast.nodes.program;
 
 import java.util.ArrayList;
+import java.util.List;
+
 
 import fr.amvproject.group3.ast.AstNode;
+import fr.amvproject.group3.ast.AstVisitor;
 
-public class DeclsNode implements AstNode {
-    public final java.util.List<DeclNode> decls = new ArrayList<>();
-    public void add(DeclNode d) { decls.add(d); }
+public class DeclsNode extends AstNode {
+    private final List<DeclNode> decls = new ArrayList<>();
+    
+    public void add(DeclNode d) {
+        decls.add(d);
+    }
+
+    public List<DeclNode> getDecls() {
+        return decls;
+    }
 
     @Override
-    public String toString() {
-        if (decls.isEmpty()) return "(DECLS vnil)";
-        StringBuilder sb = new StringBuilder("(DECLS ");
-        for (DeclNode d : decls) sb.append(d).append(" ");
-        sb.append(")");
-        return sb.toString();
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visitDecls(this);
     }
 }

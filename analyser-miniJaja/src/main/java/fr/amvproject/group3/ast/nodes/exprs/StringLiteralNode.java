@@ -1,15 +1,21 @@
 package fr.amvproject.group3.ast.nodes.exprs;
 
-public class StringLiteralNode extends ExpNode {
-    public final String valeur;
+import fr.amvproject.group3.ast.AstVisitor;
 
-    public StringLiteralNode(String valeur) {
+public class StringLiteralNode extends ExpNode {
+    private final String value;
+
+    public StringLiteralNode(String value) {
         // Enlever les guillemets si présents
-        this.valeur = valeur.replaceAll("^\"|\"$", "");
+        this.value = value.replaceAll("^\"|\"$", "");
+    }
+
+    public String getValue() {
+        return value;
     }
 
     @Override
-    public String toString() {
-        return "\"" + valeur + "\"";
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visitStringLiteral(this);
     }
 }

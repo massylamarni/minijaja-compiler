@@ -1,18 +1,27 @@
 package fr.amvproject.group3.ast.nodes.instrs;
 
+import fr.amvproject.group3.ast.AstVisitor;
 import fr.amvproject.group3.ast.nodes.exprs.ExpNode;
 
 public class WriteNode extends InstrNode {
-    public final ExpNode contenu;
-    public final boolean avecLn;
+    private final ExpNode exp;
+    private final boolean isLn;
 
-    public WriteNode(ExpNode contenu, boolean avecLn) {
-        this.contenu = contenu;
-        this.avecLn = avecLn;
+    public WriteNode(ExpNode exp, boolean isLn) {
+        this.exp = exp;
+        this.isLn = isLn;
+    }
+
+    public ExpNode getExp() {
+        return exp;
+    }
+
+    public boolean isLn() {
+        return isLn;
     }
 
     @Override
-    public String toString() {
-        return "(" + (avecLn ? "ECRIRELN" : "ECRIRE") + " " + contenu + ")";
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visitWrite(this);
     }
 }

@@ -1,39 +1,50 @@
 package fr.amvproject.group3.ast.nodes.decls;
 
-import java.util.List;
-import java.util.ArrayList;
-
+import fr.amvproject.group3.ast.AstVisitor;
 import fr.amvproject.group3.ast.nodes.abstracts.Ident;
 import fr.amvproject.group3.ast.nodes.instrs.InstrsNode;
 import fr.amvproject.group3.ast.nodes.other.TypeNode;
-import fr.amvproject.group3.ast.nodes.program.DeclsNode;
 import fr.amvproject.group3.ast.nodes.program.DeclNode;
-import fr.amvproject.group3.ast.nodes.params.EnteteNode;
+import fr.amvproject.group3.ast.nodes.params.EntetesNode;
 
 public class MethodeNode extends DeclNode {
-    public final TypeNode returnType;
-    public final Ident ident;
-    public final List<EnteteNode> params;
-    public final DeclsNode vars;
-    public final InstrsNode instrs;
+    private final TypeNode returnType;
+    private final Ident ident;
+    private final EntetesNode entetes;
+    private final VarsNode vars;
+    private final InstrsNode instrs;
 
-    public MethodeNode(String returnType, Ident ident, List<EnteteNode> params, DeclsNode vars, InstrsNode instrs) {
+    public MethodeNode(String returnType, Ident ident, EntetesNode entetes, VarsNode vars, InstrsNode instrs) {
         super(ident);
         this.returnType = new TypeNode(returnType);
         this.ident = ident;
-        this.params = params != null ? params : new ArrayList<>();
-        this.vars = vars != null ? vars : new DeclsNode();
+        this.entetes = entetes != null ? entetes : new EntetesNode();
+        this.vars = vars != null ? vars : new VarsNode();
         this.instrs = instrs != null ? instrs : new InstrsNode();
     }
 
+    public TypeNode getReturnType() {
+        return returnType;
+    }
+
+    public Ident getIdent() {
+        return ident;
+    }
+
+    public EntetesNode getEntetes() {
+        return entetes;
+    }
+
+    public VarsNode getVars() {
+        return vars;
+    }
+
+    public InstrsNode getInstrs() {
+        return instrs;
+    }
+
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("(METHODE ").append(returnType).append(" ").append(ident).append(" ");
-        sb.append("(ENTETES ");
-        for (EnteteNode e : params) sb.append(e).append(" ");
-        sb.append(") ");
-        sb.append(vars).append(" ").append(instrs).append(")");
-        return sb.toString();
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visitMethode(this);
     }
 }

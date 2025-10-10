@@ -1,18 +1,23 @@
 package fr.amvproject.group3.ast.nodes.instrs;
 
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
 import fr.amvproject.group3.ast.AstNode;
+import fr.amvproject.group3.ast.AstVisitor;
 
-public class InstrsNode implements AstNode {
-    public final java.util.List<InstrNode> list = new ArrayList<>();
-    public void add(InstrNode i) { list.add(i); }
+public class InstrsNode extends AstNode {
+    private final List<InstrNode> list = new ArrayList<>();
+    
+    public void add(InstrNode i) {
+        list.add(i);
+    }
+
+    public List<InstrNode> getList() {
+        return list;
+    }
 
     @Override
-    public String toString() {
-        if (list.isEmpty()) return "(INSTRS inil)";
-        StringBuilder sb = new StringBuilder("(INSTRS ");
-        for (InstrNode i : list) sb.append(i).append(" ");
-        sb.append(")");
-        return sb.toString();
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visitInstrs(this);
     }
 }

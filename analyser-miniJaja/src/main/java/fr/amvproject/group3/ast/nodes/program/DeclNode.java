@@ -1,17 +1,25 @@
 package fr.amvproject.group3.ast.nodes.program;
 
 import fr.amvproject.group3.ast.AstNode;
+import fr.amvproject.group3.ast.AstVisitor;
 import fr.amvproject.group3.ast.nodes.abstracts.Ident;
 
-public class DeclNode implements AstNode {
-    public final Ident ident;
+/* 
+ * Var | Methode
+ */
+public class DeclNode extends AstNode {
+    private final Ident ident;
 
     public DeclNode(Ident ident) {
         this.ident = ident;
     }
 
+    public Ident getIdent() {
+        return ident;
+    }
+
     @Override
-    public String toString() {
-        return "DeclNode(" + ident + ")";
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visitDecl(this);
     }
 }

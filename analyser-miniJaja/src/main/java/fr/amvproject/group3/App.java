@@ -2,9 +2,9 @@ package fr.amvproject.group3;
 
 import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.MiniJajaAstBuilder;
+import fr.amvproject.group3.ast.PrintVisitor;
 
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.CharStream;
 
 
 public class App {
@@ -17,6 +17,10 @@ public class App {
         MiniJajaParser.ProgramContext tree = parser.program();
         MiniJajaAstBuilder builder = new MiniJajaAstBuilder();
         AstNode ast = builder.visit(tree);
+
+        PrintVisitor printer = new PrintVisitor();
+        String result = ast.accept(printer);
+        System.out.println(result);
 
         System.out.println("=== AST ===");
         System.out.println(ast);
