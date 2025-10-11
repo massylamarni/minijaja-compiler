@@ -1,58 +1,52 @@
 lexer grammar MiniJajaLexer;
 
-// --------- Mots-clés ---------
-CLASS     : 'class' ;
-VOID      : 'void' ;
-MAIN      : 'main' ;
-RETURN    : 'return' ;
-IF        : 'if' ;
-ELSE      : 'else' ;
-WHILE     : 'while' ;
-FINAL     : 'final' ;
+// ----------------- Keywords -----------------
+CLASS       : 'class';
+MAIN        : 'main';
+FINAL       : 'final';
+VOID        : 'void';
+INT         : 'int';
+BOOLEAN     : 'boolean';
+RETURN      : 'return';
+WRITE       : 'write';
+WRITELN     : 'writeln';
+IF          : 'if';
+ELSE        : 'else';
+WHILE       : 'while';
+TRUE        : 'true';
+FALSE       : 'false';
+LENGTH      : 'length';
 
-INTTYPE   : 'int' ;
-BOOLTYPE  : 'boolean' ;
-TRUE      : 'true' ;
-FALSE     : 'false' ;
-WRITE     : 'write' ;
-WRITELN   : 'writeln' ;
-LENGTH    : 'length' ;
+// ----------------- Delimiters -----------------
+LBRACE      : '{';
+RBRACE      : '}';
+LPAREN      : '(';
+RPAREN      : ')';
+LBRACK      : '[';
+RBRACK      : ']';
+SEMI        : ';';
+COMMA       : ',';
 
-// --------- Opérateurs ---------
-ASSIGN    : '=' ;
-PLUS      : '+' ;
-MINUS     : '-' ;
-MUL       : '*' ;
-DIV       : '/' ;
-INCR      : '++' ;
-PLUSEQ    : '+=' ;
+// ----------------- Operators -----------------
+ASSIGN      : '=';
+ADDASSIGN   : '+=';
+INC         : '++';
+ADD         : '+';
+SUB         : '-';
+MUL         : '*';
+DIV         : '/';
+NOT         : '!';
+AND         : '&&';
+OR          : '||';
+EQ          : '==';
+GT          : '>';
 
-LT        : '<' ;
-LE        : '<=' ;
-GT        : '>' ;
-GE        : '>=' ;
-EQ        : '==' ;
-NEQ       : '!=' ;
+// ----------------- Identifiers & Literals -----------------
+STRING      : '"' ( ~["\\\r\n] | '\\' . )* '"' ;
+IDENTIFICATEUR : [a-zA-Z_] [a-zA-Z_0-9]* ;
+NOMBRE         : [0-9]+ ;
 
-AND       : '&&' ;
-OR        : '||' ;
-NOT       : '!' ;
-
-// --------- Délimiteurs ---------
-LBRACK    : '[' ;
-RBRACK    : ']' ;
-LPAREN    : '(' ;
-RPAREN    : ')' ;
-LBRACE    : '{' ;
-RBRACE    : '}' ;
-COMMA     : ',' ;
-SEMI      : ';' ;
-
-// --------- Identificateurs & Littéraux ---------
-IDENT     : [a-zA-Z][a-zA-Z0-9]* ;
-INT       : [0-9]+ ;
-STRING    : '"' ( ~["\\\r\n] | '\\' . )* '"' ;
-
-// --------- Espaces et commentaires ---------
-WS        : [ \t\r\n]+ -> skip ;
-COMMENT: '//' (.)*?[\r\n] -> skip;
+// ----------------- Whitespaces and Comments -----------------
+WS : [ \t\r\n]+ -> skip ;
+LINE_COMMENT      : '//' ~[\r\n]* -> skip;
+MULTILINE_COMMENT : '/*' .*? '*/' -> skip ;

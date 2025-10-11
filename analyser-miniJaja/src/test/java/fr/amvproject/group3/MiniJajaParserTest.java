@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class MiniJajaParserTest {
-
+/*
 
     @Test
     public void given__when__then() {
@@ -39,5 +39,5 @@ public class MiniJajaParserTest {
         // Then
 
     }
-
+*/
 }

@@ -91,6 +91,18 @@ public class PrintVisitor implements AstVisitor<String> {
     }
 
     @Override
+    public String visitProgram(ProgramNode node) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(indent()).append("(PROGRAM");
+
+        sb.append(joinChildren(node.getClasses()));
+
+        sb.append("\n").append(indent()).append(")");
+        return sb.toString();
+    }
+
+
+    @Override
     public String visitClasse(ClasseNode node) {
         StringBuilder sb = new StringBuilder(indent() + "(CLASSE " + node.getIdent().accept(this));
         if (node.getDecls() != null) sb.append("\n").append(node.getDecls().accept(this));
@@ -173,14 +185,14 @@ public class PrintVisitor implements AstVisitor<String> {
 
     @Override
     public String visitAddAssign(AddAssignNode node) {
-        return indent() + node.getIdent().accept(this) + " += " + node.getExp().accept(this);
+        return indent() + node.getLeftValueNode().accept(this) + " += " + node.getExp().accept(this);
     }
 
     @Override
     public String visitIf(IfNode node) {
         StringBuilder sb = new StringBuilder(indent() + "(IF " + node.getCondExp().accept(this));
         sb.append("\n").append(node.getThenInstrs().accept(this));
-        if (node.getElseInstrs() != null) sb.append("\n").append(node.getElseInstrs().accept(this));
+        if (node.getElseInstrs() != null) sb.append("\n").append(indent() + "(ELSE " + node.getElseInstrs().accept(this));
         sb.append(")");
         return sb.toString();
     }

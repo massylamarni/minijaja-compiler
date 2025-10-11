@@ -1,5 +1,6 @@
 package fr.amvproject.group3.ast;
 
+import fr.amvproject.group3.memory.MiniJajaInterpreter;
 import fr.amvproject.group3.MiniJajaLexer;
 import fr.amvproject.group3.MiniJajaParser;
 
@@ -8,6 +9,7 @@ import org.antlr.v4.runtime.*;
 public class MainInterpreter {
 
     public static void main(String[] args) throws Exception {
+        /*
         // Vérifier les arguments
         if (args.length == 0) {
             System.err.println("Usage: java MainInterpreter <fichier.mj> [--debug] [--show-ast] [--show-memory]");
@@ -169,5 +171,6 @@ public class MainInterpreter {
         public java.util.List<String> getErrors() {
             return errors;
         }
+            */
     }
 }

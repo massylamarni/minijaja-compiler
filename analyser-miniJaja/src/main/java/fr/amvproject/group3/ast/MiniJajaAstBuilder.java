@@ -1,43 +1,36 @@
 package fr.amvproject.group3.ast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fr.amvproject.group3.MiniJajaParser;
 import fr.amvproject.group3.MiniJajaParserBaseVisitor;
-import fr.amvproject.group3.ast.nodes.abstracts.Ident;
-import fr.amvproject.group3.ast.nodes.abstracts.IdentExp;
-import fr.amvproject.group3.ast.nodes.decls.MethMainNode;
-import fr.amvproject.group3.ast.nodes.decls.VarNode;
-import fr.amvproject.group3.ast.nodes.decls.VarsNode;
-import fr.amvproject.group3.ast.nodes.exprs.BinaryExpNode;
-import fr.amvproject.group3.ast.nodes.exprs.BoolLiteralNode;
-import fr.amvproject.group3.ast.nodes.exprs.ExpNode;
-import fr.amvproject.group3.ast.nodes.exprs.IntLiteralNode;
-import fr.amvproject.group3.ast.nodes.exprs.StringLiteralNode;
-import fr.amvproject.group3.ast.nodes.exprs.UnaryExpNode;
-import fr.amvproject.group3.ast.nodes.exprs.VarRefNode;
-import fr.amvproject.group3.ast.nodes.instrs.AssignNode;
-import fr.amvproject.group3.ast.nodes.instrs.IfNode;
-import fr.amvproject.group3.ast.nodes.instrs.IncNode;
-import fr.amvproject.group3.ast.nodes.instrs.InstrNode;
-import fr.amvproject.group3.ast.nodes.instrs.InstrsNode;
-import fr.amvproject.group3.ast.nodes.instrs.WhileNode;
-import fr.amvproject.group3.ast.nodes.instrs.WriteNode;
-import fr.amvproject.group3.ast.nodes.other.BinaryOpNode;
-import fr.amvproject.group3.ast.nodes.other.LeftValueNode;
-import fr.amvproject.group3.ast.nodes.other.TypeNode;
-import fr.amvproject.group3.ast.nodes.other.UnaryOpNode;
-import fr.amvproject.group3.ast.nodes.program.ClasseNode;
-import fr.amvproject.group3.ast.nodes.program.DeclNode;
-import fr.amvproject.group3.ast.nodes.program.DeclsNode;
+import fr.amvproject.group3.ast.nodes.abstracts.*;
+import fr.amvproject.group3.ast.nodes.decls.*;
+import fr.amvproject.group3.ast.nodes.exprs.*;
+import fr.amvproject.group3.ast.nodes.instrs.*;
+import fr.amvproject.group3.ast.nodes.other.*;
+import fr.amvproject.group3.ast.nodes.program.*;
 
 public class MiniJajaAstBuilder extends MiniJajaParserBaseVisitor<AstNode> {
 
     // ========== PROGRAMME ==========
     @Override
     public AstNode visitProgram(MiniJajaParser.ProgramContext ctx) {
-        Ident className = new Ident(ctx.IDENT().getText());
+        List<ClasseNode> classes = new ArrayList<>();
+        for (MiniJajaParser.ClasseContext classeCtx : ctx.classe()) {
+            classes.add((ClasseNode) visitClasse(classeCtx));
+        }
+        return new ProgramNode(classes);
+    }
+
+
+    @Override
+    public AstNode visitClasse(MiniJajaParser.ClasseContext ctx) {
+        Ident ident = new Ident(ctx.ident().getText());
         DeclsNode decls = (DeclsNode) visit(ctx.decls());
         MethMainNode main = (MethMainNode) visit(ctx.methmain());
-        return new ClasseNode(className, decls, main);
+        return new ClasseNode(ident, decls, main);
     }
 
     // ========== DECLARATIONS ==========
@@ -45,82 +38,55 @@ public class MiniJajaAstBuilder extends MiniJajaParserBaseVisitor<AstNode> {
     public AstNode visitDecls(MiniJajaParser.DeclsContext ctx) {
         DeclsNode decls = new DeclsNode();
 
-        // La grammaire est récursive : decl SEMI decls | ε
-        if (ctx.decl() != null) {
-            AstNode declNode = visit(ctx.decl());
+        for (MiniJajaParser.DeclContext declCtx : ctx.decl()) {
+            AstNode declNode = visit(declCtx);
             if (declNode instanceof DeclNode) {
                 decls.add((DeclNode) declNode);
-            }
-
-            // Parcourir récursivement le reste
-            if (ctx.decls() != null) {
-                DeclsNode restDecls = (DeclsNode) visit(ctx.decls());
-                decls.getDecls().addAll(restDecls.getDecls());
             }
         }
 
         return decls;
     }
 
+
     @Override
     public AstNode visitDecl(MiniJajaParser.DeclContext ctx) {
         if (ctx.var() != null) {
             return visit(ctx.var());
         }
-        // Si c'est une méthode, on pourrait la gérer ici
-        // Pour l'instant on ignore les méthodes dans les déclarations
-        return null;
+        
+        return visit(ctx.methode());
     }
 
-    @Override
+    @Override 
     public AstNode visitVar(MiniJajaParser.VarContext ctx) {
-        String type = ctx.typemeth() != null ? ctx.typemeth().getText() : ctx.type().getText();
-        Ident name = new Ident(ctx.IDENT().getText());
+        ExpNode exp = (ctx.vexp() != null && ctx.vexp().exp() != null) ? (ExpNode) visit(ctx.vexp().exp()) : null;
+        Boolean isFinal = (ctx.FINAL() != null);
 
-        // Déclaration finale
-        if (ctx.FINAL() != null) {
-            ExpNode exp = ctx.vexp() != null && ctx.vexp().exp() != null
-                    ? (ExpNode) visit(ctx.vexp().exp())
-                    : null;
-            // Pour final, on réutilise Decl avec le type préfixé
-            return new VarNode(new TypeNode(type), name, null, exp, true);
-        }
-
-        // Déclaration de tableau
+        // Array, grammar does not allow to init arrays
         if (ctx.LBRACK() != null) {
-            ExpNode size = (ExpNode) visit(ctx.exp());
-            // On peut créer un Decl spécial ou utiliser Decl avec notation spéciale
-            return new VarNode(new TypeNode(type), name, size, null, false);
+            // TODO: Handle case where exp is defined
+            return new VarNode(new TypeNode(ctx.typemeth().getText()), new Ident(ctx.ident().getText()), (ExpNode) visit(ctx.exp()), null, false);
         }
 
-        // Déclaration simple avec initialisation optionnelle
-        ExpNode exp = null;
-        if (ctx.vexp() != null && ctx.vexp().exp() != null) {
-            exp = (ExpNode) visit(ctx.vexp().exp());
-        }
-
-        return new VarNode(new TypeNode(type), name, null, exp, false);
+        // Var or Final
+        return new VarNode(new TypeNode(isFinal ? ctx.type().getText() : ctx.typemeth().getText()), new Ident(ctx.ident().getText()), null, exp, isFinal);
     }
 
     // ========== MAIN ==========
     @Override
     public AstNode visitMethmain(MiniJajaParser.MethmainContext ctx) {
-        VarsNode vars = (VarsNode) visit(ctx.vars());
-        InstrsNode instrs = (InstrsNode) visit(ctx.instrs());
-        return new MethMainNode(vars, instrs);
+        return new MethMainNode((VarsNode) visit(ctx.vars()), (InstrsNode) visit(ctx.instrs()));
     }
 
     @Override
     public AstNode visitVars(MiniJajaParser.VarsContext ctx) {
         VarsNode vars = new VarsNode();
 
-        // Récursif : var SEMI vars | ε
-        if (ctx.var() != null) {
-            vars.add((VarNode) visit(ctx.var()));
-
-            if (ctx.vars() != null) {
-                VarsNode restVars = (VarsNode) visit(ctx.vars());
-                vars.getList().addAll(restVars.getList());
+        for (MiniJajaParser.VarContext varCtx : ctx.var()) {
+            AstNode varNode = visit(varCtx);
+            if (varNode instanceof VarNode) {
+                vars.add((VarNode) varNode);
             }
         }
 
@@ -132,16 +98,10 @@ public class MiniJajaAstBuilder extends MiniJajaParserBaseVisitor<AstNode> {
     public AstNode visitInstrs(MiniJajaParser.InstrsContext ctx) {
         InstrsNode instrs = new InstrsNode();
 
-        // Récursif : instr SEMI instrs | ε
-        if (ctx.instr() != null) {
-            InstrNode instr = (InstrNode) visit(ctx.instr());
+        for (MiniJajaParser.InstrContext instrCtx : ctx.instr()) {
+            InstrNode instr = (InstrNode) visit(instrCtx);
             if (instr != null) {
                 instrs.add(instr);
-            }
-
-            if (ctx.instrs() != null) {
-                InstrsNode restInstrs = (InstrsNode) visit(ctx.instrs());
-                instrs.getList().addAll(restInstrs.getList());
             }
         }
 
@@ -150,95 +110,86 @@ public class MiniJajaAstBuilder extends MiniJajaParserBaseVisitor<AstNode> {
 
     @Override
     public AstNode visitInstr(MiniJajaParser.InstrContext ctx) {
-        // Affectation : ident1 = exp
+        // = : ident1 = exp
         if (ctx.ASSIGN() != null) {
-            AstNode identNode = visit(ctx.ident1());
+            AstNode leftValueNode = visit(ctx.ident1());
             ExpNode exp = (ExpNode) visit(ctx.exp());
 
-            if (identNode instanceof VarNode) {
-                return new AssignNode(new VarRefNode(((VarNode) identNode).getIdent()), exp);
-            }
-            // Si c'est un accès tableau, créer une affectation spéciale
-            // Pour simplifier, on utilise l'ident de base
-            return new AssignNode(new VarRefNode(new Ident(ctx.ident1().IDENT().getText())), exp);
+            if (leftValueNode instanceof VarRefNode) { // Var
+                return new AssignNode(new VarRefNode(((VarRefNode) leftValueNode).getIdent()), exp);
+            } else if (leftValueNode instanceof ArrayAccessNode) { // Array
+                return new AssignNode(new ArrayAccessNode(((ArrayAccessNode) leftValueNode).getIdent(), ((ArrayAccessNode) leftValueNode).getIndexExp()), exp);
+            } else {
+                throw new RuntimeException("Unexpected left-hand side in =: " + leftValueNode);
+            }            
         }
 
         // += : ident1 += exp
-        if (ctx.PLUSEQ() != null) {
-            Ident ident = new Ident(ctx.ident1().IDENT().getText());
+        if (ctx.ADDASSIGN() != null) {
+            AstNode leftValueNode = visit(ctx.ident1());
             ExpNode exp = (ExpNode) visit(ctx.exp());
-            // Transformer en affectation : x = x + exp
-            return new AssignNode(new VarRefNode(ident), new BinaryExpNode(new BinaryOpNode("+"), new IdentExp(ident), exp));
+
+            if (leftValueNode instanceof VarRefNode) {
+                return new AddAssignNode(new VarRefNode(((VarRefNode) leftValueNode).getIdent()), exp);
+            } else {
+                return new AddAssignNode(new ArrayAccessNode(((ArrayAccessNode) leftValueNode).getIdent(), ((ArrayAccessNode) leftValueNode).getIndexExp()), exp);
+            } // Other checks are done internally
         }
 
-        // Incrémentation : ident1++
-        if (ctx.INCR() != null) {
-            Ident ident = new Ident(ctx.ident1().IDENT().getText());
-            return new IncNode(ident);
+
+        // ++ : ident1++
+        if (ctx.INC() != null) {
+            return new IncNode(new Ident(ctx.ident1().ident().getText()));
         }
 
-        // Appel de méthode : IDENT(listexp)
-        if (ctx.LPAREN() != null && ctx.IDENT() != null) {
-            // C'est un appel de méthode (instruction)
-            // Pour simplifier, on ignore les appels de méthode pour l'instant
-            return null;
+        // MethodCallExp : IDENT(listexp)
+        if (ctx.LPAREN() != null && ctx.ident() != null) {
+            Ident ident = new Ident(ctx.ident().getText());
+            ListExpNode listExp = (ListExpNode) visit(ctx.listexp());
+            return new MethodCallExpNode(ident, listExp);
         }
 
         // Return
         if (ctx.RETURN() != null) {
             ExpNode exp = (ExpNode) visit(ctx.exp());
-            // On pourrait créer une classe ReturnInstr
-            // Pour l'instant, on ignore ou on crée une instruction spéciale
-            return null;
+            return new RetourNode(exp);
         }
 
         // Write / Writeln
         if (ctx.WRITE() != null || ctx.WRITELN() != null) {
-            // Write / Writeln
-            if (ctx.WRITE() != null || ctx.WRITELN() != null) {
-                boolean isLn = ctx.WRITELN() != null;
-                ExpNode contenu = null;
+            boolean isLn = ctx.WRITELN() != null;
+            ExpNode exp = null;
 
-                // Expression
-                if (ctx.exp() != null) {
-                    contenu = (ExpNode) visit(ctx.exp());
-                }
-                // Identifiant
-                else if (ctx.ident1() != null) {
-                    contenu = (ExpNode) visit(ctx.ident1());
-                }
-                // Chaîne de caractères
-                else if (ctx.STRING() != null) {
-                    String str = ctx.STRING().getText();
-                    str = str.substring(1, str.length() - 1); // Enlever les guillemets
-                    contenu = new StringLiteralNode(str);  // ✅ Utilise la classe Chaine en français
-                }
-
-                return new WriteNode(contenu, isLn);  // ✅ Utilise la classe Ecrire en français
+            // Ident1
+            if (ctx.ident1() != null) {
+                exp = (ExpNode) visit(ctx.ident1());
             }
+            // String
+            else if (ctx.STRING() != null) {
+                String str = ctx.STRING().getText();
+                str = str.substring(1, str.length() - 1);
+                exp = new StringLiteralNode(str);
+            }
+
+            return new WriteNode(exp, isLn);
         }
 
         // IF
         if (ctx.IF() != null) {
-            ExpNode cond = (ExpNode) visit(ctx.exp());
+            ExpNode condExp = (ExpNode) visit(ctx.exp());
 
-            // Le premier bloc instrs est le THEN
+            // Then
             InstrsNode thenInstrs = (InstrsNode) visit(ctx.instrs(0));
 
-            // Le deuxième bloc (si présent) est le ELSE
-            InstrsNode elseInstrs = new InstrsNode();
-            if (ctx.instrs().size() > 1) {
-                elseInstrs = (InstrsNode) visit(ctx.instrs(1));
-            }
+            // Else
+            InstrsNode elseInstrs = (ctx.instrs().size() > 1) ? (InstrsNode) visit(ctx.instrs(1)) : null;
 
-            return new IfNode(cond, thenInstrs, elseInstrs);
+            return new IfNode(condExp, thenInstrs, elseInstrs);
         }
 
         // WHILE
         if (ctx.WHILE() != null) {
-            ExpNode cond = (ExpNode) visit(ctx.exp());
-            InstrsNode body = (InstrsNode) visit(ctx.instrs(0));
-            return new WhileNode(cond, body);
+            return new WhileNode((ExpNode) visit(ctx.exp()), (InstrsNode) visit(ctx.instrs(0)));
         }
 
         return null;
@@ -247,7 +198,11 @@ public class MiniJajaAstBuilder extends MiniJajaParserBaseVisitor<AstNode> {
     // ========== EXPRESSIONS ==========
     @Override
     public AstNode visitExp(MiniJajaParser.ExpContext ctx) {
-        // exp : expAnd ( OR expAnd )*
+        return visit(ctx.expOr());
+    }
+
+    public AstNode visitExpOr(MiniJajaParser.ExpOrContext ctx) {
+        // expOr : expAnd ( OR expAnd )*
         if (ctx.expAnd().size() == 1) {
             return visit(ctx.expAnd(0));
         }
@@ -277,75 +232,76 @@ public class MiniJajaAstBuilder extends MiniJajaParserBaseVisitor<AstNode> {
 
     @Override
     public AstNode visitExpEq(MiniJajaParser.ExpEqContext ctx) {
-        // expEq : expAdd ( (EQ | GT) expAdd )*
-        if (ctx.expAdd().size() == 1) {
-            return visit(ctx.expAdd(0));
+        // expEq : expRel ( (EQ | GT) expRel )*
+        if (ctx.expRel().size() == 1) {
+            return visit(ctx.expRel(0));
         }
 
-        ExpNode result = (ExpNode) visit(ctx.expAdd(0));
-        for (int i = 1; i < ctx.expAdd().size(); i++) {
+        ExpNode result = (ExpNode) visit(ctx.expRel(0));
+        for (int i = 1; i < ctx.expRel().size(); i++) {
             String op = ctx.EQ(i-1) != null ? "==" : ">";
-            ExpNode right = (ExpNode) visit(ctx.expAdd(i));
+            ExpNode right = (ExpNode) visit(ctx.expRel(i));
             result = new BinaryExpNode(new BinaryOpNode(op), result, right);
         }
         return result;
+    }
+
+    public AstNode visitExpRel(MiniJajaParser.ExpRelContext ctx) {
+        return visit(ctx.expAdd());
     }
 
     @Override
     public AstNode visitExpAdd(MiniJajaParser.ExpAddContext ctx) {
-        // expAdd : MINUS expAdd | expNot ( (PLUS | MINUS) expNot )*
-
-        // Cas unaire : -expAdd
-        if (ctx.MINUS() != null && ctx.expAdd() != null) {
-            ExpNode exp = (ExpNode) visit(ctx.expAdd());
-            return new UnaryExpNode(new UnaryOpNode("-"), exp);
+        // expAdd : expMul ( (ADD | SUB) expMul )*
+        if (ctx.expMul().size() == 1) {
+            return visit(ctx.expMul(0));
         }
 
-        // Cas binaire : expNot (+|- expNot)*
-        if (ctx.expNot().size() == 1) {
-            return visit(ctx.expNot(0));
-        }
-
-        ExpNode result = (ExpNode) visit(ctx.expNot(0));
-        for (int i = 1; i < ctx.expNot().size(); i++) {
-            String op = ctx.PLUS(i-1) != null ? "+" : "-";
-            ExpNode right = (ExpNode) visit(ctx.expNot(i));
+        ExpNode result = (ExpNode) visit(ctx.expMul(0));
+        for (int i = 1; i < ctx.expMul().size(); i++) {
+            String op = ctx.ADD(i-1) != null ? "+" : "-";
+            ExpNode right = (ExpNode) visit(ctx.expMul(i));
             result = new BinaryExpNode(new BinaryOpNode(op), result, right);
         }
         return result;
     }
 
     @Override
-    public AstNode visitExpNot(MiniJajaParser.ExpNotContext ctx) {
-        // expNot : NOT expNot | terme
-        if (ctx.NOT() != null) {
-            ExpNode exp = (ExpNode) visit(ctx.expNot());
-            return new UnaryExpNode(new UnaryOpNode("!"), exp);
-        }
-        return visit(ctx.terme());
-    }
-
-    @Override
-    public AstNode visitTerme(MiniJajaParser.TermeContext ctx) {
-        // terme : fact ( (MUL | DIV) fact )*
-        if (ctx.fact().size() == 1) {
-            return visit(ctx.fact(0));
+    public AstNode visitExpMul(MiniJajaParser.ExpMulContext ctx) {
+        // expMul: expUnary ((MUL | DIV) expUnary)*;
+        if (ctx.expUnary().size() == 1) {
+            return visit(ctx.expUnary(0));
         }
 
-        ExpNode result = (ExpNode) visit(ctx.fact(0));
-        for (int i = 1; i < ctx.fact().size(); i++) {
+        ExpNode result = (ExpNode) visit(ctx.expUnary(0));
+        for (int i = 1; i < ctx.expUnary().size(); i++) {
             String op = ctx.MUL(i-1) != null ? "*" : "/";
-            ExpNode right = (ExpNode) visit(ctx.fact(i));
+            ExpNode right = (ExpNode) visit(ctx.expUnary(i));
             result = new BinaryExpNode(new BinaryOpNode(op), result, right);
         }
         return result;
     }
 
+    @Override
+    public AstNode visitExpUnary(MiniJajaParser.ExpUnaryContext ctx) {
+        // expUnary: (NOT | SUB) expUnary | fact;
+        if (ctx.NOT() != null) {
+            ExpNode right = (ExpNode) visit(ctx.expUnary());
+            return new UnaryExpNode(new UnaryOpNode("!"), right);
+        } else if (ctx.SUB() != null) {
+            ExpNode right = (ExpNode) visit(ctx.expUnary());
+            return new UnaryExpNode(new UnaryOpNode("-"), right);
+        } else {
+            return visit(ctx.fact());
+        }
+    }
+
+    
     @Override
     public AstNode visitFact(MiniJajaParser.FactContext ctx) {
-        // Littéraux
-        if (ctx.INT() != null) {
-            return new IntLiteralNode(Integer.parseInt(ctx.INT().getText()));
+        // Literals
+        if (ctx.NOMBRE() != null) {
+            return new IntLiteralNode(Integer.parseInt(ctx.NOMBRE().getText()));
         }
         if (ctx.TRUE() != null) {
             return new BoolLiteralNode(true);
@@ -354,53 +310,38 @@ public class MiniJajaAstBuilder extends MiniJajaParserBaseVisitor<AstNode> {
             return new BoolLiteralNode(false);
         }
 
-        // Chaîne de caractères
-        if (ctx.STRING() != null) {
-            String str = ctx.STRING().getText();
-            // On retourne un IntLiteralNode pour l'instant (à adapter selon ton AST)
-            // Ou créer une StringExp si nécessaire
-            return new IntLiteralNode(0); // Placeholder
-        }
-
-        // Identifiant ou accès tableau
+        // Ident1
         if (ctx.ident1() != null) {
             return visit(ctx.ident1());
         }
 
-        // Expression entre parenthèses
-        if (ctx.LPAREN() != null && ctx.exp() != null) {
+        // Ident(listexp)
+        if (ctx.ident() != null && ctx.LPAREN() != null && ctx.exp() != null) {
+            return new MethodCallExpNode(new Ident(ctx.ident().getText()), (ListExpNode) visit(ctx.listexp()));
+        }
+
+        // Length(ident)
+        if (ctx.LENGTH() != null && ctx.ident() != null) {
+            return new LengthNode(new Ident(ctx.ident().getText()));
+        }
+
+        // (exp)
+        if (ctx.exp() != null) {
             return visit(ctx.exp());
         }
 
-        // Appel de méthode : IDENT(listexp)
-        if (ctx.LPAREN() != null && ctx.IDENT() != null) {
-            // Appel de méthode en tant qu'expression
-            // Pour simplifier, on retourne une valeur par défaut
-            return new IntLiteralNode(0); // Placeholder
-        }
-
-        // LENGTH(IDENT)
-        if (ctx.LENGHT() != null) {
-            // Pour simplifier, on retourne une valeur par défaut
-            return new IntLiteralNode(0); // Placeholder
-        }
-
-        return new IntLiteralNode(0); // Fallback
+        return new IntLiteralNode(0); // Fallback TODO: explanation
     }
 
     @Override
     public AstNode visitIdent1(MiniJajaParser.Ident1Context ctx) {
-        Ident ident = new Ident(ctx.IDENT().getText());
-
-        // Accès tableau : IDENT[exp]
+        // Array
         if (ctx.LBRACK() != null) {
-            ExpNode index = (ExpNode) visit(ctx.exp());
-            // Pour simplifier, on retourne juste l'IdentExp
-            // Ou créer une classe ArrayAccessExp si nécessaire
-            return new IdentExp(ident);
+            
+            return new ArrayAccessNode(new Ident(ctx.ident().getText()), (ExpNode) visit(ctx.exp()));
         }
 
-        // Identifiant simple
-        return new IdentExp(ident);
+        // Var
+        return new VarRefNode(new Ident(ctx.ident().getText()));
     }
 }

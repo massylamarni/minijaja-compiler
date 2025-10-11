@@ -9,11 +9,11 @@ import org.antlr.v4.runtime.*;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        CharStream input = CharStreams.fromFileName("/home/dhk/Desktop/UFC/Compilation/groupe-3/analyser-miniJaja/test.mj");
+        
+        CharStream input = CharStreams.fromFileName("/home/dhk/Desktop/UFC/Compilation/groupe-3/analyser-miniJaja/test_full.mj");
         MiniJajaLexer lexer = new MiniJajaLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         MiniJajaParser parser = new MiniJajaParser(tokens);
-
         MiniJajaParser.ProgramContext tree = parser.program();
         MiniJajaAstBuilder builder = new MiniJajaAstBuilder();
         AstNode ast = builder.visit(tree);
@@ -21,8 +21,5 @@ public class App {
         PrintVisitor printer = new PrintVisitor();
         String result = ast.accept(printer);
         System.out.println(result);
-
-        System.out.println("=== AST ===");
-        System.out.println(ast);
     }
 }

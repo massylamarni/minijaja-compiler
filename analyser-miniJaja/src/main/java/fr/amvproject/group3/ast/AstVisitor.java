@@ -49,6 +49,7 @@ public interface AstVisitor<T> {
     T visitEntetes(EntetesNode node);
 
     // --------- Program ---------
+    T visitProgram(ProgramNode node);
     T visitClasse(ClasseNode node);
     T visitDecl(DeclNode node);
     T visitDecls(DeclsNode node);
