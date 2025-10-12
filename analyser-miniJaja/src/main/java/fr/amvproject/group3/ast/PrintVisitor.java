@@ -221,8 +221,8 @@ public class PrintVisitor implements AstVisitor<String> {
     @Override
     public String visitMethodCallInstr(MethodCallInstrNode node) {
         StringBuilder sb = new StringBuilder();
-        sb.append("(APPELI ").append(node.getIdent()).append(" (LISTEXP");
-        for (ExpNode arg : node.getListExp().getList()) sb.append(" ").append(arg);
+        sb.append("(APPELI ").append(node.getIdent().getName()).append(" (LISTEXP");
+        for (ExpNode arg : node.getListExp().getList()) sb.append(" ").append(arg.evaluate());
         sb.append("))");
         return sb.toString();
     };

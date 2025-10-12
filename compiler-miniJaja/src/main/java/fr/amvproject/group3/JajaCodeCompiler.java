@@ -4,7 +4,6 @@ package fr.amvproject.group3;
 
 import fr.amvproject.group3.ast.*;
 import fr.amvproject.group3.ast.nodes.abstracts.Ident;
-import fr.amvproject.group3.ast.nodes.abstracts.IdentExp;
 import fr.amvproject.group3.ast.nodes.params.EnteteNode;
 import fr.amvproject.group3.ast.nodes.params.EntetesNode;
 import fr.amvproject.group3.ast.nodes.program.*;
@@ -53,6 +52,11 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
 
     @Override
     public Void visitUnaryExp(UnaryExpNode node) {
+        return null;
+    }
+
+    @Override
+    public Void visitInstr(InstrNode node) {
         return null;
     }
 
@@ -139,7 +143,7 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
         node.getExp().accept(this);
 
         // Affecter la valeur à la variable à gauche
-        emitter.emit("store " + node.getIdent().getName());
+        emitter.emit("store " + node.getLeftValue().evaluate());
         return null;
     }
 
@@ -233,11 +237,6 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
 
     @Override
     public Void visitIdent(Ident node) {
-        return null;
-    }
-
-    @Override
-    public Void visitIdentExp(IdentExp node) {
         return null;
     }
 

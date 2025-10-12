@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 
 public class App {
     public static void main(String[] args) {
-        String inputFile = "compiler-miniJaja/test_expr.mj"; // chemin par défaut (ton ancien test)
+        String inputFile = "compiler-miniJaja/test_full.mj";
         if (args.length > 0) inputFile = args[0];
 
         try {
