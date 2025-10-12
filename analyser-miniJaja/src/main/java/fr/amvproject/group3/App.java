@@ -12,7 +12,7 @@ import org.antlr.v4.runtime.*;
 public class App {
     public static void main(String[] args) throws Exception {
         
-        CharStream input = CharStreams.fromFileName("/home/dhk/Desktop/UFC/Compilation/groupe-3/analyser-miniJaja/test_full.mj");
+        CharStream input = CharStreams.fromFileName("analyser-miniJaja/test_full.mj");
         MiniJajaLexer lexer = new MiniJajaLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         MiniJajaParser parser = new MiniJajaParser(tokens);
