@@ -1,5 +1,5 @@
 package fr.amvproject.group3;
-
+/*
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -10,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class MiniJajaParserTest {
-/*
+
 
     @Test
     public void given__when__then() {
@@ -39,5 +39,6 @@ public class MiniJajaParserTest {
         // Then
 
     }
-*/
+
 }
+*/

@@ -15,6 +15,11 @@ public class StringLiteralNode extends ExpNode {
     }
 
     @Override
+    public String evaluate() {
+        return value;
+    }
+
+    @Override
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visitStringLiteral(this);
     }

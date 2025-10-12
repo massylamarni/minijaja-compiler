@@ -1,15 +1,20 @@
 package fr.amvproject.group3.memory;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 
 import fr.amvproject.group3.ast.nodes.abstracts.Ident;
+import fr.amvproject.group3.ast.nodes.decls.VarNode;
+import fr.amvproject.group3.ast.nodes.decls.VarsNode;
 import fr.amvproject.group3.ast.nodes.instrs.InstrNode;
 import fr.amvproject.group3.ast.nodes.instrs.InstrsNode;
 import fr.amvproject.group3.ast.nodes.instrs.RetourNode;
 import fr.amvproject.group3.ast.nodes.other.TypeNode;
+import fr.amvproject.group3.ast.nodes.params.EnteteNode;
+import fr.amvproject.group3.ast.nodes.params.EntetesNode;
 
 public class Stack {
   static class Quad {
@@ -65,13 +70,21 @@ public class Stack {
     stack.push(new Quad(ident, value, obj, type));
   }
 
-  public void declTab(Ident ident, Object[] values, TypeNode type) {
-    int ref = heap.allocate(values);
+  public void declTab(Ident ident, Object value, TypeNode type) {
+    int ref = heap.allocate(value);
     stack.push(new Quad(ident, ref, "tab", type));
   }
 
-  public void declMeth(Ident ident, TypeNode returnType, List<Quad> entetes, List<Quad> vars, InstrsNode instrs) {
-    stack.push(new Quad(ident, null, "meth", returnType, entetes, vars, instrs));
+  public void declMeth(Ident ident, TypeNode returnType, EntetesNode entetes, VarsNode vars, InstrsNode instrs) {
+    List<Quad> qEntetes = new ArrayList<>();
+    List<Quad> qVars = new ArrayList<>();
+    for (EnteteNode entete : entetes.getList()) {
+      qEntetes.add(new Quad(entete.getIdent(), null, "var", entete.getType()));
+    }
+    for (VarNode var : vars.getList()) {
+      qVars.add(new Quad(var.getIdent(), var.getInitExp(), var.getVarObj(), returnType));
+    }
+    stack.push(new Quad(ident, null, "meth", returnType, qEntetes, qVars, instrs));
   }
 
   // --- Access / Assignment ---
@@ -133,7 +146,6 @@ public class Stack {
   }
 
   // --- Method Call Execution ---
-
   public Object callMethod(Ident Ident, List<Object> argValues) {
     Quad method = null;
     for (Quad q : stack) {
@@ -146,7 +158,7 @@ public class Stack {
       throw new RuntimeException("Method not found: " + Ident.getName());
 
     // Save current stack
-    stack.push(new Quad(new Ident("_METHOD_FRAME_"), null, "frame", method.type));
+    stack.push(new Quad(new Ident("_METHOD_FRAME_", -1), null, "frame", method.type));
 
     // Initialize entetes
     if (method.entetes != null) {
@@ -185,4 +197,51 @@ public class Stack {
 
     return returnExp;
   }
+
+  // --- Utils ---
+  public void printStack() {
+    System.out.println("===== STACK DUMP =====");
+    if (stack.isEmpty()) {
+      System.out.println("[Empty Stack]");
+      return;
+    }
+
+    int i = stack.size();
+    for (Quad q : stack) {
+      System.out.println("-- Entry #" + (i--) + " --");
+      System.out.println("  Ident : " + (q.ident != null ? q.ident.getName() : "null"));
+      System.out.println("  Obj   : " + q.obj);
+      System.out.println("  Type  : " + (q.type != null ? q.type.getType() : "null"));
+
+      if (q.obj.equals("tab")) {
+        /*
+        Object arr = (Object) heap.get((int) q.value);
+        System.out.print("  Value : [");
+          System.out.print(arr);
+        System.out.println("]"); */
+      } else if (q.obj.equals("meth")) {
+        System.out.println("  Method parameters:");
+        if (q.entetes != null) {
+          for (Quad e : q.entetes) {
+            System.out.println("    - " + e.ident.getName() + " : " + e.type.getType());
+          }
+        }
+        System.out.println("  Local vars:");
+        if (q.vars != null) {
+          for (Quad v : q.vars) {
+            System.out.println("    - " + v.ident.getName() + " : " + v.type.getType());
+          }
+        }
+        System.out.println("  Instructions count: " + 
+          (q.instrs != null ? q.instrs.getList().size() : 0));
+      } else if (q.obj.equals("frame")) {
+        System.out.println("  <Method Frame Boundary>");
+      } else {
+        System.out.println("  Value : " + q.value);
+      }
+      System.out.println();
+    }
+    System.out.println("======================");
+  }
+
 }

@@ -26,6 +26,11 @@ public class BinaryExpNode extends ExpNode {
     }
 
     @Override
+    public String evaluate() {
+        return leftExp.evaluate() + op.getOp().getName() + rightExp.evaluate();
+    }
+
+    @Override
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visitBinaryExp(this);
     }

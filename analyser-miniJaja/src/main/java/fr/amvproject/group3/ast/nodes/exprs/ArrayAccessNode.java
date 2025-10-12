@@ -26,6 +26,11 @@ public class ArrayAccessNode extends LeftValueNode {
     }
 
     @Override
+    public String evaluate() {
+        return ident.getName() + "[ " + indexExp.evaluate() + " ]";
+    }
+
+    @Override
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visitArrayAccess(this);
     }

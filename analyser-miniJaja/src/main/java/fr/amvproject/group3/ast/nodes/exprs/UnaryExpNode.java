@@ -21,6 +21,11 @@ public class UnaryExpNode extends ExpNode {
     }
 
     @Override
+    public String evaluate() {
+        return op.getOp().getName() + exp.evaluate();
+    }
+
+    @Override
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visitUnaryExp(this);
     }

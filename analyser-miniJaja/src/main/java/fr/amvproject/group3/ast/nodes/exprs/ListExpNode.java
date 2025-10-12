@@ -16,6 +16,18 @@ public class ListExpNode extends AstNode {
         return list;
     }
 
+    public String evaluate() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < list.size(); i++) {
+            ExpNode exp = list.get(i);
+            sb.append(exp.evaluate());
+            if (i < list.size() - 1) {
+                sb.append(", ");
+            }
+        }
+        return sb.toString();
+    }
+
     @Override
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visitListExp(this);

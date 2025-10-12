@@ -15,6 +15,7 @@ public class Heap {
 
     // Allocate a new object in the heap and return its address
     public int allocate(Object value) {
+      if (value == null) return nextAddress++;
       heap.addLast(value);
       return nextAddress++;
     }

@@ -46,6 +46,12 @@ public class VarNode extends DeclNode {
         return isFinal;
     }
 
+    public String getVarObj() {
+        if (isFinal) return "cst";
+        else if (sizeExp != null) return "tab";
+        return "var";
+    }
+
     @Override
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visitVar(this);

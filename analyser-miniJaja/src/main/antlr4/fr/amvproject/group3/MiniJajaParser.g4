@@ -23,7 +23,7 @@ methode : typemeth ident LPAREN entetes RPAREN LBRACE vars instrs RBRACE ;
 
 methmain : MAIN LBRACE vars instrs RBRACE ;
 
-entetes : (entete (COMMA entetes)?)?;
+entetes : (entete (COMMA entete)*)?;
 
 entete : type ident ;
 
@@ -39,7 +39,7 @@ instr : ident1 ASSIGN exp
       | IF LPAREN exp RPAREN LBRACE instrs RBRACE (ELSE LBRACE instrs RBRACE)?
       | WHILE LPAREN exp RPAREN LBRACE instrs RBRACE ;
 
-listexp : (exp (COMMA listexp)?)? ;
+listexp : (exp (COMMA exp)*)? ;
 
 // Operator precedence (highest → lowest):
 // unary (!, -), multiplicative (*, /), additive (+, -), relational (==, >), logical (&&, ||)

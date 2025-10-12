@@ -14,6 +14,11 @@ public class BoolLiteralNode extends ExpNode {
     }
 
     @Override
+    public String evaluate() {
+        return value ? "true" : "false";
+    }
+
+    @Override
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visitBoolLiteral(this);
     }

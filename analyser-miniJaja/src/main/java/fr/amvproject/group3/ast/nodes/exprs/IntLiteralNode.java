@@ -14,6 +14,11 @@ public class IntLiteralNode extends ExpNode {
     }
 
     @Override
+    public String evaluate() {
+        return String.valueOf(value);
+    }
+
+    @Override
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visitIntLiteral(this);
     }

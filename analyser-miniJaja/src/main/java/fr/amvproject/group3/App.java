@@ -3,6 +3,8 @@ package fr.amvproject.group3;
 import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.MiniJajaAstBuilder;
 import fr.amvproject.group3.ast.PrintVisitor;
+import fr.amvproject.group3.memory.MemoryVisitor;
+import fr.amvproject.group3.memory.SymbolTable;
 
 import org.antlr.v4.runtime.*;
 
@@ -21,5 +23,10 @@ public class App {
         PrintVisitor printer = new PrintVisitor();
         String result = ast.accept(printer);
         System.out.println(result);
+
+        MemoryVisitor memoryVisitor = new MemoryVisitor();
+        ast.accept(memoryVisitor);
+        SymbolTable symbolTable = memoryVisitor.getSymbolTable();
+        symbolTable.printTable();
     }
 }

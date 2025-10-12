@@ -15,6 +15,11 @@ public class LengthNode extends ExpNode {
     }
 
     @Override
+    public String evaluate() {
+        return ident.getName();
+    }
+
+    @Override
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visitLength(this);
     }

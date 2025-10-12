@@ -21,6 +21,11 @@ public class MethodCallExpNode extends ExpNode {
     }
 
     @Override
+    public String evaluate() {
+        return ident.getName() + listexp.evaluate();
+    }
+
+    @Override
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visitMethodCallExp(this);
     }

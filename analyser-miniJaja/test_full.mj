@@ -7,6 +7,11 @@
 class C {
   int x;
   int y = 10;
+	int tab[5];
+	int meth(int entete1, boolean entete2) {
+		int localvar = 0;
+		localvar = 5;
+	};
   final int VAL = 5;
   boolean b1 = true;
   boolean b2 = false;
@@ -17,6 +22,8 @@ class C {
 	} else {
 		x++;
 	};
+	meth(tab[VAL], y);
+	tab[meth(y)] = 2;
 	write("x (15) = ");
 	writeln(x);
 	x = y * z;

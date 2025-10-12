@@ -36,6 +36,10 @@ public class TypeNode extends AstNode {
         this.type = TypeName.fromString(name);
     }
 
+    public String getName() {
+        return type.getName();
+    }
+
     public TypeName getType() {
         return type;
     }

@@ -14,9 +14,9 @@ public class MethodeNode extends DeclNode {
     private final VarsNode vars;
     private final InstrsNode instrs;
 
-    public MethodeNode(String returnType, Ident ident, EntetesNode entetes, VarsNode vars, InstrsNode instrs) {
+    public MethodeNode(TypeNode returnType, Ident ident, EntetesNode entetes, VarsNode vars, InstrsNode instrs) {
         super(ident);
-        this.returnType = new TypeNode(returnType);
+        this.returnType = returnType;
         this.ident = ident;
         this.entetes = entetes != null ? entetes : new EntetesNode();
         this.vars = vars != null ? vars : new VarsNode();

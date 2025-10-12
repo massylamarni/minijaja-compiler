@@ -19,6 +19,11 @@ public class VarRefNode extends LeftValueNode {
     }
 
     @Override
+    public String evaluate() {
+        return ident.getName();
+    }
+
+    @Override
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visitVarRef(this);
     }
