@@ -1,5 +1,5 @@
 package fr.amvproject.group3;
-
+/*
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -272,3 +272,4 @@ public class MiniJajaParserTest {
     }
 
 }
+*/

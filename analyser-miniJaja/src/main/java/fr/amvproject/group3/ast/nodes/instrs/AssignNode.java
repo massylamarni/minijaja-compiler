@@ -1,19 +1,26 @@
 package fr.amvproject.group3.ast.nodes.instrs;
 
-import fr.amvproject.group3.ast.*;
+import fr.amvproject.group3.ast.AstVisitor;
+import fr.amvproject.group3.ast.nodes.exprs.ExpNode;
+import fr.amvproject.group3.ast.nodes.other.LeftValueNode;
 
-// Affectation =
-public class AssignNode extends AstNode {
-    private final String ident;
-    private final AstNode expr;
+public class AssignNode extends InstrNode {
 
-    public AssignNode(String ident, AstNode expr) {
-        this.ident = ident;
-        this.expr = expr;
+    private final LeftValueNode leftValue;   // Variable ou case de tableau
+    private final ExpNode exp;           // Expression assignée
+
+    public AssignNode(LeftValueNode leftValue, ExpNode exp) {
+        this.leftValue = leftValue;
+        this.exp = exp;
     }
 
-    public String getIdent() { return ident; }
-    public AstNode getExpr() { return expr; }
+    public LeftValueNode getLeftValue() {
+        return leftValue;
+    }
+
+    public ExpNode getExp() {
+        return exp;
+    }
 
     @Override
     public <T> T accept(AstVisitor<T> visitor) {
