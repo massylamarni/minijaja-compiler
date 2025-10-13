@@ -1,5 +1,5 @@
 package fr.amvproject.group3;
-/*
+
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -30,9 +30,11 @@ public class MiniJajaParserTest {
         ParseTree tree = parser.exp();
         // Then
         assertThat(tree, notNullValue());
-        MiniJajaParser.ExpAndContext expAnd = (MiniJajaParser.ExpAndContext) tree.getChild(0);
+        MiniJajaParser.ExpOrContext expOr = (MiniJajaParser.ExpOrContext) tree.getChild(0);
+        MiniJajaParser.ExpAndContext expAnd = (MiniJajaParser.ExpAndContext) expOr.getChild(0);
         MiniJajaParser.ExpEqContext expEq = (MiniJajaParser.ExpEqContext) expAnd.getChild(0);
-        MiniJajaParser.ExpAddContext expAdd = (MiniJajaParser.ExpAddContext) expEq.getChild(0);
+        MiniJajaParser.ExpRelContext expRel = (MiniJajaParser.ExpRelContext) expEq.getChild(0);
+        MiniJajaParser.ExpAddContext expAdd = (MiniJajaParser.ExpAddContext) expRel.getChild(0);
 
         assertThat(expAdd.getChildCount(), is(3));
         assertThat(expAdd.getChild(0).getText(), is("1"));
@@ -79,49 +81,59 @@ public class MiniJajaParserTest {
 
     @Test
     public void givenComplexExpression__whenParse__thenCorrect() {
-        //Given
+        // Given
         String input = "(1 + 2) * 3";
-        MiniJajaParser parser = new MiniJajaParser(new CommonTokenStream(new MiniJajaLexer(CharStreams.fromString(input))));
+        MiniJajaParser parser = new MiniJajaParser(
+                new CommonTokenStream(new MiniJajaLexer(CharStreams.fromString(input)))
+        );
+
         // When
         MiniJajaParser.ExpContext expCtx = parser.exp();
 
         // Then
         assertThat(expCtx, notNullValue());
-        System.out.println(expCtx.toStringTree(parser));
 
-        MiniJajaParser.TermeContext termeCtx =
-                expCtx.expAnd(0).expEq(0).expAdd(0).expNot(0).terme();
+        MiniJajaParser.ExpMulContext expMulCtx =
+                expCtx.expOr().expAnd(0).expEq(0).expRel(0).expAdd().expMul(0);
 
-        assertThat(termeCtx.fact().size(), is(2));
-        assertThat(termeCtx.fact(0).getText(), is("(1+2)"));
-        assertThat(termeCtx.fact(1).getText(), is("3"));
+        assertThat(expMulCtx.expUnary().size(), is(2));
+        assertThat(expMulCtx.expUnary(0).getText(), is("(1+2)"));
+        assertThat(expMulCtx.expUnary(1).getText(), is("3"));
     }
+
 
     @Test
     public void givenIfStatement__whenParse__thenCorrect() {
+        // Given
         String input = "if (x > 5) { x = 1; }";
         MiniJajaParser parser = new MiniJajaParser(
                 new CommonTokenStream(new MiniJajaLexer(CharStreams.fromString(input)))
         );
 
+        // When
         MiniJajaParser.InstrContext instrCtx = parser.instr();
 
+        // Then
         assertNotNull(instrCtx.IF());
         assertEquals("if", instrCtx.IF().getText());
 
         MiniJajaParser.ExpContext cond = instrCtx.exp();
         assertNotNull(cond);
 
-        MiniJajaParser.ExpAndContext expAnd = cond.expAnd(0);
-        MiniJajaParser.ExpEqContext expEq = expAnd.expEq(0);
+        MiniJajaParser.ExpEqContext expEq = cond
+                .expOr()
+                .expAnd(0)
+                .expEq(0);
 
-        assertThat(expEq.getChild(1).getText(), is(">"));
         assertThat(expEq.getChild(0).getText(), is("x"));
+        assertThat(expEq.getChild(1).getText(), is(">"));
         assertThat(expEq.getChild(2).getText(), is("5"));
 
         MiniJajaParser.InstrsContext instrsCtx = instrCtx.instrs(0);
         assertNotNull(instrsCtx);
-        MiniJajaParser.InstrContext innerInstr = instrsCtx.instr();
+
+        // Première (et seule) instruction à l’intérieur du bloc
+        MiniJajaParser.InstrContext innerInstr = instrsCtx.instr(0);
         assertNotNull(innerInstr);
 
         assertThat(innerInstr.ident1().getText(), is("x"));
@@ -129,24 +141,28 @@ public class MiniJajaParserTest {
         assertThat(innerInstr.exp().getText(), is("1"));
     }
 
+
     @Test
     public void givenWhileLoop_whenParse_thenCorrect() {
+        // Given
         String input = "while (x > 10) { x = x + 1; }";
         MiniJajaParser parser = new MiniJajaParser(
                 new CommonTokenStream(new MiniJajaLexer(CharStreams.fromString(input)))
         );
 
+        // When
         MiniJajaParser.InstrContext instrCtx = parser.instr();
-        assertThat(instrCtx, notNullValue());
 
+        // Then
+        assertThat(instrCtx, notNullValue());
         assertThat(instrCtx.WHILE(), notNullValue());
         assertThat(instrCtx.WHILE().getText(), is("while"));
 
         MiniJajaParser.ExpContext cond = instrCtx.exp();
         assertThat(cond, notNullValue());
 
-        MiniJajaParser.ExpAndContext expAnd = cond.expAnd(0);
-        MiniJajaParser.ExpEqContext expEq = expAnd.expEq(0);
+        MiniJajaParser.ExpEqContext expEq =
+                cond.expOr().expAnd(0).expEq(0);
 
         List<String> condParts = expEq.children.stream()
                 .map(ParseTree::getText)
@@ -154,19 +170,18 @@ public class MiniJajaParserTest {
 
         assertThat(condParts, hasItems("x", ">", "10"));
 
-        MiniJajaParser.InstrsContext instrsCtx = instrCtx.instrs().get(0);
+        MiniJajaParser.InstrsContext instrsCtx = instrCtx.instrs(0);
         assertThat(instrsCtx, notNullValue());
 
-        MiniJajaParser.InstrContext innerInstr = instrsCtx.instr();
+        MiniJajaParser.InstrContext innerInstr = instrsCtx.instr(0);
         assertThat(innerInstr, notNullValue());
 
         assertThat(innerInstr.ident1().getText(), is("x"));
         assertThat(innerInstr.ASSIGN().getText(), is("="));
 
         MiniJajaParser.ExpContext rhs = innerInstr.exp();
-        MiniJajaParser.ExpAndContext rhsAnd = rhs.expAnd(0);
-        MiniJajaParser.ExpEqContext rhsEq = rhsAnd.expEq(0);
-        MiniJajaParser.ExpAddContext rhsAdd = rhsEq.expAdd(0);
+        MiniJajaParser.ExpAddContext rhsAdd =
+                rhs.expOr().expAnd(0).expEq(0).expRel(0).expAdd();
 
         List<String> rhsParts = rhsAdd.children.stream()
                 .map(ParseTree::getText)
@@ -175,49 +190,54 @@ public class MiniJajaParserTest {
         assertThat(rhsParts, hasItems("x", "+", "1"));
     }
 
+
     @Test
     public void givenMethodDeclaration_whenParse_thenCorrect() {
+        // Given
         String input = "int sum(int a, int b) { int r; r = a + b; }";
         MiniJajaParser parser = new MiniJajaParser(
                 new CommonTokenStream(new MiniJajaLexer(CharStreams.fromString(input)))
         );
 
+        // When
         MiniJajaParser.MethodeContext methodeCtx = parser.methode();
+
+        // Then
         assertThat(methodeCtx, notNullValue());
-
-        assertThat(methodeCtx.IDENT().getText(), is("sum"));
-
+        assertThat(methodeCtx.ident().getText(), is("sum"));
         assertThat(methodeCtx.typemeth().getText(), is("int"));
 
         MiniJajaParser.EntetesContext paramsCtx = methodeCtx.entetes();
         assertThat(paramsCtx, notNullValue());
 
-        MiniJajaParser.EnteteContext param1 = paramsCtx.entete();
-        assertThat(param1.type().getText(), is("int"));
-        assertThat(param1.IDENT().getText(), is("a"));
+        List<MiniJajaParser.EnteteContext> enteteList = paramsCtx.entete();
+        assertThat(enteteList.size(), is(2));
 
-        MiniJajaParser.EnteteContext param2 = paramsCtx.entetes().entete();
+        MiniJajaParser.EnteteContext param1 = enteteList.get(0);
+        assertThat(param1.type().getText(), is("int"));
+        assertThat(param1.ident().getText(), is("a"));
+
+        MiniJajaParser.EnteteContext param2 = enteteList.get(1);
         assertThat(param2.type().getText(), is("int"));
-        assertThat(param2.IDENT().getText(), is("b"));
+        assertThat(param2.ident().getText(), is("b"));
 
         MiniJajaParser.VarsContext varsCtx = methodeCtx.vars();
         assertThat(varsCtx, notNullValue());
 
-        MiniJajaParser.VarContext varR = varsCtx.var();
+        MiniJajaParser.VarContext varR = varsCtx.var(0);
         assertThat(varR.typemeth().getText(), is("int"));
-        assertThat(varR.IDENT().getText(), is("r"));
+        assertThat(varR.ident().getText(), is("r"));
 
         MiniJajaParser.InstrsContext instrsCtx = methodeCtx.instrs();
         assertThat(instrsCtx, notNullValue());
 
-        MiniJajaParser.InstrContext assignInstr = instrsCtx.instr();
+        MiniJajaParser.InstrContext assignInstr = instrsCtx.instr(0);
         assertThat(assignInstr.ident1().getText(), is("r"));
         assertThat(assignInstr.ASSIGN().getText(), is("="));
 
         MiniJajaParser.ExpContext rhs = assignInstr.exp();
-        MiniJajaParser.ExpAndContext rhsAnd = rhs.expAnd(0);
-        MiniJajaParser.ExpEqContext rhsEq = rhsAnd.expEq(0);
-        MiniJajaParser.ExpAddContext rhsAdd = rhsEq.expAdd(0);
+        MiniJajaParser.ExpAddContext rhsAdd =
+                rhs.expOr().expAnd(0).expEq(0).expRel(0).expAdd();
 
         List<String> rhsParts = rhsAdd.children.stream()
                 .map(ParseTree::getText)
@@ -225,6 +245,7 @@ public class MiniJajaParserTest {
 
         assertThat(rhsParts, hasItems("a", "+", "b"));
     }
+
 
     @Test
     public void givenSimpleProgram_whenParse_thenCorrect() {
@@ -245,31 +266,31 @@ public class MiniJajaParserTest {
         MiniJajaParser.ProgramContext programCtx = parser.program();
         assertThat(programCtx, notNullValue());
 
-        assertThat(programCtx.CLASS(), notNullValue());
-        assertThat(programCtx.IDENT().getText(), is("Test"));
+        assertThat(programCtx.classe(), notNullValue());
+        assertThat(programCtx.classe(0).ident().getText(), is("Test"));
 
-        MiniJajaParser.DeclsContext declsCtx = programCtx.decls();
+        MiniJajaParser.DeclsContext declsCtx = programCtx.classe(0).decls();
         assertThat(declsCtx, notNullValue());
 
-        MiniJajaParser.DeclContext varXDecl = declsCtx.decl();
+        MiniJajaParser.DeclContext varXDecl = declsCtx.decl(0);
         MiniJajaParser.VarContext varX = varXDecl.var();
         assertThat(varX.typemeth().getText(), is("int"));
-        assertThat(varX.IDENT().getText(), is("x"));
+        assertThat(varX.ident().getText(), is("x"));
 
-        MiniJajaParser.MethmainContext mainCtx = programCtx.methmain();
+        MiniJajaParser.MethmainContext mainCtx = programCtx.classe(0).methmain();
         assertThat(mainCtx, notNullValue());
 
         MiniJajaParser.VarsContext mainVars = mainCtx.vars();
-        MiniJajaParser.VarContext varY = mainVars.var();
+        MiniJajaParser.VarContext varY = mainVars.var(0);
         assertThat(varY.typemeth().getText(), is("int"));
-        assertThat(varY.IDENT().getText(), is("y"));
+        assertThat(varY.ident().getText(), is("y"));
 
         MiniJajaParser.InstrsContext mainInstrs = mainCtx.instrs();
-        MiniJajaParser.InstrContext assignInstr = mainInstrs.instr();
+        MiniJajaParser.InstrContext assignInstr = mainInstrs.instr(0);
         assertThat(assignInstr.ident1().getText(), is("y"));
         assertThat(assignInstr.ASSIGN().getText(), is("="));
         assertThat(assignInstr.exp().getText(), is("5"));
     }
 
+
 }
-*/
