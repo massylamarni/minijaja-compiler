@@ -1,18 +1,24 @@
 package fr.amvproject.group3.ast.nodes.instrs;
 
-import fr.amvproject.group3.ast.*;
+import fr.amvproject.group3.ast.AstVisitor;
+import fr.amvproject.group3.ast.nodes.exprs.ExpNode;
 
-public class WhileNode extends AstNode {
-    private final AstNode condition;
-    private final java.util.List<AstNode> body;
+public class WhileNode extends InstrNode {
+    private final ExpNode condExp;
+    private final InstrsNode instrs;
 
-    public WhileNode(AstNode condition, java.util.List<AstNode> body) {
-        this.condition = condition;
-        this.body = body;
+    public WhileNode(ExpNode condExp, InstrsNode instrs) {
+        this.condExp = condExp;
+        this.instrs = instrs;
     }
 
-    public AstNode getCondition() { return condition; }
-    public java.util.List<AstNode> getBody() { return body; }
+    public ExpNode getCondExp() {
+        return condExp;
+    }
+
+    public InstrsNode getInstrs() {
+        return instrs;
+    }
 
     @Override
     public <T> T accept(AstVisitor<T> visitor) {

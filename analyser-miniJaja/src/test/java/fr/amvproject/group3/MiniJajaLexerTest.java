@@ -19,16 +19,16 @@ public class MiniJajaLexerTest {
 
         assertThat(tokens.size(),is(5));
 
-        assertThat(tokens.get(0).getType(), is(MiniJajaLexer.INTTYPE));
+        assertThat(tokens.get(0).getType(), is(MiniJajaLexer.INT));
         assertThat(tokens.get(0).getText(), is("int"));
 
-        assertThat(tokens.get(1).getType(),is(MiniJajaLexer.IDENT));
+        assertThat(tokens.get(1).getType(),is(MiniJajaLexer.IDENTIFICATEUR));
         assertThat( tokens.get(1).getText(),is("y"));
 
         assertThat(tokens.get(2).getType(),is(MiniJajaLexer.ASSIGN));
         assertThat(tokens.get(2).getText(),is("="));
 
-        assertThat(tokens.get(3).getType(),is(MiniJajaLexer.INT));
+        assertThat(tokens.get(3).getType(),is(MiniJajaLexer.NOMBRE));
         assertThat(tokens.get(3).getText(),is("10"));
 
         assertThat(tokens.get(4).getType(),is(MiniJajaLexer.SEMI));
@@ -82,7 +82,7 @@ public class MiniJajaLexerTest {
         assertThat(tokens.get(0).getType(), is(MiniJajaLexer.CLASS));
         assertThat(tokens.get(0).getText(), is("class"));
 
-        assertThat(tokens.get(1).getType(),is(MiniJajaLexer.IDENT));
+        assertThat(tokens.get(1).getType(),is(MiniJajaLexer.IDENTIFICATEUR));
         assertThat( tokens.get(1).getText(),is("C"));
 
         assertThat(tokens.get(2).getType(),is(MiniJajaLexer.LBRACE));
@@ -108,16 +108,16 @@ public class MiniJajaLexerTest {
         assertThat(tokens.get(0).getType(), is(MiniJajaLexer.FINAL));
         assertThat(tokens.get(0).getText(), is("final"));
 
-        assertThat(tokens.get(1).getType(),is(MiniJajaLexer.INTTYPE));
+        assertThat(tokens.get(1).getType(),is(MiniJajaLexer.INT));
         assertThat( tokens.get(1).getText(),is("int"));
 
-        assertThat(tokens.get(2).getType(),is(MiniJajaLexer.IDENT));
+        assertThat(tokens.get(2).getType(),is(MiniJajaLexer.IDENTIFICATEUR));
         assertThat(tokens.get(2).getText(),is("VAL"));
 
         assertThat(tokens.get(3).getType(),is(MiniJajaLexer.ASSIGN));
         assertThat(tokens.get(3).getText(),is("="));
 
-        assertThat(tokens.get(4).getType(),is(MiniJajaLexer.INT));
+        assertThat(tokens.get(4).getType(),is(MiniJajaLexer.NOMBRE));
         assertThat(tokens.get(4).getText(),is("5"));
 
         assertThat(tokens.get(5).getType(),is(MiniJajaLexer.SEMI));
@@ -137,10 +137,10 @@ public class MiniJajaLexerTest {
         // Then
         assertThat(tokens.size(),is(5));
 
-        assertThat(tokens.get(0).getType(), is(MiniJajaLexer.BOOLTYPE));
+        assertThat(tokens.get(0).getType(), is(MiniJajaLexer.BOOLEAN));
         assertThat(tokens.get(0).getText(), is("boolean"));
 
-        assertThat(tokens.get(1).getType(),is(MiniJajaLexer.IDENT));
+        assertThat(tokens.get(1).getType(),is(MiniJajaLexer.IDENTIFICATEUR));
         assertThat(tokens.get(1).getText(),is("b1"));
 
         assertThat(tokens.get(2).getType(),is(MiniJajaLexer.ASSIGN));
@@ -192,7 +192,7 @@ public class MiniJajaLexerTest {
         assertThat(tokens.get(1).getType(),is(MiniJajaLexer.LPAREN));
         assertThat(tokens.get(1).getText(),is("("));
 
-        assertThat(tokens.get(2).getType(),is(MiniJajaLexer.IDENT));
+        assertThat(tokens.get(2).getType(),is(MiniJajaLexer.IDENTIFICATEUR));
         assertThat(tokens.get(2).getText(),is("x"));
 
         assertThat(tokens.get(3).getType(),is(MiniJajaLexer.RPAREN));
@@ -249,10 +249,10 @@ public class MiniJajaLexerTest {
         assertThat(tokens.get(1).getType(),is(MiniJajaLexer.LBRACE));
         assertThat(tokens.get(1).getText(),is("{"));
 
-        assertThat(tokens.get(2).getType(),is(MiniJajaLexer.IDENT));
+        assertThat(tokens.get(2).getType(),is(MiniJajaLexer.IDENTIFICATEUR));
         assertThat(tokens.get(2).getText(),is("x"));
 
-        assertThat(tokens.get(3).getType(),is(MiniJajaLexer.INCR));
+        assertThat(tokens.get(3).getType(),is(MiniJajaLexer.INC));
         assertThat(tokens.get(3).getText(),is("++"));
 
         assertThat(tokens.get(4).getType(),is(MiniJajaLexer.SEMI));
@@ -281,7 +281,7 @@ public class MiniJajaLexerTest {
         assertThat(tokens.get(1).getType(),is(MiniJajaLexer.LPAREN));
         assertThat(tokens.get(1).getText(),is("("));
 
-        assertThat(tokens.get(2).getType(),is(MiniJajaLexer.IDENT));
+        assertThat(tokens.get(2).getType(),is(MiniJajaLexer.IDENTIFICATEUR));
         assertThat(tokens.get(2).getText(),is("b1"));
 
         assertThat(tokens.get(3).getType(),is(MiniJajaLexer.AND));
@@ -290,7 +290,7 @@ public class MiniJajaLexerTest {
         assertThat(tokens.get(4).getType(),is(MiniJajaLexer.LPAREN));
         assertThat(tokens.get(4).getText(),is("("));
 
-        assertThat(tokens.get(5).getType(),is(MiniJajaLexer.IDENT));
+        assertThat(tokens.get(5).getType(),is(MiniJajaLexer.IDENTIFICATEUR));
         assertThat(tokens.get(5).getText(),is("b1"));
 
         assertThat(tokens.get(6).getType(),is(MiniJajaLexer.OR));
@@ -302,7 +302,7 @@ public class MiniJajaLexerTest {
         assertThat(tokens.get(8).getType(),is(MiniJajaLexer.NOT));
         assertThat(tokens.get(8).getText(),is("!"));
 
-        assertThat(tokens.get(9).getType(),is(MiniJajaLexer.IDENT));
+        assertThat(tokens.get(9).getType(),is(MiniJajaLexer.IDENTIFICATEUR));
         assertThat(tokens.get(9).getText(),is("b2"));
 
         assertThat(tokens.get(10).getType(),is(MiniJajaLexer.RPAREN));
@@ -333,19 +333,19 @@ public class MiniJajaLexerTest {
         // Then
         assertThat(tokens.size(),is(12));
 
-        assertThat(tokens.get(0).getType(), is(MiniJajaLexer.INTTYPE));
+        assertThat(tokens.get(0).getType(), is(MiniJajaLexer.INT));
         assertThat(tokens.get(0).getText(), is("int"));
 
-        assertThat(tokens.get(1).getType(),is(MiniJajaLexer.IDENT));
+        assertThat(tokens.get(1).getType(),is(MiniJajaLexer.IDENTIFICATEUR));
         assertThat(tokens.get(1).getText(),is("somme"));
 
         assertThat(tokens.get(2).getType(),is(MiniJajaLexer.LPAREN));
         assertThat(tokens.get(2).getText(),is("("));
 
-        assertThat(tokens.get(3).getType(),is(MiniJajaLexer.INTTYPE));
+        assertThat(tokens.get(3).getType(),is(MiniJajaLexer.INT));
         assertThat(tokens.get(3).getText(),is("int"));
 
-        assertThat(tokens.get(4).getType(),is(MiniJajaLexer.IDENT));
+        assertThat(tokens.get(4).getType(),is(MiniJajaLexer.IDENTIFICATEUR));
         assertThat(tokens.get(4).getText(),is("max"));
 
         assertThat(tokens.get(5).getType(),is(MiniJajaLexer.RPAREN));
@@ -357,7 +357,7 @@ public class MiniJajaLexerTest {
         assertThat(tokens.get(7).getType(),is(MiniJajaLexer.RETURN));
         assertThat(tokens.get(7).getText(),is("return"));
 
-        assertThat(tokens.get(8).getType(),is(MiniJajaLexer.INT));
+        assertThat(tokens.get(8).getType(),is(MiniJajaLexer.NOMBRE));
         assertThat(tokens.get(8).getText(),is("1"));
 
         assertThat(tokens.get(9).getType(),is(MiniJajaLexer.SEMI));
@@ -382,13 +382,13 @@ public class MiniJajaLexerTest {
         // Then
         assertThat(tokens.size(),is(5));
 
-        assertThat(tokens.get(0).getType(), is(MiniJajaLexer.IDENT));
+        assertThat(tokens.get(0).getType(), is(MiniJajaLexer.IDENTIFICATEUR));
         assertThat(tokens.get(0).getText(), is("f"));
 
         assertThat(tokens.get(1).getType(),is(MiniJajaLexer.LPAREN));
         assertThat(tokens.get(1).getText(),is("("));
 
-        assertThat(tokens.get(2).getType(),is(MiniJajaLexer.INT));
+        assertThat(tokens.get(2).getType(),is(MiniJajaLexer.NOMBRE));
         assertThat(tokens.get(2).getText(),is("10"));
 
         assertThat(tokens.get(3).getType(),is(MiniJajaLexer.RPAREN));

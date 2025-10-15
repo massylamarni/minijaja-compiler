@@ -1,22 +1,20 @@
 package fr.amvproject.group3.ast.nodes.program;
 
-import fr.amvproject.group3.ast.*;
+import fr.amvproject.group3.ast.AstNode;
+import fr.amvproject.group3.ast.AstVisitor;
+
 import java.util.List;
 
 public class ProgramNode extends AstNode {
-    private final String className;
-    private final List<AstNode> decls;
-    private final MethmainNode main;
+    private final List<ClasseNode> classes;
 
-    public ProgramNode(String className, List<AstNode> decls, MethmainNode main) {
-        this.className = className;
-        this.decls = decls;
-        this.main = main;
+    public ProgramNode(List<ClasseNode> classes) {
+        this.classes = classes;
     }
 
-    public String getClassName() { return className; }
-    public List<AstNode> getDecls() { return decls; }
-    public MethmainNode getMain() { return main; }
+    public List<ClasseNode> getClasses() {
+        return classes;
+    }
 
     @Override
     public <T> T accept(AstVisitor<T> visitor) {
