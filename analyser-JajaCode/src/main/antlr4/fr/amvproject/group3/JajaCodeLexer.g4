@@ -1,0 +1,50 @@
+lexer grammar JajaCodeLexer;
+
+
+INIT     : 'init';
+SWAP     : 'swap';
+PUSH     : 'push';
+NEW      : 'new';
+NEWARRAY : 'newarray';
+INVOKE   : 'invoke';
+GOTO     : 'goto';
+LOAD     : 'load';
+ALOAD    : 'aload';
+STORE    : 'store';
+ASTORE   : 'astore';
+LENGHT   : 'lenght';
+INC      : 'inc';
+AINC     : 'ainc';
+IF       : 'if';
+JCSTOP   : 'jcstop';
+TRUE     : 'true' ;
+FALSE    : 'false' ;
+INTTYPE  : 'entier';
+BOOLEAN  : 'boolean';
+POP      : 'pop';
+RETURN   : 'return';
+WRITE    : 'write';
+WRITELN  : 'writeln';
+VAR      : 'var';
+METH     : 'meth';
+NEG      : 'neg';
+NOT      : 'not';
+ADD      : 'add';
+SUB      : 'sub';
+MUL      : 'mul';
+DIV      : 'div';
+CMP      : 'cmp';
+SUP      : 'sup';
+OR       : 'or';
+AND      : 'and';
+NOP      : 'nop';
+
+COMMA    : ',';
+LPAREN   : '(';
+RPAREN   : ')';
+WS       : [ \t\r\n]+ -> skip ;
+COMMENT  : '//' (.)*?[\r\n] -> skip;
+
+IDENT    : [a-zA-Z][a-zA-Z0-9]* ;
+NOMBRE   : [0-9]+ ;
+STRING   : '"' ( ~["\\\r\n] | '\\' . )* '"' ;
