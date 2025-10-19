@@ -22,12 +22,12 @@ class C {
 	} else {
 		x++;
 	};
-	meth(tab[VAL], y);
-	tab[meth(y)] = 2;
+	//meth(tab[VAL], y);
+	//tab[meth(y)] = 2;
 	write("x (15) = ");
 	writeln(x);
-	x = y * z;
-	x = x / z;
+	x = y * 1;
+	x = x / 1;
 	 x++; // x = 11
 	write("x (11) = ");
 	writeln(x);
