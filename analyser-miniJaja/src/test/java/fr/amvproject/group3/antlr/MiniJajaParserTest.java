@@ -1,5 +1,7 @@
-package fr.amvproject.group3;
+package fr.amvproject.group3.antlr;
 
+import fr.amvproject.group3.MiniJajaLexer;
+import fr.amvproject.group3.MiniJajaParser;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
