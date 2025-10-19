@@ -124,10 +124,23 @@ public class Stack {
             if (q.ident.equals(ident) && q.obj.equals("tab")) {
                 Object[] arr = (Object[]) heap.get((int) q.value);
                 if (index < 0 || index >= arr.length)
-                    throw new IndexOutOfBoundsException();
+                    throw new IndexOutOfBoundsException("Array index out of bounds: " + index);
                 arr[index] = value;
                 heap.set((int) q.value, arr);
                 return;
+            }
+        }
+        throw new RuntimeException("Array not found: " + ident.getName());
+    }
+
+    // Gets a value from an array at a specific index
+    public Object valT(Ident ident, int index) {
+        for (Quad q : stack) {
+            if (q.ident.equals(ident) && q.obj.equals("tab")) {
+                Object[] arr = (Object[]) heap.get((int) q.value);
+                if (index < 0 || index >= arr.length)
+                    throw new IndexOutOfBoundsException("Array index out of bounds: " + index);
+                return arr[index];
             }
         }
         throw new RuntimeException("Array not found: " + ident.getName());
@@ -237,15 +250,5 @@ public class Stack {
             System.out.println();
         }
         System.out.println("======================");
-    }
-
-    public Object valT(Ident ident, int index) {
-        for (Quad q : stack) {
-            if (q.ident.equals(ident) && q.obj.equals("tab")) {
-                Object[] arr = (Object[]) heap.get((int) q.value);
-                return arr[index];
-            }
-        }
-        throw new RuntimeException("Array not found: " + ident.getName());
     }
 }
