@@ -166,7 +166,8 @@ public class InterpreterVisitor implements AstVisitor<Object> {
 
         Object addValue = node.getExp().accept(this);
 
-        int result = ((Number) currentValue).intValue() + ((Number) addValue).intValue();
+        //int result = ((Number) currentValue).intValue() + ((Number) addValue).intValue();
+        int result = ((Number) addValue).intValue();
 
         if (node.getLeftValueNode() instanceof VarRefNode) {
             VarRefNode varRef = (VarRefNode) node.getLeftValueNode();
