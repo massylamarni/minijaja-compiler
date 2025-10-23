@@ -19,6 +19,8 @@ import fr.amvproject.group3.ast.nodes.program.*;
 
 public class PrintVisitor implements AstVisitor<String> {
     private static final Logger LOGGER = Logger.getLogger(PrintVisitor.class.getName());
+
+    private boolean programDebug = false;
     private int indentLevel = -1;
 
     private String indent() {
@@ -30,7 +32,7 @@ public class PrintVisitor implements AstVisitor<String> {
         indentLevel++;
         for (AstNode node : nodes) {
             if (node != null) {
-                sb.append(node.accept(this)).append(";\n");
+                sb.append(node.accept(this)).append(indentLevel != 0 ? ";\n" : "");
             }
         }
         indentLevel--;
@@ -50,6 +52,8 @@ public class PrintVisitor implements AstVisitor<String> {
         return sb.toString();
     }
 
+    private static final String BLOCK_START = ") {\n"; 
+
     // --------- Nodes ---------
     @Override
     public String visitProgram(ProgramNode node) {
@@ -68,7 +72,7 @@ public class PrintVisitor implements AstVisitor<String> {
 
     @Override
     public String visitDecls(DeclsNode node) {
-        if (node.getDecls().isEmpty()) return indent() + "/* DECLS empty */\n";
+        if (node.getDecls().isEmpty() && programDebug) return indent() + "/* DECLS empty */\n";
         return indent() + joinChildren(node.getDecls());
     }
 
@@ -96,7 +100,7 @@ public class PrintVisitor implements AstVisitor<String> {
     public String visitMethode(MethodeNode node) {
         StringBuilder sb = new StringBuilder(indent());
         sb.append(node.getReturnType().accept(this)).append(" ").append(node.getIdent().accept(this)).append("(");
-        sb.append(joinChildrenLinear(node.getEntetes().getList())).append(") {\n");
+        sb.append(joinChildrenLinear(node.getEntetes().getList())).append(BLOCK_START);
         if (node.getVars() != null) sb.append(node.getVars().accept(this));
         if (node.getInstrs() != null) sb.append(node.getInstrs().accept(this));
         sb.append(indent()).append("}");
@@ -126,7 +130,7 @@ public class PrintVisitor implements AstVisitor<String> {
     
     @Override
     public String visitInstrs(InstrsNode node) {
-        if (node.getList().isEmpty()) return indent() + "/* INSTRS empty */\n";
+        if (node.getList().isEmpty() && programDebug) return indent() + "/* INSTRS empty */\n";
         return joinChildren(node.getList());
     }
     
@@ -188,7 +192,7 @@ public class PrintVisitor implements AstVisitor<String> {
     @Override
     public String visitIf(IfNode node) {
         StringBuilder sb = new StringBuilder(indent());
-        sb.append("if (").append(node.getCondExp().accept(this)).append(") {\n");
+        sb.append("if (").append(node.getCondExp().accept(this)).append(BLOCK_START);
         sb.append(node.getThenInstrs().accept(this));
         if (node.getElseInstrs() != null) sb.append(indent()).append("} else {\n").append(node.getElseInstrs().accept(this));
         sb.append(indent()).append("}");
@@ -198,7 +202,7 @@ public class PrintVisitor implements AstVisitor<String> {
     @Override
     public String visitWhile(WhileNode node) {
         StringBuilder sb = new StringBuilder(indent());
-        sb.append("while (").append(node.getCondExp().accept(this)).append(") {\n");
+        sb.append("while (").append(node.getCondExp().accept(this)).append(BLOCK_START);
         sb.append(node.getInstrs().accept(this)).append(indent()).append("}");
         return sb.toString();
     }
@@ -254,7 +258,7 @@ public class PrintVisitor implements AstVisitor<String> {
         sb.append(joinChildrenLinear(node.getListExp().getList()));
         sb.append(")");
         return sb.toString();
-    };
+    }
 
     @Override
     public String visitType(TypeNode node) {

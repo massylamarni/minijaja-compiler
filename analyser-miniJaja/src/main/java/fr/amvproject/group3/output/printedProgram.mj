@@ -450,7 +450,6 @@ class C0 {
       retour ((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0));
     };
     if (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     } else {
       intt0[(intv0 > 0)] = 0;
       intt0[(intv0 > 0)] = (intv0 > 0);
@@ -463,139 +462,90 @@ class C0 {
       retour ((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0));
     };
     if (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     };
     if (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (5) {
-    /* INSTRS empty */
     };
     if (5) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (true) {
-    /* INSTRS empty */
     };
     if (true) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     while (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     };
     while (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     };
     while ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     };
     while (5) {
-    /* INSTRS empty */
     };
     while (true) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     while ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     };
     while ((intv0 > 0)) {
-    /* INSTRS empty */
     };
   };
   boolean boolm1(boolean e0, int e1, boolean e1) {
@@ -623,147 +573,95 @@ class C0 {
     writeLn(intv0);
     writeLn(intt0);
     if (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     };
     if (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     };
     if (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (5) {
-    /* INSTRS empty */
     };
     if (5) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (true) {
-    /* INSTRS empty */
     };
     if (true) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     while (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     };
     while (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     };
     while ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     };
     while (5) {
-    /* INSTRS empty */
     };
     while (true) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     while ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     };
     while ((intv0 > 0)) {
-    /* INSTRS empty */
     };
   };
   int intm0(int e2) {
@@ -791,147 +689,95 @@ class C0 {
     writeLn(intv0);
     writeLn(intt0);
     if (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     };
     if (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     };
     if (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (5) {
-    /* INSTRS empty */
     };
     if (5) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (true) {
-    /* INSTRS empty */
     };
     if (true) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     while (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     };
     while (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     };
     while ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     };
     while (5) {
-    /* INSTRS empty */
     };
     while (true) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     while ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     };
     while ((intv0 > 0)) {
-    /* INSTRS empty */
     };
   };
   int intm1(boolean e2, int e3, boolean e3) {
@@ -959,147 +805,95 @@ class C0 {
     writeLn(intv0);
     writeLn(intt0);
     if (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     };
     if (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     };
     if (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (5) {
-    /* INSTRS empty */
     };
     if (5) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (true) {
-    /* INSTRS empty */
     };
     if (true) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     while (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     };
     while (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     };
     while ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     };
     while (5) {
-    /* INSTRS empty */
     };
     while (true) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     while ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     };
     while ((intv0 > 0)) {
-    /* INSTRS empty */
     };
   };
   void voidm0(int e4) {
@@ -1127,147 +921,95 @@ class C0 {
     writeLn(intv0);
     writeLn(intt0);
     if (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     };
     if (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     };
     if (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (5) {
-    /* INSTRS empty */
     };
     if (5) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (true) {
-    /* INSTRS empty */
     };
     if (true) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     while (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     };
     while (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     };
     while ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     };
     while (5) {
-    /* INSTRS empty */
     };
     while (true) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     while ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     };
     while ((intv0 > 0)) {
-    /* INSTRS empty */
     };
   };
   void voidm1(boolean e4, int e5, boolean e5) {
@@ -1295,147 +1037,95 @@ class C0 {
     writeLn(intv0);
     writeLn(intt0);
     if (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     };
     if (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     };
     if (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (5) {
-    /* INSTRS empty */
     };
     if (5) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (true) {
-    /* INSTRS empty */
     };
     if (true) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     while (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     };
     while (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     };
     while ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     };
     while (5) {
-    /* INSTRS empty */
     };
     while (true) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     while ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     };
     while ((intv0 > 0)) {
-    /* INSTRS empty */
     };
   };
   main {
@@ -1463,153 +1153,99 @@ class C0 {
     writeLn(intv0);
     writeLn(intt0);
     if (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     };
     if (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     };
     if (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (5) {
-    /* INSTRS empty */
     };
     if (5) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (true) {
-    /* INSTRS empty */
     };
     if (true) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     while (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     };
     while (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     };
     while ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     };
     while (5) {
-    /* INSTRS empty */
     };
     while (true) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     while ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     };
     while ((intv0 > 0)) {
-    /* INSTRS empty */
     };
   }
 }
-;
 class C1 {
-/* DECLS empty */
   main {
     intv0++;
     intt0++;
@@ -1635,148 +1271,95 @@ class C1 {
     writeLn(intv0);
     writeLn(intt0);
     if (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     };
     if (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     };
     if (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (5) {
-    /* INSTRS empty */
     };
     if (5) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (true) {
-    /* INSTRS empty */
     };
     if (true) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     };
     if (0) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     };
     if ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     if ((intv0 > 0)) {
-    /* INSTRS empty */
     } else {
-    /* INSTRS empty */
     };
     while (((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0))) {
-    /* INSTRS empty */
     };
     while (((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0))) {
-    /* INSTRS empty */
     };
     while ((((1 == 2) > false) && ((boolv0 == boolv0) > boolv0))) {
-    /* INSTRS empty */
     };
     while (5) {
-    /* INSTRS empty */
     };
     while (true) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while (0) {
-    /* INSTRS empty */
     };
     while ((intv0 > 0)) {
-    /* INSTRS empty */
     };
     while ((((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)) {
-    /* INSTRS empty */
     };
     while ((intv0 > 0)) {
-    /* INSTRS empty */
     };
   }
 }
-;
