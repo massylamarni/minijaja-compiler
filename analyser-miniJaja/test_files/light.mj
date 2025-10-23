@@ -439,9 +439,27 @@ class C0 {
     writeln(intv0);
     writeln(intt0);
     if ((1 + 2 * 3 / 4) + intv0 / intv0 * intv0) {
+        intt0[intv0 > Length(boolv0)] = Length(intv0);
+        intt0[intv0 > Length(boolv0)] = intv0 > Length(intv0);
+        intt0[intv0 > Length(boolv0)] = (1 > 2 == (false > boolv0 == boolv0) > boolv0);
+        intt0[intv0 > Length(boolv0)] = intv0 > Length(boolv0);
+        intv0++;
+        intt0++;
+        voidm0((1 + 2 * 3 / 4) + intv0 / intv0 * intv0);
+        voidm0((1 + 2 * 3 / 4) + intv0 / intv0 * intv0, (true || false && !false == true) || boolv0 && boolv0 && boolv0, 1 > 2 == false && boolv0 == boolv0 > boolv0);
+        return (1 + 2 * 3 / 4) + intv0 / intv0 * intv0;
     };
     if ((1 + 2 * 3 / 4) + intv0 / intv0 * intv0) {
     } else {
+        intt0[intv0 > Length(boolv0)] = Length(intv0);
+    intt0[intv0 > Length(boolv0)] = intv0 > Length(intv0);
+    intt0[intv0 > Length(boolv0)] = (1 > 2 == (false > boolv0 == boolv0) > boolv0);
+    intt0[intv0 > Length(boolv0)] = intv0 > Length(boolv0);
+    intv0++;
+    intt0++;
+    voidm0((1 + 2 * 3 / 4) + intv0 / intv0 * intv0);
+    voidm0((1 + 2 * 3 / 4) + intv0 / intv0 * intv0, (true || false && !false == true) || boolv0 && boolv0 && boolv0, 1 > 2 == false && boolv0 == boolv0 > boolv0);
+    return (1 + 2 * 3 / 4) + intv0 / intv0 * intv0;
     };
     if ((true || false && !false == true) || boolv0 && boolv0 && boolv0) {
     };

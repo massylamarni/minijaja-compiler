@@ -23,14 +23,13 @@ public class App {
         AstNode ast = builder.visit(tree);
 
         PrintVisitor printer = new PrintVisitor();
-        String result = ast.accept(printer);
-        LOGGER.info(result);
+        printer.save(ast.accept(printer));
 
-        
+        /*
         MemoryVisitor memoryVisitor = new MemoryVisitor();
         ast.accept(memoryVisitor);
         SymbolTable symbolTable = memoryVisitor.getSymbolTable();
         symbolTable.printTable();
-        
+        */
     }
 }
