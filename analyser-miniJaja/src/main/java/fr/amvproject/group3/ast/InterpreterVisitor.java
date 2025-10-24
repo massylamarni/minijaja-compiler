@@ -245,15 +245,17 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         if (node.getLeftValueNode() instanceof VarRefNode) {
             // Règle [somme]
             VarRefNode varRef = (VarRefNode) node.getLeftValueNode();
-            Object currentValue = stack.val(varRef.getIdent());
-            int result = ((Number) currentValue).intValue() + ((Number) addValue).intValue();
+            //Object currentValue = stack.val(varRef.getIdent());
+            //int result = ((Number) currentValue).intValue() + ((Number) addValue).intValue();
+            int result = ((Number) addValue).intValue();
             stack.affecterVal(varRef.getIdent(), result);
         } else if (node.getLeftValueNode() instanceof ArrayAccessNode) {
             // Règle [sommeT]
             ArrayAccessNode arrayAccess = (ArrayAccessNode) node.getLeftValueNode();
             int index = ((Number) evalExp(arrayAccess.getIndexExp())).intValue();
-            Object currentValue = stack.valT(arrayAccess.getIdent(), index);
-            int result = ((Number) currentValue).intValue() + ((Number) addValue).intValue();
+            //Object currentValue = stack.valT(arrayAccess.getIdent(), index);
+            //int result = ((Number) currentValue).intValue() + ((Number) addValue).intValue();
+            int result = ((Number) addValue).intValue();
             stack.affecterValT(arrayAccess.getIdent(), index, result);
         }
         return null;

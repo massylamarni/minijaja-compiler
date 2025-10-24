@@ -4,13 +4,14 @@ import fr.amvproject.group3.MiniJajaLexer;
 import fr.amvproject.group3.MiniJajaParser;
 import fr.amvproject.group3.ast.InterpreterVisitor;
 import fr.amvproject.group3.ast.MiniJajaAstBuilder;
-import fr.amvproject.group3.ast.nodes.abstracts.Ident;
 import fr.amvproject.group3.ast.nodes.program.ProgramNode;
-import fr.amvproject.group3.memory.Stack;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -40,18 +41,26 @@ public class InterpreterVisitorTest {
                 int y = 3;
                 main {
                     x = x + y;
+                    write(x);
                 }
             }
             """;
 
         ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
         // When
         InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        try {
+            program.accept(interpreter);
+        }finally {
+            System.setOut(originalOut);
+        }
 
-        Stack stack = interpreter.getStack();
         // Then
-        assertThat(stack.val(new Ident("x",1)),is(5));
+        String output = outContent.toString().trim();
+        assertThat(output, is("5"));
 
     }
 
@@ -64,18 +73,26 @@ public class InterpreterVisitorTest {
                 int y = 3;
                 main {
                     x = x - y;
+                    write(x);
                 }
             }
             """;
 
         ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
         // When
         InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        try {
+            program.accept(interpreter);
+        }finally {
+            System.setOut(originalOut);
+        }
 
-        Stack stack = interpreter.getStack();
         // Then
-        assertThat(stack.val(new Ident("x",1)),is(-1));
+        String output = outContent.toString().trim();
+        assertThat(output, is("-1"));
 
     }
 
@@ -89,18 +106,25 @@ public class InterpreterVisitorTest {
                 int y = 3;
                 main {
                     x = x * y;
+                    write(x);
                 }
             }
             """;
 
         ProgramNode program = buildAstFromCode(code);
-        // When
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
         InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
-
-        Stack stack = interpreter.getStack();
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
         // Then
-        assertThat(stack.val(new Ident("x",1)),is(6));
+        String output = outContent.toString().trim();
+        assertThat(output, is("6"));
 
     }
 
@@ -114,18 +138,26 @@ public class InterpreterVisitorTest {
                 int y = 3;
                 main {
                     x = x / y;
+                    write(x);
                 }
             }
             """;
 
         ProgramNode program = buildAstFromCode(code);
-        // When
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
         InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
 
-        Stack stack = interpreter.getStack();
         // Then
-        assertThat(stack.val(new Ident("x",1)),is(3));
+        String output = outContent.toString().trim();
+        assertThat(output, is("3"));
 
     }
 
@@ -140,18 +172,26 @@ public class InterpreterVisitorTest {
                 int y = 9;
                 main {
                     boolean z = x > y;
+                    write(z);
                 }
             }
             """;
 
         ProgramNode program = buildAstFromCode(code);
-        // When
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
         InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
 
-        Stack stack = interpreter.getStack();
         // Then
-        assertThat(stack.val(new Ident("z",1)),is(false));
+        String output = outContent.toString().trim();
+        assertThat(output, is("false"));
     }
 
     @Test
@@ -163,18 +203,26 @@ public class InterpreterVisitorTest {
                 int y = 3;
                 main {
                     boolean z = x > y;
+                    write(z);
                 }
             }
             """;
 
         ProgramNode program = buildAstFromCode(code);
-        // When
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
         InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
 
-        Stack stack = interpreter.getStack();
         // Then
-        assertThat(stack.val(new Ident("z",1)),is(true));
+        String output = outContent.toString().trim();
+        assertThat(output, is("true"));
     }
 
 
@@ -187,6 +235,7 @@ public class InterpreterVisitorTest {
                 boolean y = true;
                 main {
                     boolean z = x > y;
+                    write(z);
                 }
             }
             """;
@@ -216,18 +265,26 @@ public class InterpreterVisitorTest {
                 int y = 3;
                 main {
                     boolean z = x == y;
+                    write(z);
                 }
             }
             """;
 
         ProgramNode program = buildAstFromCode(code);
-        // When
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
         InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
 
-        Stack stack = interpreter.getStack();
         // Then
-        assertThat(stack.val(new Ident("z",1)),is(false));
+        String output = outContent.toString().trim();
+        assertThat(output, is("false"));
     }
 
     @Test
@@ -239,18 +296,26 @@ public class InterpreterVisitorTest {
                 int y = 9;
                 main {
                     boolean z = x == y;
+                    write(z);
                 }
             }
             """;
 
         ProgramNode program = buildAstFromCode(code);
-        // When
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
         InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
 
-        Stack stack = interpreter.getStack();
         // Then
-        assertThat(stack.val(new Ident("z",1)),is(true));
+        String output = outContent.toString().trim();
+        assertThat(output, is("true"));
     }
 
 
@@ -263,18 +328,26 @@ public class InterpreterVisitorTest {
                 boolean y = false;
                 main {
                     boolean z = x == y;
+                    write(z);
                 }
             }
             """;
 
         ProgramNode program = buildAstFromCode(code);
-        // When
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
         InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
 
-        Stack stack = interpreter.getStack();
         // Then
-        assertThat(stack.val(new Ident("z",1)),is(false));
+        String output = outContent.toString().trim();
+        assertThat(output, is("false"));
     }
 
     @Test
@@ -286,18 +359,26 @@ public class InterpreterVisitorTest {
                 boolean y = true;
                 main {
                     boolean z = x == y;
+                    write(z);
                 }
             }
             """;
 
         ProgramNode program = buildAstFromCode(code);
-        // When
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
         InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
 
-        Stack stack = interpreter.getStack();
         // Then
-        assertThat(stack.val(new Ident("z",1)),is(true));
+        String output = outContent.toString().trim();
+        assertThat(output, is("true"));
     }
 
 
@@ -316,18 +397,26 @@ public class InterpreterVisitorTest {
                     else {
                     x+=10;
                     }
+                    write(x);
                 }
             }
             """;
 
         ProgramNode program = buildAstFromCode(code);
-        // When
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
         InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
 
-        Stack stack = interpreter.getStack();
         // Then
-        assertThat(stack.val(new Ident("x",1)),is(11));
+        String output = outContent.toString().trim();
+        assertThat(output, is("11"));
     }
 
     @Test
@@ -340,18 +429,26 @@ public class InterpreterVisitorTest {
                     if(x == 0){
                     x+=1;
                     }
+                    write(x);
                 }
             }
             """;
 
         ProgramNode program = buildAstFromCode(code);
-        // When
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
         InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
 
-        Stack stack = interpreter.getStack();
         // Then
-        assertThat(stack.val(new Ident("x",1)),is(1));
+        String output = outContent.toString().trim();
+        assertThat(output, is("1"));
     }
 
     @Test
@@ -364,18 +461,26 @@ public class InterpreterVisitorTest {
                     if(x == 0){
                     x+=1;
                     }
+                    write(x);
                 }
             }
             """;
 
         ProgramNode program = buildAstFromCode(code);
-        // When
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
         InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
 
-        Stack stack = interpreter.getStack();
         // Then
-        assertThat(stack.val(new Ident("x",1)),is(1));
+        String output = outContent.toString().trim();
+        assertThat(output, is("1"));
     }
 
     @Test
@@ -397,18 +502,26 @@ public class InterpreterVisitorTest {
                     else {
                     x += 1;
                     }
+                    write(x);
                 }
             }
             """;
 
         ProgramNode program = buildAstFromCode(code);
-        // When
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
         InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
 
-        Stack stack = interpreter.getStack();
         // Then
-        assertThat(stack.val(new Ident("x",1)),is(2));
+        String output = outContent.toString().trim();
+        assertThat(output, is("2"));
 
     }
 
@@ -422,19 +535,215 @@ public class InterpreterVisitorTest {
                    while(10 > x){
                    x+=1;
                     }
+                    write(x);
                 }
             }
             """;
 
         ProgramNode program = buildAstFromCode(code);
-        // When
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
         InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
 
-        Stack stack = interpreter.getStack();
         // Then
-        assertThat(stack.val(new Ident("x",1)),is(10));
+        String output = outContent.toString().trim();
+        assertThat(output, is("10"));
 
+    }
+
+    // ######################## COMPARAISON LOGICAL CONNECTOR ########################
+
+    @Test
+    public void givenSimpleAndComparaisonBool__whenInterpret__thenStackHaveResultTrue() throws Exception {
+        // Given
+        String code = """
+            class Test {
+                boolean x = true;
+                boolean y = true;
+                main {
+                    boolean z = x && y;
+                    write(z);
+                }
+            }
+            """;
+
+        ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        // Then
+        String output = outContent.toString().trim();
+        assertThat(output, is("true"));
+    }
+
+    @Test
+    public void givenSimpleAndComparaisonBool__whenInterpret__thenStackHaveResultFalse() throws Exception {
+        // Given
+        String code = """
+            class Test {
+                boolean x = true;
+                boolean y = false;
+                main {
+                    boolean z = x && y;
+                    write(z);
+                }
+            }
+            """;
+
+        ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        // Then
+        String output = outContent.toString().trim();
+        assertThat(output, is("false"));
+    }
+
+
+    @Test
+    public void givenSimpleOrComparaisonBool__whenInterpret__thenStackHaveResultTrue() throws Exception {
+        // Given
+        String code = """
+            class Test {
+                boolean x = true;
+                boolean y = true;
+                main {
+                    boolean z = x || y;
+                    write(z);
+                }
+            }
+            """;
+
+        ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        // Then
+        String output = outContent.toString().trim();
+        assertThat(output, is("true"));
+    }
+
+    @Test
+    public void givenSimpleOrComparaisonBoolTrueFalse__whenInterpret__thenStackHaveResultTrue() throws Exception {
+        // Given
+        String code = """
+            class Test {
+                boolean x = true;
+                boolean y = false;
+                main {
+                    boolean z = x || y;
+                    write(z);
+                }
+            }
+            """;
+
+        ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        // Then
+        String output = outContent.toString().trim();
+        assertThat(output, is("true"));
+    }
+
+
+    @Test
+    public void givenSimpleNotComparaisonBool__whenInterpret__thenStackHaveResultFalse() throws Exception {
+        // Given
+        String code = """
+            class Test {
+                boolean x = true;
+                main {
+                    boolean z = !(x);
+                    write(z);
+                }
+            }
+            """;
+
+        ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        // Then
+        String output = outContent.toString().trim();
+        assertThat(output, is("false"));
+    }
+
+    @Test
+    public void givenSimpleNotComparaisonBool__whenInterpret__thenStackHaveResultTrue() throws Exception {
+        // Given
+        String code = """
+            class Test {
+                boolean x = false;
+                main {
+                    boolean z = !(x);
+                    write(z);
+                }
+            }
+            """;
+
+        ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        // Then
+        String output = outContent.toString().trim();
+        assertThat(output, is("true"));
     }
 
 }
