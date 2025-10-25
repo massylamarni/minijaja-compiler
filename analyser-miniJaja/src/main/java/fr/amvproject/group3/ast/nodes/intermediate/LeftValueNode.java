@@ -1,6 +1,4 @@
-package fr.amvproject.group3.ast.nodes.other;
-
-import fr.amvproject.group3.ast.nodes.exprs.ExpNode;
+package fr.amvproject.group3.ast.nodes.intermediate;
 
 /**
  * Equivalent de Ident1

@@ -1,9 +1,11 @@
-package fr.amvproject.group3.ast.nodes.instrs;
+package fr.amvproject.group3.ast.nodes.abstracts;
 
 import java.util.List;
 import java.util.ArrayList;
+
 import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
+import fr.amvproject.group3.ast.nodes.intermediate.InstrNode;
 
 public class InstrsNode extends AstNode {
     private final List<InstrNode> list = new ArrayList<>();

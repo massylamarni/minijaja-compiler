@@ -5,9 +5,17 @@ import fr.amvproject.group3.ast.AstVisitor;
 import fr.amvproject.group3.ast.nodes.abstracts.*;
 import fr.amvproject.group3.ast.nodes.decls.*;
 import fr.amvproject.group3.ast.nodes.exprs.*;
+import fr.amvproject.group3.ast.nodes.finals.ArrayAccessNode;
+import fr.amvproject.group3.ast.nodes.finals.BoolLiteralNode;
+import fr.amvproject.group3.ast.nodes.finals.IdentNode;
+import fr.amvproject.group3.ast.nodes.finals.IntLiteralNode;
+import fr.amvproject.group3.ast.nodes.finals.ParamNode;
+import fr.amvproject.group3.ast.nodes.finals.StringLiteralNode;
 import fr.amvproject.group3.ast.nodes.instrs.*;
+import fr.amvproject.group3.ast.nodes.intermediate.DeclNode;
+import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
+import fr.amvproject.group3.ast.nodes.intermediate.InstrNode;
 import fr.amvproject.group3.ast.nodes.other.*;
-import fr.amvproject.group3.ast.nodes.params.*;
 import fr.amvproject.group3.ast.nodes.program.*;
 
 public class MemoryVisitor implements AstVisitor<AstNode> {
@@ -19,14 +27,14 @@ public class MemoryVisitor implements AstVisitor<AstNode> {
 
   @Override
   public AstNode visitProgram(ProgramNode node) {
-    for (ClasseNode classeNode : node.getClasses()) {
+    for (ClassNode classeNode : node.getClasses()) {
       classeNode.accept(this);
     }
     return null;
   }
 
   @Override
-  public AstNode visitClasse(ClasseNode node) {
+  public AstNode visitClass(ClassNode node) {
     node.getDecls().accept(this);
     node.getMain().accept(this);
     return null;
@@ -45,7 +53,7 @@ public class MemoryVisitor implements AstVisitor<AstNode> {
     if (node instanceof VarNode) {
       ((VarNode) node).accept(this);
     } else {
-      ((MethodeNode) node).accept(this);
+      ((MethodNode) node).accept(this);
     }
     return null;
   }
@@ -60,37 +68,45 @@ public class MemoryVisitor implements AstVisitor<AstNode> {
 
   @Override
   public AstNode visitVar(VarNode node) {
-    if (node.getVarObj() == "tab") {
-      symbolTable.addSymbol(node.getIdent(), node.getType(), null, node.getSizeExp().evaluate(), node.getIdent().getLine());
-    } else {
-      symbolTable.addSymbol(node.getIdent(), node.getType(), null, null, node.getIdent().getLine());
-    }
+    symbolTable.addSymbol(node.getIdent(), node.getType(), null, null, node.getIdent().getLine());
     return null;
   }
 
   @Override
-  public AstNode visitMethode(MethodeNode node) {
-    symbolTable.addSymbol(node.getIdent(), node.getReturnType(), node.getEntetes(), null, node.getIdent().getLine());
+  public AstNode visitCst(CstNode node) {
+    symbolTable.addSymbol(node.getIdent(), node.getType(), null, null, node.getIdent().getLine());
+    return null;
+  }
+
+  @Override
+  public AstNode visitTable(TableNode node) {
+    symbolTable.addSymbol(node.getIdent(), node.getType(), null, node.getSizeExp().evaluate(), node.getIdent().getLine());
+    return null;
+  }
+
+  @Override
+  public AstNode visitMethod(MethodNode node) {
+    symbolTable.addSymbol(node.getIdent(), node.getReturnType(), node.getParams(), null, node.getIdent().getLine());
     return null;
   }
   
   @Override
-  public AstNode visitMethMain(MethMainNode node) {
+  public AstNode visitMain(MainNode node) {
     node.getVars().accept(this);
     node.getInstrs().accept(this);
     return null;
   }
 
   @Override
-  public AstNode visitEntetes(EntetesNode node) {
-    for (EnteteNode enteteNode : node.getList()) {
-      enteteNode.accept(this);
+  public AstNode visitParams(ParamsNode node) {
+    for (ParamNode paramNode : node.getList()) {
+      paramNode.accept(this);
     }
     return null;
   }
   
   @Override
-  public AstNode visitEntete(EnteteNode node) {
+  public AstNode visitParam(ParamNode node) {
     node.accept(this);
     return null;
   }
@@ -100,11 +116,6 @@ public class MemoryVisitor implements AstVisitor<AstNode> {
     for (InstrNode instrNode : node.getList()) {
       instrNode.accept(this);
     }
-    return null;
-  }
-
-  @Override
-  public AstNode visitInstr(InstrNode node) {
     return null;
   }
 
@@ -176,7 +187,7 @@ public class MemoryVisitor implements AstVisitor<AstNode> {
   }
 
   @Override
-  public AstNode visitRetour(RetourNode node) {
+  public AstNode visitReturn(ReturnNode node) {
     node.getExp().accept(this);
     return null;
   }
@@ -197,26 +208,20 @@ public class MemoryVisitor implements AstVisitor<AstNode> {
   }
 
   @Override
-  public AstNode visitVarRef(VarRefNode node) {
-    node.getIdent().accept(this);
-    return null;
-  }
-
-  @Override
   public AstNode visitArrayAccess(ArrayAccessNode node) {
     node.getIdent().accept(this);
     return null;
   }
 
   @Override
-  public AstNode visitMethodCallExp(MethodCallExpNode node) {
+  public AstNode visitCallExp(CallExpNode node) {
     node.getIdent().accept(this);
     node.getListExp().accept(this);
     return null;
   }
 
   @Override
-  public AstNode visitMethodCallInstr(MethodCallInstrNode node) {
+  public AstNode visitCallInstr(CallInstrNode node) {
     node.getIdent().accept(this);
     node.getListExp().accept(this);
     return null;
@@ -238,7 +243,7 @@ public class MemoryVisitor implements AstVisitor<AstNode> {
   }
 
   @Override
-  public AstNode visitIdent(Ident node) {
+  public AstNode visitIdent(IdentNode node) {
     symbolTable.recordUsage(node, node.getLine());
     return null;
   }

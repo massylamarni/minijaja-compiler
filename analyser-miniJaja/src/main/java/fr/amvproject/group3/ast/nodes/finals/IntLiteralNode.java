@@ -1,6 +1,7 @@
-package fr.amvproject.group3.ast.nodes.exprs;
+package fr.amvproject.group3.ast.nodes.finals;
 
 import fr.amvproject.group3.ast.AstVisitor;
+import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
 
 public class IntLiteralNode extends ExpNode {
     private final int value;

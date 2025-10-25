@@ -1,15 +1,14 @@
-package fr.amvproject.group3.ast.nodes.params;
+package fr.amvproject.group3.ast.nodes.finals;
 
 import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
-import fr.amvproject.group3.ast.nodes.abstracts.Ident;
 import fr.amvproject.group3.ast.nodes.other.TypeNode;
 
-public class EnteteNode extends AstNode {
+public class ParamNode extends AstNode {
     private final TypeNode type;
-    private final Ident ident;
+    private final IdentNode ident;
 
-    public EnteteNode(TypeNode type, Ident ident) {
+    public ParamNode(TypeNode type, IdentNode ident) {
         this.type = type;
         this.ident = ident;
     }
@@ -18,12 +17,12 @@ public class EnteteNode extends AstNode {
         return type;
     }
 
-    public Ident getIdent() {
+    public IdentNode getIdent() {
         return ident;
     }
 
     @Override
     public <T> T accept(AstVisitor<T> visitor) {
-        return visitor.visitEntete(this);
+        return visitor.visitParam(this);
     }
 }

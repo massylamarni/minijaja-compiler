@@ -6,42 +6,42 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 
-import fr.amvproject.group3.ast.nodes.abstracts.Ident;
+import fr.amvproject.group3.ast.nodes.abstracts.ParamsNode;
+import fr.amvproject.group3.ast.nodes.abstracts.InstrsNode;
+import fr.amvproject.group3.ast.nodes.abstracts.VarsNode;
 import fr.amvproject.group3.ast.nodes.decls.VarNode;
-import fr.amvproject.group3.ast.nodes.decls.VarsNode;
-import fr.amvproject.group3.ast.nodes.instrs.InstrNode;
-import fr.amvproject.group3.ast.nodes.instrs.InstrsNode;
-import fr.amvproject.group3.ast.nodes.instrs.RetourNode;
+import fr.amvproject.group3.ast.nodes.finals.IdentNode;
+import fr.amvproject.group3.ast.nodes.finals.ParamNode;
+import fr.amvproject.group3.ast.nodes.instrs.ReturnNode;
+import fr.amvproject.group3.ast.nodes.intermediate.InstrNode;
 import fr.amvproject.group3.ast.nodes.other.TypeNode;
-import fr.amvproject.group3.ast.nodes.params.EnteteNode;
-import fr.amvproject.group3.ast.nodes.params.EntetesNode;
 
 public class Stack {
   static class Quad {
-    Ident ident;
+    IdentNode ident;
     Object value;
     String obj; // var, cst, vcst, tab, meth, frame
     TypeNode type; // int, boolean, void.
 
     // For methods
-    List<Quad> entetes;
+    List<Quad> params;
     List<Quad> vars;
     InstrsNode instrs;
 
-    Quad(Ident ident, Object value, String obj, TypeNode type) {
+    Quad(IdentNode ident, Object value, String obj, TypeNode type) {
       this.ident = ident;
       this.value = value;
       this.obj = obj;
       this.type = type;
     }
 
-    Quad(Ident ident, Object value, String obj, TypeNode type, List<Quad> entetes, List<Quad> vars,
+    Quad(IdentNode ident, Object value, String obj, TypeNode type, List<Quad> params, List<Quad> vars,
         InstrsNode instrs) {
       this.ident = ident;
       this.value = value;
       this.obj = obj;
       this.type = type;
-      this.entetes = entetes;
+      this.params = params;
       this.vars = vars;
       this.instrs = instrs;
     }
@@ -61,36 +61,32 @@ public class Stack {
 
   // --- Variable / Constant / Array / Method Declarations ---
 
-  public void declVar(Ident ident, Object value, TypeNode type) {
+  public void declVar(IdentNode ident, Object value, TypeNode type, List<Quad> m) {
+    for (Quad quad : m) stack.push(quad);
     stack.push(new Quad(ident, value, "var", type));
   }
 
-  public void declCst(Ident ident, Object value, TypeNode type, boolean isVcst) {
-    String obj = isVcst ? "vcst" : "cst"; // Vcst = variable constant, can be initialized later but not changed after
+  public void declCst(IdentNode ident, Object value, TypeNode type, List<Quad> m) {
+    String obj = value == null ? "vcst" : "cst"; // Vcst = can be initialized later but not changed after
+    for (Quad quad : m) stack.push(quad);
     stack.push(new Quad(ident, value, obj, type));
   }
 
-  public void declTab(Ident ident, Object value, TypeNode type) {
-    int ref = heap.allocate(value);
+  public void declTab(IdentNode ident, int size, TypeNode type, List<Quad> m) {
+    int ref = heap.allocate(size);
+    for (Quad quad : m) stack.push(quad);
     stack.push(new Quad(ident, ref, "tab", type));
   }
 
-  public void declMeth(Ident ident, TypeNode returnType, EntetesNode entetes, VarsNode vars, InstrsNode instrs) {
-    List<Quad> qEntetes = new ArrayList<>();
-    List<Quad> qVars = new ArrayList<>();
-    for (EnteteNode entete : entetes.getList()) {
-      qEntetes.add(new Quad(entete.getIdent(), null, "var", entete.getType()));
-    }
-    for (VarNode var : vars.getList()) {
-      qVars.add(new Quad(var.getIdent(), var.getInitExp(), var.getVarObj(), returnType));
-    }
-    stack.push(new Quad(ident, null, "meth", returnType, qEntetes, qVars, instrs));
+  public void declMeth(IdentNode ident, ParamsNode params, TypeNode returnType, List<Quad> m) {
+    for (Quad quad : m) stack.push(quad);
+    stack.push(new Quad(ident, params, "meth", returnType));
   }
 
   // --- Access / Assignment ---
 
   // Retunrs the value associated with the identifier
-  public Object val(Ident ident) {
+  public Object val(IdentNode ident) {
     for (Quad q : stack)
       if (q.ident.equals(ident))
         return q.value;
@@ -98,7 +94,7 @@ public class Stack {
   }
 
   // Assigns a new value to the identifier
-  public void affecterVal(Ident ident, Object value) {
+  public void affecterVal(IdentNode ident, Object value) {
     for (Quad q : stack) {
       if (q.ident.equals(ident)) {
         switch (q.obj) {
@@ -119,7 +115,7 @@ public class Stack {
   }
 
   // Assigns a new value to an array at a specific index
-  public void affecterValT(Ident ident, int index, Object value) {
+  public void affecterValT(IdentNode ident, int index, Object value) {
     for (Quad q : stack) {
       if (q.ident.equals(ident) && q.obj.equals("tab")) {
         Object[] arr = (Object[]) heap.get((int) q.value);
@@ -134,7 +130,7 @@ public class Stack {
   }
 
   // Remove Declaration from Stack
-  public void retirerDecl(Ident ident) {
+  public void retirerDecl(IdentNode ident) {
     Iterator<Quad> it = stack.iterator();
     while (it.hasNext()) {
       Quad q = it.next();
@@ -146,7 +142,7 @@ public class Stack {
   }
 
   // --- Method Call Execution ---
-  public Object callMethod(Ident Ident, List<Object> argValues) {
+  public Object callMethod(IdentNode Ident, List<Object> argValues) {
     Quad method = null;
     for (Quad q : stack) {
       if (q.ident.equals(Ident) && q.obj.equals("meth")) {
@@ -158,30 +154,30 @@ public class Stack {
       throw new RuntimeException("Method not found: " + Ident.getName());
 
     // Save current stack
-    stack.push(new Quad(new Ident("_METHOD_FRAME_", -1), null, "frame", method.type));
+    stack.push(new Quad(new IdentNode("_METHOD_FRAME_", -1), null, "frame", method.type));
 
-    // Initialize entetes
-    if (method.entetes != null) {
-      if (argValues.size() != method.entetes.size())
+    // Initialize params
+    if (method.params != null) {
+      if (argValues.size() != method.params.size())
         throw new RuntimeException("Parameter count mismatch for method " + Ident.getName());
-      for (int i = 0; i < method.entetes.size(); i++) {
-        Quad p = method.entetes.get(i);
-        declVar(p.ident, argValues.get(i), p.type);
+      for (int i = 0; i < method.params.size(); i++) {
+        Quad p = method.params.get(i);
+        declVar(p.ident, argValues.get(i), p.type, null);
       }
     }
 
     // Initialize local variables
     if (method.vars != null) {
       for (Quad v : method.vars)
-        declVar(v.ident, v.value, v.type);
+        declVar(v.ident, v.value, v.type, null);
     }
 
     // Execute instrs
     Object returnExp = null;
     if (method.instrs != null) {
       for (InstrNode instr : method.instrs.getList()) {
-        if (instr instanceof RetourNode) {
-          returnExp = ((RetourNode) instr).getExp();
+        if (instr instanceof ReturnNode) {
+          returnExp = ((ReturnNode) instr).getExp();
           break;
         }
         //instr.execute(this);
@@ -221,8 +217,8 @@ public class Stack {
         System.out.println("]"); */
       } else if (q.obj.equals("meth")) {
         System.out.println("  Method parameters:");
-        if (q.entetes != null) {
-          for (Quad e : q.entetes) {
+        if (q.params != null) {
+          for (Quad e : q.params) {
             System.out.println("    - " + e.ident.getName() + " : " + e.type.getType());
           }
         }

@@ -1,13 +1,13 @@
-package fr.amvproject.group3.ast.nodes.abstracts;
+package fr.amvproject.group3.ast.nodes.finals;
 
-import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
+import fr.amvproject.group3.ast.nodes.intermediate.LeftValueNode;
 
-public class Ident extends AstNode {
+public class IdentNode extends LeftValueNode {
     private final String name;
     private final int line;
     
-    public Ident(String name, int line) {
+    public IdentNode(String name, int line) {
         this.name = name;
         this.line = line;   // -1 is used for temp stack nodes
     }
@@ -18,6 +18,11 @@ public class Ident extends AstNode {
 
     public int getLine() {
         return line;
+    }
+
+    @Override
+    public String evaluate() {
+        return name;
     }
 
     @Override

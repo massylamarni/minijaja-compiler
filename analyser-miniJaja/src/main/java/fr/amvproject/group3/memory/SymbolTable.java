@@ -5,21 +5,21 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import fr.amvproject.group3.ast.nodes.abstracts.Ident;
+import fr.amvproject.group3.ast.nodes.abstracts.ParamsNode;
+import fr.amvproject.group3.ast.nodes.finals.IdentNode;
+import fr.amvproject.group3.ast.nodes.finals.ParamNode;
 import fr.amvproject.group3.ast.nodes.other.TypeNode;
-import fr.amvproject.group3.ast.nodes.params.EnteteNode;
-import fr.amvproject.group3.ast.nodes.params.EntetesNode;
 
 public class SymbolTable {
     public static class Symbol {
-        private final Ident ident;
+        private final IdentNode ident;
         private final TypeNode type;
         private final String dimension; // Table size can be defined by an expression
-        private final EntetesNode entetes;
+        private final ParamsNode entetes;
         private final int lineOfDeclaration;
         private List<Integer> linesOfUsage;
 
-        public Symbol(Ident ident, TypeNode type, String dimension, EntetesNode entetes, int lineOfDeclaration) {
+        public Symbol(IdentNode ident, TypeNode type, String dimension, ParamsNode entetes, int lineOfDeclaration) {
             this.ident = ident;
             this.type = type;
             this.dimension = dimension;
@@ -28,7 +28,7 @@ public class SymbolTable {
             this.linesOfUsage = new ArrayList<>();
         }
 
-        public Ident getIdent() {
+        public IdentNode getIdent() {
             return ident;
         }
 
@@ -40,7 +40,7 @@ public class SymbolTable {
             return dimension;
         }
 
-        public EntetesNode getEntetes() {
+        public ParamsNode getEntetes() {
             return entetes;
         }
 
@@ -61,9 +61,9 @@ public class SymbolTable {
             StringBuilder params = new StringBuilder();
 
             if (entetes != null && !entetes.getList().isEmpty()) {
-                for (EnteteNode e : entetes.getList()) {
+                for (ParamNode e : entetes.getList()) {
                     TypeNode t = e.getType();
-                    Ident i = e.getIdent();
+                    IdentNode i = e.getIdent();
                     params.append(String.format("%s %s, ", 
                         t != null ? t.getName() : "<?>", 
                         i != null ? i.getName() : "<?>"));
@@ -89,7 +89,7 @@ public class SymbolTable {
 
     private final Map<String, Symbol> symbols = new LinkedHashMap<>();
 
-    public boolean addSymbol(Ident ident, TypeNode type, EntetesNode entetes, String dimension, int lineOfDeclaration) {
+    public boolean addSymbol(IdentNode ident, TypeNode type, ParamsNode entetes, String dimension, int lineOfDeclaration) {
         if (symbols.containsKey(ident.getName())) {
             // TODO: redeclaration error handling
             return false;
@@ -98,11 +98,11 @@ public class SymbolTable {
         return true;
     }
 
-    public Symbol lookup(Ident ident) {
+    public Symbol lookup(IdentNode ident) {
         return symbols.get(ident.getName());
     }
 
-    public boolean recordUsage(Ident ident, int lineOfUsage) {
+    public boolean recordUsage(IdentNode ident, int lineOfUsage) {
         Symbol sym = symbols.get(ident.getName());
         if (sym == null) {
             // TODO: undeclared usage

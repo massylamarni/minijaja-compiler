@@ -1,6 +1,7 @@
 package fr.amvproject.group3.ast.nodes.exprs;
 
 import fr.amvproject.group3.ast.AstVisitor;
+import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.ast.nodes.other.UnaryOpNode;
 
 public class UnaryExpNode extends ExpNode {

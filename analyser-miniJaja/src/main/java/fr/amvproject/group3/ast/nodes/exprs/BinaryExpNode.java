@@ -1,11 +1,13 @@
 package fr.amvproject.group3.ast.nodes.exprs;
 
 import fr.amvproject.group3.ast.AstVisitor;
+import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.ast.nodes.other.BinaryOpNode;
 
 public class BinaryExpNode extends ExpNode {
     private final BinaryOpNode op;
-    private final ExpNode leftExp, rightExp;
+    private final ExpNode leftExp;
+    private final ExpNode rightExp;
 
     public BinaryExpNode(BinaryOpNode op, ExpNode leftExp, ExpNode rightExp) {
         this.op = op;

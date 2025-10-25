@@ -12,9 +12,15 @@ import java.util.logging.Logger;
 import fr.amvproject.group3.ast.nodes.abstracts.*;
 import fr.amvproject.group3.ast.nodes.decls.*;
 import fr.amvproject.group3.ast.nodes.exprs.*;
+import fr.amvproject.group3.ast.nodes.finals.ArrayAccessNode;
+import fr.amvproject.group3.ast.nodes.finals.BoolLiteralNode;
+import fr.amvproject.group3.ast.nodes.finals.IdentNode;
+import fr.amvproject.group3.ast.nodes.finals.IntLiteralNode;
+import fr.amvproject.group3.ast.nodes.finals.ParamNode;
+import fr.amvproject.group3.ast.nodes.finals.StringLiteralNode;
 import fr.amvproject.group3.ast.nodes.instrs.*;
+import fr.amvproject.group3.ast.nodes.intermediate.DeclNode;
 import fr.amvproject.group3.ast.nodes.other.*;
-import fr.amvproject.group3.ast.nodes.params.*;
 import fr.amvproject.group3.ast.nodes.program.*;
 
 public class PrintVisitor implements AstVisitor<String> {
@@ -61,7 +67,7 @@ public class PrintVisitor implements AstVisitor<String> {
     }
 
     @Override
-    public String visitClasse(ClasseNode node) {
+    public String visitClass(ClassNode node) {
         StringBuilder sb = new StringBuilder(indent());
         sb.append("class ").append(node.getIdent().accept(this)).append(" {\n");
         if (node.getDecls() != null) sb.append(indent()).append(node.getDecls().accept(this));
@@ -89,18 +95,32 @@ public class PrintVisitor implements AstVisitor<String> {
     @Override
     public String visitVar(VarNode node) {
         StringBuilder sb = new StringBuilder(indent());
-        if (node.isFinal()) sb.append("final ");
         sb.append(node.getType().accept(this)).append(" ").append(node.getIdent().accept(this));
-        if (node.getSizeExp() != null) sb.append("[").append(node.getSizeExp().accept(this)).append("]");
         if (node.getInitExp() != null) sb.append(" = ").append(node.getInitExp().accept(this));
         return sb.toString();
     }
 
     @Override
-    public String visitMethode(MethodeNode node) {
+    public String visitCst(CstNode node) {
+        StringBuilder sb = new StringBuilder(indent());
+        sb.append("final ").append(node.getType().accept(this)).append(" ").append(node.getIdent().accept(this));
+        if (node.getInitExp() != null) sb.append(" = ").append(node.getInitExp().accept(this));
+        return sb.toString();
+    }
+
+    @Override
+    public String visitTable(TableNode node) {
+        StringBuilder sb = new StringBuilder(indent());
+        sb.append(node.getType().accept(this)).append(" ").append(node.getIdent().accept(this));
+        if (node.getSizeExp() != null) sb.append("[").append(node.getSizeExp().accept(this)).append("]");
+        return sb.toString();
+    }
+
+    @Override
+    public String visitMethod(MethodNode node) {
         StringBuilder sb = new StringBuilder(indent());
         sb.append(node.getReturnType().accept(this)).append(" ").append(node.getIdent().accept(this)).append("(");
-        sb.append(joinChildrenLinear(node.getEntetes().getList())).append(BLOCK_START);
+        sb.append(joinChildrenLinear(node.getParams().getList())).append(BLOCK_START);
         if (node.getVars() != null) sb.append(node.getVars().accept(this));
         if (node.getInstrs() != null) sb.append(node.getInstrs().accept(this));
         sb.append(indent()).append("}");
@@ -108,7 +128,7 @@ public class PrintVisitor implements AstVisitor<String> {
     }
 
     @Override
-    public String visitMethMain(MethMainNode node) {
+    public String visitMain(MainNode node) {
         indentLevel++;
         StringBuilder sb = new StringBuilder(indent()).append("main {\n");
         if (node.getVars() != null) sb.append(node.getVars().accept(this));
@@ -119,12 +139,12 @@ public class PrintVisitor implements AstVisitor<String> {
     }
 
     @Override
-    public String visitEntetes(EntetesNode node) {
+    public String visitParams(ParamsNode node) {
         return "(" + joinChildren(node.getList()) + ")";
     }
 
     @Override
-    public String visitEntete(EnteteNode node) {
+    public String visitParam(ParamNode node) {
         return node.getType().accept(this) + " " + node.getIdent().accept(this);
     }
     
@@ -132,11 +152,6 @@ public class PrintVisitor implements AstVisitor<String> {
     public String visitInstrs(InstrsNode node) {
         if (node.getList().isEmpty() && programDebug) return indent() + "/* INSTRS empty */\n";
         return joinChildren(node.getList());
-    }
-    
-    @Override
-    public String visitInstr(InstrNode node) {
-        return null;
     }
 
     @Override
@@ -213,7 +228,7 @@ public class PrintVisitor implements AstVisitor<String> {
     }
 
     @Override
-    public String visitRetour(RetourNode node) {
+    public String visitReturn(ReturnNode node) {
         return indent() + "retour " + node.getExp().accept(this);
     }
 
@@ -233,17 +248,12 @@ public class PrintVisitor implements AstVisitor<String> {
     }
 
     @Override
-    public String visitVarRef(VarRefNode node) {
-        return node.getIdent().accept(this);
-    }
-
-    @Override
     public String visitArrayAccess(ArrayAccessNode node) {
         return node.getIdent().accept(this) + "[" + node.getIndexExp().accept(this) + "]";
     }
 
     @Override
-    public String visitMethodCallExp(MethodCallExpNode node) {
+    public String visitCallExp(CallExpNode node) {
         StringBuilder sb = new StringBuilder();
         sb.append(node.getIdent().accept(this)).append("(");
         sb.append(joinChildrenLinear(node.getListExp().getList()));
@@ -252,7 +262,7 @@ public class PrintVisitor implements AstVisitor<String> {
     }
 
     @Override
-    public String visitMethodCallInstr(MethodCallInstrNode node) {
+    public String visitCallInstr(CallInstrNode node) {
         StringBuilder sb = new StringBuilder(indent());
         sb.append(node.getIdent().accept(this)).append("(");
         sb.append(joinChildrenLinear(node.getListExp().getList()));
@@ -276,7 +286,7 @@ public class PrintVisitor implements AstVisitor<String> {
     }
 
     @Override
-    public String visitIdent(Ident node) {
+    public String visitIdent(IdentNode node) {
         return node.getName();
     }
 

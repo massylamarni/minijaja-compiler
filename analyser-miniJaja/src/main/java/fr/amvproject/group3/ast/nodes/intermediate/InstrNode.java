@@ -1,4 +1,4 @@
-package fr.amvproject.group3.ast.nodes.instrs;
+package fr.amvproject.group3.ast.nodes.intermediate;
 
 import fr.amvproject.group3.ast.AstNode;
 

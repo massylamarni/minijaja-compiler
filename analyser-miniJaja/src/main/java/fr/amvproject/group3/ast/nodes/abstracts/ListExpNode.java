@@ -1,9 +1,11 @@
-package fr.amvproject.group3.ast.nodes.exprs;
+package fr.amvproject.group3.ast.nodes.abstracts;
 
 import java.util.List;
 import java.util.ArrayList;
+
 import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
+import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
 
 public class ListExpNode extends AstNode {
     private final List<ExpNode> list = new ArrayList<>();
@@ -14,18 +16,6 @@ public class ListExpNode extends AstNode {
 
     public List<ExpNode> getList() {
         return list;
-    }
-
-    public String evaluate() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < list.size(); i++) {
-            ExpNode exp = list.get(i);
-            sb.append(exp.evaluate());
-            if (i < list.size() - 1) {
-                sb.append(", ");
-            }
-        }
-        return sb.toString();
     }
 
     @Override

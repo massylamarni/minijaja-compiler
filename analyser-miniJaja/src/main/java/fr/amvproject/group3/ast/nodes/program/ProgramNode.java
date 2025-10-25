@@ -6,13 +6,13 @@ import fr.amvproject.group3.ast.AstVisitor;
 import java.util.List;
 
 public class ProgramNode extends AstNode {
-    private final List<ClasseNode> classes;
+    private final List<ClassNode> classes;
 
-    public ProgramNode(List<ClasseNode> classes) {
+    public ProgramNode(List<ClassNode> classes) {
         this.classes = classes;
     }
 
-    public List<ClasseNode> getClasses() {
+    public List<ClassNode> getClasses() {
         return classes;
     }
 

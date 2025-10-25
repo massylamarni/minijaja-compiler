@@ -2,13 +2,25 @@ package fr.amvproject.group3;
 
 
 
+import com.ibm.icu.impl.UResource.Table;
+
 import fr.amvproject.group3.ast.*;
-import fr.amvproject.group3.ast.nodes.abstracts.Ident;
-import fr.amvproject.group3.ast.nodes.params.EnteteNode;
-import fr.amvproject.group3.ast.nodes.params.EntetesNode;
 import fr.amvproject.group3.ast.nodes.program.*;
 import fr.amvproject.group3.ast.nodes.exprs.*;
+import fr.amvproject.group3.ast.nodes.finals.ArrayAccessNode;
+import fr.amvproject.group3.ast.nodes.finals.BoolLiteralNode;
+import fr.amvproject.group3.ast.nodes.finals.IdentNode;
+import fr.amvproject.group3.ast.nodes.finals.IntLiteralNode;
+import fr.amvproject.group3.ast.nodes.finals.ParamNode;
+import fr.amvproject.group3.ast.nodes.finals.StringLiteralNode;
 import fr.amvproject.group3.ast.nodes.instrs.*;
+import fr.amvproject.group3.ast.nodes.intermediate.DeclNode;
+import fr.amvproject.group3.ast.nodes.intermediate.InstrNode;
+import fr.amvproject.group3.ast.nodes.abstracts.DeclsNode;
+import fr.amvproject.group3.ast.nodes.abstracts.ParamsNode;
+import fr.amvproject.group3.ast.nodes.abstracts.InstrsNode;
+import fr.amvproject.group3.ast.nodes.abstracts.ListExpNode;
+import fr.amvproject.group3.ast.nodes.abstracts.VarsNode;
 import fr.amvproject.group3.ast.nodes.decls.*;
 import fr.amvproject.group3.ast.nodes.other.*;
 
@@ -41,7 +53,7 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
     }
 
     @Override
-    public Void visitMethodCallExp(MethodCallExpNode node) {
+    public Void visitCallExp(CallExpNode node) {
         return null;
     }
 
@@ -55,16 +67,11 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
         return null;
     }
 
-    @Override
-    public Void visitInstr(InstrNode node) {
-        return null;
-    }
-
     // TODO : tu ajouteras ici visitBinaryExp, visitAssign, visitIf, visitWhile, etc.
 
     // Méthodes par défaut (obligatoires pour compilo)
     @Override
-    public Void visitClasse(ClasseNode node) {
+    public Void visitClass(ClassNode node) {
         emitter.emit("; Début de la classe " + node.getIdent().getName());
 
         // Déclarations globales
@@ -126,11 +133,6 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
 
         return null;
     }
-    @Override
-    public Void visitVarRef(VarRefNode node) {
-        emitter.emit("load " + node.getIdent().getName());
-        return null;
-    }
 
     @Override
     public Void visitAddAssign(AddAssignNode node) {
@@ -186,12 +188,12 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
 
 
     @Override
-    public Void visitMethodCallInstr(MethodCallInstrNode node) {
+    public Void visitCallInstr(CallInstrNode node) {
         return null;
     }
 
     @Override
-    public Void visitRetour(RetourNode node) {
+    public Void visitReturn(ReturnNode node) {
         return null;
     }
 
@@ -223,6 +225,17 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
         return null;
     }
 
+    @Override
+    public Void visitCst(CstNode node) {
+
+        return null;
+    }
+
+    @Override
+    public Void visitTable(TableNode node) {
+
+        return null;
+    }
 
 
     @Override
@@ -236,12 +249,12 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
     }
 
     @Override
-    public Void visitIdent(Ident node) {
+    public Void visitIdent(IdentNode node) {
         return null;
     }
 
     @Override
-    public Void visitMethMain(MethMainNode node) {
+    public Void visitMain(MainNode node) {
         emitter.emit("main:");
         System.out.println("[DEBUG] Entrée dans main");
 
@@ -264,19 +277,19 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
 
 
     @Override
-    public Void visitMethode(MethodeNode node) {
+    public Void visitMethod(MethodNode node) {
         return null;
     }
 
     @Override public Void visitWrite(WriteNode node) { return null; }
 
     @Override
-    public Void visitEntete(EnteteNode node) {
+    public Void visitParam(ParamNode node) {
         return null;
     }
 
     @Override
-    public Void visitEntetes(EntetesNode node) {
+    public Void visitParams(ParamsNode node) {
         return null;
     }
 
@@ -285,7 +298,7 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
         emitter.emit("; Début du programme");
 
         // Parcourt toutes les classes du programme
-        for (ClasseNode classe : node.getClasses()) {
+        for (ClassNode classe : node.getClasses()) {
             classe.accept(this);
         }
 

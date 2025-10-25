@@ -1,7 +1,7 @@
 package fr.amvproject.group3;
 
 import fr.amvproject.group3.ast.*;
-import fr.amvproject.group3.ast.nodes.program.ClasseNode;
+import fr.amvproject.group3.ast.nodes.program.ClassNode;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 

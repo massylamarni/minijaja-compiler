@@ -1,20 +1,20 @@
-package fr.amvproject.group3.ast.nodes.program;
+package fr.amvproject.group3.ast.nodes.intermediate;
 
 import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
-import fr.amvproject.group3.ast.nodes.abstracts.Ident;
+import fr.amvproject.group3.ast.nodes.finals.IdentNode;
 
 /* 
  * Var | Methode
  */
 public class DeclNode extends AstNode {
-    private final Ident ident;
+    private final IdentNode ident;
 
-    public DeclNode(Ident ident) {
+    public DeclNode(IdentNode ident) {
         this.ident = ident;
     }
 
-    public Ident getIdent() {
+    public IdentNode getIdent() {
         return ident;
     }
 
