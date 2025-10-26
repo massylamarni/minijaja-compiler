@@ -1,0 +1,21 @@
+package fr.amvproject.group3.utils;
+
+public class IndentManager {
+    private int indentLevel = -1;
+
+    public int getIndentLevel() {
+      return indentLevel;
+    }
+
+    public void increaseIndent() {
+      indentLevel++;
+    }
+
+    public void decreseIndent() {
+      indentLevel--;
+    }
+
+    public String indent() {
+      return "  ".repeat(indentLevel);
+    }
+  }

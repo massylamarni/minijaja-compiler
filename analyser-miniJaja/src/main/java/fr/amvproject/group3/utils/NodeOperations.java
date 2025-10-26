@@ -8,10 +8,10 @@ import fr.amvproject.group3.ast.nodes.instrs.AssignNode;
 import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.ast.nodes.intermediate.LeftValueNode;
 import fr.amvproject.group3.ast.nodes.other.BinaryOpNode;
-import fr.amvproject.group3.exceptions.NodeExceptions;
+import fr.amvproject.group3.exceptions.NodeException;
 
 public class NodeOperations {
-  public AssignNode addAssignToAssign(AddAssignNode addAssignNode) {
+  public AssignNode addAssignToAssign(AddAssignNode addAssignNode) throws NodeException {
     LeftValueNode leftValueNode = addAssignNode.getLeftValueNode();
 
     ExpNode addExp;
@@ -20,7 +20,7 @@ public class NodeOperations {
     } else if (leftValueNode instanceof ArrayAccessNode arrayAccessNode) { // Array
       addExp = new BinaryExpNode(new BinaryOpNode("+"), arrayAccessNode, addAssignNode.getExp());
     } else {
-      throw new NodeExceptions("Unexpected left-hand side in +=");
+      throw new NodeException("Unexpected left-hand side in +=");
     }
     return new AssignNode(leftValueNode, addExp);
   }

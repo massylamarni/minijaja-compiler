@@ -1,14 +1,8 @@
 package fr.amvproject.group3.memory;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
-import java.util.logging.Logger;
 
 import fr.amvproject.group3.ast.nodes.abstracts.ParamsNode;
 import fr.amvproject.group3.ast.nodes.abstracts.VarsNode;
@@ -20,9 +14,9 @@ import fr.amvproject.group3.ast.nodes.finals.ParamNode;
 import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.ast.nodes.intermediate.VarDeclNode;
 import fr.amvproject.group3.ast.nodes.other.TypeNode;
+import fr.amvproject.group3.utils.StringSaver;
 
 public class Stack {
-    private static final Logger LOGGER = Logger.getLogger(Stack.class.getName());
   static class Quad {
     IdentNode ident;
     Object value;
@@ -263,9 +257,7 @@ public class Stack {
 
   /* Print stack */
 
-  public void save() {
-    final String fileName = "stack_dump.txt";
-    Path dir = Paths.get("analyser-miniJaja", "src", "main", "java", "fr", "amvproject", "group3", "output");
+  public void print() {
     StringBuilder sb = new StringBuilder();
     sb.append("===== STACK DUMP =====\n");
 
@@ -280,7 +272,7 @@ public class Stack {
 
     sb.append("======================\n");
 
-    writeToFile(dir, fileName, sb.toString());
+    StringSaver.save(sb.toString(), "stackDump.txt");
   }
 
   private void appendQuad(StringBuilder sb, Quad q, int index) {
@@ -327,18 +319,4 @@ public class Stack {
           .append("\n");
     }
   }
-
-  private void writeToFile(Path dir, String fileName, String content) {
-    try {
-      Files.createDirectories(dir);
-      Path filePath = dir.resolve(fileName);
-      try (BufferedWriter writer = Files.newBufferedWriter(filePath)) {
-        writer.write(content);
-        LOGGER.info(() -> "Stack dump saved successfully to " + filePath.toAbsolutePath());
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
 }

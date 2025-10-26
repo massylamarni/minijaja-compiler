@@ -5,14 +5,14 @@ import fr.amvproject.group3.ast.MiniJajaAstBuilder;
 import fr.amvproject.group3.ast.PrintVisitor;
 import fr.amvproject.group3.memory.MemoryVisitor;
 import fr.amvproject.group3.memory.SymbolTable;
+import fr.amvproject.group3.utils.StringSaver;
 
 import org.antlr.v4.runtime.*;
-
 
 public class App {
     public static void main(String[] args) throws Exception {
         
-        CharStream input = CharStreams.fromFileName("analyser-miniJaja/test_files/light.mj");
+        CharStream input = CharStreams.fromFileName("analyser-miniJaja/src/main/java/fr/amvproject/group3/test_files/light.mj");
         MiniJajaLexer lexer = new MiniJajaLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         MiniJajaParser parser = new MiniJajaParser(tokens);
@@ -21,11 +21,12 @@ public class App {
         AstNode ast = builder.visit(tree);
 
         PrintVisitor printer = new PrintVisitor();
-        printer.save(ast.accept(printer));
+
+        StringSaver.save(ast.accept(printer), "printedProgram.mj");
         
         MemoryVisitor memoryVisitor = new MemoryVisitor();
         ast.accept(memoryVisitor);
         SymbolTable symbolTable = memoryVisitor.getSymbolTable();
-        symbolTable.save();
+        symbolTable.print();
     }
 }

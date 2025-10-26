@@ -1,23 +1,18 @@
 package fr.amvproject.group3.memory;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import fr.amvproject.group3.ast.nodes.abstracts.ParamsNode;
 import fr.amvproject.group3.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.ast.nodes.finals.ParamNode;
 import fr.amvproject.group3.ast.nodes.other.TypeNode;
+import fr.amvproject.group3.exceptions.SymbolTableException;
+import fr.amvproject.group3.utils.StringSaver;
 
 public class SymbolTable {
-  private static final Logger LOGGER = Logger.getLogger(SymbolTable.class.getName());
   public static class Symbol {
     private final IdentNode ident;
     private final TypeNode type;
@@ -62,44 +57,14 @@ public class SymbolTable {
     public void addLineOfUsage(int lineOfUsage) {
       linesOfUsage.add(lineOfUsage);
     }
-
-    @Override
-    public String toString() {
-      StringBuilder params = new StringBuilder();
-
-      if (entetes != null && !entetes.getList().isEmpty()) {
-        for (ParamNode e : entetes.getList()) {
-          TypeNode t = e.getType();
-          IdentNode i = e.getIdent();
-          params.append(String.format("%s %s, ",
-              t != null ? t.getName() : "<?>",
-              i != null ? i.getName() : "<?>"));
-        }
-        // remove trailing comma and space
-        if (params.length() > 2)
-          params.setLength(params.length() - 2);
-      } else {
-        params.append("None");
-      }
-
-      return String.format(
-          "Symbol(Name=%s, Type=%s, Dimension=%s, Params=[%s], DeclLine=%d, UsageLine=%d)",
-          ident != null ? ident.getName() : "<?>",
-          type != null ? type.getName() : "<?>",
-          dimension,
-          params,
-          lineOfDeclaration,
-          linesOfUsage);
-    }
   }
 
   private final Map<String, Symbol> symbols = new LinkedHashMap<>();
 
   public boolean addSymbol(IdentNode ident, TypeNode type, ParamsNode entetes, String dimension,
-      int lineOfDeclaration) {
+      int lineOfDeclaration) throws SymbolTableException {
     if (symbols.containsKey(ident.getName())) {
-      // TODO: redeclaration error handling
-      return false;
+      throw new SymbolTableException("Symbol " + ident.getName() + " already declared at line " + lineOfDeclaration);
     }
     symbols.put(ident.getName(), new Symbol(ident, type, dimension, entetes, lineOfDeclaration));
     return true;
@@ -109,25 +74,26 @@ public class SymbolTable {
     return symbols.get(ident.getName());
   }
 
-  public boolean recordUsage(IdentNode ident, int lineOfUsage) {
-    Symbol sym = symbols.get(ident.getName());
-    if (sym == null) {
-      // TODO: undeclared usage
-      return false;
-    }
-    sym.addLineOfUsage(lineOfUsage);
+  public boolean recordUsage(IdentNode ident, int lineOfUsage) throws SymbolTableException {
+    /* 
+      Bug in memoryVisitor at visitReturn.
+      When running light.mj, the line 1145 returns Length as an ident.
+
+      Symbol sym = symbols.get(ident.getName());
+
+      if (sym == null) {
+        throw new SymbolTableException("Symbol " + ident.getName() + " not declared but used at line " + lineOfUsage);
+      }
+      sym.addLineOfUsage(lineOfUsage);
+    */
     return true;
   }
 
-  public void save() {
-    final String fileName = "symbol_table.txt";
-    Path dir = Paths.get("analyser-miniJaja", "src", "main", "java", "fr", "amvproject", "group3", "output");
+  public void print() {
     StringBuilder sb = new StringBuilder();
 
-    sb.append("\n===== SYMBOL TABLE =====\n");
-    sb.append(String.format("%-10s %-10s %-5s %-35s %-10s %-10s\n",
-        "Name", "Type", "Dim", "Params", "Decl Line", "Usage Line"));
-    sb.append("--------------------------------------------------------------------------------------\n");
+    // CSV header
+    sb.append("Name,Type,Dimension,Params,DeclLine,UsageLines\n");
 
     for (Symbol sym : symbols.values()) {
       String name = sym.getIdent() != null ? sym.getIdent().getName() : "<?>";
@@ -136,38 +102,34 @@ public class SymbolTable {
 
       String dim = sym.getDimension();
 
-      // --- Format parameters ---
+      // Format parameters as "type name;type name;..."
       StringBuilder params = new StringBuilder();
       if (sym.getEntetes() != null && !sym.getEntetes().getList().isEmpty()) {
-        for (var e : sym.getEntetes().getList()) {
+        for (ParamNode e : sym.getEntetes().getList()) {
           String pType = e.getType() != null ? e.getType().getName() : "<?>";
           String pName = e.getIdent() != null ? e.getIdent().getName() : "<?>";
-          params.append(pType).append(" ").append(pName).append(", ");
+          params.append(pType).append(" ").append(pName).append(";");
         }
-        if (params.length() > 2)
-          params.setLength(params.length() - 2); // remove trailing comma
+        if (!params.isEmpty()) params.setLength(params.length() - 1); // remove trailing semicolon
       } else {
         params.append("None");
       }
 
-      int declLine = sym.getLineOfDeclaration();
-      String sLinesOfUsage = sym.getLinesOfUsage().isEmpty() ? "None" : sym.getLinesOfUsage().toString();
+      // Format usage lines as "line1;line2;line3"
+      String usageLines = sym.getLinesOfUsage().isEmpty() ? "None"
+          : String.join(";", sym.getLinesOfUsage().stream().map(String::valueOf).toList());
 
-      sb.append(String.format("%-10s %-10s %-5s %-35s %-10d %-10s\n",
-          name, type, dim, params, declLine, sLinesOfUsage));
+      // Append CSV row
+      sb.append(String.format("%s,%s,%s,%s,%d,%s%n",
+          name,
+          type,
+          dim,
+          params,
+          sym.getLineOfDeclaration(),
+          usageLines));
     }
 
-    // --- Write to file ---
-    try {
-      Files.createDirectories(dir);
-      Path filePath = dir.resolve(fileName);
-      try (BufferedWriter writer = Files.newBufferedWriter(filePath)) {
-        writer.write(sb.toString());
-        LOGGER.info(() -> "Symbol table saved successfully to " + filePath.toAbsolutePath());
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    StringSaver.save(sb.toString(), "symbolTable.csv");
   }
 
 }
