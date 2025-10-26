@@ -16,6 +16,7 @@ import fr.amvproject.group3.ast.nodes.finals.StringLiteralNode;
 import fr.amvproject.group3.ast.nodes.instrs.*;
 import fr.amvproject.group3.ast.nodes.intermediate.DeclNode;
 import fr.amvproject.group3.ast.nodes.intermediate.InstrNode;
+import fr.amvproject.group3.ast.nodes.intermediate.VarDeclNode;
 import fr.amvproject.group3.ast.nodes.abstracts.DeclsNode;
 import fr.amvproject.group3.ast.nodes.abstracts.ParamsNode;
 import fr.amvproject.group3.ast.nodes.abstracts.InstrsNode;
@@ -89,6 +90,11 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
 
     @Override
     public Void visitDecl(DeclNode node) {
+        return null;
+    }
+
+    @Override
+    public Void visitVarDecl(VarDeclNode node) {
         return null;
     }
 

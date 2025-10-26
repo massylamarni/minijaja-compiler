@@ -26,6 +26,7 @@ public interface AstVisitor<T> {
     T visitVar(VarNode node);
 
     T visitDecl(DeclNode node);
+    T visitVarDecl(VarDeclNode node);
 
     T visitBinaryExp(BinaryExpNode node);
     T visitCallExp(CallExpNode node);
@@ -40,7 +41,6 @@ public interface AstVisitor<T> {
     T visitReturn(ReturnNode node);
     T visitWhile(WhileNode node);
     T visitWrite(WriteNode node);
-
 
     T visitIdent(IdentNode node);
     T visitArrayAccess(ArrayAccessNode node);

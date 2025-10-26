@@ -2,11 +2,11 @@ package fr.amvproject.group3.ast.nodes.decls;
 
 import fr.amvproject.group3.ast.AstVisitor;
 import fr.amvproject.group3.ast.nodes.finals.IdentNode;
-import fr.amvproject.group3.ast.nodes.intermediate.DeclNode;
 import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
+import fr.amvproject.group3.ast.nodes.intermediate.VarDeclNode;
 import fr.amvproject.group3.ast.nodes.other.TypeNode;
 
-public class TableNode extends DeclNode {
+public class TableNode extends VarDeclNode {
   private final TypeNode type;
   private final ExpNode sizeExp;
 

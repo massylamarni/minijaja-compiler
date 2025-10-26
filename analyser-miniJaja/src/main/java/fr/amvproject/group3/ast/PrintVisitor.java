@@ -20,6 +20,7 @@ import fr.amvproject.group3.ast.nodes.finals.ParamNode;
 import fr.amvproject.group3.ast.nodes.finals.StringLiteralNode;
 import fr.amvproject.group3.ast.nodes.instrs.*;
 import fr.amvproject.group3.ast.nodes.intermediate.DeclNode;
+import fr.amvproject.group3.ast.nodes.intermediate.VarDeclNode;
 import fr.amvproject.group3.ast.nodes.other.*;
 import fr.amvproject.group3.ast.nodes.program.*;
 
@@ -90,6 +91,11 @@ public class PrintVisitor implements AstVisitor<String> {
     @Override
     public String visitVars(VarsNode node) {
         return joinChildren(node.getList());
+    }
+
+    @Override
+    public String visitVarDecl(VarDeclNode node) {
+        return indent() + node.getIdent().accept(this);
     }
 
     @Override

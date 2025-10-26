@@ -1,17 +1,16 @@
 package fr.amvproject.group3.ast.nodes.abstracts;
 
 import java.util.List;
-import java.util.ArrayList;
 
 import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
 import fr.amvproject.group3.ast.nodes.finals.ParamNode;
 
 public class ParamsNode extends AstNode {
-    private final List<ParamNode> list = new ArrayList<>();
+    private final List<ParamNode> list;
     
-    public void add(ParamNode i) {
-        list.add(i);
+    public ParamsNode(List<ParamNode> list) {
+        this.list = list;
     }
 
     public List<ParamNode> getList() {

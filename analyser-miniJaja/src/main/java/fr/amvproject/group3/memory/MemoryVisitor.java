@@ -15,6 +15,7 @@ import fr.amvproject.group3.ast.nodes.instrs.*;
 import fr.amvproject.group3.ast.nodes.intermediate.DeclNode;
 import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.ast.nodes.intermediate.InstrNode;
+import fr.amvproject.group3.ast.nodes.intermediate.VarDeclNode;
 import fr.amvproject.group3.ast.nodes.other.*;
 import fr.amvproject.group3.ast.nodes.program.*;
 
@@ -50,8 +51,8 @@ public class MemoryVisitor implements AstVisitor<AstNode> {
 
   @Override
   public AstNode visitDecl(DeclNode node) {
-    if (node instanceof VarNode) {
-      ((VarNode) node).accept(this);
+    if (node instanceof VarDeclNode varDeclNode) {
+      varDeclNode.accept(this);
     } else {
       ((MethodNode) node).accept(this);
     }
@@ -60,8 +61,20 @@ public class MemoryVisitor implements AstVisitor<AstNode> {
 
   @Override
   public AstNode visitVars(VarsNode node) {
-    for (VarNode varNode : node.getList()) {
+    for (VarDeclNode varDeclNode : node.getList()) {
+      varDeclNode.accept(this);
+    }
+    return null;
+  }
+
+  @Override
+  public AstNode visitVarDecl(VarDeclNode node) {
+    if (node instanceof CstNode cstNode) {
+      cstNode.accept(this);
+    } else if (node instanceof VarNode varNode) {
       varNode.accept(this);
+    } else {
+      ((TableNode) node).accept(this);
     }
     return null;
   }
@@ -225,7 +238,7 @@ public class MemoryVisitor implements AstVisitor<AstNode> {
     node.getIdent().accept(this);
     node.getListExp().accept(this);
     return null;
-  };
+  }
 
   @Override
   public AstNode visitType(TypeNode node) {

@@ -1,17 +1,13 @@
 package fr.amvproject.group3.memory;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 
 import fr.amvproject.group3.ast.nodes.abstracts.ParamsNode;
 import fr.amvproject.group3.ast.nodes.abstracts.InstrsNode;
-import fr.amvproject.group3.ast.nodes.abstracts.VarsNode;
-import fr.amvproject.group3.ast.nodes.decls.VarNode;
 import fr.amvproject.group3.ast.nodes.finals.IdentNode;
-import fr.amvproject.group3.ast.nodes.finals.ParamNode;
 import fr.amvproject.group3.ast.nodes.instrs.ReturnNode;
 import fr.amvproject.group3.ast.nodes.intermediate.InstrNode;
 import fr.amvproject.group3.ast.nodes.other.TypeNode;

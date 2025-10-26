@@ -1,20 +1,19 @@
 package fr.amvproject.group3.ast.nodes.abstracts;
 
 import java.util.List;
-import java.util.ArrayList;
 
 import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
-import fr.amvproject.group3.ast.nodes.decls.VarNode;
+import fr.amvproject.group3.ast.nodes.intermediate.VarDeclNode;
 
 public class VarsNode extends AstNode {
-    private final List<VarNode> list = new ArrayList<>();
+    private final List<VarDeclNode> list;
     
-    public void add(VarNode i) {
-        list.add(i);
+    public VarsNode(List<VarDeclNode> list) {
+        this.list = list;
     }
 
-    public List<VarNode> getList() {
+    public List<VarDeclNode> getList() {
         return list;
     }
 
