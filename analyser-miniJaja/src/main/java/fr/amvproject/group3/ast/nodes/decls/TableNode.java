@@ -7,17 +7,11 @@ import fr.amvproject.group3.ast.nodes.intermediate.VarDeclNode;
 import fr.amvproject.group3.ast.nodes.other.TypeNode;
 
 public class TableNode extends VarDeclNode {
-  private final TypeNode type;
   private final ExpNode sizeExp;
 
   public TableNode(TypeNode type, IdentNode ident, ExpNode sizeExp) {
-    super(ident);
-    this.type = type;
+    super(ident, type);
     this.sizeExp = sizeExp;
-  }
-
-  public TypeNode getType() {
-    return type;
   }
 
   public ExpNode getSizeExp() {

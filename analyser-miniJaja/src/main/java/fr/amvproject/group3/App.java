@@ -22,11 +22,10 @@ public class App {
 
         PrintVisitor printer = new PrintVisitor();
         printer.save(ast.accept(printer));
-
         
         MemoryVisitor memoryVisitor = new MemoryVisitor();
         ast.accept(memoryVisitor);
         SymbolTable symbolTable = memoryVisitor.getSymbolTable();
-        symbolTable.printTable();
+        symbolTable.save();
     }
 }

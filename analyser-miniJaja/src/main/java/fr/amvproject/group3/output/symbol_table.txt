@@ -1,0 +1,120 @@
+
+===== SYMBOL TABLE =====
+Name       Type       Dim   Params                              Decl Line  Usage Line
+--------------------------------------------------------------------------------------
+voidv0     void       null  None                                2          None      
+boolv0     boolean    null  None                                3          [1135, 1135, 1135, 1135, 1135, 1135, 1137, 1137, 1137, 1138, 1138, 1138, 1142, 1142, 1142, 1142, 1142, 1142, 1144, 1144, 1144, 1144, 1144, 1144, 1147, 1147, 1147, 1148, 1160, 1160, 1160, 1162, 1162, 1162, 1165, 1165, 1165, 1167, 1167, 1167, 1185, 1185, 1185, 1185, 1185, 1185, 1187, 1187, 1187, 1187, 1187, 1187, 1195, 1195, 1195, 1195, 1195, 1195, 1197, 1197, 1197, 1197, 1197, 1197, 1210, 1210, 1210, 1212, 1212, 1212, 1215, 1217, 1222, 1222, 1222, 1224, 1224, 1224, 1232, 1232, 1232, 1232, 1232, 1232, 1236, 1236, 1236, 1236, 1236, 1236, 1242, 1242, 1242, 1244, 1253, 1253, 1253, 1253, 1253, 1253, 1255, 1255, 1255, 1256, 1256, 1256, 1260, 1260, 1260, 1260, 1260, 1260, 1262, 1262, 1262, 1262, 1262, 1262, 1265, 1265, 1265, 1266, 1278, 1278, 1278, 1280, 1280, 1280, 1283, 1283, 1283, 1285, 1285, 1285, 1303, 1303, 1303, 1303, 1303, 1303, 1305, 1305, 1305, 1305, 1305, 1305, 1313, 1313, 1313, 1313, 1313, 1313, 1315, 1315, 1315, 1315, 1315, 1315, 1328, 1328, 1328, 1330, 1330, 1330, 1333, 1335, 1340, 1340, 1340, 1342, 1342, 1342, 1350, 1350, 1350, 1350, 1350, 1350, 1354, 1354, 1354, 1354, 1354, 1354, 1360, 1360, 1360, 1362]
+boolv1     boolean    null  None                                4          None      
+boolv2     boolean    null  None                                5          None      
+boolv3     boolean    null  None                                6          None      
+boolv4     boolean    null  None                                7          None      
+boolv5     boolean    null  None                                8          None      
+boolv6     boolean    null  None                                9          None      
+boolv7     boolean    null  None                                10         None      
+boolv8     boolean    null  None                                11         None      
+boolv9     boolean    null  None                                12         None      
+boolv10    boolean    null  None                                13         None      
+boolv11    boolean    null  None                                14         None      
+boolv12    boolean    null  None                                15         None      
+boolv13    boolean    null  None                                16         None      
+voidt0     void       1+2*3/4+intv0*intv0/intv0 None                                17         None      
+voidt1     void       true||false&&!false==true||boolv0&&boolv0&&boolv0 None                                18         None      
+voidt2     void       1==2>false&&boolv0==boolv0>boolv0 None                                19         None      
+voidt3     void       5     None                                20         None      
+voidt4     void       true  None                                21         None      
+voidt5     void       intf01+2*3/4+intv0*intv0/intv0 None                                22         None      
+voidt6     void       intf01+2*3/4+intv0*intv0/intv0true||false&&!false==true||boolv0&&boolv0&&boolv01==2>false&&boolv0==boolv0>boolv0 None                                23         None      
+voidt7     void       boolf01+2*3/4+intv0*intv0/intv0 None                                24         None      
+voidt8     void       boolf01+2*3/4+intv0*intv0/intv0true||false&&!false==true||boolv0&&boolv0&&boolv01==2>false&&boolv0==boolv0>boolv0 None                                25         None      
+voidt9     void       Lengthintv0 None                                26         None      
+voidt10    void       intv0>Lengthintv0 None                                27         None      
+voidt11    void       1==2>false==boolv0>boolv0>boolv0 None                                28         None      
+voidt12    void       intv0>Lengthboolv0 None                                29         None      
+boolt0     boolean    1+2*3/4+intv0*intv0/intv0 None                                30         None      
+boolt1     boolean    true||false&&!false==true||boolv0&&boolv0&&boolv0 None                                31         None      
+boolt2     boolean    1==2>false&&boolv0==boolv0>boolv0 None                                32         None      
+boolt3     boolean    5     None                                33         None      
+boolt4     boolean    true  None                                34         None      
+boolt5     boolean    intf01+2*3/4+intv0*intv0/intv0 None                                35         None      
+boolt6     boolean    intf01+2*3/4+intv0*intv0/intv0true||false&&!false==true||boolv0&&boolv0&&boolv01==2>false&&boolv0==boolv0>boolv0 None                                36         None      
+boolt7     boolean    boolf01+2*3/4+intv0*intv0/intv0 None                                37         None      
+boolt8     boolean    boolf01+2*3/4+intv0*intv0/intv0true||false&&!false==true||boolv0&&boolv0&&boolv01==2>false&&boolv0==boolv0>boolv0 None                                38         None      
+boolt9     boolean    Lengthintv0 None                                39         None      
+boolt10    boolean    intv0>Lengthintv0 None                                40         None      
+boolt11    boolean    1==2>false==boolv0>boolv0>boolv0 None                                41         None      
+boolt12    boolean    intv0>Lengthboolv0 None                                42         None      
+boolf0     boolean    null  None                                43         [1143, 1144, 1190, 1192, 1195, 1197, 1234, 1236, 1261, 1262, 1308, 1310, 1313, 1315, 1352, 1354]
+boolf1     boolean    null  None                                44         None      
+boolf2     boolean    null  None                                45         None      
+boolf3     boolean    null  None                                46         None      
+boolf4     boolean    null  None                                47         None      
+boolf5     boolean    null  None                                48         None      
+boolf6     boolean    null  None                                49         None      
+boolf7     boolean    null  None                                50         None      
+boolf8     boolean    null  None                                51         None      
+boolf9     boolean    null  None                                52         None      
+boolf10    boolean    null  None                                53         None      
+boolf11    boolean    null  None                                54         None      
+boolf12    boolean    null  None                                55         None      
+boolf13    boolean    null  None                                56         None      
+voidv1     void       null  None                                57         None      
+intv0      int        null  None                                58         [1132, 1134, 1134, 1134, 1135, 1135, 1135, 1136, 1136, 1136, 1141, 1141, 1141, 1142, 1142, 1142, 1143, 1143, 1143, 1144, 1144, 1144, 1145, 1146, 1146, 1148, 1151, 1153, 1155, 1155, 1155, 1157, 1157, 1157, 1180, 1180, 1180, 1182, 1182, 1182, 1185, 1185, 1185, 1187, 1187, 1187, 1190, 1190, 1190, 1192, 1192, 1192, 1195, 1195, 1195, 1197, 1197, 1197, 1200, 1202, 1205, 1205, 1207, 1207, 1215, 1217, 1220, 1220, 1220, 1230, 1230, 1230, 1232, 1232, 1232, 1234, 1234, 1234, 1236, 1236, 1236, 1238, 1240, 1240, 1244, 1250, 1252, 1252, 1252, 1253, 1253, 1253, 1254, 1254, 1254, 1259, 1259, 1259, 1260, 1260, 1260, 1261, 1261, 1261, 1262, 1262, 1262, 1263, 1264, 1264, 1266, 1269, 1271, 1273, 1273, 1273, 1275, 1275, 1275, 1298, 1298, 1298, 1300, 1300, 1300, 1303, 1303, 1303, 1305, 1305, 1305, 1308, 1308, 1308, 1310, 1310, 1310, 1313, 1313, 1313, 1315, 1315, 1315, 1318, 1320, 1323, 1323, 1325, 1325, 1333, 1335, 1338, 1338, 1338, 1348, 1348, 1348, 1350, 1350, 1350, 1352, 1352, 1352, 1354, 1354, 1354, 1356, 1358, 1358, 1362]
+intv1      int        null  None                                59         None      
+intv2      int        null  None                                60         None      
+intv3      int        null  None                                61         None      
+intv4      int        null  None                                62         None      
+intv5      int        null  None                                63         None      
+intv6      int        null  None                                64         None      
+intv7      int        null  None                                65         None      
+intv8      int        null  None                                66         None      
+intv9      int        null  None                                67         None      
+intv10     int        null  None                                68         None      
+intv11     int        null  None                                69         None      
+intv12     int        null  None                                70         None      
+intv13     int        null  None                                71         None      
+voidt13    void       1+2*3/4+intv0*intv0/intv0 None                                72         None      
+voidt14    void       true||false&&!false==true||boolv0&&boolv0&&boolv0 None                                73         None      
+voidt15    void       1==2>false&&boolv0==boolv0>boolv0 None                                74         None      
+voidt16    void       5     None                                75         None      
+voidt17    void       true  None                                76         None      
+voidt18    void       intf01+2*3/4+intv0*intv0/intv0 None                                77         None      
+voidt19    void       intf01+2*3/4+intv0*intv0/intv0true||false&&!false==true||boolv0&&boolv0&&boolv01==2>false&&boolv0==boolv0>boolv0 None                                78         None      
+voidt20    void       boolf01+2*3/4+intv0*intv0/intv0 None                                79         None      
+voidt21    void       boolf01+2*3/4+intv0*intv0/intv0true||false&&!false==true||boolv0&&boolv0&&boolv01==2>false&&boolv0==boolv0>boolv0 None                                80         None      
+voidt22    void       Lengthintv0 None                                81         None      
+voidt23    void       intv0>Lengthintv0 None                                82         None      
+voidt24    void       1==2>false==boolv0>boolv0>boolv0 None                                83         None      
+voidt25    void       intv0>Lengthboolv0 None                                84         None      
+intt0      int        1+2*3/4+intv0*intv0/intv0 None                                85         [1133, 1152, 1154, 1251, 1270, 1272]
+intt1      int        true||false&&!false==true||boolv0&&boolv0&&boolv0 None                                86         None      
+intt2      int        1==2>false&&boolv0==boolv0>boolv0 None                                87         None      
+intt3      int        5     None                                88         None      
+intt4      int        true  None                                89         None      
+intt5      int        intf01+2*3/4+intv0*intv0/intv0 None                                90         None      
+intt6      int        intf01+2*3/4+intv0*intv0/intv0true||false&&!false==true||boolv0&&boolv0&&boolv01==2>false&&boolv0==boolv0>boolv0 None                                91         None      
+intt7      int        boolf01+2*3/4+intv0*intv0/intv0 None                                92         None      
+intt8      int        boolf01+2*3/4+intv0*intv0/intv0true||false&&!false==true||boolv0&&boolv0&&boolv01==2>false&&boolv0==boolv0>boolv0 None                                93         None      
+intt9      int        Lengthintv0 None                                94         None      
+intt10     int        intv0>Lengthintv0 None                                95         None      
+intt11     int        1==2>false==boolv0>boolv0>boolv0 None                                96         None      
+intt12     int        intv0>Lengthboolv0 None                                97         None      
+intf0      int        null  None                                98         [1141, 1142, 1180, 1182, 1185, 1187, 1230, 1232, 1259, 1260, 1298, 1300, 1303, 1305, 1348, 1350]
+intf1      int        null  None                                99         None      
+intf2      int        null  None                                100        None      
+intf3      int        null  None                                101        None      
+intf4      int        null  None                                102        None      
+intf5      int        null  None                                103        None      
+intf6      int        null  None                                104        None      
+intf7      int        null  None                                105        None      
+intf8      int        null  None                                106        None      
+intf9      int        null  None                                107        None      
+intf10     int        null  None                                108        None      
+intf11     int        null  None                                109        None      
+intf12     int        null  None                                110        None      
+intf13     int        null  None                                111        None      
+boolm0     boolean    null  int e0                              112        None      
+boolm1     boolean    null  boolean e0, int e1, boolean e1      551        None      
+intm0      int        null  int e2                              667        None      
+intm1      int        null  boolean e2, int e3, boolean e3      783        None      
+voidm0     void       null  int e4                              899        [1134, 1135, 1252, 1253]
+voidm1     void       null  boolean e4, int e5, boolean e5      1015       None      

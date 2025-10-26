@@ -7,23 +7,16 @@ import fr.amvproject.group3.ast.nodes.intermediate.VarDeclNode;
 import fr.amvproject.group3.ast.nodes.other.TypeNode;
 
 public class VarNode extends VarDeclNode {
-    private final TypeNode type;
     private final ExpNode initExp;
 
     public VarNode(TypeNode type, IdentNode ident) {
-      super(ident);
-      this.type = type;
+      super(ident, type);
       this.initExp = null;
     }
 
     public VarNode(TypeNode type, IdentNode ident, ExpNode initExp) {
-      super(ident);
-      this.type = type;
+      super(ident, type);
       this.initExp = initExp;
-    }
-
-    public TypeNode getType() {
-        return type;
     }
 
     public ExpNode getInitExp() {

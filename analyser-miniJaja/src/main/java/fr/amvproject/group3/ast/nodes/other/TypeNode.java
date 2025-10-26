@@ -56,6 +56,10 @@ public class TypeNode extends AstNode {
         return type == TypeName.VOID;
     }
 
+    public boolean sameAs(TypeNode typeNode) {
+        return this.type == typeNode.type;
+    }
+
     @Override
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visitType(this);
