@@ -85,6 +85,23 @@ public class SymbolTable {
     return true;
   }
 
+  /* Print */
+
+  private final StringBuilder getParams(Symbol sym) {
+    StringBuilder params = new StringBuilder();
+    if (sym.getEntetes() != null && !sym.getEntetes().getList().isEmpty()) {
+      for (ParamNode e : sym.getEntetes().getList()) {
+        String pType = e.getType() != null ? e.getType().getName() : "<?>";
+        String pName = e.getIdent() != null ? e.getIdent().getName() : "<?>";
+        params.append(pType).append(" ").append(pName).append(";");
+      }
+      if (!params.isEmpty()) params.setLength(params.length() - 1); // remove trailing semicolon
+    } else {
+      params.append("None");
+    }
+    return params;
+  }
+
   public void print() {
     StringBuilder sb = new StringBuilder();
 
@@ -99,17 +116,7 @@ public class SymbolTable {
       String dim = sym.getDimension();
 
       // Format parameters as "type name;type name;..."
-      StringBuilder params = new StringBuilder();
-      if (sym.getEntetes() != null && !sym.getEntetes().getList().isEmpty()) {
-        for (ParamNode e : sym.getEntetes().getList()) {
-          String pType = e.getType() != null ? e.getType().getName() : "<?>";
-          String pName = e.getIdent() != null ? e.getIdent().getName() : "<?>";
-          params.append(pType).append(" ").append(pName).append(";");
-        }
-        if (!params.isEmpty()) params.setLength(params.length() - 1); // remove trailing semicolon
-      } else {
-        params.append("None");
-      }
+      StringBuilder params = getParams(sym);
 
       // Format usage lines as "line1;line2;line3"
       String usageLines = sym.getLinesOfUsage().isEmpty() ? "None"
@@ -127,5 +134,4 @@ public class SymbolTable {
 
     StringSaver.save(sb.toString(), "symbolTable.csv");
   }
-
 }

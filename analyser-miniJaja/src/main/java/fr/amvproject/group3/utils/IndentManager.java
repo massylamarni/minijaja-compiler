@@ -16,6 +16,6 @@ public class IndentManager {
     }
 
     public String indent() {
-      return "  ".repeat(indentLevel);
+      return "  ".repeat(indentLevel < 0 ? 0 : indentLevel);
     }
   }

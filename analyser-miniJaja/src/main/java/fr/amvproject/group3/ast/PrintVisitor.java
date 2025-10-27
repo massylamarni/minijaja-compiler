@@ -12,6 +12,7 @@ import fr.amvproject.group3.ast.nodes.other.*;
 import fr.amvproject.group3.ast.nodes.program.*;
 import fr.amvproject.group3.utils.IndentManager;
 
+@SuppressWarnings("java:S6539") // Visitor pattern: large by design
 public class PrintVisitor implements AstVisitor<String> {
 
   private boolean programDebug = false;

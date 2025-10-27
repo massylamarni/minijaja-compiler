@@ -12,7 +12,7 @@ public class StringSaver {
   private static final Logger LOGGER = Logger.getLogger(StringSaver.class.getName());
   
   public static void save(String str, String fileName) {
-    Path dir = Paths.get("analyser-miniJaja", "src", "main", "java", "fr", "amvproject", "group3", "output");
+    Path dir = Paths.get("analyser-miniJaja", "target", "output");
     try {
       Files.createDirectories(dir);
       Path filePath = dir.resolve(fileName);
