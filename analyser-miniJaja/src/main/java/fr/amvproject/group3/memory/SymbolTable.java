@@ -75,17 +75,13 @@ public class SymbolTable {
   }
 
   public boolean recordUsage(IdentNode ident, int lineOfUsage) throws SymbolTableException {
-    /* 
-      Bug in memoryVisitor at visitReturn.
-      When running light.mj, the line 1145 returns Length as an ident.
+    Symbol sym = symbols.get(ident.getName());
 
-      Symbol sym = symbols.get(ident.getName());
-
-      if (sym == null) {
-        throw new SymbolTableException("Symbol " + ident.getName() + " not declared but used at line " + lineOfUsage);
-      }
-      sym.addLineOfUsage(lineOfUsage);
-    */
+    if (sym == null) {
+      throw new SymbolTableException("Symbol " + ident.getName() + " not declared but used at line " + lineOfUsage);
+    }
+    sym.addLineOfUsage(lineOfUsage);
+    
     return true;
   }
 

@@ -21,7 +21,7 @@ public class MiniJajaParser extends Parser {
 		RBRACE=17, LPAREN=18, RPAREN=19, LBRACK=20, RBRACK=21, SEMI=22, COMMA=23, 
 		ASSIGN=24, ADDASSIGN=25, INC=26, ADD=27, SUB=28, MUL=29, DIV=30, NOT=31, 
 		AND=32, OR=33, EQ=34, GT=35, STRING=36, IDENTIFICATEUR=37, NOMBRE=38, 
-		WS=39, LINE_COMMENT=40, MULTILINE_COMMENT=41;
+		WS=39, COMMENT_LINE=40, COMMENT_BLOCK=41;
 	public static final int
 		RULE_program = 0, RULE_classe = 1, RULE_ident = 2, RULE_decls = 3, RULE_decl = 4, 
 		RULE_vars = 5, RULE_var = 6, RULE_vexp = 7, RULE_methode = 8, RULE_methmain = 9, 
@@ -55,7 +55,7 @@ public class MiniJajaParser extends Parser {
 			"WRITELN", "IF", "ELSE", "WHILE", "TRUE", "FALSE", "LENGTH", "LBRACE", 
 			"RBRACE", "LPAREN", "RPAREN", "LBRACK", "RBRACK", "SEMI", "COMMA", "ASSIGN", 
 			"ADDASSIGN", "INC", "ADD", "SUB", "MUL", "DIV", "NOT", "AND", "OR", "EQ", 
-			"GT", "STRING", "IDENTIFICATEUR", "NOMBRE", "WS", "LINE_COMMENT", "MULTILINE_COMMENT"
+			"GT", "STRING", "IDENTIFICATEUR", "NOMBRE", "WS", "COMMENT_LINE", "COMMENT_BLOCK"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();

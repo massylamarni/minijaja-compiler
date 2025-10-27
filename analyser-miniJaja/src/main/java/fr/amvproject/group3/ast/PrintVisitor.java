@@ -26,7 +26,7 @@ public class PrintVisitor implements AstVisitor<String> {
         sb.append(node.accept(this)).append(indentManager.getIndentLevel() != 0 ? ";\n" : "");
       }
     }
-    indentManager.decreseIndent();
+    indentManager.decreaseIndent();
     return sb.toString();
   }
 
@@ -40,7 +40,7 @@ public class PrintVisitor implements AstVisitor<String> {
           sb.append(", ");
       }
     }
-    indentManager.decreseIndent();
+    indentManager.decreaseIndent();
     return sb.toString();
   }
 
@@ -135,7 +135,7 @@ public class PrintVisitor implements AstVisitor<String> {
     if (node.getInstrs() != null)
       sb.append(node.getInstrs().accept(this));
     sb.append(indentManager.indent()).append("}\n");
-    indentManager.decreseIndent();
+    indentManager.decreaseIndent();
     return sb.toString();
   }
 

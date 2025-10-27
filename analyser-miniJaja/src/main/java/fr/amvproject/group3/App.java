@@ -11,7 +11,10 @@ import org.antlr.v4.runtime.*;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        
+        ProgramGenerator generator = new ProgramGenerator();
+        generator.generateProgram();
+        generator.print();
+
         CharStream input = CharStreams.fromFileName("analyser-miniJaja/src/main/java/fr/amvproject/group3/test_files/light.mj");
         MiniJajaLexer lexer = new MiniJajaLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);

@@ -11,7 +11,7 @@ public class IndentManager {
       indentLevel++;
     }
 
-    public void decreseIndent() {
+    public void decreaseIndent() {
       indentLevel--;
     }
 
