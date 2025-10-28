@@ -47,6 +47,14 @@ public class UnaryOpNode extends AstNode {
   }
 
   @Override
+  public boolean sameAs(AstNode other) {
+    if (other instanceof UnaryOpNode unaryOpNode) {
+      return this.unaryOp == unaryOpNode.unaryOp;
+    }
+    return false;
+  }
+
+  @Override
   public <T> T accept(AstVisitor<T> visitor) {
     return visitor.visitUnaryOp(this);
   }

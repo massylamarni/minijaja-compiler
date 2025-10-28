@@ -1,24 +1,33 @@
 package fr.amvproject.group3.ast.nodes.instrs;
 
+import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
 import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.ast.nodes.intermediate.InstrNode;
 
 public class WriteNode extends InstrNode {
-    private final ExpNode exp;
+    private final ExpNode expNode;
     private final boolean isLn;
 
-    public WriteNode(ExpNode exp, boolean isLn) {
-        this.exp = exp;
+    public WriteNode(ExpNode expNode, boolean isLn) {
+        this.expNode = expNode;
         this.isLn = isLn;
     }
 
     public ExpNode getExp() {
-        return exp;
+        return expNode;
     }
 
     public boolean isLn() {
         return isLn;
+    }
+
+    @Override
+    public boolean sameAs(AstNode other) {
+        if (other instanceof WriteNode writeNode) {
+            return this.expNode.sameAs(writeNode.expNode) && this.isLn == writeNode.isLn;
+        }
+        return false;
     }
 
     @Override

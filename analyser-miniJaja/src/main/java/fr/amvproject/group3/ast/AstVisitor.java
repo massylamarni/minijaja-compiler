@@ -51,5 +51,6 @@ public interface AstVisitor<T> {
 
     T visitBinaryOp(BinaryOpNode node);
     T visitType(TypeNode node);
+    T visitTypeMeth(TypeMethNode node);
     T visitUnaryOp(UnaryOpNode node);
 }

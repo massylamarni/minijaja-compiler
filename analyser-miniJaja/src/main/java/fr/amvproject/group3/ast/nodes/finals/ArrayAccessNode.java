@@ -1,5 +1,6 @@
 package fr.amvproject.group3.ast.nodes.finals;
 
+import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
 import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.ast.nodes.intermediate.LeftValueNode;
@@ -28,6 +29,14 @@ public class ArrayAccessNode extends LeftValueNode {
     @Override
     public String evaluate() {
         return ident.getName() + "[" + indexExp.evaluate() + "]";
+    }
+
+    @Override
+    public boolean sameAs(AstNode other) {
+        if (other instanceof ArrayAccessNode arrayAccessNode) {
+            return this.ident.sameAs(arrayAccessNode.ident) && this.indexExp.sameAs(arrayAccessNode.indexExp);
+        }
+        return false;
     }
 
     @Override

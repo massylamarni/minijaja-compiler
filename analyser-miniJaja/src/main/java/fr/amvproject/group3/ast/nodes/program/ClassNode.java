@@ -7,26 +7,36 @@ import fr.amvproject.group3.ast.nodes.decls.MainNode;
 import fr.amvproject.group3.ast.nodes.finals.IdentNode;
 
 public class ClassNode extends AstNode {
-    private final IdentNode ident;
-    private final DeclsNode decls;
-    private final MainNode main;
+    private final IdentNode identNode;
+    private final DeclsNode declsNode;
+    private final MainNode mainNode;
 
-    public ClassNode(IdentNode ident, DeclsNode decls, MainNode main) {
-        this.ident = ident;
-        this.decls = decls;
-        this.main = main;
+    public ClassNode(IdentNode identNode, DeclsNode declsNode, MainNode mainNode) {
+        this.identNode = identNode;
+        this.declsNode = declsNode;
+        this.mainNode = mainNode;
     }
 
     public IdentNode getIdent() {
-        return ident;
+        return identNode;
     }
 
     public DeclsNode getDecls() {
-        return decls;
+        return declsNode;
     }
 
     public MainNode getMain() {
-        return main;
+        return mainNode;
+    }
+
+    @Override
+    public boolean sameAs(AstNode other) {
+        if (other instanceof ClassNode classNode) {
+            return this.identNode.sameAs(classNode.identNode) &&
+                this.declsNode.sameAs(classNode.declsNode) &&
+                this.mainNode.sameAs(classNode.mainNode);
+        }
+        return false;
     }
 
     @Override

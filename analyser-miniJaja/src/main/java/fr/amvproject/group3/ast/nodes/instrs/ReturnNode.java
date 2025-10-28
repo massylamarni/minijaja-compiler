@@ -1,18 +1,27 @@
 package fr.amvproject.group3.ast.nodes.instrs;
 
+import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
 import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.ast.nodes.intermediate.InstrNode;
 
 public class ReturnNode extends InstrNode {
-    private final ExpNode exp;
+    private final ExpNode expNode;
 
-    public ReturnNode(ExpNode exp) {
-        this.exp = exp;
+    public ReturnNode(ExpNode expNode) {
+        this.expNode = expNode;
     }
 
     public ExpNode getExp() {
-        return exp;
+        return expNode;
+    }
+
+    @Override
+    public boolean sameAs(AstNode other) {
+        if (other instanceof ReturnNode returnNode) {
+            return this.expNode.sameAs(returnNode.expNode);
+        }
+        return false;
     }
 
     @Override

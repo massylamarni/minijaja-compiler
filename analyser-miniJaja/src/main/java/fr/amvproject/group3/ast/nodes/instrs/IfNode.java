@@ -1,5 +1,6 @@
 package fr.amvproject.group3.ast.nodes.instrs;
 
+import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
 import fr.amvproject.group3.ast.nodes.abstracts.InstrsNode;
 import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
@@ -26,6 +27,18 @@ public class IfNode extends InstrNode {
 
     public InstrsNode getElseInstrs() {
         return elseInstrs;
+    }
+
+    @Override
+    public boolean sameAs(AstNode other) {
+        if (other instanceof IfNode ifNode) {
+            if (this.thenInstrs == null || ifNode.thenInstrs == null) return this.thenInstrs == ifNode.thenInstrs;
+            if (this.elseInstrs == null || ifNode.elseInstrs == null) return this.elseInstrs == ifNode.elseInstrs;
+            return this.condExp.sameAs(ifNode.condExp) &&
+                this.thenInstrs.sameAs(ifNode.thenInstrs) &&
+                this.elseInstrs.sameAs(ifNode.elseInstrs);
+        }
+        return false;
     }
 
     @Override

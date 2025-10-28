@@ -6,20 +6,28 @@ import fr.amvproject.group3.ast.nodes.abstracts.InstrsNode;
 import fr.amvproject.group3.ast.nodes.abstracts.VarsNode;
 
 public class MainNode extends AstNode {
-    private final VarsNode vars;
-    private final InstrsNode instrs;
+    private final VarsNode varsNode;
+    private final InstrsNode instrsNode;
 
-    public MainNode(VarsNode vars, InstrsNode instrs) {
-        this.vars = vars;
-        this.instrs = instrs;
+    public MainNode(VarsNode varsNode, InstrsNode instrsNode) {
+        this.varsNode = varsNode;
+        this.instrsNode = instrsNode;
     }
 
     public VarsNode getVars() {
-        return vars;
+        return varsNode;
     }
 
     public InstrsNode getInstrs() {
-        return instrs;
+        return instrsNode;
+    }
+
+    @Override
+    public boolean sameAs(AstNode other) {
+        if (other instanceof MainNode mainNode) {
+            return this.varsNode.sameAs(mainNode.varsNode) && this.instrsNode.sameAs(mainNode.instrsNode);
+        }
+        return false;
     }
 
     @Override

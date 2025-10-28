@@ -1,5 +1,6 @@
 package fr.amvproject.group3.ast.nodes.instrs;
 
+import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
 import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.ast.nodes.intermediate.InstrNode;
@@ -7,11 +8,11 @@ import fr.amvproject.group3.ast.nodes.intermediate.LeftValueNode;
 
 public class AddAssignNode extends InstrNode {
     private final LeftValueNode leftValueNode;
-    private final ExpNode exp;
+    private final ExpNode expNode;
 
-    public AddAssignNode(LeftValueNode leftValueNode, ExpNode exp) {        
+    public AddAssignNode(LeftValueNode leftValueNode, ExpNode expNode) {        
         this.leftValueNode = leftValueNode;
-        this.exp = exp;
+        this.expNode = expNode;
     }
 
     public LeftValueNode getLeftValueNode() {
@@ -19,7 +20,15 @@ public class AddAssignNode extends InstrNode {
     }
 
     public ExpNode getExp() {
-        return exp;
+        return expNode;
+    }
+
+    @Override
+    public boolean sameAs(AstNode other) {
+        if (other instanceof AddAssignNode addAssignNode) {
+            return this.leftValueNode.sameAs(addAssignNode.leftValueNode) && this.expNode.sameAs(addAssignNode.expNode);
+        }
+        return false;
     }
 
     @Override

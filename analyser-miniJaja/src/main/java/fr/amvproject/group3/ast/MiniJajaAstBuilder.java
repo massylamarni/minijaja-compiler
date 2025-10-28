@@ -47,7 +47,7 @@ public class MiniJajaAstBuilder extends MiniJajaParserBaseVisitor<AstNode> {
 
     // Array, grammar does not allow to init arrays
     if (ctx.LBRACK() != null) {
-      return new TableNode(new TypeNode(ctx.typemeth().getText()),
+      return new TableNode(new TypeMethNode(ctx.typemeth().getText()),
           new IdentNode(ctx.ident().getText(), ctx.ident().IDENTIFICATEUR().getSymbol().getLine()),
           (ExpNode) visit(ctx.exp()));
     } else if (ctx.FINAL() != null) {
@@ -56,14 +56,14 @@ public class MiniJajaAstBuilder extends MiniJajaParserBaseVisitor<AstNode> {
           new IdentNode(ctx.ident().getText(), ctx.ident().IDENTIFICATEUR().getSymbol().getLine()), exp);
     }
     // Var
-    return new VarNode(new TypeNode(ctx.typemeth().getText()),
+    return new VarNode(new TypeMethNode(ctx.typemeth().getText()),
         new IdentNode(ctx.ident().getText(), ctx.ident().IDENTIFICATEUR().getSymbol().getLine()), exp);
 
   }
 
   @Override
   public AstNode visitMethode(MiniJajaParser.MethodeContext ctx) {
-    return new MethodNode(new TypeNode(ctx.typemeth().getText()),
+    return new MethodNode(new TypeMethNode(ctx.typemeth().getText()),
         new IdentNode(ctx.ident().getText(), ctx.ident().IDENTIFICATEUR().getSymbol().getLine()),
         (ParamsNode) visit(ctx.entetes()), (VarsNode) visit(ctx.vars()), (InstrsNode) visit(ctx.instrs()));
   }

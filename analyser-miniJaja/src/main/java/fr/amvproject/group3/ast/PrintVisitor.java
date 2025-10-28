@@ -205,7 +205,7 @@ public class PrintVisitor implements AstVisitor<String> {
 
   @Override
   public String visitLength(LengthNode node) {
-    return indentManager.indent() + "Longueur(" + node.getIdent().accept(this) + ")";
+    return "length(" + node.getIdent().accept(this) + ")";
   }
 
   @Override
@@ -229,12 +229,12 @@ public class PrintVisitor implements AstVisitor<String> {
 
   @Override
   public String visitWrite(WriteNode node) {
-    return indentManager.indent() + (node.isLn() ? "writeLn" : "write") + "(" + node.getExp().accept(this) + ")";
+    return indentManager.indent() + (node.isLn() ? "writeln" : "write") + "(" + node.getExp().accept(this) + ")";
   }
 
   @Override
   public String visitReturn(ReturnNode node) {
-    return indentManager.indent() + "retour " + node.getExp().accept(this);
+    return indentManager.indent() + "return " + node.getExp().accept(this);
   }
 
   @Override
@@ -277,7 +277,12 @@ public class PrintVisitor implements AstVisitor<String> {
 
   @Override
   public String visitType(TypeNode node) {
-    return node.getType().getName();
+    return node.getName();
+  }
+
+  @Override
+  public String visitTypeMeth(TypeMethNode node) {
+    return node.getName();
   }
 
   @Override

@@ -1,5 +1,6 @@
 package fr.amvproject.group3.ast.nodes.finals;
 
+import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
 import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
 
@@ -18,6 +19,14 @@ public class StringLiteralNode extends ExpNode {
     @Override
     public String evaluate() {
         return value;
+    }
+
+    @Override
+    public boolean sameAs(AstNode other) {
+        if (other instanceof StringLiteralNode stringLiteralNode) {
+            return this.value.equals(stringLiteralNode.value);
+        }
+        return false;
     }
 
     @Override

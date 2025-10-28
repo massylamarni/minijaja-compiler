@@ -18,6 +18,19 @@ public class DeclsNode extends AstNode {
     }
 
     @Override
+    public boolean sameAs(AstNode other) {
+        if (other instanceof DeclsNode declsNode && this.list.size() == declsNode.list.size()) {
+            for (int i = 0; i < this.list.size(); i++) {
+                if (!this.list.get(i).sameAs(declsNode.list.get(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visitDecls(this);
     }

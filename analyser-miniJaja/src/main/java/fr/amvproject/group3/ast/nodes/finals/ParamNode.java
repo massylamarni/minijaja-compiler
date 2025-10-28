@@ -5,20 +5,28 @@ import fr.amvproject.group3.ast.AstVisitor;
 import fr.amvproject.group3.ast.nodes.other.TypeNode;
 
 public class ParamNode extends AstNode {
-    private final TypeNode type;
-    private final IdentNode ident;
+    private final TypeNode typeNode;
+    private final IdentNode identNode;
 
-    public ParamNode(TypeNode type, IdentNode ident) {
-        this.type = type;
-        this.ident = ident;
+    public ParamNode(TypeNode typeNode, IdentNode identNode) {
+        this.typeNode = typeNode;
+        this.identNode = identNode;
     }
 
     public TypeNode getType() {
-        return type;
+        return typeNode;
     }
 
     public IdentNode getIdent() {
-        return ident;
+        return identNode;
+    }
+
+    @Override
+    public boolean sameAs(AstNode other) {
+        if (other instanceof ParamNode paramNode) {
+            return this.typeNode.sameAs(paramNode.typeNode) && this.identNode.sameAs(paramNode.identNode);
+        }
+        return false;
     }
 
     @Override

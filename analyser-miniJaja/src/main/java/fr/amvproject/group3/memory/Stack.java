@@ -6,7 +6,10 @@ import java.util.Iterator;
 
 import fr.amvproject.group3.ast.nodes.abstracts.ParamsNode;
 import fr.amvproject.group3.ast.nodes.abstracts.VarsNode;
+import fr.amvproject.group3.ast.nodes.decls.CstNode;
 import fr.amvproject.group3.ast.nodes.decls.MethodNode;
+import fr.amvproject.group3.ast.nodes.decls.TableNode;
+import fr.amvproject.group3.ast.nodes.decls.VarNode;
 import fr.amvproject.group3.ast.nodes.abstracts.InstrsNode;
 import fr.amvproject.group3.ast.nodes.abstracts.ListExpNode;
 import fr.amvproject.group3.ast.nodes.finals.IdentNode;
@@ -217,7 +220,7 @@ public class Stack {
       queue.push(q);
       return params;
     } else if (quad.obj.equals("meth") && (quad.value instanceof MethodNode methodNode)
-        && methodNode.getIdent().equals(ident) && methodNode.getReturnType().sameAs(quad.type)) {
+        && methodNode.getIdent().sameAs(ident) && methodNode.getReturnType().sameAs(quad.type)) {
       return methodNode.getParams();
     }
     return null;
@@ -233,7 +236,7 @@ public class Stack {
       queue.push(q);
       return vars;
     } else if (quad.obj.equals("meth") && (quad.value instanceof MethodNode methodNode)
-        && methodNode.getIdent().equals(ident) && methodNode.getReturnType().sameAs(quad.type)) {
+        && methodNode.getIdent().sameAs(ident) && methodNode.getReturnType().sameAs(quad.type)) {
       return methodNode.getVars();
     }
     return null;
@@ -249,7 +252,7 @@ public class Stack {
       queue.push(q);
       return intrs;
     } else if (quad.obj.equals("meth") && (quad.value instanceof MethodNode methodNode)
-        && methodNode.getIdent().equals(ident) && methodNode.getReturnType().sameAs(quad.type)) {
+        && methodNode.getIdent().sameAs(ident) && methodNode.getReturnType().sameAs(quad.type)) {
       return methodNode.getInstrs();
     }
     return null;
@@ -295,6 +298,13 @@ public class Stack {
     sb.append("  Value : [").append(arr).append("]\n");
   }
 
+  private String getTypeNameHelper(VarDeclNode v) {
+    if (v instanceof TableNode tableNode) return tableNode.getType().getName();
+    if (v instanceof VarNode varNode) return varNode.getType().getName();
+    if (v instanceof CstNode cstNode) return cstNode.getType().getName();
+    return null;
+  }
+
   private void appendMethod(StringBuilder sb, Quad q) {
     sb.append("  Method parameters:\n");
     if (q.value instanceof ParamsNode params) {
@@ -310,7 +320,7 @@ public class Stack {
       if (vars != null) {
         for (VarDeclNode v : vars.getList()) {
           sb.append("    - ").append(v.getIdent().getName())
-              .append(" : ").append(v.getType().getName()).append("\n");
+              .append(" : ").append(getTypeNameHelper(v)).append("\n");
         }
       }
 

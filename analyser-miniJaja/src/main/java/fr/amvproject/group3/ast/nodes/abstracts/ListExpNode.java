@@ -18,6 +18,19 @@ public class ListExpNode extends AstNode {
     }
 
     @Override
+    public boolean sameAs(AstNode other) {
+        if (other instanceof ListExpNode listExpNode && this.list.size() == listExpNode.list.size()) {
+            for (int i = 0; i < this.list.size(); i++) {
+                if (!this.list.get(i).sameAs(listExpNode.list.get(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visitListExp(this);
     }

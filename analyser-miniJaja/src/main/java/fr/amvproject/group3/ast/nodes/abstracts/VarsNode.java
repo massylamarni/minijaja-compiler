@@ -18,6 +18,19 @@ public class VarsNode extends AstNode {
     }
 
     @Override
+    public boolean sameAs(AstNode other) {
+        if (other instanceof VarsNode varsNode && this.list.size() == varsNode.list.size()) {
+            for (int i = 0; i < this.list.size(); i++) {
+                if (!this.list.get(i).sameAs(varsNode.list.get(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visitVars(this);
     }

@@ -79,7 +79,7 @@ public class MemoryVisitor implements AstVisitor<AstNode> {
 
   @Override
   public AstNode visitCst(CstNode node) {
-    symbolTable.addSymbol(node.getIdent(), node.getType(), null, null, node.getIdent().getLine());
+    symbolTable.addSymbol(node.getIdent(), new TypeMethNode(node.getType().getName()), null, null, node.getIdent().getLine());
     return null;
   }
 
@@ -234,6 +234,11 @@ public class MemoryVisitor implements AstVisitor<AstNode> {
 
   @Override
   public AstNode visitType(TypeNode node) {
+    return null;
+  }
+
+  @Override
+  public AstNode visitTypeMeth(TypeMethNode node) {
     return null;
   }
 

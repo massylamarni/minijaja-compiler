@@ -8,14 +8,22 @@ import fr.amvproject.group3.ast.nodes.finals.IdentNode;
  * Var | Methode
  */
 public class DeclNode extends AstNode {
-    private final IdentNode ident;
+    private final IdentNode identNode;
 
-    public DeclNode(IdentNode ident) {
-        this.ident = ident;
+    public DeclNode(IdentNode identNode) {
+        this.identNode = identNode;
     }
 
     public IdentNode getIdent() {
-        return ident;
+        return identNode;
+    }
+
+    @Override
+    public boolean sameAs(AstNode other) {
+        if (other instanceof DeclNode declNode) {
+            return this.identNode.sameAs(declNode.identNode);
+        }
+        return false;
     }
 
     @Override

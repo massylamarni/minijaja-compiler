@@ -18,6 +18,19 @@ public class ParamsNode extends AstNode {
     }
 
     @Override
+    public boolean sameAs(AstNode other) {
+        if (other instanceof ParamsNode paramsNode && this.list.size() == paramsNode.list.size()) {
+            for (int i = 0; i < this.list.size(); i++) {
+                if (!this.list.get(i).sameAs(paramsNode.list.get(i))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visitParams(this);
     }

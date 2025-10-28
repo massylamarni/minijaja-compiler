@@ -1,22 +1,24 @@
 package fr.amvproject.group3.ast.nodes.intermediate;
 
+import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
 import fr.amvproject.group3.ast.nodes.finals.IdentNode;
-import fr.amvproject.group3.ast.nodes.other.TypeNode;
 
 /* 
  * Cst | Var | Table
  */
 public class VarDeclNode extends DeclNode {
-    private TypeNode type;
 
-    public VarDeclNode(IdentNode ident, TypeNode type) {
-        super(ident);
-        this.type = type;
+    public VarDeclNode(IdentNode identNode) {
+        super(identNode);
     }
 
-    public TypeNode getType() {
-      return type;
+    @Override
+    public boolean sameAs(AstNode other) {
+        if (other instanceof VarDeclNode varDeclNode) {
+            return this.getIdent().sameAs(varDeclNode.getIdent());
+        }
+        return false;
     }
 
     @Override

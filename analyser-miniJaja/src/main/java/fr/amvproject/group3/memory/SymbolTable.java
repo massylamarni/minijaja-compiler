@@ -8,20 +8,20 @@ import java.util.Map;
 import fr.amvproject.group3.ast.nodes.abstracts.ParamsNode;
 import fr.amvproject.group3.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.ast.nodes.finals.ParamNode;
-import fr.amvproject.group3.ast.nodes.other.TypeNode;
+import fr.amvproject.group3.ast.nodes.other.TypeMethNode;
 import fr.amvproject.group3.exceptions.SymbolTableException;
 import fr.amvproject.group3.utils.StringSaver;
 
 public class SymbolTable {
   public static class Symbol {
     private final IdentNode ident;
-    private final TypeNode type;
+    private final TypeMethNode type;
     private final String dimension; // Table size can be defined by an expression
     private final ParamsNode entetes;
     private final int lineOfDeclaration;
     private List<Integer> linesOfUsage;
 
-    public Symbol(IdentNode ident, TypeNode type, String dimension, ParamsNode entetes, int lineOfDeclaration) {
+    public Symbol(IdentNode ident, TypeMethNode type, String dimension, ParamsNode entetes, int lineOfDeclaration) {
       this.ident = ident;
       this.type = type;
       this.dimension = dimension;
@@ -34,7 +34,7 @@ public class SymbolTable {
       return ident;
     }
 
-    public TypeNode getType() {
+    public TypeMethNode getType() {
       return type;
     }
 
@@ -61,7 +61,7 @@ public class SymbolTable {
 
   private final Map<String, Symbol> symbols = new LinkedHashMap<>();
 
-  public boolean addSymbol(IdentNode ident, TypeNode type, ParamsNode entetes, String dimension,
+  public boolean addSymbol(IdentNode ident, TypeMethNode type, ParamsNode entetes, String dimension,
       int lineOfDeclaration) throws SymbolTableException {
     if (symbols.containsKey(ident.getName())) {
       throw new SymbolTableException("Symbol " + ident.getName() + " already declared at line " + lineOfDeclaration);
