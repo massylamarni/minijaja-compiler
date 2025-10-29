@@ -1,8 +1,8 @@
 package fr.amvproject.group3;
 
-import javafx.application.Application;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextArea;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -11,25 +11,47 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Optional;
 
-public class FileSaver extends Application {
+/**
+ * Handles saving text content from the editor into a .mjj file.
+ * Includes safety checks such as:
+ *  - existing file confirmation,
+ *  - disk space and permission validation,
+ *  - empty editor check,
+ *  - informative dialogs for user feedback.
+ */
+public class FileSaver {
 
-    @Override
-    public void start(Stage primaryStage) {
-        primaryStage.setTitle("Save File Example");
+    /**
+     * Opens a "Save File" dialog and writes the content of the TextArea into a .mjj file.
+     * This is invoked by the Save button or the Ctrl+S shortcut in TextEdit.java.
+     *
+     * @param textArea The TextArea containing the text to be saved
+     * @param stage    The current JavaFX window stage
+     */
+    public void saveToFile(TextArea textArea, Stage stage) {
+        String content = textArea.getText();
 
+        // 🛑 Step 1: Check if text editor is empty before proceeding
+        if (content == null || content.trim().isEmpty()) {
+            showInfoDialog("Empty File", "Cannot save an empty file.\nPlease write something first.");
+            return;
+        }
+
+        // Step 2: Create a file chooser dialog
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save jaja File");
+        fileChooser.setTitle("Save MiniJaja File");
 
-        // extention filter
+        // Restrict to .mjj files
         FileChooser.ExtensionFilter extFilter =
-                new FileChooser.ExtensionFilter("Text files (*.mjj)", "*.mjj");
+                new FileChooser.ExtensionFilter("MiniJaja files (*.mjj)", "*.mjj");
         fileChooser.getExtensionFilters().add(extFilter);
 
-        // Open "Save As" dialog
-        File file = fileChooser.showSaveDialog(primaryStage);
+        // Step 3: Open the dialog
+        File file = fileChooser.showSaveDialog(stage);
+
         if (file != null) {
+            // Step 4: If file already exists → ask for confirmation
             if (file.exists()) {
-                // Ask the user whether to overwrite
                 boolean overwrite = askOverwriteConfirmation(file.getName());
                 if (!overwrite) {
                     showInfoDialog("Save Canceled", "The file was not overwritten.");
@@ -37,41 +59,50 @@ public class FileSaver extends Application {
                 }
             }
 
-            boolean success = saveTextToFile("Hello from MiniJaja!", file);
+            // Step 5: Save content into file
+            boolean success = saveTextToFile(content, file);
             if (success) {
-                // Confirmation already shown in saveTextToFile
+                showConfirmationDialog(file.getAbsolutePath());
             }
         }
     }
 
+    /**
+     * Attempts to save text content into the specified file,
+     * performing pre-save safety checks.
+     *
+     * @param content The text to write into the file
+     * @param file    The destination file
+     * @return true if saved successfully, false otherwise
+     */
     private boolean saveTextToFile(String content, File file) {
         try {
-            // Check if parent directory exists and is writable
+            // Ensure the parent directory exists or can be created
             File parentDir = file.getParentFile();
             if (parentDir == null || (!parentDir.exists() && !parentDir.mkdirs())) {
                 showInfoDialog("Error", "The path is invalid or cannot create directories.");
                 return false;
             }
 
+            // Check write permission
             if (file.exists() && !file.canWrite()) {
                 showInfoDialog("Error", "You don't have permission to write to this file.");
                 return false;
             }
 
-            // Optional: check disk space (approximation)
+            // Approximate disk space check
             long freeSpace = parentDir.getUsableSpace();
-            if (freeSpace < content.length()) { // simple check in bytes
+            if (freeSpace < content.length()) {
                 showInfoDialog("Error", "Not enough disk space to save the file.");
                 return false;
             }
 
-            // Try writing to the file
+            // Write text into file
             try (FileWriter writer = new FileWriter(file)) {
                 writer.write(content);
                 System.out.println("File saved: " + file.getAbsolutePath());
             }
 
-            showConfirmationDialog(file.getAbsolutePath());
             return true;
 
         } catch (IOException e) {
@@ -81,6 +112,12 @@ public class FileSaver extends Application {
         }
     }
 
+    /**
+     * Displays a confirmation dialog if the file already exists.
+     *
+     * @param fileName The name of the file to overwrite
+     * @return true if the user agrees to overwrite, false otherwise
+     */
     private boolean askOverwriteConfirmation(String fileName) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("File Already Exists");
@@ -95,6 +132,11 @@ public class FileSaver extends Application {
         return result.isPresent() && result.get() == yes;
     }
 
+    /**
+     * Shows a confirmation dialog when saving succeeds.
+     *
+     * @param filePath The path to the saved file
+     */
     private void showConfirmationDialog(String filePath) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("File Saved");
@@ -103,6 +145,12 @@ public class FileSaver extends Application {
         alert.showAndWait();
     }
 
+    /**
+     * Shows an informational dialog for general errors or user messages.
+     *
+     * @param title   The title of the dialog
+     * @param message The message to display
+     */
     private void showInfoDialog(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
