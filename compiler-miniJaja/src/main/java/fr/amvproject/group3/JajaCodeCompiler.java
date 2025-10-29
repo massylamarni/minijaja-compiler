@@ -312,6 +312,9 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
         return null;
     }
 
-
-
+    @Override
+    public Void visitTypeMeth(TypeMethNode node) {
+    // TODO Auto-generated method stub
+    return null;
+    }
 }

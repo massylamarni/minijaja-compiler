@@ -1,6 +1,6 @@
 lexer grammar JajaCodeLexer;
 
-
+VIDE     : 'vide';
 INIT     : 'init';
 SWAP     : 'swap';
 PUSH     : 'push';
@@ -12,14 +12,14 @@ LOAD     : 'load';
 ALOAD    : 'aload';
 STORE    : 'store';
 ASTORE   : 'astore';
-LENGHT   : 'lenght';
+LENGHT   : 'length';
 INC      : 'inc';
 AINC     : 'ainc';
 IF       : 'if';
 JCSTOP   : 'jcstop';
 TRUE     : 'true' ;
 FALSE    : 'false' ;
-INTTYPE  : 'entier';
+INT      : 'entier';
 BOOLEAN  : 'boolean';
 POP      : 'pop';
 RETURN   : 'return';
@@ -42,9 +42,13 @@ NOP      : 'nop';
 COMMA    : ',';
 LPAREN   : '(';
 RPAREN   : ')';
-WS       : [ \t\r\n]+ -> skip ;
-COMMENT  : '//' (.)*?[\r\n] -> skip;
 
-IDENT    : [a-zA-Z][a-zA-Z0-9]* ;
-NOMBRE   : [0-9]+ ;
-STRING   : '"' ( ~["\\\r\n] | '\\' . )* '"' ;
+// ----------------- Identifiers & Literals -----------------
+STRING      : '"' ( ~["\\\r\n] | '\\' . )* '"' ;
+IDENTIFICATEUR : [a-zA-Z_] [a-zA-Z_0-9]* ;
+NOMBRE         : [0-9]+ ;
+
+// --------- Espaces et commentaires ---------
+WS        : [ \t\r\n]+ -> skip ;
+COMMENT_LINE   : '//' (.)*?[\r\n] -> skip;
+COMMENT_BLOCK : '/*' .*? '*/' -> skip;

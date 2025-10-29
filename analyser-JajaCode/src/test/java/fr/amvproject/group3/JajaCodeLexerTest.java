@@ -103,7 +103,7 @@ public class JajaCodeLexerTest {
         assertThat(tokens.get(2).getType(), is(JajaCodeLexer.LPAREN));
         assertThat(tokens.get(2).getText(), is("("));
 
-        assertThat(tokens.get(3).getType(), is(JajaCodeLexer.IDENT));
+        assertThat(tokens.get(3).getType(), is(JajaCodeLexer.IDENTIFICATEUR));
         assertThat(tokens.get(3).getText(), is("x"));
 
         assertThat(tokens.get(4).getType(), is(JajaCodeLexer.RPAREN));
@@ -130,7 +130,7 @@ public class JajaCodeLexerTest {
         assertThat(tokens.get(2).getType(), is(JajaCodeLexer.LPAREN));
         assertThat(tokens.get(2).getText(), is("("));
 
-        assertThat(tokens.get(3).getType(), is(JajaCodeLexer.IDENT));
+        assertThat(tokens.get(3).getType(), is(JajaCodeLexer.IDENTIFICATEUR));
         assertThat(tokens.get(3).getText(), is("f"));
 
         assertThat(tokens.get(4).getType(), is(JajaCodeLexer.RPAREN));
@@ -156,7 +156,7 @@ public class JajaCodeLexerTest {
         assertThat(tokens.get(2).getType(), is(JajaCodeLexer.LPAREN));
         assertThat(tokens.get(2).getText(), is("("));
 
-        assertThat(tokens.get(3).getType(), is(JajaCodeLexer.IDENT));
+        assertThat(tokens.get(3).getType(), is(JajaCodeLexer.IDENTIFICATEUR));
         assertThat(tokens.get(3).getText(), is("x"));
 
         assertThat(tokens.get(4).getType(), is(JajaCodeLexer.RPAREN));
@@ -272,7 +272,7 @@ public class JajaCodeLexerTest {
         assertThat(tokens.get(2).getType(), is(JajaCodeLexer.LPAREN));
         assertThat(tokens.get(2).getText(), is("("));
 
-        assertThat(tokens.get(3).getType(), is(JajaCodeLexer.IDENT));
+        assertThat(tokens.get(3).getType(), is(JajaCodeLexer.IDENTIFICATEUR));
         assertThat(tokens.get(3).getText(), is("p"));
 
         assertThat(tokens.get(4).getType(), is(JajaCodeLexer.RPAREN));
@@ -299,13 +299,13 @@ public class JajaCodeLexerTest {
         assertThat(tokens.get(2).getType(), is(JajaCodeLexer.LPAREN));
         assertThat(tokens.get(2).getText(), is("("));
 
-        assertThat(tokens.get(3).getType(), is(JajaCodeLexer.IDENT));
+        assertThat(tokens.get(3).getType(), is(JajaCodeLexer.IDENTIFICATEUR));
         assertThat(tokens.get(3).getText(), is("x"));
 
         assertThat(tokens.get(4).getType(), is(JajaCodeLexer.COMMA));
         assertThat(tokens.get(4).getText(), is(","));
 
-        assertThat(tokens.get(5).getType(), is(JajaCodeLexer.INTTYPE));
+        assertThat(tokens.get(5).getType(), is(JajaCodeLexer.INT));
         assertThat(tokens.get(5).getText(), is("entier"));
 
         assertThat(tokens.get(6).getType(), is(JajaCodeLexer.COMMA));
