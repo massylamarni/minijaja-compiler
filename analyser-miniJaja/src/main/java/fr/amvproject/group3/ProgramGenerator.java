@@ -435,8 +435,8 @@ public class ProgramGenerator {
     lnAppender(indentManager.indent(), getIdentRef(ObjType.METHODE, TypeMeth.VOID), "(", getListExp(ParamType.MULTY), ");\n");
   }
 
-  public void print() {
-      StringSaver.save(sb.toString(), "generatedProgram.mj");
+  public void print(String preset) {
+      StringSaver.save(sb.toString(), "generatedProgram.mjj", preset);
   }
 
 }

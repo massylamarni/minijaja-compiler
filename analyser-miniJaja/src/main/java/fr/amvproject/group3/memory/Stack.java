@@ -275,7 +275,7 @@ public class Stack {
 
     sb.append("======================\n");
 
-    StringSaver.save(sb.toString(), "stackDump.txt");
+    StringSaver.save(sb.toString(), "stackDump.txt", "main");
   }
 
   private void appendQuad(StringBuilder sb, Quad q, int index) {

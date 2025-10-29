@@ -38,11 +38,11 @@ public class UnaryOpNode extends AstNode {
     return unaryOp;
   }
 
-  public boolean isAnd() {
+  public boolean isNot() {
     return unaryOp == UnaryOpName.NOT;
   }
 
-  public boolean isOr() {
+  public boolean isNeg() {
     return unaryOp == UnaryOpName.NEG;
   }
 

@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 
 public class App {
     public static void main(String[] args) {
-        String inputFile = "compiler-miniJaja/test_full.mj";
+        String inputFile = "compiler-miniJaja/test_full.mjj";
         if (args.length > 0) inputFile = args[0];
 
         try {

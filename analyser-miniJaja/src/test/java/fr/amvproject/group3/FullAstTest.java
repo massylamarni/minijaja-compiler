@@ -22,10 +22,10 @@ public class FullAstTest {
     // Generate program
     ProgramGenerator generator = new ProgramGenerator();
     generator.generateProgram();
-    generator.print();
+    generator.print("test");
 
     // Build AST from generated program
-    Path path = Paths.get(System.getProperty("user.dir"), "src", "test", "resources", "light.mjj");
+    Path path = Paths.get(System.getProperty("user.dir"), "src", "test", "resources", "generatedProgram.mjj");
     CharStream input = CharStreams.fromFileName(path.toString());
     MiniJajaLexer lexer = new MiniJajaLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -37,7 +37,7 @@ public class FullAstTest {
     // Print AST to file
     PrintVisitor printer = new PrintVisitor();
     String printedProgram = ast.accept(printer);
-    StringSaver.save(printedProgram, "printedProgram.mj");
+    StringSaver.save(printedProgram, "printedProgram.mjj", "test");
 
     // Compare line counts
     long originalLines = input.toString().lines().count();

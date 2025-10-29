@@ -22,7 +22,7 @@ public class App {
         // Print AST to file
         PrintVisitor printer = new PrintVisitor();
         String printedProgram = ast.accept(printer);
-        StringSaver.save(printedProgram, "printedProgram.mj");
+        StringSaver.save(printedProgram, "printedProgram.mjj", "main");
 
         // Rebuild AST from printed program
         CharStream printedInput = CharStreams.fromString(printedProgram);

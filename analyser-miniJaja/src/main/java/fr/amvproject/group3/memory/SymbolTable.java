@@ -132,6 +132,6 @@ public class SymbolTable {
           usageLines));
     }
 
-    StringSaver.save(sb.toString(), "symbolTable.csv");
+    StringSaver.save(sb.toString(), "symbolTable.csv", "main");
   }
 }
