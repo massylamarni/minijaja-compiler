@@ -1,0 +1,9 @@
+0 init
+1 push(10)
+2 push(20)
+3 add
+4 push(5)
+5 sub
+6 write
+7 writeln
+8 jcstop
