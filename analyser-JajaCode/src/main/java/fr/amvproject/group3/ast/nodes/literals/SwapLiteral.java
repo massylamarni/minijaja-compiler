@@ -2,8 +2,9 @@ package fr.amvproject.group3.ast.nodes.literals;
 
 import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
+import fr.amvproject.group3.ast.nodes.intermediate.InstrNode;
 
-public class SwapLiteral extends AstNode {
+public class SwapLiteral extends InstrNode {
   @Override
   public boolean sameAs(AstNode other) {
     return other instanceof SwapLiteral;
@@ -11,6 +12,6 @@ public class SwapLiteral extends AstNode {
 
   @Override
   public <T> T accept(AstVisitor<T> visitor) {
-    return null;
+    return visitor.visitSwap(this);
   }
 }

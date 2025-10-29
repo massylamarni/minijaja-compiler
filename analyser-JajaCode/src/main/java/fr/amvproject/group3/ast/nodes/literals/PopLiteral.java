@@ -2,8 +2,9 @@ package fr.amvproject.group3.ast.nodes.literals;
 
 import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
+import fr.amvproject.group3.ast.nodes.intermediate.InstrNode;
 
-public class PopLiteral extends AstNode {
+public class PopLiteral extends InstrNode {
   @Override
   public boolean sameAs(AstNode other) {
     return other instanceof PopLiteral;
@@ -11,6 +12,6 @@ public class PopLiteral extends AstNode {
 
   @Override
   public <T> T accept(AstVisitor<T> visitor) {
-    return null;
+    return visitor.visitPop(this);
   }
 }

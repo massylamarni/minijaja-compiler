@@ -8,6 +8,8 @@ import fr.amvproject.group3.JajaCodeParser.AdresseContext;
 import fr.amvproject.group3.JajaCodeParser.IdentContext;
 import fr.amvproject.group3.JajaCodeParser.Oper1Context;
 import fr.amvproject.group3.JajaCodeParser.Oper2Context;
+import fr.amvproject.group3.JajaCodeParser.SorteContext;
+import fr.amvproject.group3.JajaCodeParser.TypeContext;
 import fr.amvproject.group3.JajaCodeParser.ValeurContext;
 import fr.amvproject.group3.ast.nodes.finals.*;
 import fr.amvproject.group3.ast.nodes.instrs.*;
@@ -84,10 +86,18 @@ public class JajaCodeAstBuilder extends JajaCodeParserBaseVisitor<AstNode> {
 
   @Override
   public AstNode visitAdresse(AdresseContext ctx) {
-    return new IntLiteralNode(Integer.parseInt(ctx.NOMBRE().getText()));
+    return new AddressNode(Integer.parseInt(ctx.NOMBRE().getText()));
   }
 
-  
+  @Override
+  public AstNode visitType(TypeContext ctx) {
+    return new TypeNode(ctx.getText());
+  }
+
+  @Override
+  public AstNode visitSorte(SorteContext ctx) {
+    return new ObjNode(ctx.getText());
+  }
 
   /* Helper visitors */
 
@@ -136,7 +146,7 @@ public class JajaCodeAstBuilder extends JajaCodeParserBaseVisitor<AstNode> {
   }
 
   public AstNode visitGoto(JajaCodeParser.InstrContext ctx) {
-    AddressNode addressNode = (AddressNode) visit(ctx.ident());
+    AddressNode addressNode = (AddressNode) visit(ctx.adresse());
     return new GotoNode(addressNode);
   }
 

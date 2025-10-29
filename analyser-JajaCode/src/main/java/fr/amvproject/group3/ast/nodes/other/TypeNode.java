@@ -5,7 +5,7 @@ import fr.amvproject.group3.ast.AstVisitor;
 
 public class TypeNode extends AstNode {
   protected enum TypeName {
-    INT("int"),
+    INT("entier"),
     BOOLEAN("boolean");
 
     private final String name;

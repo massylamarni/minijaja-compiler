@@ -12,7 +12,7 @@ public class PushNode extends InstrNode {
         this.valueNode = valueNode;
     }
 
-    public ValueNode getIdent() {
+    public ValueNode getValue() {
         return valueNode;
     }
 

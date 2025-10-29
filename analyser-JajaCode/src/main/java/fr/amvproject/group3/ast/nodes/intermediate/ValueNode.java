@@ -1,5 +1,3 @@
 package fr.amvproject.group3.ast.nodes.intermediate;
 
-import fr.amvproject.group3.ast.AstNode;
-
-public abstract class ValueNode extends AstNode {}
+public abstract class ValueNode extends InstrNode {}

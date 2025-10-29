@@ -2,8 +2,9 @@ package fr.amvproject.group3.ast.nodes.literals;
 
 import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
+import fr.amvproject.group3.ast.nodes.intermediate.InstrNode;
 
-public class WriteLiteral extends AstNode {
+public class WriteLiteral extends InstrNode {
   private final boolean isLn;
 
   public WriteLiteral(boolean isLn) {
@@ -21,6 +22,6 @@ public class WriteLiteral extends AstNode {
 
   @Override
   public <T> T accept(AstVisitor<T> visitor) {
-    return null;
+    return visitor.visitWrite(this);
   }
 }

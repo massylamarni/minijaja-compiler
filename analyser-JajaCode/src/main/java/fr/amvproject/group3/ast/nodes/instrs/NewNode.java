@@ -33,7 +33,7 @@ public class NewNode extends InstrNode {
         return objNode;
     }
 
-    public ValueNode getAddress() {
+    public ValueNode getValue() {
         return valueNode;
     }
 
