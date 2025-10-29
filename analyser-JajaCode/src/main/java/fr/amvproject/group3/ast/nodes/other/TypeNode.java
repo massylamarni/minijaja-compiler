@@ -6,7 +6,8 @@ import fr.amvproject.group3.ast.AstVisitor;
 public class TypeNode extends AstNode {
   protected enum TypeName {
     INT("entier"),
-    BOOLEAN("boolean");
+    BOOLEAN("boolean"),
+    STRING("string");
 
     private final String name;
 
@@ -44,6 +45,10 @@ public class TypeNode extends AstNode {
 
   public boolean isBoolean() {
     return type == TypeName.BOOLEAN;
+  }
+
+  public boolean isString() {
+    return type == TypeName.STRING;
   }
 
   @Override

@@ -6,6 +6,7 @@ import fr.amvproject.group3.ast.AstVisitor;
 public class ObjNode extends AstNode {
   protected enum ObjName {
     VAR("var"),
+    TAB("tab"),
     METH("meth");
 
     private final String name;
@@ -40,6 +41,10 @@ public class ObjNode extends AstNode {
 
   public boolean isVar() {
     return obj == ObjName.VAR;
+  }
+
+  public boolean isTab() {
+    return obj == ObjName.TAB;
   }
 
   public boolean isMeth() {

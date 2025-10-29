@@ -19,15 +19,13 @@ import java.nio.file.Paths;
 public class FullAstTest {
   @Test
   public void givenExhaustiveProgram__whenBuildingAst__thenCorrectRepresentation() throws IOException {
-    /*
     // Generate program
     ProgramGenerator generator = new ProgramGenerator();
     generator.generateProgram();
-    generator.print();
-    */
+    generator.print("test");
 
     // Build AST from generated program
-    Path path = Paths.get(System.getProperty("user.dir"), "src", "test", "resources", "td.jjc");
+    Path path = Paths.get(System.getProperty("user.dir"), "src", "test", "resources", "generatedProgram.jjc");
     CharStream input = CharStreams.fromFileName(path.toString());
     JajaCodeLexer lexer = new JajaCodeLexer(input);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -39,7 +37,7 @@ public class FullAstTest {
     // Print AST to file
     PrintVisitor printer = new PrintVisitor();
     String printedProgram = ast.accept(printer);
-    StringSaver.save(printedProgram, "printedProgram.jjc");
+    StringSaver.save(printedProgram, "printedProgram.jjc", "test");
 
     // Compare line counts
     long originalLines = input.toString().lines().count();

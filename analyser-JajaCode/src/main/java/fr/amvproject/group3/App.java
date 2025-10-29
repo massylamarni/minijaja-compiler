@@ -9,6 +9,10 @@ import org.antlr.v4.runtime.*;
 
 public class App {
     public static void main(String[] args) throws Exception {
+
+        ProgramGenerator generator = new ProgramGenerator();
+    generator.generateProgram();
+    generator.print("main");
         CharStream input = CharStreams.fromFileName("analyser-JajaCode/src/test/resources/td.jjc");
         JajaCodeLexer lexer = new JajaCodeLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -20,7 +24,7 @@ public class App {
         // Print AST to file
         PrintVisitor printer = new PrintVisitor();
         String printedProgram = ast.accept(printer);
-        StringSaver.save(printedProgram, "printedProgram.jjc");
+        StringSaver.save(printedProgram, "printedProgram.jjc", "main");
 
         // Rebuild AST from printed program
         CharStream printedInput = CharStreams.fromString(printedProgram);

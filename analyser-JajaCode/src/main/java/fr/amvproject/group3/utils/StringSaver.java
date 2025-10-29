@@ -11,8 +11,10 @@ public class StringSaver {
   private StringSaver() {}
   private static final Logger LOGGER = Logger.getLogger(StringSaver.class.getName());
   
-  public static void save(String str, String fileName) {
-    Path dir = Paths.get("analyser-miniJaja", "target", "output");
+  public static void save(String str, String fileName, String preset) {
+    Path dir;
+    if (preset.equals("test")) dir = Paths.get("src", "test", "resources");
+    else dir = Paths.get("analyser-JajaCode", "target", "output");
     try {
       Files.createDirectories(dir);
       Path filePath = dir.resolve(fileName);

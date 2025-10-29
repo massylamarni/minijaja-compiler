@@ -121,7 +121,7 @@ public class PrintVisitor implements AstVisitor<String> {
   
   @Override
   public String visitLoad(LoadNode node) {
-    return node.isA() ? "aload(" : "load(" + node.getIdent().accept(this) + ")";
+    return (node.isA() ? "aload(" : "load(") + node.getIdent().accept(this) + ")";
   }
 
   @Override
@@ -141,7 +141,7 @@ public class PrintVisitor implements AstVisitor<String> {
 
   @Override
   public String visitInc(IncNode node) {
-    return node.isA() ? "ainc(" : "inc(" + node.getIdent().accept(this) + ")";
+    return (node.isA() ? "ainc(" : "inc(") + node.getIdent().accept(this) + ")";
   }
 
   @Override
