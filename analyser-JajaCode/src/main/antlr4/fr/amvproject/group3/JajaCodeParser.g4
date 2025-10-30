@@ -1,53 +1,41 @@
 parser grammar JajaCodeParser;
 options { tokenVocab=JajaCodeLexer; }
 
-program : adresse instr program EOF | ;
+program : classe+ EOF ;
 
-adresse : NOMBRE ;
+classe : adresse instr ;
 
 instr
     :INIT
     |SWAP
-    |new
-    |newarray
-    |invoke
+    |NEW LPAREN ident COMMA type COMMA sorte COMMA valeur RPAREN
+    |NEWARRAY LPAREN ident COMMA type RPAREN
+    |INVOKE LPAREN ident RPAREN
     |RETURN
-    |push
+    |PUSH LPAREN valeur RPAREN
     |POP
-    |load
-    |aload
-    |store
-    |astore
+    |LOAD LPAREN ident RPAREN
+    |ALOAD LPAREN ident RPAREN
+    |STORE LPAREN ident RPAREN
+    |ASTORE LPAREN ident RPAREN
     |WRITE
     |WRITELN
-    |length
-    |if
-    |goto
-    |inc
-    |ainc
+    |LENGHT LPAREN ident RPAREN
+    |IF LPAREN adresse RPAREN
+    |GOTO LPAREN adresse RPAREN
+    |INC LPAREN ident RPAREN
+    |AINC LPAREN ident RPAREN
     |oper
     |NOP
     |JCSTOP
 ;
 
-new : NEW LPAREN IDENT COMMA type COMMA sorte COMMA val RPAREN ;
-newarray : NEWARRAY LPAREN ident COMMA type RPAREN;
-invoke: INVOKE LPAREN ident RPAREN;
-push: PUSH LPAREN valeur RPAREN;
-load: LOAD LPAREN IDENT RPAREN;
-aload: ALOAD LPAREN IDENT RPAREN;
-store : STORE LPAREN ident RPAREN;
-astore : ASTORE LPAREN ident RPAREN;
-length: LENGHT LPAREN IDENT RPAREN;
-ident : IDENT;
-if: IF LPAREN adresse RPAREN;
-goto: GOTO LPAREN adresse RPAREN;
-inc: INC LPAREN IDENT RPAREN;
-ainc: AINC LPAREN IDENT RPAREN;
-valeur:  NOMBRE | TRUE |FALSE | STRING | ;
-type : INTTYPE | BOOLEAN;
-sorte: VAR | METH;
-val:  TRUE | FALSE | NOMBRE;
-oper: oper2 | oper1;
-oper1: NEG | NOT;
-oper2: ADD | SUB | MUL | DIV | CMP | SUP | OR | AND ;
+ident : IDENTIFICATEUR;
+valeur :  (NOMBRE | TRUE | FALSE | STRING)? ;
+adresse : NOMBRE ;
+oper : oper2 | oper1;
+oper1 : NEG | NOT;
+oper2 : ADD | SUB | MUL | DIV | CMP | SUP | OR | AND ;
+type : INT | BOOLEAN;
+sorte : VAR | METH;
+
