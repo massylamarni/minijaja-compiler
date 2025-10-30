@@ -8,13 +8,14 @@ import java.nio.file.Paths;
 
 public class App {
     public static void main(String[] args) {
-        String inputFile = "compiler-miniJaja/test_full.mjj";
+        String inputFile = "compiler-miniJaja/test_expr.mj";
         if (args.length > 0) inputFile = args[0];
 
         try {
             // vérifie que le fichier existe
             if (!Files.exists(Paths.get(inputFile))) {
                 System.err.println("Fichier introuvable : " + inputFile);
+
                 return;
             }
 
