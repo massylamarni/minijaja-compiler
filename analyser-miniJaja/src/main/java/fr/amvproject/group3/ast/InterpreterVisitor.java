@@ -232,17 +232,21 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitAddAssign(AddAssignNode node) {
-        // m eval⊢ e ⇒ v
         Object addValue = evalExp(node.getExp());
-
+        // Vérification du type de la valeur à ajouter
+        if (!(addValue instanceof Integer)) {
+            throw new RuntimeException(
+                    "Type error: += operator requires integer operand, got " +
+                            addValue.getClass().getSimpleName()
+            );
+        }
         if (node.getLeftValueNode() instanceof IdentNode identNode) {
-            // Règle [somme]
-            int result = (int) addValue;
-            stack.affecterVal(identNode, result, stack.pop());
+            // Règle [somme]: Val(i,m) + v
+            stack.affecterVal(identNode, (int) stack.val(identNode, stack.pop()) + (int) addValue, stack.pop());
         } else if (node.getLeftValueNode() instanceof ArrayAccessNode arrayAccessNode) {
-            // Règle [sommeT]
             int index = (int) evalExp(arrayAccessNode.getIndexExp());
-            stack.affecterValT(arrayAccessNode.getIdent(), index, addValue, stack.pop());
+            int result = (int) stack.valT(arrayAccessNode.getIdent(), index, stack.pop()) + (int) addValue;
+            stack.affecterValT(arrayAccessNode.getIdent(), index, result, stack.pop());
         }
         return null;
     }
@@ -253,8 +257,15 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitInc(IncNode node) {
-        int currentValue = (int) stack.val(node.getIdent(), stack.pop());
-        int newValue = currentValue + 1;
+        Object currentValue = stack.val(node.getIdent(), stack.pop());
+        // Vérification du type
+        if (!(currentValue instanceof Integer)) {
+            throw new RuntimeException(
+                    "Type error: increment operator requires integer variable, got " +
+                            currentValue.getClass().getSimpleName()
+            );
+        }
+        int newValue = (int) currentValue + 1;
         stack.affecterVal(node.getIdent(), newValue, stack.pop());
         return null;
     }
@@ -275,8 +286,17 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitIf(IfNode node) {
+        Object condValue = evalExp(node.getCondExp());
+
+        // Verification du type de la condition
+        if (!(condValue instanceof Boolean)){
+            throw new RuntimeException(
+                    "Type error: if condition must be boolean, got " +
+                            condValue.getClass().getSimpleName()
+            );
+        }
         // m eval⊢ e ⇒ condition
-        if ((boolean) evalExp(node.getCondExp())) {
+        if ((boolean) condValue) {
             // Règle [sivrai]
             node.getThenInstrs().accept(this);
         } else if (node.getElseInstrs() != null) {
@@ -296,6 +316,13 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitWhile(WhileNode node) {
+        // Verification du type de la condition
+        if (!(evalExp(node.getCondExp()) instanceof Boolean)) {
+            throw new RuntimeException(
+                    "Type error: while condition must be boolean, got " +
+                            evalExp(node.getCondExp()).getClass().getSimpleName()
+            );
+        }
         // m eval⊢ e ⇒ condition
         while ((boolean) evalExp(node.getCondExp())) {
             // Règle [tantquevrai]
@@ -397,7 +424,12 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitIdent(IdentNode node) {
-        return stack.val(node, stack.pop());
+        try {
+            return stack.val(node, stack.pop());
+        } catch (RuntimeException e) {
+            throw new RuntimeException(
+                    "Variable '" + node.getName() + "' not declared", e);
+        }
     }
 
     /**
@@ -406,8 +438,29 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitArrayAccess(ArrayAccessNode node) {
-        int index = (int) evalExp(node.getIndexExp());
-        return stack.valT(node.getIdent(), index, stack.pop());
+        Object indexObj = evalExp(node.getIndexExp());
+        if (!(indexObj instanceof Integer)) {
+            throw new RuntimeException(
+                    "Type error: array index must be integer, got " +
+                            indexObj.getClass().getSimpleName()
+            );
+        }
+        // Je cast apres vérification
+        int index = (int) indexObj;
+        if (index < 0) {
+            throw new RuntimeException(
+                    "Runtime error: array index cannot be negative, got " + index
+            );
+        }
+        try {
+            return stack.valT(node.getIdent(), index, stack.pop());
+        } catch (IndexOutOfBoundsException e) {
+            throw new RuntimeException(
+                    "Runtime error: array index " + index +
+                            " out of bounds for array '" + node.getIdent().getName() + "'",
+                    e
+            );
+        }
     }
 
     /**
@@ -457,32 +510,64 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      * m eval⊢ op2(e, e1) ⇒ v op v1
      */
     private Object evalBinaryExp(BinaryExpNode node) {
-        // Court-circuit pour AND et OR
+        // ========== PARTIE 1 : Opérateurs logiques (&&, ||) ==========
         if (node.getOp().isAnd()) {
-            if (!(boolean) evalExp(node.getLeftExp())) return false;
-            return evalExp(node.getRightExp());
+            Object left = evalExp(node.getLeftExp());
+            Object right = evalExp(node.getRightExp());
+
+            if (!(left instanceof Boolean && right instanceof Boolean)) {
+                throw new RuntimeException(
+                        "Type error: logical operator '&&' requires boolean operands, got " +
+                                left.getClass().getSimpleName() + " and " +
+                                right.getClass().getSimpleName()
+                );
+            }
+
+            if (!(boolean) left) return false;
+            return right;
+
         } else if (node.getOp().isOr()) {
-            if ((boolean) evalExp(node.getLeftExp())) return true;
-            return evalExp(node.getRightExp());
+            Object left = evalExp(node.getLeftExp());
+            Object right = evalExp(node.getRightExp());
+            if (!(left instanceof Boolean && right instanceof Boolean)) {
+                throw new RuntimeException(
+                        "Type error: logical operator '||' requires boolean operands, got " +
+                                left.getClass().getSimpleName() + " and " +
+                                right.getClass().getSimpleName()
+                );
+            }
+            if ((boolean) left) return true;
+            return right;
         }
 
-        // m eval⊢ e ⇒ v
-        int left = (int) evalExp(node.getLeftExp());
-        // m eval⊢ e1 ⇒ v1
-        int right = (int) evalExp(node.getRightExp());
+        // ========== PARTIE 2 : Opérateurs arithmétiques (+, -, *, /, ==, >) ==========
+        Object leftObj = evalExp(node.getLeftExp());
+        Object rightObj = evalExp(node.getRightExp());
 
-        // v op v1
+        if (!(leftObj instanceof Integer && rightObj instanceof Integer)) {
+            throw new RuntimeException(
+                    "Type error: arithmetic operator requires integer operands, got " +
+                            leftObj.getClass().getSimpleName() + " and " +
+                            rightObj.getClass().getSimpleName()
+            );
+        }
+
+        int left = (int) leftObj;
+        int right = (int) rightObj;
+
         switch (node.getOp().getOp()) {
             case ADD: return left + right;
             case SUB: return left - right;
             case MUL: return left * right;
             case DIV:
-                int divisor = right;
-                if (divisor == 0) throw new RuntimeException("Division by zero");
-                return left / divisor;
+                if (right == 0) {
+                    throw new RuntimeException("Runtime error: division by zero");
+                }
+                return left / right;
             case EQ: return left == right;
             case GT: return left > right;
-            default: throw new RuntimeException("Unknown binary operator: " + node.getOp());
+            default:
+                throw new RuntimeException("Unknown binary operator: " + node.getOp());
         }
     }
 
@@ -498,8 +583,22 @@ public class InterpreterVisitor implements AstVisitor<Object> {
 
         // op1 v
         switch (op) {
-            case "-": return -(int) operand;                  // [moins]
-            case "!": return !(boolean) operand;              // [non]
+            case "-":
+                if (!(operand instanceof Integer)) {
+                    throw new RuntimeException(
+                            "Type error: unary minus requires integer operand, got " +
+                                    operand.getClass().getSimpleName()
+                    );
+                }
+                return -(int) operand;
+            case "!":
+                if (!(operand instanceof Boolean)) {
+                    throw new RuntimeException(
+                            "Type error: logical NOT requires boolean operand, got " +
+                                    operand.getClass().getSimpleName()
+                    );
+                }
+                return !(boolean) operand;             // [non]
             default: throw new RuntimeException("Unknown unary operator: " + op);
         }
     }
