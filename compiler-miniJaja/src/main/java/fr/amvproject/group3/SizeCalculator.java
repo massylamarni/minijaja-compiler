@@ -16,6 +16,7 @@ import java.util.List;
  * Calcule le nombre d'instructions Jaja-Code qui seront émises pour un AST (two-pass).
  * Doit rester cohérent avec JajaCodeCompiler (ordre et instructions réellement émises).
  */
+@SuppressWarnings("java:S6539") // Visitor pattern: large by design
 public class SizeCalculator implements AstVisitor<Integer> {
 
     // utilitaire
@@ -346,6 +347,7 @@ public class SizeCalculator implements AstVisitor<Integer> {
     @Override public Integer visitParam(ParamNode node) { return 0; }
     @Override public Integer visitParams(ParamsNode node) { return 0; }
     @Override public Integer visitType(TypeNode node) { return 0; }
+    @Override public Integer visitTypeMeth(TypeMethNode node) { return 0; }
 
     // If AST contains other node types that appear in your project, add handlers similarly.
 }

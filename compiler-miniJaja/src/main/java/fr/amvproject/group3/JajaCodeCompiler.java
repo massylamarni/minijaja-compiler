@@ -12,6 +12,7 @@ import fr.amvproject.group3.ast.nodes.program.*;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
+@SuppressWarnings("java:S6539") // Visitor pattern: large by design
 public class JajaCodeCompiler implements AstVisitor<Void> {
 
     private final CodeEmitter emitter;
@@ -501,6 +502,7 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
     @Override public Void visitParam(ParamNode node) { return null; }
     @Override public Void visitParams(ParamsNode node) { return null; }
     @Override public Void visitType(TypeNode node) { return null; }
+    @Override public Void visitTypeMeth(TypeMethNode node) { return null; }
 
 
     // helper: retrait variables (swap ; pop) for each var
