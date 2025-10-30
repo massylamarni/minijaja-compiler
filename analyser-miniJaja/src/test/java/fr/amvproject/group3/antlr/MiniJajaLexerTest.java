@@ -1,5 +1,6 @@
-package fr.amvproject.group3;
+package fr.amvproject.group3.antlr;
 
+import fr.amvproject.group3.MiniJajaLexer;
 import org.antlr.v4.runtime.*;
 
 import java.util.List;

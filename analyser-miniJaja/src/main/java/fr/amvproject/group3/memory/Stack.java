@@ -16,7 +16,7 @@ import fr.amvproject.group3.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.ast.nodes.finals.ParamNode;
 import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.ast.nodes.intermediate.VarDeclNode;
-import fr.amvproject.group3.ast.nodes.other.TypeNode;
+import fr.amvproject.group3.ast.nodes.other.TypeMethNode;
 import fr.amvproject.group3.utils.StringSaver;
 
 public class Stack {
@@ -24,9 +24,9 @@ public class Stack {
     IdentNode ident;
     Object value;
     String obj; // var, cst, vcst, tab, meth, frame
-    TypeNode type; // int, boolean, void.
+    TypeMethNode type; // int, boolean, void.
 
-    Quad(IdentNode ident, Object value, String obj, TypeNode type) {
+    Quad(IdentNode ident, Object value, String obj, TypeMethNode type) {
       this.ident = ident;
       this.value = value;
       this.obj = obj;
@@ -37,7 +37,7 @@ public class Stack {
   private Deque<Quad> queue = new ArrayDeque<>();
   private Heap heap = new Heap();
 
-  // --- Stack Operations ---
+    // --- Stack Operations ---
 
   public void swap() {
     Quad first = queue.pop();
@@ -46,30 +46,34 @@ public class Stack {
     queue.push(second);
   }
 
-  // --- Variable / Constant / Array / Method Declarations ---
+  public Quad pop() {
+    return queue.pop();
+  }
 
-  public void declVar(IdentNode ident, Object value, TypeNode type) {
+    // --- Variable / Constant / Array / Method Declarations ---
+
+  public void declVar(IdentNode ident, Object value, TypeMethNode type) {
     queue.push(new Quad(ident, value, "var", type));
   }
 
-  public void declCst(IdentNode ident, Object value, TypeNode type) {
+  public void declCst(IdentNode ident, Object value, TypeMethNode type) {
     // Vcst = can be initialized later but not changed after
     queue.push(new Quad(ident, value, value == null ? "vcst" : "cst", type));
   }
 
-  public void declTab(IdentNode ident, int size, TypeNode type) {
+  public void declTab(IdentNode ident, int size, TypeMethNode type) {
     int ref = heap.allocate(size, type);
     queue.push(new Quad(ident, ref, "tab", type));
   }
 
-  public void declMeth(IdentNode ident, ParamsNode params, TypeNode returnType) {
+  public void declMeth(IdentNode ident, ParamsNode params, TypeMethNode returnType) {
     queue.push(new Quad(ident, params, "meth", returnType));
   }
 
-  // --- Access / Assignment ---
+    // --- Access / Assignment ---
 
   // Replaces the Quad at stackDepth
-  public void identVal(IdentNode ident, TypeNode type, Quad quad, int stackDepth) {
+  public void identVal(IdentNode ident, TypeMethNode type, Quad quad, int stackDepth) {
     if (quad == null || stackDepth < 0)
       return;
     Quad q = queue.pop();
@@ -164,7 +168,7 @@ public class Stack {
   }
 
   // Assigns a new type to an identifier
-  public void affecterType(IdentNode ident, TypeNode type, Quad quad) {
+  public void affecterType(IdentNode ident, TypeMethNode type, Quad quad) {
     Quad q = queue.pop();
     if (quad.ident.equals(ident))
       queue.push(new Quad(ident, quad.value, quad.obj, type));
@@ -182,7 +186,7 @@ public class Stack {
     while (expIt.hasNext() && paramIt.hasNext()) {
       ExpNode exp = expIt.next();
       ParamNode param = paramIt.next();
-      declVar(param.getIdent(), exp, param.getType());
+      declVar(param.getIdent(), exp, new TypeMethNode(param.getType().getName()));
     }
   }
 
@@ -199,13 +203,13 @@ public class Stack {
   }
 
   // Return type of identifier
-  public TypeNode sorte(IdentNode ident, Quad quad) {
+  public TypeMethNode sorte(IdentNode ident, Quad quad) {
     if (quad == null)
       return null;
     if (quad.ident.equals(ident))
       return quad.type;
     Quad q = queue.pop();
-    TypeNode type = sorte(ident, q);
+    TypeMethNode type = sorte(ident, q);
     queue.push(q);
     return type;
   }
