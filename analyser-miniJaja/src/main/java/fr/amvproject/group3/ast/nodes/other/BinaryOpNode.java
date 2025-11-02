@@ -77,6 +77,14 @@ public class BinaryOpNode extends AstNode {
   }
 
   @Override
+  public boolean sameAs(AstNode other) {
+    if (other instanceof BinaryOpNode binaryOpNode) {
+      return this.binaryOp == binaryOpNode.binaryOp;
+    }
+    return false;
+  }
+
+  @Override
   public <T> T accept(AstVisitor<T> visitor) {
     return visitor.visitBinaryOp(this);
   }

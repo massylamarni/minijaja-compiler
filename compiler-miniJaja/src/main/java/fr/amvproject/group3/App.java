@@ -1,22 +1,21 @@
 package fr.amvproject.group3;
 
 import fr.amvproject.group3.ast.*;
-import fr.amvproject.group3.ast.nodes.program.ClasseNode;
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class App {
     public static void main(String[] args) {
-        String inputFile = "compiler-miniJaja/test_full.mj";
+        String inputFile = "compiler-miniJaja/test_expr.mj";
         if (args.length > 0) inputFile = args[0];
 
         try {
             // vérifie que le fichier existe
             if (!Files.exists(Paths.get(inputFile))) {
                 System.err.println("Fichier introuvable : " + inputFile);
+
                 return;
             }
 

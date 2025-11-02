@@ -1,15 +1,17 @@
 package fr.amvproject.group3.ast.nodes.exprs;
 
+import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
+import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.ast.nodes.other.UnaryOpNode;
 
 public class UnaryExpNode extends ExpNode {
     private final UnaryOpNode op;
-    private final ExpNode exp;
+    private final ExpNode expNode;
 
-    public UnaryExpNode(UnaryOpNode op, ExpNode exp) {
+    public UnaryExpNode(UnaryOpNode op, ExpNode expNode) {
         this.op = op;
-        this.exp = exp;
+        this.expNode = expNode;
     }
 
     public UnaryOpNode getOp() {
@@ -17,12 +19,20 @@ public class UnaryExpNode extends ExpNode {
     }
 
     public ExpNode getExp() {
-        return exp;
+        return expNode;
     }
 
     @Override
     public String evaluate() {
-        return op.getOp().getName() + exp.evaluate();
+        return op.getOp().getName() + expNode.evaluate();
+    }
+
+    @Override
+    public boolean sameAs(AstNode other) {
+        if (other instanceof UnaryExpNode unaryExpNode) {
+            return this.op.sameAs(unaryExpNode.op) && this.expNode.sameAs(unaryExpNode.expNode);
+        }
+        return false;
     }
 
     @Override

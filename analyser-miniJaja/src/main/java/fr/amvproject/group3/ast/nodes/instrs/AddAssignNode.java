@@ -1,32 +1,18 @@
 package fr.amvproject.group3.ast.nodes.instrs;
 
+import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
-import fr.amvproject.group3.ast.nodes.exprs.ArrayAccessNode;
-import fr.amvproject.group3.ast.nodes.exprs.BinaryExpNode;
-import fr.amvproject.group3.ast.nodes.exprs.ExpNode;
-import fr.amvproject.group3.ast.nodes.exprs.VarRefNode;
-import fr.amvproject.group3.ast.nodes.other.BinaryOpNode;
-import fr.amvproject.group3.ast.nodes.other.LeftValueNode;
+import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
+import fr.amvproject.group3.ast.nodes.intermediate.InstrNode;
+import fr.amvproject.group3.ast.nodes.intermediate.LeftValueNode;
 
 public class AddAssignNode extends InstrNode {
     private final LeftValueNode leftValueNode;
-    private final ExpNode exp;
+    private final ExpNode expNode;
 
-    public AddAssignNode(LeftValueNode leftValueNode, ExpNode exp) {
-
-        // Build addition expression
-        ExpNode addExp;
-        if (leftValueNode instanceof VarRefNode) { // Var
-            addExp = new BinaryExpNode(new BinaryOpNode("+"), new VarRefNode(((VarRefNode) leftValueNode).getIdent()), exp);
-        } else if (leftValueNode instanceof ArrayAccessNode) { // Array
-            ArrayAccessNode arrNode = (ArrayAccessNode) leftValueNode;
-            addExp = new BinaryExpNode(new BinaryOpNode("+"), new ArrayAccessNode(arrNode.getIdent(), arrNode.getIndexExp()), exp);
-        } else {
-            throw new RuntimeException("Unexpected left-hand side in +=: " + leftValueNode);
-        }
-        
+    public AddAssignNode(LeftValueNode leftValueNode, ExpNode expNode) {        
         this.leftValueNode = leftValueNode;
-        this.exp = addExp;
+        this.expNode = expNode;
     }
 
     public LeftValueNode getLeftValueNode() {
@@ -34,7 +20,15 @@ public class AddAssignNode extends InstrNode {
     }
 
     public ExpNode getExp() {
-        return exp;
+        return expNode;
+    }
+
+    @Override
+    public boolean sameAs(AstNode other) {
+        if (other instanceof AddAssignNode addAssignNode) {
+            return this.leftValueNode.sameAs(addAssignNode.leftValueNode) && this.expNode.sameAs(addAssignNode.expNode);
+        }
+        return false;
     }
 
     @Override

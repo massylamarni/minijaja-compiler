@@ -1,22 +1,32 @@
 package fr.amvproject.group3.ast.nodes.exprs;
 
+import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
-import fr.amvproject.group3.ast.nodes.abstracts.Ident;
+import fr.amvproject.group3.ast.nodes.finals.IdentNode;
+import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
 
 public class LengthNode extends ExpNode {
-    private final Ident ident;
+    private final IdentNode identNode;
 
-    public LengthNode(Ident ident) {
-        this.ident = ident;
+    public LengthNode(IdentNode identNode) {
+        this.identNode = identNode;
     }
 
-    public Ident getIdent() {
-        return ident;
+    public IdentNode getIdent() {
+        return identNode;
     }
 
     @Override
     public String evaluate() {
-        return ident.getName();
+        return identNode.getName();
+    }
+
+    @Override
+    public boolean sameAs(AstNode other) {
+        if (other instanceof LengthNode lengthNode) {
+            return this.identNode.sameAs(lengthNode.identNode);
+        }
+        return false;
     }
 
     @Override

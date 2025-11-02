@@ -1,17 +1,11 @@
 class C {
   int x;
-  int y = 10;
+  int f(int p) {
+  return p ;
+  };
   main {
-  x = y + 5;
-  x = x * 2;
-    if (x > y) {
-    	x = 15;
-    	} else {
-    		x = 18;
-    	};
-    while (x > 12) {
-    x = x + 1 ;
-    };
+  x = 3;
+    x += f(x);
   }
 }
 

@@ -1,11 +1,14 @@
 package fr.amvproject.group3.ast.nodes.exprs;
 
+import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
+import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.ast.nodes.other.BinaryOpNode;
 
 public class BinaryExpNode extends ExpNode {
     private final BinaryOpNode op;
-    private final ExpNode leftExp, rightExp;
+    private final ExpNode leftExp;
+    private final ExpNode rightExp;
 
     public BinaryExpNode(BinaryOpNode op, ExpNode leftExp, ExpNode rightExp) {
         this.op = op;
@@ -28,6 +31,16 @@ public class BinaryExpNode extends ExpNode {
     @Override
     public String evaluate() {
         return leftExp.evaluate() + op.getOp().getName() + rightExp.evaluate();
+    }
+
+    @Override
+    public boolean sameAs(AstNode other) {
+        if (other instanceof BinaryExpNode binaryExpNode) {
+            return this.leftExp.sameAs(binaryExpNode.leftExp) &&
+                this.op.sameAs(binaryExpNode.op) &&
+                this.rightExp.sameAs(binaryExpNode.rightExp);
+        }
+        return false;
     }
 
     @Override

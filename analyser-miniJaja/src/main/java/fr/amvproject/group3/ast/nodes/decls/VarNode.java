@@ -1,55 +1,49 @@
 package fr.amvproject.group3.ast.nodes.decls;
 
+import fr.amvproject.group3.ast.AstNode;
 import fr.amvproject.group3.ast.AstVisitor;
-import fr.amvproject.group3.ast.nodes.abstracts.Ident;
-import fr.amvproject.group3.ast.nodes.exprs.ExpNode;
-import fr.amvproject.group3.ast.nodes.other.TypeNode;
-import fr.amvproject.group3.ast.nodes.program.DeclNode;
+import fr.amvproject.group3.ast.nodes.finals.IdentNode;
+import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
+import fr.amvproject.group3.ast.nodes.intermediate.VarDeclNode;
+import fr.amvproject.group3.ast.nodes.other.TypeMethNode;
 
-public class VarNode extends DeclNode {
-    private final TypeNode type;
-    private final ExpNode sizeExp;     // si tableau, expression donnant la taille (null sinon)
-    private final ExpNode initExp;     // valeur initiale (null si pas d'affectation)
-    private final boolean isFinal;      // true si 'final'
+public class VarNode extends VarDeclNode {
+    private final ExpNode initExp;
+    private final TypeMethNode typeMethNode;
 
-    // Constructeur pour variable simple
-    public VarNode(TypeNode type, Ident ident) {
+    public VarNode(TypeMethNode typeMethNode, IdentNode ident) {
       super(ident);
-      this.type = type;
-      this.sizeExp = null;
+      this.typeMethNode = typeMethNode;
       this.initExp = null;
-      this.isFinal = false;
     }
 
-    // Constructeur complet
-    public VarNode(TypeNode type, Ident ident, ExpNode sizeExp, ExpNode initExp, boolean isFinal) {
+    public VarNode(TypeMethNode typeMethNode, IdentNode ident, ExpNode initExp) {
       super(ident);
-      this.type = type;
-      this.sizeExp = sizeExp;
+      this.typeMethNode = typeMethNode;
       this.initExp = initExp;
-      this.isFinal = isFinal;
-    }
-
-    public TypeNode getType() {
-        return type;
-    }
-
-    public ExpNode getSizeExp() {
-        return sizeExp;
     }
 
     public ExpNode getInitExp() {
         return initExp;
     }
 
-    public boolean isFinal() {
-        return isFinal;
+    public TypeMethNode getType() {
+      return typeMethNode;
     }
 
-    public String getVarObj() {
-        if (isFinal) return "cst";
-        else if (sizeExp != null) return "tab";
-        return "var";
+    @Override
+    public boolean sameAs(AstNode other) {
+      if (other instanceof VarNode varNode) {
+        if (this.initExp == null || varNode.initExp == null) {
+          return (this.initExp == varNode.initExp) &&
+            (this.getIdent().sameAs(varNode.getIdent())) &&
+            (this.typeMethNode.sameAs(varNode.typeMethNode));
+        }
+        return this.getIdent().sameAs(varNode.getIdent()) &&
+          this.typeMethNode.sameAs(varNode.typeMethNode) &&
+          this.initExp.sameAs(varNode.initExp);
+      }
+      return false;
     }
 
     @Override
