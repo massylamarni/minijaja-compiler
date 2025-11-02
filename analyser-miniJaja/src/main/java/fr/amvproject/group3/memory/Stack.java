@@ -20,13 +20,13 @@ import fr.amvproject.group3.ast.nodes.other.TypeMethNode;
 import fr.amvproject.group3.utils.StringSaver;
 
 public class Stack {
-  static class Quad {
-    IdentNode ident;
-    Object value;
-    String obj; // var, cst, vcst, tab, meth, frame
-    TypeMethNode type; // int, boolean, void.
+  public static class Quad {
+    public IdentNode ident;
+    public Object value;
+    public String obj; // var, cst, vcst, tab, meth, frame
+    public TypeMethNode type; // int, boolean, void.
 
-    Quad(IdentNode ident, Object value, String obj, TypeMethNode type) {
+    public Quad(IdentNode ident, Object value, String obj, TypeMethNode type) {
       this.ident = ident;
       this.value = value;
       this.obj = obj;
@@ -104,18 +104,24 @@ public class Stack {
   public Object val(IdentNode ident, Quad quad) {
     if (quad == null)
       return null;
-    Quad q = queue.pop();
+    // First check the quad parameter itself
     if (quad.ident.equals(ident)) {
       return quad.value;
     }
-    val(ident, q);
+    // Then search in the queue
+    if (queue.isEmpty())
+      return null;
+    Quad q = queue.pop();
+    Object result = val(ident, q);
     queue.push(q);
-    return null;
+    return result;
   }
 
   // Return value of identifier (array)
   public Object valT(IdentNode ident, int index, Quad quad) {
     if (quad == null)
+      return null;
+    if (queue.isEmpty())
       return null;
     Quad q = queue.pop();
     if (quad.ident.equals(ident)) {
@@ -130,6 +136,8 @@ public class Stack {
   public Integer longT(IdentNode ident, Quad quad) {
     if (quad == null)
       return null;
+    if (queue.isEmpty())
+      return null;
     Quad q = queue.pop();
     if (quad.ident.equals(ident)) {
       return (int) heap.get((int) quad.value - 1);
@@ -141,39 +149,66 @@ public class Stack {
 
   // Assigns a new value to the identifier
   public void affecterVal(IdentNode ident, Object value, Quad quad) {
-    Quad q = queue.pop();
-    if (!quad.ident.equals(ident))
-      affecterVal(ident, value, q);
-    else if (quad.obj.equals("vcst")) {
-      queue.push(new Quad(ident, value, "cst", quad.type));
-      return;
-    } else if (quad.obj.equals("tab")) {
-      int ref = heap.allocate((int) value, quad.type); // AjouterRef(v, t)
-      queue.push(new Quad(ident, ref, "tab", quad.type));
-      heap.remove((int) quad.value, quad.type); // RetirerTas
-      return;
-    } else if (quad.obj.equals("cst")) {
+    // First check if the quad parameter matches
+    if (quad != null && quad.ident.equals(ident)) {
+      // Don't modify, just return - the quad is not in the stack yet
       return;
     }
-    queue.push(new Quad(ident, value, quad.obj, quad.type));
+    
+    if (queue.isEmpty())
+      return;
+    Quad q = queue.pop();
+    if (!q.ident.equals(ident)) {
+      affecterVal(ident, value, q);
+      queue.push(q);
+    } else if (q.obj.equals("vcst")) {
+      queue.push(new Quad(ident, value, "cst", q.type));
+    } else if (q.obj.equals("tab")) {
+      int ref = heap.allocate((int) value, q.type); // AjouterRef(v, t)
+      queue.push(new Quad(ident, ref, "tab", q.type));
+      heap.remove((int) q.value, q.type); // RetirerTas
+    } else if (q.obj.equals("cst")) {
+      queue.push(q);
+    } else {
+      queue.push(new Quad(ident, value, q.obj, q.type));
+    }
   }
 
   // Assigns a new value to an array at a specific index
   public void affecterValT(IdentNode ident, int index, Object value, Quad quad) {
+    // First check if the quad parameter matches
+    if (quad != null && quad.ident.equals(ident)) {
+      if (quad.obj.equals("tab")) {
+        heap.set((int) quad.value, index, value);
+      }
+      return;
+    }
+    
+    if (queue.isEmpty())
+      return;
     Quad q = queue.pop();
-    if (!quad.ident.equals(ident))
+    if (!q.ident.equals(ident)) {
       affecterValT(ident, index, value, q);
-    else
-      heap.set((int) quad.value, index, value);
+      queue.push(q);
+    } else {
+      if (q.obj.equals("tab")) {
+        heap.set((int) q.value, index, value);
+      }
+      queue.push(q);
+    }
   }
 
   // Assigns a new type to an identifier
   public void affecterType(IdentNode ident, TypeMethNode type, Quad quad) {
+    if (queue.isEmpty())
+      return;
     Quad q = queue.pop();
-    if (quad.ident.equals(ident))
+    if (quad.ident.equals(ident)) {
       queue.push(new Quad(ident, quad.value, quad.obj, type));
-    else {
+      queue.push(q);  // Push back q
+    } else {
       affecterType(ident, type, q);
+      queue.push(q);  // Push back q after recursion
     }
   }
 
@@ -196,6 +231,8 @@ public class Stack {
       return null;
     if (quad.ident.equals(ident))
       return quad.obj;
+    if (queue.isEmpty())
+      return null;
     Quad q = queue.pop();
     String obj = objet(ident, q);
     queue.push(q);
@@ -208,6 +245,8 @@ public class Stack {
       return null;
     if (quad.ident.equals(ident))
       return quad.type;
+    if (queue.isEmpty())
+      return null;
     Quad q = queue.pop();
     TypeMethNode type = sorte(ident, q);
     queue.push(q);
@@ -219,6 +258,8 @@ public class Stack {
     if (quad == null)
       return null;
     if (!quad.ident.equals(ident)) {
+      if (queue.isEmpty())
+        return null;
       Quad q = queue.pop();
       ParamsNode params = parametre(ident, q);
       queue.push(q);
@@ -235,6 +276,8 @@ public class Stack {
     if (quad == null)
       return null;
     if (!quad.ident.equals(ident)) {
+      if (queue.isEmpty())
+        return null;
       Quad q = queue.pop();
       VarsNode vars = declaration(ident, q);
       queue.push(q);
@@ -251,6 +294,8 @@ public class Stack {
     if (quad == null)
       return null;
     if (!quad.ident.equals(ident)) {
+      if (queue.isEmpty())
+        return null;
       Quad q = queue.pop();
       InstrsNode intrs = corps(ident, q);
       queue.push(q);
@@ -332,5 +377,15 @@ public class Stack {
           .append(methodNode.getInstrs() != null ? methodNode.getInstrs().getList().size() : 0)
           .append("\n");
     }
+  }
+
+  // --- Getters for inspection ---
+  
+  public Deque<Quad> getQueue() {
+    return queue;
+  }
+
+  public Heap getHeap() {
+    return heap;
   }
 }

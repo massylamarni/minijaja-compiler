@@ -33,10 +33,6 @@ import fr.amvproject.group3.ast.nodes.other.UnaryOpNode;
 import fr.amvproject.group3.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.ast.nodes.program.ProgramNode;
 
-/**
- * JajaCodeInterpreter implements the semantic interpretation rules for JajaCode.
- * It uses the visitor pattern to execute each instruction according to the rules.
- */
 public class JajaCodeInterpreter implements AstVisitor<Void> {
 
     private final ExecutionState state;
@@ -47,9 +43,6 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         this.state = new ExecutionState();
     }
 
-    /**
-     * Records the current execution state as an ExecutionStep
-     */
     private void recordStep(String instructionName) {
         ExecutionStep step = new ExecutionStep(
             stepCounter++,
@@ -64,16 +57,10 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         executionSteps.add(step);
     }
 
-    /**
-     * Gets all recorded execution steps
-     */
     public List<ExecutionStep> getExecutionSteps() {
         return new ArrayList<>(executionSteps);
     }
 
-    /**
-     * Gets the most recent execution step
-     */
     public ExecutionStep getLastExecutionStep() {
         if (executionSteps.isEmpty()) {
             return null;
@@ -81,60 +68,35 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         return executionSteps.get(executionSteps.size() - 1);
     }
 
-    /**
-     * Gets total number of steps executed
-     */
     public int getStepCount() {
         return stepCounter;
     }
 
-    // ==================== Program Execution ====================
-
     @Override
     public Void visitProgram(ProgramNode node) {
         if (node == null) return null;
-        
-        // A program consists of a list of classes/instructions
-        System.out.println("Starting JajaCode program execution...");
-        
-        // Initialize memory
         state.init();
-        
-        // Execute the program
-        // The actual execution would be done by a separate execution engine
-        // that processes instructions in order
-        
         return null;
     }
 
     @Override
     public Void visitClass(ClassNode node) {
         if (node == null) return null;
-        
-        // Execute instructions in class
         if (node.getInstr() != null) {
             node.getInstr().accept(this);
         }
-        
         return null;
     }
 
-    // ==================== Literal Instructions ====================
-
-    /**
-     * [init] : <m,a> ⊢ init –» <[], a+1>
-     */
+    // [init] : <m,a> ⊢ init –» <[], a+1>
     @Override
     public Void visitInit(InitLiteral literal) {
         state.init();
-        state.incrementAddress();
         recordStep("init");
         return null;
     }
 
-    /**
-     * [jcstop] : <m,a> ⊢ jcstop –» <m, ⊥>
-     */
+    // [jcstop] : <m,a> ⊢ jcstop –» <m, ⊥>
     @Override
     public Void visitJcstop(JcstopLiteral literal) {
         state.stop();
@@ -142,9 +104,7 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         return null;
     }
 
-    /**
-     * [nop] : <m,a> ⊢ nop –» <m, a+1>
-     */
+    // [nop] : <m,a> ⊢ nop –» <m, a+1>
     @Override
     public Void visitNop(NopLiteral literal) {
         state.incrementAddress();
@@ -152,9 +112,7 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         return null;
     }
 
-    /**
-     * [swap] : <q1.q2.m,a> ⊢ swap –» <q2.q1.m, a+1>
-     */
+    // [swap] : <q1.q2.m,a> ⊢ swap –» <q2.q1.m, a+1>
     @Override
     public Void visitSwap(SwapLiteral literal) {
         state.swap();
@@ -163,9 +121,7 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         return null;
     }
 
-    /**
-     * [pop] : <<i,v,o,t>.m,a>- pop –» <m, a+1>
-     */
+    // [pop] : <<i,v,o,t>.m,a>- pop –» <m, a+1>
     @Override
     public Void visitPop(PopLiteral literal) {
         state.pop();
@@ -174,23 +130,42 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         return null;
     }
 
-    /**
-     * [return] : <<w ,a1,cst,*>.m,a> ⊢ return –» <m, a1>
-     */
+    // [return] : <<w ,a1,cst,*>.m,a> ⊢ return –» <m, a1>
     @Override
     public Void visitReturn(ReturnLiteral literal) {
-        // Pop the frame marker which contains the return address
-        ExecutionState.StackValue frame = state.pop();
-        if ("frame".equals(frame.getObjectType())) {
-            state.setAddressCounter(frame.getReturnAddress());
+        if (state.isEmpty()) {
+            throw new RuntimeException("Stack is empty at return");
         }
+        
+        int returnAddress = -1;
+        ExecutionState.StackValue returnValue = null;
+        
+        while (!state.isEmpty()) {
+            ExecutionState.StackValue item = state.pop();
+            
+            if ("__frame__".equals(item.getName())) {
+                returnAddress = ((Number) item.getValue()).intValue();
+                if (!state.isEmpty()) {
+                    returnValue = state.pop();
+                }
+                break;
+            }
+        }
+        
+        if (returnAddress == -1) {
+            throw new RuntimeException("No frame marker found for return");
+        }
+        
+        if (returnValue != null) {
+            state.push(returnValue.getValue());
+        }
+        
+        state.setAddressCounter(returnAddress);
         recordStep("return");
         return null;
     }
 
-    /**
-     * [write] : <<w, v, cst,*>.m,a> ⊢ write –» <Afficher(v,m),a+1>
-     */
+    // [write] : <<w, v, cst,*>.m,a> ⊢ write –» <Afficher(v,m),a+1>
     @Override
     public Void visitWrite(WriteLiteral literal) {
         if (!state.isEmpty()) {
@@ -206,11 +181,7 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         return null;
     }
 
-    // ==================== Stack Operations ====================
-
-    /**
-     * [push]: <m,a> ⊢ push(v) –» <<w, v, cst,*>.m, a+1>
-     */
+    // [push]: <m,a> ⊢ push(v) –» <<w, v, cst,*>.m, a+1>
     @Override
     public Void visitPush(PushNode node) {
         if (node != null && node.getValue() != null) {
@@ -227,27 +198,47 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         return null;
     }
 
-    // ==================== Variable/Constant/Array/Method Operations ====================
-
-    /**
-     * [newV] : <m,a> ⊢ new(i,t,var,s) –» <IdentVal(i,t,m,s),a+1>
-     * [newC] : <<w,v, cst,*>.m,a> ⊢ new(i,t,cst,0) –» <DeclCst(i,v,t,m),a+1>
-     * [newM] : <<w, v, cst,*>.m,a> ⊢ new(i,t,meth,0) –» <DeclMeth(i, v, t, m),a+1>
-     */
+    // [newV] : <m,a> ⊢ new(i,t,var,s) –» <IdentVal(i,t,m,s),a+1>
+    // [newV0]: <<w,v,cst,*>.m,a> ⊢ new(i,t,var,0) –» <IdentVal(i,t,m,v),a+1>
+    // [newC] : <<w,v, cst,*>.m,a> ⊢ new(i,t,cst,0) –» <DeclCst(i,v,t,m),a+1>
+    // [newM] : <<w, v, cst,*>.m,a> ⊢ new(i,t,meth,0) –» <DeclMeth(i, v, t, m),a+1>
     @Override
     public Void visitNew(NewNode node) {
         if (node == null) return null;
 
         String identName = node.getIdent().getName();
-        String objType = node.getObj().getName();  // "var" or "meth"
-        String typeStr = node.getType().getName();  // "entier" or "boolean"
+        String objType = node.getObj().getName();
+        String typeStr = node.getType().getName();
 
         Object value = null;
         if (node.getValue() != null) {
             value = extractValueFromNode(node.getValue());
         }
 
-        // Push the new variable onto the stack
+        Object originalValue = value;
+        
+        if (value instanceof Integer && (Integer) value == 0) {
+            ExecutionState.StackValue stackVal = state.pop();
+            value = stackVal.getValue();
+            
+            if ("meth".equals(objType) && value instanceof Integer && (Integer) value == 0) {
+                value = state.getAddressCounter() + 2;
+            }
+        }
+
+        if ("var".equals(objType) && originalValue != null && !originalValue.equals(0)) {
+            ExecutionState.StackValue top = state.peek();
+            if (top != null && "__frame__".equals(top.getName())) {
+                state.swap();
+                state.pop();
+                state.push(identName, value, objType, typeStr);
+                state.swap();
+                state.incrementAddress();
+                recordStep("new(" + identName + "," + typeStr + "," + objType + ")");
+                return null;
+            }
+        }
+
         state.push(identName, value, objType, typeStr);
         state.incrementAddress();
         recordStep("new(" + identName + "," + typeStr + "," + objType + ")");
@@ -255,9 +246,7 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         return null;
     }
 
-    /**
-     * [newarray]: <<w, v, cst,*>.m,a> ⊢ newarray(i, t) –» <DeclTab(i, v, t, m), a+1>
-     */
+    // [newarray]: <<w, v, cst,*>.m,a> ⊢ newarray(i, t) –» <DeclTab(i, v, t, m), a+1>
     @Override
     public Void visitNewArray(NewArrayNode node) {
         if (node == null) return null;
@@ -265,24 +254,17 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         String identName = node.getIdent().getName();
         String typeStr = node.getType().getName();
 
-        // Get array size from top of stack (should be pushed before)
         ExecutionState.StackValue sizeValue = state.pop();
         int size = ((Number) sizeValue.getValue()).intValue();
 
-        // Allocate array in heap and get reference
-        int heapRef = state.getHeapManager().allocate(size, typeStr);
-
-        // Push array reference onto stack
-        state.push(identName, heapRef, "tab", typeStr);
+        state.push(identName, size, "tab", typeStr);
         state.incrementAddress();
         recordStep("newarray(" + identName + "," + typeStr + "[" + size + "])");
 
         return null;
     }
 
-    /**
-     * [invoke]: <m,a> ⊢ invoke(i) –» <<w, a+1,cst,*>.m, Val(i, m)>
-     */
+    // [invoke]: <m,a> ⊢ invoke(i) –» <<w, a+1,cst,*>.m, Val(i, m)>
     @Override
     public Void visitInvoke(InvokeNode node) {
         if (node == null) return null;
@@ -290,34 +272,32 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         String methodName = node.getIdent().getName();
         int returnAddress = state.getAddressCounter() + 1;
 
-        // Push frame marker containing return address
-        state.push("__frame__", returnAddress, "frame", "void");
+        state.push("__frame__", returnAddress, "cst", "void");
 
-        // Find method and jump to it
-        // In a real implementation, this would look up the method in the program
-        // and set the address counter accordingly
-        // For now, we'll just set a placeholder
-        System.out.println("Invoking method: " + methodName);
+        Object methodValue = state.getValue(methodName);
+        
+        int methodAddress;
+        if (methodValue instanceof Integer) {
+            methodAddress = (Integer) methodValue;
+        } else {
+            throw new RuntimeException("Method " + methodName + " value is not an integer address: " + methodValue);
+        }
+
+        state.setAddressCounter(methodAddress);
         recordStep("invoke(" + methodName + ")");
 
         return null;
     }
 
-    /**
-     * [length] : <m,a> ⊢ length(i) –» <<w,long(I,m),cst,*>, a+1>
-     */
+    // [length] : <m,a> ⊢ length(i) –» <<w,long(I,m),cst,*>, a+1>
     @Override
     public Void visitLength(LengthNode node) {
         if (node == null) return null;
         
-        // Get the array reference from stack
-        ExecutionState.StackValue arrayRef = state.pop();
-        int ref = ((Number) arrayRef.getValue()).intValue();
+        String identName = node.getIdent().getName();
+        
+        int size = state.getArrayLength(identName);
 
-        // Get array size from heap
-        int size = state.getHeapManager().getSize(ref);
-
-        // Push size onto stack
         state.push(size);
         state.incrementAddress();
         recordStep("length");
@@ -325,42 +305,32 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         return null;
     }
 
-    // ==================== Load/Store Operations ====================
-
-    /**
-     * [load]: <m,a> ⊢ load(i) –» <<w, Val(i,m), cst,*>.m, a+1>
-     */
+    // [load]: <m,a> ⊢ load(i) –» <<w, Val(i,m), cst,*>.m, a+1>
     @Override
     public Void visitLoad(LoadNode node) {
         if (node == null) return null;
 
         String identName = node.getIdent().getName();
-        
+        state.incrementAddress();
+
         if (node.isA()) {
             // [aload]: <<w, ind, cst,*>.m,a> ⊢ aload(i) –»<<w, ValT(i, ind, m), cst,*>.m, a+1>
             ExecutionState.StackValue index = state.pop();
             int idx = ((Number) index.getValue()).intValue();
             
-            Object arrayValue = state.getValue(identName);
-            int ref = ((Number) arrayValue).intValue();
-            
-            Object elementValue = state.getHeapManager().get(ref, idx);
+            Object elementValue = state.getArrayValue(identName, idx);
             state.push(elementValue);
             recordStep("aload(" + identName + "[" + idx + "])");
         } else {
-            // Regular load
             Object value = state.getValue(identName);
             state.push(value);
             recordStep("load(" + identName + ")");
         }
         
-        state.incrementAddress();
         return null;
     }
 
-    /**
-     * [store]: <<w, v, cst,*>.m,a> ⊢ store(i) –» <AffecterVal(i,v,m), a+1>
-     */
+    // [store]: <<w, v, cst,*>.m,a> ⊢ store(i) –» <AffecterVal(i,v,m), a+1>
     @Override
     public Void visitStore(StoreNode node) {
         if (node == null) return null;
@@ -373,13 +343,9 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
             ExecutionState.StackValue indexValue = state.pop();
             int idx = ((Number) indexValue.getValue()).intValue();
             
-            Object arrayValue = state.getValue(identName);
-            int ref = ((Number) arrayValue).intValue();
-            
-            state.getHeapManager().set(ref, idx, value.getValue());
+            state.setArrayValue(identName, idx, value.getValue());
             recordStep("astore(" + identName + "[" + idx + "]=" + value.getValue() + ")");
         } else {
-            // Regular store
             state.setValue(identName, value.getValue());
             recordStep("store(" + identName + "=" + value.getValue() + ")");
         }
@@ -388,11 +354,7 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         return null;
     }
 
-    // ==================== Jump Operations ====================
-
-    /**
-     * [goto]: <m,a> ⊢ goto(a1) –» <m, a1>
-     */
+    // [goto]: <m,a> ⊢ goto(a1) –» <m, a1>
     @Override
     public Void visitGoto(GotoNode node) {
         if (node == null) return null;
@@ -404,10 +366,8 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         return null;
     }
 
-    /**
-     * [iftrue]: <<w,true, cst, *>.m,a> ⊢ if(a1) –» <m,a1>
-     * [iffalse]: <<w,false, cst, *>.m,a> ⊢ if(a1) –» <m,a+1>
-     */
+    // [iftrue]: <<w,true, cst, *>.m,a> ⊢ if(a1) –» <m,a1>
+    // [iffalse]: <<w,false, cst, *>.m,a> ⊢ if(a1) –» <m,a+1>
     @Override
     public Void visitIf(IfNode node) {
         if (node == null) return null;
@@ -427,18 +387,14 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         return null;
     }
 
-    // ==================== Increment Operations ====================
-
-    /**
-     * [inc]: <<w,v, cst,*>.m,a> ⊢ inc(i) –» <AffecterVal(i,Val(i,m)+v,m), a+1>
-     */
+    // [inc]: <<w,v, cst,*>.m,a> ⊢ inc(i) –» <AffecterVal(i,Val(i,m)+v,m), a+1>
     @Override
     public Void visitInc(IncNode node) {
         if (node == null) return null;
 
         String identName = node.getIdent().getName();
+        
         ExecutionState.StackValue incrementValue = state.pop();
-
         Object currentValue = state.getValue(identName);
         
         Number result;
@@ -449,17 +405,15 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         }
 
         state.setValue(identName, result);
+        
         state.incrementAddress();
         recordStep("inc(" + identName + "=" + result + ")");
 
         return null;
     }
 
-    // ==================== Literal Values ====================
-
     @Override
     public Void visitIntLiteral(IntLiteralNode node) {
-        // This is handled in visitPush and other operations that need the actual value
         return null;
     }
 
@@ -483,8 +437,6 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         return null;
     }
 
-    // ==================== Other Operations ====================
-
     @Override
     public Void visitObj(ObjNode node) {
         return null;
@@ -495,9 +447,7 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         return null;
     }
 
-    /**
-     * [op1]: <<w, v1,cst,*>.m,a> ⊢ oper1 –» <<w, oper1 v1, cst,*>.m, a+1>
-     */
+    // [op1]: <<w, v1,cst,*>.m,a> ⊢ oper1 –» <<w, oper1 v1, cst,*>.m, a+1>
     @Override
     public Void visitUnaryOp(UnaryOpNode node) {
         if (node == null) return null;
@@ -514,14 +464,11 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         return null;
     }
 
-    /**
-     * [op2]: <<w, v2,cst,*>.<w, v1,cst,*>.m,a>⊢oper2 –» <<w, v1 oper2 v2, cst,*>.m, a+1>
-     */
+    // [op2]: <<w, v2,cst,*>.<w, v1,cst,*>.m,a>⊢oper2 –» <<w, v1 oper2 v2, cst,*>.m, a+1>
     @Override
     public Void visitBinaryOp(BinaryOpNode node) {
         if (node == null) return null;
 
-        // Pop in reverse order (LIFO)
         ExecutionState.StackValue v2 = state.pop();
         ExecutionState.StackValue v1 = state.pop();
 
@@ -539,9 +486,6 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         return null;
     }
 
-    /**
-     * Extract actual value from nodes
-     */
     public Object extractValueFromNode(Object node) {
         if (node instanceof IntLiteralNode intNode) {
             return intNode.getValue();
@@ -553,9 +497,6 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         return node;
     }
 
-    /**
-     * Apply unary operator
-     */
     private Object applyUnaryOp(UnaryOpNode.UnaryOpName operator, Object operand) {
         if (operator == UnaryOpNode.UnaryOpName.NOT) {
             if (operand instanceof Boolean) {
@@ -573,9 +514,6 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         throw new RuntimeException("Unknown unary operator: " + operator);
     }
 
-    /**
-     * Apply binary operator
-     */
     private Object applyBinaryOp(BinaryOpNode.BinaryOpName operator, Object left, Object right) {
         if (left == null || right == null) {
             throw new RuntimeException("Binary operation: null operand(s). left=" + left + ", right=" + right + ", operator=" + operator);
@@ -611,7 +549,6 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
             }
             throw new RuntimeException("Unknown binary operator for boolean: " + operator);
         } else {
-            // Numeric operations
             try {
                 double l = ((Number) left).doubleValue();
                 double r = ((Number) right).doubleValue();
@@ -637,9 +574,6 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         }
     }
 
-    /**
-     * Get execution state for testing
-     */
     public ExecutionState getState() {
         return state;
     }

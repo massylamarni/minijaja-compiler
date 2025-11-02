@@ -3,10 +3,6 @@ package fr.amvproject.group3.interpreter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * ExecutionStep represents the state of the interpreter after executing one instruction.
- * This is what gets returned to the UI layer.
- */
 public class ExecutionStep {
     private final int stepNumber;
     private final int addressCounter;

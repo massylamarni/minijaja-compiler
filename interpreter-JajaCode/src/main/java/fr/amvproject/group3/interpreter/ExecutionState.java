@@ -1,22 +1,18 @@
 package fr.amvproject.group3.interpreter;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
 
-/**
- * ExecutionState manages the memory and address counter for JajaCode execution.
- * Implements the semantic interpretation < MEM, ADR > ⊢ JCODE –» < MEM, ADR >
- */
+import fr.amvproject.group3.memory.Stack;
+import fr.amvproject.group3.ast.nodes.finals.IdentNode;
+import fr.amvproject.group3.ast.nodes.other.TypeMethNode;
+
 public class ExecutionState {
-    /**
-     * Represents a stack value with metadata: <w, v, cst, *>
-     */
+
     public static class StackValue {
         private final String name;           // identifier name
         private Object value;                // the actual value
-        private final String objectType;     // "var", "cst", "vcst", "tab", "meth", "frame"
+        private final String objectType;     // "var", "cst", "tab"
         private final String typeStr;        // int, boolean, void
         private int returnAddress;           // for frames: where to return to
 
@@ -62,32 +58,39 @@ public class ExecutionState {
         }
     }
 
-    // Memory (stack): represented as a deque of StackValues
-    private final Deque<StackValue> memory = new ArrayDeque<>();
-
-    // Address counter: current instruction address
-    private int addressCounter = 0;
-
-    // Stop flag: when jcstop is executed
+    private final Stack stack = new Stack();
+    private int addressCounter = 1;
     private boolean stopped = false;
-
-    // Heap management for arrays
-    private final MemoryManager heapManager = new MemoryManager();
-
-    // Output management
     private final OutputManager outputManager = new OutputManager();
 
-    /**
-     * Initialize memory: <m,a> ⊢ init –» <[], a+1>
-     */
+    private String inferType(Object value) {
+        if (value instanceof Boolean) {
+            return "boolean";
+        } else if (value instanceof Integer || value instanceof Number) {
+            return "int";
+        } else {
+            return "void";
+        }
+    }
+
+    private String normalizeTypeName(String typeStr) {
+        if (typeStr == null) {
+            return "void";
+        }
+        return switch (typeStr.toLowerCase()) {
+            case "entier" -> "int";
+            case "booleen" -> "boolean";
+            case "vide" -> "void";
+            default -> typeStr; // already normalized or unknown
+        };
+    }
+
+    // <m,a> ⊢ init –» <[], a+1>
     public void init() {
-        memory.clear();
         addressCounter++;
     }
 
-    /**
-     * Stop execution: <m,a> ⊢ jcstop –» <m, ⊥>
-     */
+    // <m,a> ⊢ jcstop –» <m, ⊥>
     public void stop() {
         stopped = true;
     }
@@ -96,118 +99,175 @@ public class ExecutionState {
         return stopped;
     }
 
-    /**
-     * Increment address counter: for nop and other instructions
-     */
     public void incrementAddress() {
         addressCounter++;
     }
 
-    /**
-     * Set address counter to specific value: for goto and if instructions
-     */
     public void setAddressCounter(int address) {
         addressCounter = address;
     }
 
-    /**
-     * Get current address counter
-     */
     public int getAddressCounter() {
         return addressCounter;
     }
 
-    /**
-     * Push a value onto the stack: <m,a> ⊢ push(v) –» <<w, v, cst,*>.m, a+1>
-     */
+    // <m,a> ⊢ push(v) –» <<w, v, cst,*>.m, a+1>
     public void push(Object value) {
-        memory.push(new StackValue("", value, "cst", "int"));
+        // Push a constant value with empty identifier
+        IdentNode emptyIdent = new IdentNode("", -1);
+        String typeStr = inferType(value);
+        TypeMethNode type = new TypeMethNode(typeStr);
+        stack.declCst(emptyIdent, value, type);
     }
 
-    /**
-     * Push a named stack value: for new, load, etc.
-     */
     public void push(String name, Object value, String objectType, String typeStr) {
-        memory.push(new StackValue(name, value, objectType, typeStr));
+        IdentNode ident = new IdentNode(name, -1);
+        String normalizedType = normalizeTypeName(typeStr);
+        TypeMethNode type = new TypeMethNode(normalizedType);
+        
+        switch (objectType) {
+            case "var":
+                stack.declVar(ident, value, type);
+                break;
+            case "cst":
+                stack.declCst(ident, value, type);
+                break;
+            case "tab":
+                if (value instanceof Integer) {
+                    stack.declTab(ident, (Integer) value, type);
+                } else {
+                    throw new RuntimeException("Array declaration requires integer size");
+                }
+                break;
+            case "meth":
+                Stack.Quad methQuad = new Stack.Quad(ident, value, "meth", type);
+                stack.getQueue().push(methQuad);
+                break;
+            default:
+                stack.declCst(ident, value, type);
+        }
     }
 
-    /**
-     * Pop from stack: <<i,v,o,t>.m,a>- pop –» <m, a+1>
-     */
+    // <<i,v,o,t>.m,a>- pop –» <m, a+1>
     public StackValue pop() {
-        if (memory.isEmpty()) {
-            throw new RuntimeException("Stack underflow on pop");
-        }
-        StackValue popped = memory.pop();
+        Stack.Quad quad = stack.pop();
         
-        // If popped value is an array, remove from heap
-        if ("tab".equals(popped.getObjectType()) && popped.getValue() instanceof Integer) {
-            heapManager.remove((Integer) popped.getValue());
-        }
+        String name = quad.ident != null ? quad.ident.getName() : "";
+        String typeStr = quad.type != null ? quad.type.getName() : "void";
         
-        return popped;
+        StackValue sv = new StackValue(name, quad.value, quad.obj, typeStr);
+        
+        return sv;
     }
 
-    /**
-     * Peek at top of stack without removing
-     */
     public StackValue peek() {
-        if (memory.isEmpty()) {
-            throw new RuntimeException("Stack empty on peek");
-        }
-        return memory.peek();
+        Stack.Quad quad = stack.pop();
+        
+        String name = quad.ident != null ? quad.ident.getName() : "";
+        String typeStr = quad.type != null ? quad.type.getName() : "void";
+        
+        pushQuadBack(quad);
+        
+        return new StackValue(name, quad.value, quad.obj, typeStr);
     }
 
-    /**
-     * Check if stack is empty
-     */
     public boolean isEmpty() {
-        return memory.isEmpty();
+        try {
+            Stack.Quad quad = stack.pop();
+            pushQuadBack(quad);
+            return false;
+        } catch (Exception e) {
+            return true;
+        }
     }
 
-    /**
-     * Swap top two stack values: <q1.q2.m,a> ⊢ swap –» <q2.q1.m, a+1>
-     */
+    // <q1.q2.m,a> ⊢ swap –» <q2.q1.m, a+1>
     public void swap() {
-        if (memory.size() < 2) {
-            throw new RuntimeException("Cannot swap: stack has less than 2 elements");
-        }
-        StackValue first = memory.pop();
-        StackValue second = memory.pop();
-        memory.push(first);
-        memory.push(second);
+        stack.swap();
     }
 
-    /**
-     * Find and return value of identifier from stack
-     */
     public Object getValue(String identName) {
-        for (StackValue sv : memory) {
-            if (sv.getName().equals(identName)) {
-                return sv.getValue();
-            }
+        IdentNode ident = new IdentNode(identName, -1);
+        
+        if (isEmpty()) {
+            throw new RuntimeException("Stack is empty, cannot find identifier: " + identName);
         }
-        throw new RuntimeException("Identifier not found: " + identName);
+        
+        Stack.Quad topQuad = stack.pop();
+        Object value = stack.val(ident, topQuad);
+        pushQuadBack(topQuad);
+        
+        if (value == null) {
+            throw new RuntimeException("Identifier not found: " + identName);
+        }
+        return value;
     }
 
-    /**
-     * Find and update value of identifier in stack
-     */
     public void setValue(String identName, Object value) {
-        for (StackValue sv : memory) {
-            if (sv.getName().equals(identName)) {
-                sv.setValue(value);
-                return;
+        if (isEmpty()) {
+            throw new RuntimeException("Stack is empty, cannot set identifier: " + identName);
+        }
+        
+        java.util.Deque<Stack.Quad> queue = stack.getQueue();
+        boolean found = false;
+        
+        for (Stack.Quad quad : queue) {
+            if (quad.ident != null && identName.equals(quad.ident.getName())) {
+                quad.value = value;
+                found = true;
+                break;
             }
         }
-        throw new RuntimeException("Identifier not found: " + identName);
+        
+        if (!found) {
+            throw new RuntimeException("Variable not found on stack: " + identName);
+        }
     }
 
-    /**
-     * Get heap manager for array operations
-     */
-    public MemoryManager getHeapManager() {
-        return heapManager;
+    private void pushQuadBack(Stack.Quad quad) {
+        if (quad == null) return;
+        switch (quad.obj) {
+            case "var":
+                stack.declVar(quad.ident, quad.value, quad.type);
+                break;
+            case "tab":
+                if (quad.value instanceof Integer) {
+                    stack.declTab(quad.ident, (Integer) quad.value, quad.type);
+                }
+                break;
+            default:
+                stack.declCst(quad.ident, quad.value, quad.type);
+        }
+    }
+
+    public Stack getStack() {
+        return stack;
+    }
+
+    public Object getArrayValue(String identName, int index) {
+        IdentNode ident = new IdentNode(identName, -1);
+        Stack.Quad quad = stack.pop();
+        Object result = null;
+        if (quad != null && "tab".equals(quad.obj)) {
+            result = stack.valT(ident, index, quad);
+        }
+        pushQuadBack(quad);
+        return result;
+    }
+
+    public void setArrayValue(String identName, int index, Object value) {
+        IdentNode ident = new IdentNode(identName, -1);
+        Stack.Quad quad = stack.pop();
+        stack.affecterValT(ident, index, value, quad);
+        pushQuadBack(quad);
+    }
+
+    public int getArrayLength(String identName) {
+        IdentNode ident = new IdentNode(identName, -1);
+        Stack.Quad quad = stack.pop();
+        Integer length = stack.longT(ident, quad);
+        pushQuadBack(quad);
+        return length != null ? length : 0;
     }
 
     /**
@@ -231,48 +291,81 @@ public class ExecutionState {
         return outputManager.getOutput();
     }
 
-    /**
-     * Print execution state for debugging
-     */
     public void printState() {
         System.out.println("=== Execution State ===");
         System.out.println("Address Counter: " + addressCounter);
         System.out.println("Stopped: " + stopped);
         System.out.println("Stack:");
-        if (memory.isEmpty()) {
-            System.out.println("  [Empty]");
-        } else {
-            int i = memory.size();
-            for (StackValue sv : memory) {
-                System.out.println("  [" + i + "] " + sv);
-                i--;
-            }
-        }
-        System.out.println("Heap: " + heapManager.toString());
+        stack.print();
         String outputStr = getOutput();
         System.out.println("Output: " + (outputStr.length() > 0 ? outputStr : "[Empty]"));
         System.out.println("=======================");
     }
 
-    /**
-     * Get current stack state as list of strings for step tracking
-     */
     public List<String> getStackStateAsStrings() {
         List<String> stackStrings = new ArrayList<>();
-        if (memory.isEmpty()) {
-            stackStrings.add("[Empty]");
-        } else {
-            for (StackValue sv : memory) {
-                stackStrings.add(sv.toString());
-            }
+        
+        java.util.Deque<Stack.Quad> queue = stack.getQueue();
+        
+        if (queue.isEmpty()) {
+            return stackStrings;
         }
+        
+        for (Stack.Quad quad : queue) {
+            String identName = quad.ident != null ? quad.ident.getName() : "";
+            String valueStr = quad.value != null ? quad.value.toString() : "null";
+            String obj = quad.obj != null ? quad.obj : "unknown";
+            String typeStr = quad.type != null ? quad.type.getName() : "void";
+            
+            stackStrings.add(String.format("<%s, %s, %s, %s>", identName, valueStr, obj, typeStr));
+        }
+        
         return stackStrings;
     }
 
-    /**
-     * Get current heap state as string
-     */
     public String getHeapStateAsString() {
-        return heapManager.toString();
+        java.util.List<Object> heapQueue = stack.getHeap().getQueue();
+        int nextAddress = stack.getHeap().getNextAddress();
+        
+        if (nextAddress == 0 || heapQueue.isEmpty()) {
+            return "[No allocations]";
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        int address = 0;
+        boolean firstBlock = true;
+        
+        while (address < nextAddress) {
+            if (heapQueue.get(address) instanceof Integer size && size > 0) {
+                if (!firstBlock) {
+                    sb.append("\n  ");
+                }
+                firstBlock = false;
+                
+                String type = "unknown";
+                List<Object> elements = new ArrayList<>();
+                
+                for (int i = 1; i <= size && (address + i) < heapQueue.size(); i++) {
+                    Object element = heapQueue.get(address + i);
+                    elements.add(element);
+                    
+                    if (i == 1) {
+                        if (element instanceof Integer) {
+                            type = "entier";
+                        } else if (element instanceof Boolean) {
+                            type = "booleen";
+                        }
+                    }
+                }
+                
+                sb.append(String.format("Array@%d [size=%d, type=%s]: %s", 
+                    address, size, type, elements));
+                address += size + 1;
+            } else {
+                address++;
+            }
+        }
+        
+        return sb.length() > 0 ? sb.toString() : "[No allocations]";
     }
 }

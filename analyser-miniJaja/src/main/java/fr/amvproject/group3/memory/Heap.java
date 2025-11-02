@@ -16,7 +16,8 @@ public class Heap {
 
     // Allocate memory in the heap and return its address, aka CreerTas
     public int allocate(int size, TypeMethNode type) {
-      queue.add(size);
+      int address = nextAddress;
+      queue.add(size); // Store size at current address
       if (type.isInt()) {
         for (int i = 0; i < size; i++)
           queue.add(0);
@@ -27,7 +28,8 @@ public class Heap {
         for (int i = 0; i < size; i++)
           queue.add(null);
       }
-      return nextAddress+size+1;
+      nextAddress += size + 1; // Update nextAddress: size + 1 for the size header
+      return address + 1; // Return address of first element (after size header)
     }
 
     // Remove the allocated memory from specific address, aka RetirerTas
@@ -51,5 +53,15 @@ public class Heap {
     public void set(int address, int index, Object value) {
       if (address < 0 || address >= nextAddress) throw new IndexOutOfBoundsException();
       queue.set(address+index, value);
+    }
+
+    // --- Getters for inspection ---
+    
+    public List<Object> getQueue() {
+      return queue;
+    }
+
+    public int getNextAddress() {
+      return nextAddress;
     }
   }
