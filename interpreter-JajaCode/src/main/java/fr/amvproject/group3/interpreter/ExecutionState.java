@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.amvproject.group3.memory.Stack;
-import fr.amvproject.group3.ast.nodes.finals.IdentNode;
-import fr.amvproject.group3.ast.nodes.other.TypeMethNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.finals.IdentNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.TypeMethNode;
 
 public class ExecutionState {
 
@@ -124,7 +124,7 @@ public class ExecutionState {
         IdentNode ident = new IdentNode(name, -1);
         String normalizedType = normalizeTypeName(typeStr);
         TypeMethNode type = new TypeMethNode(normalizedType);
-        
+
         switch (objectType) {
             case "var":
                 stack.declVar(ident, value, type);
@@ -151,23 +151,23 @@ public class ExecutionState {
     // <<i,v,o,t>.m,a>- pop –» <m, a+1>
     public StackValue pop() {
         Stack.Quad quad = stack.pop();
-        
+
         String name = quad.ident != null ? quad.ident.getName() : "";
         String typeStr = quad.type != null ? quad.type.getName() : "void";
-        
+
         StackValue sv = new StackValue(name, quad.value, quad.obj, typeStr);
-        
+
         return sv;
     }
 
     public StackValue peek() {
         Stack.Quad quad = stack.pop();
-        
+
         String name = quad.ident != null ? quad.ident.getName() : "";
         String typeStr = quad.type != null ? quad.type.getName() : "void";
-        
+
         pushQuadBack(quad);
-        
+
         return new StackValue(name, quad.value, quad.obj, typeStr);
     }
 
@@ -188,15 +188,15 @@ public class ExecutionState {
 
     public Object getValue(String identName) {
         IdentNode ident = new IdentNode(identName, -1);
-        
+
         if (isEmpty()) {
             throw new RuntimeException("Stack is empty, cannot find identifier: " + identName);
         }
-        
+
         Stack.Quad topQuad = stack.pop();
         Object value = stack.val(ident, topQuad);
         pushQuadBack(topQuad);
-        
+
         if (value == null) {
             throw new RuntimeException("Identifier not found: " + identName);
         }
@@ -207,10 +207,10 @@ public class ExecutionState {
         if (isEmpty()) {
             throw new RuntimeException("Stack is empty, cannot set identifier: " + identName);
         }
-        
+
         java.util.Deque<Stack.Quad> queue = stack.getQueue();
         boolean found = false;
-        
+
         for (Stack.Quad quad : queue) {
             if (quad.ident != null && identName.equals(quad.ident.getName())) {
                 quad.value = value;
@@ -218,7 +218,7 @@ public class ExecutionState {
                 break;
             }
         }
-        
+
         if (!found) {
             throw new RuntimeException("Variable not found on stack: " + identName);
         }
@@ -304,51 +304,51 @@ public class ExecutionState {
 
     public List<String> getStackStateAsStrings() {
         List<String> stackStrings = new ArrayList<>();
-        
+
         java.util.Deque<Stack.Quad> queue = stack.getQueue();
-        
+
         if (queue.isEmpty()) {
             return stackStrings;
         }
-        
+
         for (Stack.Quad quad : queue) {
             String identName = quad.ident != null ? quad.ident.getName() : "";
             String valueStr = quad.value != null ? quad.value.toString() : "null";
             String obj = quad.obj != null ? quad.obj : "unknown";
             String typeStr = quad.type != null ? quad.type.getName() : "void";
-            
+
             stackStrings.add(String.format("<%s, %s, %s, %s>", identName, valueStr, obj, typeStr));
         }
-        
+
         return stackStrings;
     }
 
     public String getHeapStateAsString() {
         java.util.List<Object> heapQueue = stack.getHeap().getQueue();
         int nextAddress = stack.getHeap().getNextAddress();
-        
+
         if (nextAddress == 0 || heapQueue.isEmpty()) {
             return "[No allocations]";
         }
-        
+
         StringBuilder sb = new StringBuilder();
         int address = 0;
         boolean firstBlock = true;
-        
+
         while (address < nextAddress) {
             if (heapQueue.get(address) instanceof Integer size && size > 0) {
                 if (!firstBlock) {
                     sb.append("\n  ");
                 }
                 firstBlock = false;
-                
+
                 String type = "unknown";
                 List<Object> elements = new ArrayList<>();
-                
+
                 for (int i = 1; i <= size && (address + i) < heapQueue.size(); i++) {
                     Object element = heapQueue.get(address + i);
                     elements.add(element);
-                    
+
                     if (i == 1) {
                         if (element instanceof Integer) {
                             type = "entier";
@@ -357,15 +357,15 @@ public class ExecutionState {
                         }
                     }
                 }
-                
-                sb.append(String.format("Array@%d [size=%d, type=%s]: %s", 
+
+                sb.append(String.format("Array@%d [size=%d, type=%s]: %s",
                     address, size, type, elements));
                 address += size + 1;
             } else {
                 address++;
             }
         }
-        
+
         return sb.length() > 0 ? sb.toString() : "[No allocations]";
     }
 }

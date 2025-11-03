@@ -4,19 +4,19 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 
-import fr.amvproject.group3.ast.nodes.abstracts.ParamsNode;
-import fr.amvproject.group3.ast.nodes.abstracts.VarsNode;
-import fr.amvproject.group3.ast.nodes.decls.CstNode;
-import fr.amvproject.group3.ast.nodes.decls.MethodNode;
-import fr.amvproject.group3.ast.nodes.decls.TableNode;
-import fr.amvproject.group3.ast.nodes.decls.VarNode;
-import fr.amvproject.group3.ast.nodes.abstracts.InstrsNode;
-import fr.amvproject.group3.ast.nodes.abstracts.ListExpNode;
-import fr.amvproject.group3.ast.nodes.finals.IdentNode;
-import fr.amvproject.group3.ast.nodes.finals.ParamNode;
-import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
-import fr.amvproject.group3.ast.nodes.intermediate.VarDeclNode;
-import fr.amvproject.group3.ast.nodes.other.TypeMethNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.abstracts.ParamsNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.abstracts.VarsNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.decls.CstNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.decls.MethodNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.decls.TableNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.decls.VarNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.abstracts.InstrsNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.abstracts.ListExpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.finals.IdentNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.finals.ParamNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.intermediate.ExpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.intermediate.VarDeclNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.TypeMethNode;
 import fr.amvproject.group3.utils.StringSaver;
 
 public class Stack {
@@ -154,7 +154,7 @@ public class Stack {
       // Don't modify, just return - the quad is not in the stack yet
       return;
     }
-    
+
     if (queue.isEmpty())
       return;
     Quad q = queue.pop();
@@ -183,7 +183,7 @@ public class Stack {
       }
       return;
     }
-    
+
     if (queue.isEmpty())
       return;
     Quad q = queue.pop();
@@ -380,7 +380,7 @@ public class Stack {
   }
 
   // --- Getters for inspection ---
-  
+
   public Deque<Quad> getQueue() {
     return queue;
   }

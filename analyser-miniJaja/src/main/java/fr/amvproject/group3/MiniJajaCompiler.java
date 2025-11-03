@@ -1,10 +1,5 @@
 package fr.amvproject.group3;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import fr.amvproject.group3.ast.nodes.other.TypeNode;
-
 /*public class MiniJajaCompiler {
     private final Map<String, Object> variables = new HashMap<>();
 

@@ -1,8 +1,8 @@
 package fr.amvproject.group3;
 
-import fr.amvproject.group3.ast.AstNode;
-import fr.amvproject.group3.ast.MiniJajaAstBuilder;
-import fr.amvproject.group3.ast.PrintVisitor;
+import fr.amvproject.group3.miniJaja.ast.AstNode;
+import fr.amvproject.group3.miniJaja.ast.MiniJajaAstBuilder;
+import fr.amvproject.group3.miniJaja.ast.PrintVisitor;
 import fr.amvproject.group3.memory.MemoryVisitor;
 import fr.amvproject.group3.memory.SymbolTable;
 import fr.amvproject.group3.utils.StringSaver;

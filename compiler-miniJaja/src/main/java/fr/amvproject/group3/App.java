@@ -1,6 +1,8 @@
 package fr.amvproject.group3;
 
-import fr.amvproject.group3.ast.*;
+import fr.amvproject.group3.miniJaja.ast.AstNode;
+import fr.amvproject.group3.miniJaja.ast.MiniJajaAstBuilder;
+import fr.amvproject.group3.miniJaja.ast.PrintVisitor;
 import org.antlr.v4.runtime.*;
 
 import java.nio.file.Files;

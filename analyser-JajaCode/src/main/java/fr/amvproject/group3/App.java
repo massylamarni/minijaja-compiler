@@ -1,8 +1,8 @@
 package fr.amvproject.group3;
 
-import fr.amvproject.group3.ast.AstNode;
-import fr.amvproject.group3.ast.JajaCodeAstBuilder;
-import fr.amvproject.group3.ast.PrintVisitor;
+import fr.amvproject.group3.jajaCode.ast.AstNode;
+import fr.amvproject.group3.jajaCode.ast.JajaCodeAstBuilder;
+import fr.amvproject.group3.jajaCode.ast.PrintVisitor;
 import fr.amvproject.group3.utils.StringSaver;
 
 import org.antlr.v4.runtime.*;

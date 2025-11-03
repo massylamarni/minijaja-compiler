@@ -1,16 +1,22 @@
 package fr.amvproject.group3;
 
-import fr.amvproject.group3.ast.*;
-import fr.amvproject.group3.ast.nodes.abstracts.*;
-import fr.amvproject.group3.ast.nodes.decls.*;
-import fr.amvproject.group3.ast.nodes.exprs.*;
-import fr.amvproject.group3.ast.nodes.finals.*;
-import fr.amvproject.group3.ast.nodes.instrs.*;
-import fr.amvproject.group3.ast.nodes.intermediate.*;
-import fr.amvproject.group3.ast.nodes.other.*;
-import fr.amvproject.group3.ast.nodes.program.*;
-
-import java.util.List;
+import fr.amvproject.group3.miniJaja.ast.AstNode;
+import fr.amvproject.group3.miniJaja.ast.AstVisitor;
+import fr.amvproject.group3.miniJaja.ast.nodes.abstracts.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.decls.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.exprs.BinaryExpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.exprs.CallExpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.exprs.LengthNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.exprs.UnaryExpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.finals.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.instrs.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.intermediate.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.BinaryOpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.TypeMethNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.TypeNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.UnaryOpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.program.ClassNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.program.ProgramNode;
 
 /**
  * Two-pass size calculator: donne le nombre d'instructions Jaja-Code

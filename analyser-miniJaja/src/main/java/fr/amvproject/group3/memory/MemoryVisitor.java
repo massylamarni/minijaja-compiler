@@ -1,15 +1,25 @@
 package fr.amvproject.group3.memory;
 
-import fr.amvproject.group3.ast.AstNode;
-import fr.amvproject.group3.ast.AstVisitor;
-import fr.amvproject.group3.ast.nodes.abstracts.*;
-import fr.amvproject.group3.ast.nodes.decls.*;
-import fr.amvproject.group3.ast.nodes.exprs.*;
-import fr.amvproject.group3.ast.nodes.finals.*;
-import fr.amvproject.group3.ast.nodes.instrs.*;
-import fr.amvproject.group3.ast.nodes.intermediate.*;
-import fr.amvproject.group3.ast.nodes.other.*;
-import fr.amvproject.group3.ast.nodes.program.*;
+import fr.amvproject.group3.miniJaja.ast.AstNode;
+import fr.amvproject.group3.miniJaja.ast.AstVisitor;
+import fr.amvproject.group3.miniJaja.ast.nodes.abstracts.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.decls.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.exprs.BinaryExpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.exprs.CallExpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.exprs.LengthNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.exprs.UnaryExpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.finals.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.instrs.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.intermediate.DeclNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.intermediate.ExpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.intermediate.InstrNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.intermediate.VarDeclNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.BinaryOpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.TypeMethNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.TypeNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.UnaryOpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.program.ClassNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.program.ProgramNode;
 
 public class MemoryVisitor implements AstVisitor<AstNode> {
   SymbolTable symbolTable = new SymbolTable();
@@ -94,7 +104,7 @@ public class MemoryVisitor implements AstVisitor<AstNode> {
     symbolTable.addSymbol(node.getIdent(), node.getReturnType(), node.getParams(), null, node.getIdent().getLine());
     return null;
   }
-  
+
   @Override
   public AstNode visitMain(MainNode node) {
     node.getVars().accept(this);
@@ -109,7 +119,7 @@ public class MemoryVisitor implements AstVisitor<AstNode> {
     }
     return null;
   }
-  
+
   @Override
   public AstNode visitParam(ParamNode node) {
     node.accept(this);

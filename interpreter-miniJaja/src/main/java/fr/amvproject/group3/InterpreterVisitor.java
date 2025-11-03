@@ -3,24 +3,31 @@ package fr.amvproject.group3;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.amvproject.group3.ast.AstVisitor;
-import fr.amvproject.group3.ast.nodes.abstracts.*;
-import fr.amvproject.group3.ast.nodes.decls.*;
-import fr.amvproject.group3.ast.nodes.exprs.*;
-import fr.amvproject.group3.ast.nodes.finals.ArrayAccessNode;
-import fr.amvproject.group3.ast.nodes.finals.BoolLiteralNode;
-import fr.amvproject.group3.ast.nodes.finals.IdentNode;
-import fr.amvproject.group3.ast.nodes.finals.IntLiteralNode;
-import fr.amvproject.group3.ast.nodes.finals.ParamNode;
-import fr.amvproject.group3.ast.nodes.finals.StringLiteralNode;
-import fr.amvproject.group3.ast.nodes.instrs.*;
-import fr.amvproject.group3.ast.nodes.intermediate.DeclNode;
-import fr.amvproject.group3.ast.nodes.intermediate.ExpNode;
-import fr.amvproject.group3.ast.nodes.intermediate.InstrNode;
-import fr.amvproject.group3.ast.nodes.intermediate.VarDeclNode;
-import fr.amvproject.group3.ast.nodes.other.*;
-import fr.amvproject.group3.ast.nodes.program.*;
+import fr.amvproject.group3.miniJaja.ast.AstVisitor;
+import fr.amvproject.group3.miniJaja.ast.nodes.abstracts.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.decls.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.exprs.BinaryExpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.exprs.CallExpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.exprs.LengthNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.exprs.UnaryExpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.finals.ArrayAccessNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.finals.BoolLiteralNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.finals.IdentNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.finals.IntLiteralNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.finals.ParamNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.finals.StringLiteralNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.instrs.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.intermediate.DeclNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.intermediate.ExpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.intermediate.InstrNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.intermediate.VarDeclNode;
 import fr.amvproject.group3.memory.Stack;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.BinaryOpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.TypeMethNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.TypeNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.UnaryOpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.program.ClassNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.program.ProgramNode;
 
 /**
  * Interpréteur respectant les règles sémantiques du cours MiniJaja

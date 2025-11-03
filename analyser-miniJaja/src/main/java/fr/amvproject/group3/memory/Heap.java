@@ -3,7 +3,7 @@ package fr.amvproject.group3.memory;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.amvproject.group3.ast.nodes.other.TypeMethNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.TypeMethNode;
 
 public class Heap {
     private List<Object> queue;
@@ -56,7 +56,7 @@ public class Heap {
     }
 
     // --- Getters for inspection ---
-    
+
     public List<Object> getQueue() {
       return queue;
     }

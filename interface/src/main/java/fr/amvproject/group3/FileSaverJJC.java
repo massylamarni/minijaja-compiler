@@ -1,7 +1,7 @@
 package fr.amvproject.group3;
 
-import fr.amvproject.group3.ast.AstNode;
-import fr.amvproject.group3.ast.MiniJajaAstBuilder;
+import fr.amvproject.group3.miniJaja.ast.AstNode;
+import fr.amvproject.group3.miniJaja.ast.MiniJajaAstBuilder;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;

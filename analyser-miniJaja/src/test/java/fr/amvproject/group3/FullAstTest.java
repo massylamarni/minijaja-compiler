@@ -4,9 +4,9 @@ import org.antlr.v4.runtime.*;
 
 import org.junit.Test;
 
-import fr.amvproject.group3.ast.AstNode;
-import fr.amvproject.group3.ast.MiniJajaAstBuilder;
-import fr.amvproject.group3.ast.PrintVisitor;
+import fr.amvproject.group3.miniJaja.ast.AstNode;
+import fr.amvproject.group3.miniJaja.ast.MiniJajaAstBuilder;
+import fr.amvproject.group3.miniJaja.ast.PrintVisitor;
 import fr.amvproject.group3.utils.StringSaver;
 
 import static org.junit.Assert.assertEquals;

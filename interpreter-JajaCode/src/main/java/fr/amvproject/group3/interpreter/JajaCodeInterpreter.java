@@ -3,35 +3,35 @@ package fr.amvproject.group3.interpreter;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.amvproject.group3.ast.AstVisitor;
-import fr.amvproject.group3.ast.nodes.finals.AddressNode;
-import fr.amvproject.group3.ast.nodes.finals.BoolLiteralNode;
-import fr.amvproject.group3.ast.nodes.finals.IdentNode;
-import fr.amvproject.group3.ast.nodes.finals.IntLiteralNode;
-import fr.amvproject.group3.ast.nodes.finals.StringLiteralNode;
-import fr.amvproject.group3.ast.nodes.instrs.GotoNode;
-import fr.amvproject.group3.ast.nodes.instrs.IfNode;
-import fr.amvproject.group3.ast.nodes.instrs.IncNode;
-import fr.amvproject.group3.ast.nodes.instrs.InvokeNode;
-import fr.amvproject.group3.ast.nodes.instrs.LengthNode;
-import fr.amvproject.group3.ast.nodes.instrs.LoadNode;
-import fr.amvproject.group3.ast.nodes.instrs.NewArrayNode;
-import fr.amvproject.group3.ast.nodes.instrs.NewNode;
-import fr.amvproject.group3.ast.nodes.instrs.PushNode;
-import fr.amvproject.group3.ast.nodes.instrs.StoreNode;
-import fr.amvproject.group3.ast.nodes.literals.InitLiteral;
-import fr.amvproject.group3.ast.nodes.literals.JcstopLiteral;
-import fr.amvproject.group3.ast.nodes.literals.NopLiteral;
-import fr.amvproject.group3.ast.nodes.literals.PopLiteral;
-import fr.amvproject.group3.ast.nodes.literals.ReturnLiteral;
-import fr.amvproject.group3.ast.nodes.literals.SwapLiteral;
-import fr.amvproject.group3.ast.nodes.literals.WriteLiteral;
-import fr.amvproject.group3.ast.nodes.other.BinaryOpNode;
-import fr.amvproject.group3.ast.nodes.other.ObjNode;
-import fr.amvproject.group3.ast.nodes.other.TypeNode;
-import fr.amvproject.group3.ast.nodes.other.UnaryOpNode;
-import fr.amvproject.group3.ast.nodes.program.ClassNode;
-import fr.amvproject.group3.ast.nodes.program.ProgramNode;
+import fr.amvproject.group3.jajaCode.ast.AstVisitor;
+import fr.amvproject.group3.jajaCode.ast.nodes.finals.AddressNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.finals.BoolLiteralNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.finals.IdentNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.finals.IntLiteralNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.finals.StringLiteralNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.instrs.GotoNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.instrs.IfNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.instrs.IncNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.instrs.InvokeNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.instrs.LengthNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.instrs.LoadNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.instrs.NewArrayNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.instrs.NewNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.instrs.PushNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.instrs.StoreNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.literals.InitLiteral;
+import fr.amvproject.group3.jajaCode.ast.nodes.literals.JcstopLiteral;
+import fr.amvproject.group3.jajaCode.ast.nodes.literals.NopLiteral;
+import fr.amvproject.group3.jajaCode.ast.nodes.literals.PopLiteral;
+import fr.amvproject.group3.jajaCode.ast.nodes.literals.ReturnLiteral;
+import fr.amvproject.group3.jajaCode.ast.nodes.literals.SwapLiteral;
+import fr.amvproject.group3.jajaCode.ast.nodes.literals.WriteLiteral;
+import fr.amvproject.group3.jajaCode.ast.nodes.other.BinaryOpNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.other.ObjNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.other.TypeNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.other.UnaryOpNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.program.ClassNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.program.ProgramNode;
 
 public class JajaCodeInterpreter implements AstVisitor<Void> {
 
@@ -136,13 +136,13 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         if (state.isEmpty()) {
             throw new RuntimeException("Stack is empty at return");
         }
-        
+
         int returnAddress = -1;
         ExecutionState.StackValue returnValue = null;
-        
+
         while (!state.isEmpty()) {
             ExecutionState.StackValue item = state.pop();
-            
+
             if ("__frame__".equals(item.getName())) {
                 returnAddress = ((Number) item.getValue()).intValue();
                 if (!state.isEmpty()) {
@@ -151,15 +151,15 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
                 break;
             }
         }
-        
+
         if (returnAddress == -1) {
             throw new RuntimeException("No frame marker found for return");
         }
-        
+
         if (returnValue != null) {
             state.push(returnValue.getValue());
         }
-        
+
         state.setAddressCounter(returnAddress);
         recordStep("return");
         return null;
@@ -216,11 +216,11 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         }
 
         Object originalValue = value;
-        
+
         if (value instanceof Integer && (Integer) value == 0) {
             ExecutionState.StackValue stackVal = state.pop();
             value = stackVal.getValue();
-            
+
             if ("meth".equals(objType) && value instanceof Integer && (Integer) value == 0) {
                 value = state.getAddressCounter() + 2;
             }
@@ -275,7 +275,7 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         state.push("__frame__", returnAddress, "cst", "void");
 
         Object methodValue = state.getValue(methodName);
-        
+
         int methodAddress;
         if (methodValue instanceof Integer) {
             methodAddress = (Integer) methodValue;
@@ -293,9 +293,9 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
     @Override
     public Void visitLength(LengthNode node) {
         if (node == null) return null;
-        
+
         String identName = node.getIdent().getName();
-        
+
         int size = state.getArrayLength(identName);
 
         state.push(size);
@@ -317,7 +317,7 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
             // [aload]: <<w, ind, cst,*>.m,a> ⊢ aload(i) –»<<w, ValT(i, ind, m), cst,*>.m, a+1>
             ExecutionState.StackValue index = state.pop();
             int idx = ((Number) index.getValue()).intValue();
-            
+
             Object elementValue = state.getArrayValue(identName, idx);
             state.push(elementValue);
             recordStep("aload(" + identName + "[" + idx + "])");
@@ -326,7 +326,7 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
             state.push(value);
             recordStep("load(" + identName + ")");
         }
-        
+
         return null;
     }
 
@@ -342,14 +342,14 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
             // [astore]: <<w, v, cst,*>.<w, ind, cst,*>.m,a> ⊢ astore(i) –» <AffecterValT(i, ind, v,m), a+1>
             ExecutionState.StackValue indexValue = state.pop();
             int idx = ((Number) indexValue.getValue()).intValue();
-            
+
             state.setArrayValue(identName, idx, value.getValue());
             recordStep("astore(" + identName + "[" + idx + "]=" + value.getValue() + ")");
         } else {
             state.setValue(identName, value.getValue());
             recordStep("store(" + identName + "=" + value.getValue() + ")");
         }
-        
+
         state.incrementAddress();
         return null;
     }
@@ -393,10 +393,10 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         if (node == null) return null;
 
         String identName = node.getIdent().getName();
-        
+
         ExecutionState.StackValue incrementValue = state.pop();
         Object currentValue = state.getValue(identName);
-        
+
         Number result;
         if (currentValue instanceof Integer && incrementValue.getValue() instanceof Integer) {
             result = (Integer) currentValue + ((Integer) incrementValue.getValue());
@@ -405,7 +405,7 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         }
 
         state.setValue(identName, result);
-        
+
         state.incrementAddress();
         recordStep("inc(" + identName + "=" + result + ")");
 
@@ -518,11 +518,11 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
         if (left == null || right == null) {
             throw new RuntimeException("Binary operation: null operand(s). left=" + left + ", right=" + right + ", operator=" + operator);
         }
-        
+
         if (left instanceof Integer && right instanceof Integer) {
             int l = (Integer) left;
             int r = (Integer) right;
-            
+
             if (operator == BinaryOpNode.BinaryOpName.ADD) return l + r;
             if (operator == BinaryOpNode.BinaryOpName.SUB) return l - r;
             if (operator == BinaryOpNode.BinaryOpName.MUL) return l * r;
@@ -537,7 +537,7 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
             if (operator == BinaryOpNode.BinaryOpName.SUP) return l > r;
             if (operator == BinaryOpNode.BinaryOpName.AND) return l == 1 && r == 1;
             if (operator == BinaryOpNode.BinaryOpName.OR) return l == 1 || r == 1;
-            
+
             throw new RuntimeException("Unknown binary operator for int: " + operator);
         } else if (left instanceof Boolean && right instanceof Boolean) {
             boolean l = (Boolean) left;
@@ -552,7 +552,7 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
             try {
                 double l = ((Number) left).doubleValue();
                 double r = ((Number) right).doubleValue();
-                
+
                 if (operator == BinaryOpNode.BinaryOpName.ADD) return l + r;
                 if (operator == BinaryOpNode.BinaryOpName.SUB) return l - r;
                 if (operator == BinaryOpNode.BinaryOpName.MUL) return l * r;
@@ -565,10 +565,10 @@ public class JajaCodeInterpreter implements AstVisitor<Void> {
                     return l % r;
                 }
                 if (operator == BinaryOpNode.BinaryOpName.SUP) return l > r;
-                
+
                 throw new RuntimeException("Unknown binary operator: " + operator);
             } catch (ClassCastException e) {
-                throw new RuntimeException("Type mismatch in binary operation: left=" + left.getClass().getSimpleName() + 
+                throw new RuntimeException("Type mismatch in binary operation: left=" + left.getClass().getSimpleName() +
                         ", right=" + right.getClass().getSimpleName() + ", operator=" + operator, e);
             }
         }

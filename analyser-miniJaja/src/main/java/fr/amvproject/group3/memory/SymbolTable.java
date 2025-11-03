@@ -5,10 +5,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import fr.amvproject.group3.ast.nodes.abstracts.ParamsNode;
-import fr.amvproject.group3.ast.nodes.finals.IdentNode;
-import fr.amvproject.group3.ast.nodes.finals.ParamNode;
-import fr.amvproject.group3.ast.nodes.other.TypeMethNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.abstracts.ParamsNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.finals.IdentNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.finals.ParamNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.TypeMethNode;
 import fr.amvproject.group3.exceptions.SymbolTableException;
 import fr.amvproject.group3.utils.StringSaver;
 
@@ -81,7 +81,7 @@ public class SymbolTable {
       throw new SymbolTableException("Symbol " + ident.getName() + " not declared but used at line " + lineOfUsage);
     }
     sym.addLineOfUsage(lineOfUsage);
-    
+
     return true;
   }
 

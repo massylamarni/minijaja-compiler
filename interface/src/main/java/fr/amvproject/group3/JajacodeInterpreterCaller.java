@@ -1,10 +1,9 @@
 package fr.amvproject.group3;
 
-import javafx.scene.control.Alert;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.*;
-import fr.amvproject.group3.ast.AstNode;
-import fr.amvproject.group3.ast.JajaCodeAstBuilder;
+import fr.amvproject.group3.jajaCode.ast.AstNode;
+import fr.amvproject.group3.jajaCode.ast.JajaCodeAstBuilder;
 import fr.amvproject.group3.interpreter.JajaCodeInterpreter;
 
 import static fr.amvproject.group3.JajaCodeExecuter.*;

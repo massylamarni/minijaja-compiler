@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.antlr.v4.runtime.*;
-import fr.amvproject.group3.ast.AstNode;
-import fr.amvproject.group3.ast.JajaCodeAstBuilder;
-import fr.amvproject.group3.ast.nodes.program.ProgramNode;
-import fr.amvproject.group3.ast.nodes.program.ClassNode;
-import fr.amvproject.group3.ast.nodes.intermediate.InstrNode;
+import fr.amvproject.group3.jajaCode.ast.AstNode;
+import fr.amvproject.group3.jajaCode.ast.JajaCodeAstBuilder;
+import fr.amvproject.group3.jajaCode.ast.nodes.program.ProgramNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.program.ClassNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.intermediate.InstrNode;
 import fr.amvproject.group3.interpreter.JajaCodeInterpreter;
 import fr.amvproject.group3.interpreter.ExecutionStep;
 

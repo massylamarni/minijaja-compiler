@@ -1,16 +1,24 @@
 package fr.amvproject.group3;
 
-import fr.amvproject.group3.ast.*;
-import fr.amvproject.group3.ast.nodes.abstracts.*;
-import fr.amvproject.group3.ast.nodes.decls.*;
-import fr.amvproject.group3.ast.nodes.exprs.*;
-import fr.amvproject.group3.ast.nodes.finals.*;
-import fr.amvproject.group3.ast.nodes.instrs.*;
-import fr.amvproject.group3.ast.nodes.intermediate.*;
-import fr.amvproject.group3.ast.nodes.other.*;
-import fr.amvproject.group3.ast.nodes.program.*;
+import fr.amvproject.group3.miniJaja.ast.AstNode;
+import fr.amvproject.group3.miniJaja.ast.AstVisitor;
+import fr.amvproject.group3.miniJaja.ast.nodes.abstracts.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.decls.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.exprs.BinaryExpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.exprs.CallExpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.exprs.LengthNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.exprs.UnaryExpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.finals.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.instrs.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.intermediate.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.BinaryOpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.TypeMethNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.TypeNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.UnaryOpNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.program.ClassNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.program.ProgramNode;
+
 import java.lang.reflect.Method;
-import java.util.Collection;
 
 public class MiniJajaCompiler implements AstVisitor<Void> {
 
@@ -270,7 +278,7 @@ public class MiniJajaCompiler implements AstVisitor<Void> {
         LeftValueNode lv = node.getLeftValueNode();
         if (lv == null) throw new RuntimeException("AddAssign with null left value");
 
-        if (lv instanceof fr.amvproject.group3.ast.nodes.finals.IdentNode
+        if (lv instanceof IdentNode
                 || lv.getClass().getSimpleName().equals("IdentNode")
                 || lv.getClass().getSimpleName().equals("VarRefNode") // si ancien nom présent
         ) {
@@ -307,14 +315,14 @@ public class MiniJajaCompiler implements AstVisitor<Void> {
                 emitLine("load " + arrName);
                 Method getIndex = lv.getClass().getMethod("getIndexExp");
                 Object idx = getIndex.invoke(lv);
-                if (idx != null && idx instanceof fr.amvproject.group3.ast.AstNode) {
-                    ((fr.amvproject.group3.ast.AstNode) idx).accept((fr.amvproject.group3.ast.AstVisitor<Void>) this);
+                if (idx != null && idx instanceof AstNode) {
+                    ((AstNode) idx).accept((AstVisitor<Void>) this);
                 }
                 emitLine("loadref");
                 emitLine("swap");
                 emitLine("add");
-                if (idx != null && idx instanceof fr.amvproject.group3.ast.AstNode) {
-                    ((fr.amvproject.group3.ast.AstNode) idx).accept((fr.amvproject.group3.ast.AstVisitor<Void>) this);
+                if (idx != null && idx instanceof AstNode) {
+                    ((AstNode) idx).accept((AstVisitor<Void>) this);
                 }
                 emitLine("astore " + arrName);
             } catch (NoSuchMethodException nsme) {

@@ -12,11 +12,11 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.Before;
 import org.junit.Test;
 
-import fr.amvproject.group3.ast.AstNode;
-import fr.amvproject.group3.ast.JajaCodeAstBuilder;
-import fr.amvproject.group3.ast.nodes.intermediate.InstrNode;
-import fr.amvproject.group3.ast.nodes.program.ClassNode;
-import fr.amvproject.group3.ast.nodes.program.ProgramNode;
+import fr.amvproject.group3.jajaCode.ast.AstNode;
+import fr.amvproject.group3.jajaCode.ast.JajaCodeAstBuilder;
+import fr.amvproject.group3.jajaCode.ast.nodes.intermediate.InstrNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.program.ClassNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.program.ProgramNode;
 import fr.amvproject.group3.interpreter.ExecutionStep;
 import fr.amvproject.group3.interpreter.JajaCodeInterpreter;
 
@@ -116,7 +116,7 @@ public class JajaCodeInterpreterTest {
         executeProgram(program, interpreter);
 
         List<ExecutionStep> steps = interpreter.getExecutionSteps();
-        
+
         ExecutionStep pushStep1 = steps.get(1);
         assertEquals("Should push 10", "push(10)", pushStep1.getInstructionExecuted());
         assertEquals("Stack should have 1 element", 1, pushStep1.getStackState().size());
@@ -132,10 +132,10 @@ public class JajaCodeInterpreterTest {
         executeProgram(program, interpreter);
 
         List<ExecutionStep> steps = interpreter.getExecutionSteps();
-        
+
         boolean foundAdd = false;
         boolean foundSub = false;
-        
+
         for (ExecutionStep step : steps) {
             if (step.getInstructionExecuted().equals("binaryOp(ADD)")) {
                 foundAdd = true;
@@ -144,7 +144,7 @@ public class JajaCodeInterpreterTest {
                 foundSub = true;
             }
         }
-        
+
         assertTrue("Should have ADD operation", foundAdd);
         assertTrue("Should have SUB operation", foundSub);
     }
@@ -155,23 +155,23 @@ public class JajaCodeInterpreterTest {
         executeProgram(program, interpreter);
 
         List<ExecutionStep> steps = interpreter.getExecutionSteps();
-        
+
         boolean foundNewArray = false;
         boolean foundArrayStore = false;
-        
+
         for (ExecutionStep step : steps) {
             if (step.getInstructionExecuted().startsWith("newarray")) {
                 foundNewArray = true;
-                assertFalse("Heap should not be empty after array allocation", 
+                assertFalse("Heap should not be empty after array allocation",
                     step.getHeapState().equals("[No allocations]"));
             }
             if (step.getInstructionExecuted().startsWith("astore")) {
                 foundArrayStore = true;
-                assertTrue("Heap should contain array data", 
+                assertTrue("Heap should contain array data",
                     step.getHeapState().contains("Array@"));
             }
         }
-        
+
         assertTrue("Should have array allocation", foundNewArray);
         assertTrue("Should have array store", foundArrayStore);
     }
@@ -182,10 +182,10 @@ public class JajaCodeInterpreterTest {
         executeProgram(program, interpreter);
 
         List<ExecutionStep> steps = interpreter.getExecutionSteps();
-        
+
         boolean foundInvoke = false;
         boolean foundReturn = false;
-        
+
         for (ExecutionStep step : steps) {
             if (step.getInstructionExecuted().startsWith("invoke")) {
                 foundInvoke = true;
@@ -194,7 +194,7 @@ public class JajaCodeInterpreterTest {
                 foundReturn = true;
             }
         }
-        
+
         assertTrue("Should have method invocation", foundInvoke);
         assertTrue("Should have return", foundReturn);
     }
@@ -205,12 +205,12 @@ public class JajaCodeInterpreterTest {
         executeProgram(program, interpreter);
 
         List<ExecutionStep> steps = interpreter.getExecutionSteps();
-        
+
         boolean foundNew = false;
         boolean foundLoad = false;
         boolean foundStore = false;
         boolean foundInc = false;
-        
+
         for (ExecutionStep step : steps) {
             String instr = step.getInstructionExecuted();
             if (instr.startsWith("new(")) {
@@ -226,7 +226,7 @@ public class JajaCodeInterpreterTest {
                 foundInc = true;
             }
         }
-        
+
         assertTrue("Should have variable declaration", foundNew);
         assertTrue("Should have variable load", foundLoad);
         assertTrue("Should have variable store", foundStore);
@@ -239,10 +239,10 @@ public class JajaCodeInterpreterTest {
         executeProgram(program, interpreter);
 
         List<ExecutionStep> steps = interpreter.getExecutionSteps();
-        
+
         boolean foundGoto = false;
         boolean foundIf = false;
-        
+
         for (ExecutionStep step : steps) {
             if (step.getInstructionExecuted().startsWith("goto")) {
                 foundGoto = true;
@@ -251,7 +251,7 @@ public class JajaCodeInterpreterTest {
                 foundIf = true;
             }
         }
-        
+
         assertTrue("Should have goto", foundGoto);
         assertTrue("Should have if", foundIf);
     }
@@ -273,7 +273,7 @@ public class JajaCodeInterpreterTest {
 
         int stepCount = interpreter.getStepCount();
         List<ExecutionStep> steps = interpreter.getExecutionSteps();
-        
+
         assertEquals("Step count should match execution steps", stepCount, steps.size());
         assertTrue("Should have multiple steps", stepCount > 5);
     }
@@ -283,9 +283,9 @@ public class JajaCodeInterpreterTest {
         ProgramNode program = parseFile("src/test/resources/demo.jjc");
         executeProgram(program, interpreter);
 
-        assertTrue("Program should be stopped", 
+        assertTrue("Program should be stopped",
             interpreter.getState().isStopped());
-        assertFalse("Should have execution steps", 
+        assertFalse("Should have execution steps",
             interpreter.getExecutionSteps().isEmpty());
     }
 
@@ -306,7 +306,7 @@ public class JajaCodeInterpreterTest {
         executeProgram(program, interpreter);
 
         List<ExecutionStep> steps = interpreter.getExecutionSteps();
-        
+
         for (ExecutionStep step : steps) {
             int currentAddress = step.getAddressCounter();
             assertTrue("Address counter should progress", currentAddress >= 0);
