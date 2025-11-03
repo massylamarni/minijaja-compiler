@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 
 /**
  * Main text editor window for the MiniJaja project.
- * 
+ *
  * Features:
  *  - Text editor area for writing MiniJaja or JajaCode code.
  *  - Save button (saves content as .mjj file using FileSaver).
@@ -21,7 +21,7 @@ import javafx.stage.Stage;
  *  - Keyboard shortcuts:
  *       Ctrl + S  → Windows / Linux
  *       Command + S → macOS
- * 
+ *
  * This class connects the UI with FileSaver and FileUpload classes.
  */
 public class TextEdit extends Application {
@@ -31,6 +31,8 @@ public class TextEdit extends Application {
     private FileSaver fileSaver;
     // Handles uploading logic (with validations)
     private FileUpload fileUpload;
+    private FileSaverJJC fileSaverJJC;
+    private JajacodeInterpreterCaller jajacodeInterpreterCaller;
 
     @Override
     public void start(Stage primaryStage) {
@@ -38,10 +40,14 @@ public class TextEdit extends Application {
         textArea = new TextArea();
         fileSaver = new FileSaver();
         fileUpload = new FileUpload();
+        fileSaverJJC = new FileSaverJJC();
+        jajacodeInterpreterCaller = new JajacodeInterpreterCaller();
 
         // Create buttons
         Button saveButton = new Button("Save");
         Button uploadButton = new Button("Upload");
+        Button jajaCodeButton = new Button("Generate JajaCode");
+        Button jajaCodeInterpretButton = new Button("Execute JajaCode");
 
         // --- Button Actions ---
         // Save the current content using FileSaver
@@ -49,8 +55,12 @@ public class TextEdit extends Application {
         // Load file content using FileUpload
         uploadButton.setOnAction(e -> fileUpload.loadFile(textArea, primaryStage));
 
+        jajaCodeButton.setOnAction(e -> fileSaverJJC.saveToFile(textArea, primaryStage));
+
+        //jajaCodeInterpretButton.setOnAction(e ->  jajacodeInterpreterCaller.execute(textArea.getText()));
+
         // Build layout (top bar with buttons + text area in center)
-        BorderPane layout = createLayout(saveButton, uploadButton);
+        BorderPane layout = createLayout(saveButton, uploadButton,jajaCodeButton,jajaCodeInterpretButton);
 
         // Create the scene (window content)
         Scene scene = new Scene(layout, 800, 600);
@@ -73,14 +83,15 @@ public class TextEdit extends Application {
 
     /**
      * Creates the layout of the text editor window.
-     * 
-     * @param saveButton   Button for saving files
-     * @param uploadButton Button for uploading files
+     *
+     * @param saveButton              Button for saving files
+     * @param uploadButton            Button for uploading files
+     * @param jajaCodeInterpretButton
      * @return BorderPane containing the entire interface
      */
-    private BorderPane createLayout(Button saveButton, Button uploadButton) {
+    private BorderPane createLayout(Button saveButton, Button uploadButton, Button jajaCodeButton, Button jajaCodeInterpretButton) {
         // HBox for horizontal arrangement of buttons
-        HBox topBar = new HBox(10, saveButton, uploadButton);
+        HBox topBar = new HBox(10, saveButton, uploadButton, jajaCodeButton,jajaCodeInterpretButton);
         topBar.setStyle("-fx-padding: 10; -fx-background-color: #f0f0f0;");
 
         // BorderPane as main layout container

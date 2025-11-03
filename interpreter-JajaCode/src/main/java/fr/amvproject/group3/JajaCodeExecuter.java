@@ -14,11 +14,11 @@ import fr.amvproject.group3.interpreter.ExecutionStep;
 
 
 /*
- * App.java is just used to simulate the interpretation and display the result in the CLI
+ * JajaCodeExecuter.java is just used to simulate the interpretation and display the result in the CLI
  */
 
-public class App {
-    
+public class JajaCodeExecuter {
+
     public static void main(String[] args) throws Exception {
         String inputFile = args.length > 0 ? args[0] : "interpreter-JajaCode/src/test/resources/demo_full.jjc";
 
@@ -77,7 +77,7 @@ public class App {
         }
     }
 
-    private static void executeProgram(AstNode ast, JajaCodeInterpreter interpreter) {
+    public static void executeProgram(AstNode ast, JajaCodeInterpreter interpreter) {
         if (ast instanceof ProgramNode programNode) {
             Map<Integer, InstrNode> instructionMap = new HashMap<>();
             List<ClassNode> classes = programNode.getClasses();
@@ -110,14 +110,14 @@ public class App {
         }
     }
 
-    private static void printExecutionSteps(JajaCodeInterpreter interpreter) {
+    public static void printExecutionSteps(JajaCodeInterpreter interpreter) {
         List<ExecutionStep> steps = interpreter.getExecutionSteps();
-        
+
         if (steps.isEmpty()) {
             System.out.println("No steps executed");
             return;
         }
-        
+
         for (ExecutionStep step : steps) {
             System.out.println("Step " + step.getStepNumber() + ": " + step.getInstructionExecuted());
             System.out.println("  Address Counter: " + step.getAddressCounter());
@@ -143,14 +143,14 @@ public class App {
         }
     }
 
-    private static void printFinalState(JajaCodeInterpreter interpreter) {
+    public static void printFinalState(JajaCodeInterpreter interpreter) {
         List<String> stackStrings = interpreter.getState().getStackStateAsStrings();
         if (stackStrings.isEmpty()) {
             System.out.println("Stack: [[Empty]]");
         } else {
             System.out.println("Stack: " + String.join(", ", stackStrings));
         }
-        
+
         String heapState = interpreter.getState().getHeapStateAsString();
         System.out.println("Heap: " + heapState);
         System.out.println("Address Counter: " + interpreter.getState().getAddressCounter());

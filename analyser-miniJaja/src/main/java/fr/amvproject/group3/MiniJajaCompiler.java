@@ -5,7 +5,7 @@ import java.util.Map;
 
 import fr.amvproject.group3.ast.nodes.other.TypeNode;
 
-public class MiniJajaCompiler {
+/*public class MiniJajaCompiler {
     private final Map<String, Object> variables = new HashMap<>();
 
     public void allocateVar(String ident, TypeNode type) {
@@ -63,4 +63,4 @@ public class MiniJajaCompiler {
     public void placeLabel(String label) {
         System.out.println(label + ":");
     }
-}
+}*/

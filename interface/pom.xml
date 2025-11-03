@@ -51,6 +51,24 @@
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>fr.amvproject.group3</groupId>
+            <artifactId>compiler-miniJaja</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>fr.amvproject.group3</groupId>
+            <artifactId>analyser-JajaCode</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>fr.amvproject.group3</groupId>
+            <artifactId>interpreter-JajaCode</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
