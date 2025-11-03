@@ -12,52 +12,62 @@ import fr.amvproject.group3.ast.nodes.program.*;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
-@SuppressWarnings("java:S6539") // Visitor pattern: large by design
-public class JajaCodeCompiler implements AstVisitor<Void> {
+public class MiniJajaCompiler implements AstVisitor<Void> {
 
     private final CodeEmitter emitter;
     private final LabelManager labels;
+    // champ dans la classe
+    private int instrCount = 0;
+
+    // wrapper pour émettre et compter
+    private void emitLine(String s) {
+        emitter.emit(s);
+        instrCount++;
+    }
+
+    // helper pour obtenir la position courante (avant prochain emit)
+    private int currentPos() { return instrCount; }
 
     // champ dans JajaCodeCompiler
     private final boolean invokeConsumesArgs;
 
     // construceurs (surcharge)
-    public JajaCodeCompiler(CodeEmitter emitter, LabelManager labels) {
-        this(emitter, labels, false); // par défaut true (si ta VM dépile)
+    public MiniJajaCompiler(CodeEmitter emitter, LabelManager labels) {
+        this(emitter, labels, false); // par défaut false (si ta VM dépile, passe true)
     }
-    public JajaCodeCompiler(CodeEmitter emitter, LabelManager labels, boolean invokeConsumesArgs) {
+    public MiniJajaCompiler(CodeEmitter emitter, LabelManager labels, boolean invokeConsumesArgs) {
         this.emitter = emitter;
         this.labels = labels;
         this.invokeConsumesArgs = invokeConsumesArgs;
     }
     private void emitCleanupArgs(int nArgs) {
         for (int i = 0; i < nArgs; i++) {
-            emitter.emit("swap");
-            emitter.emit("pop");
+            emitLine("swap");
+            emitLine("pop");
         }
     }
 
     // ---------------- Program / Class ----------------
     @Override
     public Void visitProgram(ProgramNode node) {
-        emitter.emit("init");
+        emitLine("init");
         if (node.getClasses() != null) {
             for (ClassNode c : node.getClasses()) {
                 c.accept(this);
             }
         }
-        emitter.emit("pop");
-        emitter.emit("jcstop");
+        emitLine("pop");
+        emitLine("jcstop");
         return null;
     }
 
     @Override
     public Void visitClass(ClassNode node) {
-        emitter.emit("; Début de la classe " + node.getIdent().getName());
+
         if (node.getDecls() != null) node.getDecls().accept(this);
         if (node.getMain() != null) node.getMain().accept(this);
         emitRetraitDecls(node.getDecls());
-        emitter.emit("; Fin de la classe " + node.getIdent().getName());
+
         return null;
     }
 
@@ -77,12 +87,9 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
         // On parcourt en reverse (dernière déclaration créée retirée en premier)
         java.util.List<DeclNode> list = decls.getDecls();
         for (int i = list.size() - 1; i >= 0; i--) {
-            DeclNode d = list.get(i);
-            // Chaque new(...) placé lors de l'initialisation doit être retiré par swap/pop
-            // (var, table, const, method créent tous un new(...))
-            // Si tu as des types particuliers à traiter différemment, adapte ici.
-            emitter.emit("swap");
-            emitter.emit("pop");
+            // swap/pop comptés
+            emitLine("swap");
+            emitLine("pop");
         }
     }
 
@@ -101,9 +108,9 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
         if (node.getInitExp() != null) {
             node.getInitExp().accept(this);
         } else {
-            emitter.emit("push 0");
+            emitLine("push 0");
         }
-        emitter.emit("new(" + node.getIdent().getName() + "," + node.getType().getName() + ",var,0)");
+        emitLine("new(" + node.getIdent().getName() + "," + node.getType().getName() + ",var,0)");
         return null;
     }
 
@@ -112,9 +119,9 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
         if (node.getInitExp() != null) {
             node.getInitExp().accept(this);
         } else {
-            emitter.emit("push 0");
+            emitLine("push 0");
         }
-        emitter.emit("new(" + node.getIdent().getName() + "," + node.getType().getName() + ",cst,0)");
+        emitLine("new(" + node.getIdent().getName() + "," + node.getType().getName() + ",cst,0)");
         return null;
     }
 
@@ -122,8 +129,8 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
     public Void visitTable(TableNode node) {
         // compile size then new array
         if (node.getSizeExp() != null) node.getSizeExp().accept(this);
-        else emitter.emit("push 0");
-        emitter.emit("new(" + node.getIdent().getName() + "," + node.getType().getName() + ",array,0)");
+        else emitLine("push 0");
+        emitLine("new(" + node.getIdent().getName() + "," + node.getType().getName() + ",array,0)");
         return null;
     }
 
@@ -138,58 +145,90 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
     // ---------------- Main / Method ----------------
     @Override
     public Void visitMain(MainNode node) {
-        emitter.emit("; main:");
+
         // allocate local vars
         if (node.getVars() != null) node.getVars().accept(this);
         // body
         if (node.getInstrs() != null) node.getInstrs().accept(this);
         // push default return value (main return)
-        emitter.emit("push 0");
+        emitLine("push 0");
         // retrait des vars locales
         emitRetraitVars(node.getVars());
-        emitter.emit("return");
+        emitLine("return");
         return null;
     }
 
     @Override
     public Void visitMethod(MethodNode node) {
-        // compute method size (two-pass helper)
-        // au début de visitMethod
         SizeCalculator sc = new SizeCalculator();
-        int sizeMethod = sc.safe(node); // nombre d'instructions "intérieures" utilisé comme valeur à push
 
-        emitter.emit("push " + sizeMethod);
-        emitter.emit("new(" + node.getIdent().getName() + "," + node.getReturnType().getName() + ",meth,0)");
+        // tailles
+        int nParams = node.getParams() != null && node.getParams().getList() != null ? node.getParams().getList().size() : 0;
+        int pdvs = sc.size(node.getVars());
+        int piss = sc.size(node.getInstrs());
+        int nLocals = node.getVars() != null && node.getVars().getList() != null ? node.getVars().getList().size() : 0;
+        int prdvs = 2 * nLocals;
+        boolean hasReturn = sc.hasReturn(node);
+        int extraReturn = hasReturn ? 0 : 2;
 
-        String afterLabel = labels.newLabel(node.getIdent().getName() + "_after");
-        emitter.emit("goto(" + afterLabel+")");
-        // method body label
-        emitter.emit( ";" + node.getIdent().getName() + ":");
+        // skip relative (instructions qui suivent le ujp)
+        int skipRelative = nParams + pdvs + piss + prdvs + extraReturn;
 
-        // params: for each param push default then new(param,var,k)
+        // position de départ avant push/new/ujp
+        int base = currentPos();
+
+        int methodTotalSize = sc.size(node); // ok comme valeur metadata
+
+        // Emit push/new/ujp — ici nous voulons un ujp vers adresse absolue:
+        emitLine("push " + methodTotalSize);
+        emitLine("new(" + node.getIdent().getName() + "," + node.getReturnType().getName() + ",meth,0)");
+        // adresse absolue pour le corps : juste après push/new/ujp + skipRelative
+        // position du prochain emit sera base+3 (après push/new/ujp)
+        int bodyStart = base + 3;
+        int ujpTarget = bodyStart + skipRelative; // saut vers après le corps
+        emitLine("ujp " + ujpTarget);
+
+        // PROLOGUE param/new ...
+        int k = 1;
         if (node.getParams() != null && node.getParams().getList() != null) {
-            int k = 1;
             for (ParamNode p : node.getParams().getList()) {
-                emitter.emit("new(" + p.getIdent().getName() + "," + p.getType().getName() + ",var," + k + ")");
+                emitLine("new(" + p.getIdent().getName() + "," + p.getType().getName() + ",var," + k + ")");
                 k++;
             }
         }
 
-        // local vars
-        if (node.getVars() != null) node.getVars().accept(this);
+        // locals allocation...
+        if (node.getVars() != null && node.getVars().getList() != null) {
+            for (VarDeclNode vd : node.getVars().getList()) {
+                if (vd instanceof VarNode) {
+                    VarNode var = (VarNode) vd;
+                    if (var.getInitExp() != null) var.getInitExp().accept(this);
+                    else emitLine("push 0");
+                    emitLine("new(" + var.getIdent().getName() + "," + var.getType().getName() + ",var,0)");
+                } else if (vd instanceof CstNode) {
+                    CstNode c = (CstNode) vd;
+                    if (c.getInitExp() != null) c.getInitExp().accept(this);
+                    else emitLine("push 0");
+                    emitLine("new(" + c.getIdent().getName() + "," + c.getType().getName() + ",cst,0)");
+                } else if (vd instanceof TableNode) {
+                    TableNode t = (TableNode) vd;
+                    if (t.getSizeExp() != null) t.getSizeExp().accept(this);
+                    else emitLine("push 0");
+                    emitLine("new(" + t.getIdent().getName() + "," + t.getType().getName() + ",array,0)");
+                }
+            }
+        }
 
         // body
         if (node.getInstrs() != null) node.getInstrs().accept(this);
 
-        if (!methodHasReturn(node.getInstrs())) {
-            emitter.emit("swap");
-            emitter.emit("return");
+        if (!hasReturn) {
+            emitLine("swap");
+            emitLine("return");
         }
-
-        // after label
-        emitter.emit(";" + afterLabel + ":");
         return null;
     }
+
 
     // ---------------- Instructions --------------------
     @Override
@@ -207,12 +246,12 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
         // left part
         LeftValueNode left = node.getLeftValue();
         if (left instanceof IdentNode) {
-            emitter.emit("store " + ((IdentNode) left).getName());
+            emitLine("store " + ((IdentNode) left).getName());
         } else if (left instanceof ArrayAccessNode) {
             ArrayAccessNode a = (ArrayAccessNode) left;
             // we have value on stack already; push index then astore
-            a.getIndexExp().accept(this);
-            emitter.emit("astore " + a.getIdent().getName());
+            if (a.getIndexExp() != null) a.getIndexExp().accept(this);
+            emitLine("astore " + a.getIdent().getName());
         }
         return null;
     }
@@ -236,16 +275,13 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
                 || lv.getClass().getSimpleName().equals("VarRefNode") // si ancien nom présent
         ) {
             // variable simple
-            // obtenir le nom : plusieurs versions de node peuvent exister => utilisez réflexion prudente
             String name = null;
             try {
-                // si class has getIdent() returning IdentNode
                 Method m = lv.getClass().getMethod("getIdent");
                 Object identObj = m.invoke(lv);
                 Method getName = identObj.getClass().getMethod("getName");
                 name = (String) getName.invoke(identObj);
             } catch (Exception e) {
-                // fallback : essayer getName() direct si ident stocke le nom
                 try {
                     Method mm = lv.getClass().getMethod("getName");
                     name = (String) mm.invoke(lv);
@@ -255,39 +291,32 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
             }
 
             // now do the arithmetic: RHS on top, load LHS, swap, add, store
-            emitter.emit("load " + name);
-            emitter.emit("swap");
-            emitter.emit("add");
-            emitter.emit("store " + name);
+            emitLine("load " + name);
+            emitLine("swap");
+            emitLine("add");
+            emitLine("store " + name);
 
         } else {
-            // array access case: ArrayAccessNode (différentes versions existantes)
-            // we assume methods getIdent() and getIndexExp() exist
+            // array access case
             try {
                 Method getIdent = lv.getClass().getMethod("getIdent");
                 Object identObj = getIdent.invoke(lv);
                 Method getName = identObj.getClass().getMethod("getName");
                 String arrName = (String) getName.invoke(identObj);
 
-                // push array reference and index and do loadref to get current element
-                emitter.emit("load " + arrName);
+                emitLine("load " + arrName);
                 Method getIndex = lv.getClass().getMethod("getIndexExp");
                 Object idx = getIndex.invoke(lv);
                 if (idx != null && idx instanceof fr.amvproject.group3.ast.AstNode) {
                     ((fr.amvproject.group3.ast.AstNode) idx).accept((fr.amvproject.group3.ast.AstVisitor<Void>) this);
-                } else if (idx != null) {
-                    // can't compile index, but try to ignore
                 }
-                emitter.emit("loadref"); // now current element is on top, but RHS was computed earlier and is below
-                // we need RHS (was computed earlier and is now below), so swap to have lhs/top?
-                // Current stack (after loadref): ..., RHS, currentElem
-                emitter.emit("swap");
-                emitter.emit("add"); // sum
-                // need index again for astore: recompute or re-evaluate index
+                emitLine("loadref");
+                emitLine("swap");
+                emitLine("add");
                 if (idx != null && idx instanceof fr.amvproject.group3.ast.AstNode) {
                     ((fr.amvproject.group3.ast.AstNode) idx).accept((fr.amvproject.group3.ast.AstVisitor<Void>) this);
                 }
-                emitter.emit("astore " + arrName);
+                emitLine("astore " + arrName);
             } catch (NoSuchMethodException nsme) {
                 throw new RuntimeException("AddAssign on array but getIdent/getIndexExp not found on " + lv.getClass(), nsme);
             } catch (Exception ex) {
@@ -303,10 +332,10 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
     @Override
     public Void visitInc(IncNode node) {
         String name = node.getIdent().getName();
-        emitter.emit("load " + name);
-        emitter.emit("push 1");
-        emitter.emit("add");
-        emitter.emit("store " + name);
+        emitLine("load " + name);
+        emitLine("push 1");
+        emitLine("add");
+        emitLine("store " + name);
         return null;
     }
 
@@ -318,7 +347,7 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
         }
 
         // 2) invoke
-        emitter.emit("invoke " + node.getIdent().getName());
+        emitLine("invoke " + node.getIdent().getName());
 
         // 3) cleanup args (if needed)
         int nArgs = 0;
@@ -330,7 +359,7 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
         }
 
         // 4) retirer la valeur de retour de l'appel-instruction
-        emitter.emit("pop");
+        emitLine("pop");
 
         return null;
     }
@@ -339,60 +368,80 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
     @Override
     public Void visitWrite(WriteNode node) {
         if (node.getExp() != null) node.getExp().accept(this);
-        if (node.isLn()) emitter.emit("writeln");
-        else emitter.emit("write");
+        if (node.isLn()) emitLine("writeln");
+        else emitLine("write");
         return null;
     }
 
     @Override
     public Void visitReturn(ReturnNode node) {
         if (node.getExp() != null) node.getExp().accept(this);
-        emitter.emit("swap");
-        emitter.emit("return");
+        emitLine("swap");
+        emitLine("return");
         return null;
     }
 
     @Override
     public Void visitWhile(WhileNode node) {
-        String start = labels.newLabel("; while_start");
-        String end = labels.newLabel("; while_end");
-        emitter.emit(start + ":");
-        node.getCondExp().accept(this);
-        emitter.emit("; iffalse " + end);
+        SizeCalculator sc = new SizeCalculator();
+        int ne = (node.getCondExp() != null) ? sc.size(node.getCondExp()) : 0;
+        int nBody = (node.getInstrs() != null) ? sc.size(node.getInstrs()) : 0;
+
+        // position de départ du while (avant condition)
+        int base = currentPos();
+
+        // compile condition
+        if (node.getCondExp() != null) node.getCondExp().accept(this);
+
+        // adresse de sortie (après body + ujp)
+        int exitAddr = base + ne + nBody + 2;
+
+        emitLine("iffalse " + exitAddr);
+
+        // body
         if (node.getInstrs() != null) node.getInstrs().accept(this);
-        emitter.emit("goto (" + start + ")");
-        emitter.emit(")" + end + ":");
+
+        // ujp back to base (loop start)
+        emitLine("ujp " + base);
+
         return null;
     }
 
+
     @Override
     public Void visitIf(IfNode node) {
-        // two-pass: compute sizes with SizeCalculator
         SizeCalculator sc = new SizeCalculator();
-        int ne = sc.safe(node.getCondExp());
-        int nThen = sc.safe(node.getThenInstrs());
-        int nElse = sc.safe(node.getElseInstrs());
 
-        // then-first numeric layout:
-        // emit condition
-        node.getCondExp().accept(this);
+        // calculs de taille
+        int ne    = (node.getCondExp() != null) ? sc.size(node.getCondExp()) : 0;
+        int nThen = (node.getThenInstrs() != null) ? sc.size(node.getThenInstrs()) : 0;
+        int nElse = (node.getElseInstrs() != null) ? sc.size(node.getElseInstrs()) : 0;
 
-        // iffalse k1 -> skip then-block + ujp (1) => k1 = nThen + 1
-        int kIf = nThen + 1;
-        emitter.emit("iffalse " + kIf);
+        // position de départ (avant émission de la condition)
+        int base = currentPos();
 
-        // emit then-block
+        // on émet la condition (ne instructions) — utilise visit normal
+        if (node.getCondExp() != null) node.getCondExp().accept(this);
+
+        // calculer addresses absolues suivant la règle
+        int elseStart = base + ne + nThen + 2;           // cible pour iffalse
+        int afterElse  = elseStart + nElse;              // cible pour ujp après then
+
+        // émettre iffalse (numérique)
+        emitLine("iffalse " + elseStart);
+
+        // then
         if (node.getThenInstrs() != null) node.getThenInstrs().accept(this);
 
-        // ujp to skip else-block: kGoto = nElse
-        int kGoto = nElse;
-        emitter.emit("goto " + kGoto);
+        // ujp vers après else
+        emitLine("ujp " + afterElse);
 
-        // emit else-block
+        // else (commence à elseStart)
         if (node.getElseInstrs() != null) node.getElseInstrs().accept(this);
 
         return null;
     }
+
 
 
     // ---------------- Expressions --------------------
@@ -402,15 +451,15 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
         node.getRightExp().accept(this);
         String op = node.getOp().getOp().getName();
         switch (op) {
-            case "+" -> emitter.emit("add");
-            case "-" -> emitter.emit("sub");
-            case "*" -> emitter.emit("mul");
-            case "/" -> emitter.emit("div");
-            case "==" -> emitter.emit("eq");
-            case ">" -> emitter.emit("gt");
-            case "&&" -> emitter.emit("and");
-            case "||" -> emitter.emit("or");
-            default -> emitter.emit("; unknown binop " + op);
+            case "+" -> emitLine("add");
+            case "-" -> emitLine("sub");
+            case "*" -> emitLine("mul");
+            case "/" -> emitLine("div");
+            case "==" -> emitLine("eq");
+            case ">" -> emitLine("gt");
+            case "&&" -> emitLine("and");
+            case "||" -> emitLine("or");
+            default -> emitLine("; unknown binop " + op);
         }
         return null;
     }
@@ -419,8 +468,8 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
     public Void visitUnaryExp(UnaryExpNode node) {
         node.getExp().accept(this);
         String op = node.getOp().getOp().getName();
-        if ("!".equals(op)) emitter.emit("not");
-        else if ("-".equals(op)) emitter.emit("neg");
+        if ("!".equals(op)) emitLine("not");
+        else if ("-".equals(op)) emitLine("neg");
         return null;
     }
 
@@ -441,7 +490,7 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
         }
 
         // 2) invoke
-        emitter.emit("invoke " + node.getIdent().getName());
+        emitLine("invoke " + node.getIdent().getName());
 
         // 3) cleanup des arguments si invoke ne dépile pas (selon règle du cours)
         if (!invokeConsumesArgs) {
@@ -459,40 +508,40 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
 
     @Override
     public Void visitLength(LengthNode node) {
-        emitter.emit("load " + node.getIdent().getName());
-        emitter.emit("length");
+        emitLine("load " + node.getIdent().getName());
+        emitLine("length");
         return null;
     }
 
     @Override
     public Void visitArrayAccess(ArrayAccessNode node) {
-        emitter.emit("load " + node.getIdent().getName());
+        emitLine("load " + node.getIdent().getName());
         if (node.getIndexExp() != null) node.getIndexExp().accept(this);
-        emitter.emit("loadref");
+        emitLine("loadref");
         return null;
     }
 
     @Override
     public Void visitIntLiteral(IntLiteralNode node) {
-        emitter.emit("push " + node.getValue());
+        emitLine("push " + node.getValue());
         return null;
     }
 
     @Override
     public Void visitBoolLiteral(BoolLiteralNode node) {
-        emitter.emit("push " + (node.getValue() ? "true" : "false"));
+        emitLine("push " + (node.getValue() ? "true" : "false"));
         return null;
     }
 
     @Override
     public Void visitStringLiteral(StringLiteralNode node) {
-        emitter.emit("push \"" + node.getValue() + "\"");
+        emitLine("push \"" + node.getValue() + "\"");
         return null;
     }
 
     @Override
     public Void visitIdent(IdentNode node) {
-        emitter.emit("load " + node.getName());// For expressions the IdentNode as left-value is handled elsewhere (load/store)
+        emitLine("load " + node.getName());// For expressions the IdentNode as left-value is handled elsewhere (load/store)
         return null;
     }
 
@@ -502,86 +551,20 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
     @Override public Void visitParam(ParamNode node) { return null; }
     @Override public Void visitParams(ParamsNode node) { return null; }
     @Override public Void visitType(TypeNode node) { return null; }
-    @Override public Void visitTypeMeth(TypeMethNode node) { return null; }
 
 
     // helper: retrait variables (swap ; pop) for each var
     private void emitRetraitVars(VarsNode vars) {
         if (vars == null || vars.getList() == null) return;
         for (int i = 0; i < vars.getList().size(); i++) {
-            emitter.emit("swap");
-            emitter.emit("pop");
+            emitLine("swap");
+            emitLine("pop");
         }
     }
 
-
-    /* ... dans la classe JajaCodeCompiler ... */
-
-    /**
-     * Parcourt un subtree AST (type AstNode) et recherche récursivement
-     * un nœud de type "RetourNode" ou "ReturnNode" (noms possibles selon ta version).
-     * Utilise la réflexion pour être indépendant des packages / noms exacts.
-     */
-    private boolean methodHasReturn(fr.amvproject.group3.ast.AstNode node) {
-        if (node == null) return false;
-
-        // check by class simple name (RetourNode or ReturnNode)
-        String simple = node.getClass().getSimpleName();
-        if ("RetourNode".equals(simple) || "ReturnNode".equals(simple)) return true;
-
-        try {
-            // common patterns: nodes that contain lists -> getList()
-            Method getList = null;
-            try { getList = node.getClass().getMethod("getList"); } catch (NoSuchMethodException e) { getList = null; }
-            if (getList != null) {
-                Object res = getList.invoke(node);
-                if (res instanceof Collection) {
-                    for (Object child : (Collection<?>) res) {
-                        if (child instanceof fr.amvproject.group3.ast.AstNode) {
-                            if (methodHasReturn((fr.amvproject.group3.ast.AstNode) child)) return true;
-                        }
-                    }
-                }
-            }
-
-            // instrs containers often expose getInstrs(), getThenInstrs(), getElseInstrs()
-            String[] names = new String[] {"getInstrs", "getThenInstrs", "getElseInstrs", "getThen", "getElse", "getVars", "getListExp", "getList", "getDecls"};
-            for (String nm : names) {
-                try {
-                    Method m = node.getClass().getMethod(nm);
-                    Object o = m.invoke(node);
-                    if (o instanceof fr.amvproject.group3.ast.AstNode) {
-                        if (methodHasReturn((fr.amvproject.group3.ast.AstNode) o)) return true;
-                    } else if (o instanceof Collection) {
-                        for (Object child : (Collection<?>) o) {
-                            if (child instanceof fr.amvproject.group3.ast.AstNode) {
-                                if (methodHasReturn((fr.amvproject.group3.ast.AstNode) child)) return true;
-                            }
-                        }
-                    }
-                } catch (NoSuchMethodException ignored) {
-                    // méthode non présente => on continue
-                }
-            }
-
-            // parfois les nœuds d'instr contiennent directement un sous-instr via getThenInstrs()/getElseInstrs()
-            // on peut tenter de trouver getLeftExp/getRightExp/getCondExp/getExp pour descendre dans les expressions
-            String[] exprNames = new String[] {"getCondExp", "getExp", "getLeftExp", "getRightExp", "getIndexExp", "getInitExp", "getSizeExp"};
-            for (String nm : exprNames) {
-                try {
-                    Method m = node.getClass().getMethod(nm);
-                    Object o = m.invoke(node);
-                    if (o instanceof fr.amvproject.group3.ast.AstNode) {
-                        if (methodHasReturn((fr.amvproject.group3.ast.AstNode) o)) return true;
-                    }
-                } catch (NoSuchMethodException ignored) {
-                }
-            }
-        } catch (Exception ex) {
-            // en cas d'erreur réflexive, on échoue "silencieusement" et on retourne false.
-            // (mieux que lever une exception de compilation/exécution ici)
-        }
-        return false;
+    @Override
+    public Void visitTypeMeth(TypeMethNode node) {
+    // TODO Auto-generated method stub
+    return null;
     }
-
 }
