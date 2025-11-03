@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 
 public class App {
     public static void main(String[] args) {
-        String inputFile = "compiler-miniJaja/src/test/java/fr/amvproject/group3/ressource/test_expr.mj";
+        String inputFile = "compiler-miniJaja/test-cours.mj";
         if (args.length > 0) inputFile = args[0];
 
         try {
@@ -68,7 +68,7 @@ public class App {
             // 4) compiler vers JajaCode
             CodeEmitter emitter = new CodeEmitter();
             LabelManager labels = new LabelManager();
-            MiniJajaCompiler compiler = new MiniJajaCompiler(emitter, labels);
+            JajaCodeCompiler compiler = new JajaCodeCompiler(emitter, labels);
             PrintVisitor printer = new PrintVisitor();
             System.out.println(ast.accept(printer));
             ast.accept(compiler);

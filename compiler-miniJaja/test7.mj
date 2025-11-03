@@ -1,0 +1,9 @@
+class C {
+  int arr[5];
+  int res;
+  main {
+    arr[0] = 10;
+    arr[1] = 3;
+    res = longueur(arr);
+  }
+}
