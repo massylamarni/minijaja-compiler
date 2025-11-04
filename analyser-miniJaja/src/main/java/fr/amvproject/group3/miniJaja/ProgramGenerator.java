@@ -1,4 +1,4 @@
-package fr.amvproject.group3;
+package fr.amvproject.group3.miniJaja;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -437,6 +437,10 @@ public class ProgramGenerator {
 
   public void print(String preset) {
       StringSaver.save(sb.toString(), "generatedProgram.mjj", preset);
+  }
+
+  public String getString() {
+    return sb.toString();
   }
 
 }

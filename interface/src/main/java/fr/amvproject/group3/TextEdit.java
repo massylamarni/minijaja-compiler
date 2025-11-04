@@ -10,18 +10,19 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
  * Main text editor window for the MiniJaja project.
  *
  * Features:
- *  - Text editor area for writing MiniJaja or JajaCode code.
- *  - Save button (saves content as .mjj file using FileSaver).
- *  - Upload button (loads .mjj or .txt files using FileUpload).
- *  - Keyboard shortcuts:
- *       Ctrl + S  → Windows / Linux
- *       Command + S → macOS
+ * - Text editor area for writing MiniJaja or JajaCode code.
+ * - Save button (saves content as .mjj file using FileSaver).
+ * - Upload button (loads .mjj or .txt files using FileUpload).
+ * - Keyboard shortcuts:
+ * Ctrl + S → Windows / Linux
+ * Command + S → macOS
  *
  * This class connects the UI with FileSaver and FileUpload classes.
  */
@@ -73,6 +74,8 @@ public class TextEdit extends Application {
         Button compileMjjButton = new Button("Compile");
         Button interpretMjjButton = new Button("Interpret MiniJaja");
         Button interpretJjcButton = new Button("Interpret JajaCode");
+        Button generateMjjButton = new Button("Generate MiniJaja");
+        Button generateJjcButton = new Button("Generate JajaCode");
         closeOutputButton.setVisible(false);
 
         FileSaverJJC mjjManager = new FileSaverJJC();
@@ -100,10 +103,25 @@ public class TextEdit extends Application {
             openOutputPane();
         });
 
+        generateMjjButton.setOnAction(e -> {
+            fr.amvproject.group3.miniJaja.ProgramGenerator programGenerator = new fr.amvproject.group3.miniJaja.ProgramGenerator();
+            programGenerator.generateProgram();
+            outputArea.setText(programGenerator.getString());
+            openOutputPane();
+        });
+
+        generateJjcButton.setOnAction(e -> {
+            fr.amvproject.group3.jajaCode.ProgramGenerator programGenerator = new fr.amvproject.group3.jajaCode.ProgramGenerator();
+            programGenerator.generateProgram();
+            outputArea.setText(programGenerator.getString());
+            openOutputPane();
+        });
+
         closeOutputButton.setOnAction(e -> closeOutputPane());
 
         // Build layout (top bar with buttons + text area in center)
-        BorderPane layout = createLayout(saveButton, uploadButton,compileMjjButton,interpretJjcButton, interpretMjjButton, closeOutputButton);
+        BorderPane layout = createLayout(saveButton, uploadButton, compileMjjButton, interpretJjcButton,
+                interpretMjjButton, closeOutputButton, generateMjjButton, generateJjcButton);
 
         // Create the scene (window content)
         Scene scene = new Scene(layout, 800, 600);
@@ -127,15 +145,25 @@ public class TextEdit extends Application {
     /**
      * Creates the layout of the text editor window.
      *
-     * @param saveButton              Button for saving files
-     * @param uploadButton            Button for uploading files
+     * @param saveButton         Button for saving files
+     * @param uploadButton       Button for uploading files
      * @param interpretJjcButton
      * @return BorderPane containing the entire interface
      */
-    private BorderPane createLayout(Button saveButton, Button uploadButton, Button compileMjjButton, Button interpretJjcButton, Button interpretMjjButton, Button closeOutputButton) {
+    private BorderPane createLayout(Button saveButton, Button uploadButton, Button compileMjjButton,
+            Button interpretJjcButton, Button interpretMjjButton, Button closeOutputButton, Button generateMjjButton,
+            Button generateJjcButton) {
         // HBox for horizontal arrangement of buttons
-        HBox topBar = new HBox(10, saveButton, uploadButton, compileMjjButton, interpretJjcButton, interpretMjjButton, closeOutputButton);
-        topBar.setStyle("-fx-padding: 10; -fx-background-color: #f0f0f0;");
+        HBox topBar1 = new HBox(10, saveButton, uploadButton, compileMjjButton, interpretJjcButton, interpretMjjButton,
+                closeOutputButton);
+        HBox topBar2 = new HBox(10, generateMjjButton, generateJjcButton);
+        VBox topBar = new VBox(topBar1, topBar2);
+        topBar1.setStyle("-fx-padding: 10; -fx-background-color: #f0f0f0;");
+        topBar2.setStyle(
+                "-fx-padding: 10;" +
+                        "-fx-background-color: #f0f0f0;" +
+                        "-fx-border-color: #d0d0d0 transparent transparent transparent;" +
+                        "-fx-border-width: 1 0 0 0;");
 
         // BorderPane as main layout container
         BorderPane root = new BorderPane();

@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.*;
 
 import org.junit.Test;
 
+import fr.amvproject.group3.jajaCode.ProgramGenerator;
 import fr.amvproject.group3.jajaCode.ast.AstNode;
 import fr.amvproject.group3.jajaCode.ast.JajaCodeAstBuilder;
 import fr.amvproject.group3.jajaCode.ast.PrintVisitor;

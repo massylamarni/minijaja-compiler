@@ -1,14 +1,14 @@
 package fr.amvproject.group3;
 
-import fr.amvproject.group3.ast.*;
-import fr.amvproject.group3.ast.nodes.abstracts.*;
-import fr.amvproject.group3.ast.nodes.decls.*;
-import fr.amvproject.group3.ast.nodes.exprs.*;
-import fr.amvproject.group3.ast.nodes.finals.*;
-import fr.amvproject.group3.ast.nodes.instrs.*;
-import fr.amvproject.group3.ast.nodes.intermediate.*;
-import fr.amvproject.group3.ast.nodes.other.*;
-import fr.amvproject.group3.ast.nodes.program.*;
+import fr.amvproject.group3.miniJaja.ast.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.abstracts.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.decls.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.exprs.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.finals.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.instrs.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.intermediate.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.*;
+import fr.amvproject.group3.miniJaja.ast.nodes.program.*;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
@@ -265,7 +265,7 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
         LeftValueNode lv = node.getLeftValueNode();
         if (lv == null) throw new RuntimeException("AddAssign with null left value");
 
-        if (lv instanceof fr.amvproject.group3.ast.nodes.finals.IdentNode
+        if (lv instanceof fr.amvproject.group3.miniJaja.ast.nodes.finals.IdentNode
                 || lv.getClass().getSimpleName().equals("IdentNode")
                 || lv.getClass().getSimpleName().equals("VarRefNode") // si ancien nom présent
         ) {
@@ -299,14 +299,14 @@ public class JajaCodeCompiler implements AstVisitor<Void> {
                 emitLine("load (" + arrName +")");
                 Method getIndex = lv.getClass().getMethod("getIndexExp");
                 Object idx = getIndex.invoke(lv);
-                if (idx != null && idx instanceof fr.amvproject.group3.ast.AstNode) {
-                    ((fr.amvproject.group3.ast.AstNode) idx).accept((fr.amvproject.group3.ast.AstVisitor<Void>) this);
+                if (idx != null && idx instanceof fr.amvproject.group3.miniJaja.ast.AstNode) {
+                    ((fr.amvproject.group3.miniJaja.ast.AstNode) idx).accept((fr.amvproject.group3.miniJaja.ast.AstVisitor<Void>) this);
                 }
                 emitLine("loadref");
                 emitLine("swap");
                 emitLine("add");
-                if (idx != null && idx instanceof fr.amvproject.group3.ast.AstNode) {
-                    ((fr.amvproject.group3.ast.AstNode) idx).accept((fr.amvproject.group3.ast.AstVisitor<Void>) this);
+                if (idx != null && idx instanceof fr.amvproject.group3.miniJaja.ast.AstNode) {
+                    ((fr.amvproject.group3.miniJaja.ast.AstNode) idx).accept((fr.amvproject.group3.miniJaja.ast.AstVisitor<Void>) this);
                 }
                 emitLine("astore (" + arrName+")");
             } catch (NoSuchMethodException nsme) {

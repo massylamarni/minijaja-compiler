@@ -1,4 +1,4 @@
-package fr.amvproject.group3;
+package fr.amvproject.group3.jajaCode;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -108,6 +108,7 @@ public class ProgramGenerator {
   private static final String NEW = "new("; 
   public void generateNew() {
     for (Type type : Type.values()) for (ObjType objType : ObjType.values()) {
+      if (type == Type.STRING || objType == ObjType.TAB) continue;
       lnAppender(NEW, getIdent(objType, type), ", ", type.getType(), ", ", objType.getType(), ", ", "0)");
       lnAppender(NEW, getIdent(objType, type), ", ", type.getType(), ", ", objType.getType(), ", ", "true)");
       lnAppender(NEW, getIdent(objType, type), ", ", type.getType(), ", ", objType.getType(), ", ", "false)");
@@ -118,6 +119,7 @@ public class ProgramGenerator {
   private static final String NEWARRAY = "newarray("; 
   public void generateNewArray() {
     for (Type type : Type.values()) {
+      if (type == Type.STRING) continue;
       lnAppender(NEWARRAY, getIdent(ObjType.TAB, type), ", ", type.getType(), ")");
       lnAppender(NEWARRAY, getIdent(ObjType.TAB, type), ", ", type.getType(), ")");
       lnAppender(NEWARRAY, getIdent(ObjType.TAB, type), ", ", type.getType(), ")");
@@ -190,6 +192,63 @@ public class ProgramGenerator {
 
   public void print(String preset) {
       StringSaver.save(sb.toString(), "generatedProgram.jjc", preset);
+  }
+
+  public String getString() {
+    return """
+      1 init
+      2 push(0)
+      3 new(x,entier,var,0)
+      4 push(4)
+      5 newarray(t,entier)
+      6 push(9)
+      7 new(fct,entier,meth,0)
+      8 goto(29)
+      9 new(max,entier,var,1)
+      10 push(5)
+      11 new(y,entier,var,0)
+      12 load(max)
+      13 push(0)
+      14 sup
+      15 not
+      16 if(24)
+      17 load(max)
+      18 inc(y)
+      19 load(max)
+      20 push(1)
+      21 sub
+      22 store(max)
+      23 goto(12)
+      24 load(y)
+      25 swap
+      26 pop
+      27 swap 
+      28 return
+      29 push(4)
+      30 load(x)
+      31 sup
+      32 not
+      33 if(44)
+      34 load(x)
+      35 push(1)
+      36 invoke(fct)
+      37 writeln
+      38 swap
+      39 pop
+      40 astore(t)
+      41 push(1)
+      42 inc(x)
+      43 goto(29)
+      44 push(0)
+      45 swap
+      46 pop
+      47 swap
+      48 pop
+      49 swap
+      50 pop
+      51 pop
+      52 jcstop
+      """;
   }
 
 }
