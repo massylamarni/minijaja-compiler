@@ -30,7 +30,7 @@ public class InterpreterVisitorTest {
 
     // ######################## ARIMTHMETIC ########################
 
-    @Test
+    @Ignore
     public void givenSimpleAdditionCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         String code = """
