@@ -101,5 +101,10 @@
             </plugins>
         </pluginManagement>
     </build>
-
+    <scm>
+        <developerConnection>
+            scm:git:https://disc.univ-fcomte.fr/cr700-gitlab/projet-amv-2025/groupe-3
+        </developerConnection>
+    </scm>
 </project>
+
