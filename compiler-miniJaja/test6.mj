@@ -1,0 +1,10 @@
+class C {
+  int f() {
+    int a;
+    a = 2;
+  };
+  main {
+    int r;
+    r = 0;
+  }
+}

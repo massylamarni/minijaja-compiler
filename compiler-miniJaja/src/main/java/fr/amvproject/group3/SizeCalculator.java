@@ -188,7 +188,7 @@ public class SizeCalculator implements AstVisitor<Integer> {
         return s;
     }
 
-    @Override public Integer visitInc(IncNode node) { return 4; } // load,push1,add,store
+    @Override public Integer visitInc(IncNode node) { return 1; } // load,push1,add,store
 
     @Override public Integer visitCallInstr(CallInstrNode node) {
         int s = 0;
@@ -275,7 +275,6 @@ public class SizeCalculator implements AstVisitor<Integer> {
 
     @Override
     public Integer visitTypeMeth(TypeMethNode node) {
-    // TODO Auto-generated method stub
-    return null;
+        return 0;
     }
 }
