@@ -3,7 +3,7 @@
     <parent>
         <groupId>fr.amvproject.group3</groupId>
         <artifactId>miniJaja-project</artifactId>
-        <version>1.0</version>
+        <version>1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>interpreter-miniJaja</artifactId>
@@ -27,7 +27,7 @@
         <dependency>
             <groupId>fr.amvproject.group3</groupId>
             <artifactId>analyser-miniJaja</artifactId>
-            <version>1.0</version>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
