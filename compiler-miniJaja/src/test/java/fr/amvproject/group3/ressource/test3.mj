@@ -1,0 +1,14 @@
+class C {
+  int a;
+  boolean flag;
+  main {
+    a = 1;
+    flag = (a > 0);
+    if (flag) {
+      a = 10;
+    } else {
+      a = 20;
+    };
+  }
+}
+

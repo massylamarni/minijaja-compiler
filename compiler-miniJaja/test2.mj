@@ -1,0 +1,8 @@
+class C {
+  int a;
+  int b;
+  main {
+    a = 3;
+    b = a + 5;
+  }
+}
