@@ -72,7 +72,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         retraitDecls(node.getDecls());
 
         // 5. RetirerDecl(ident(i), m4) - Retirer la variable de classe
-        stack.retirerDecl(node.getIdent(), stack.pop());
+        //stack.retirerDecl(node.getIdent(), stack.pop());
 
         return null;
     }
@@ -136,7 +136,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     @Override
     public Object visitVar(VarNode node) {
         // TODO Auto-generated method stub
-        return null;
+        return visitVarDecl(node);
     }
 
     @Override
@@ -622,9 +622,9 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         for (int i = declList.size() - 1; i >= 0; i--) {
             DeclNode decl = declList.get(i);
             if (decl instanceof VarNode varNode) {
-                stack.retirerDecl(varNode.getIdent(), stack.pop());
+                //stack.retirerDecl(varNode.getIdent(), stack.pop());
             } else if (decl instanceof MethodNode methodNode) {
-                stack.retirerDecl(methodNode.getIdent(), stack.pop());
+                //stack.retirerDecl(methodNode.getIdent(), stack.pop());
             }
         }
     }

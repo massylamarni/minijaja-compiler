@@ -6,6 +6,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -29,7 +30,7 @@ public class InterpreterVisitorTest {
 
     // ######################## ARIMTHMETIC ########################
 
-    @Ignore
+    @Test
     public void givenSimpleAdditionCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         String code = """
