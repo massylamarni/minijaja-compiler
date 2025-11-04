@@ -59,6 +59,12 @@
         </dependency>
         <dependency>
             <groupId>fr.amvproject.group3</groupId>
+            <artifactId>interpreter-miniJaja</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>fr.amvproject.group3</groupId>
             <artifactId>analyser-JajaCode</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>

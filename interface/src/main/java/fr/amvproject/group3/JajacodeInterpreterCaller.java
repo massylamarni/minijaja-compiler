@@ -1,15 +1,114 @@
 package fr.amvproject.group3;
 
-import org.antlr.v4.runtime.CharStreams;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.antlr.v4.runtime.*;
 import fr.amvproject.group3.jajaCode.ast.AstNode;
 import fr.amvproject.group3.jajaCode.ast.JajaCodeAstBuilder;
+import fr.amvproject.group3.jajaCode.ast.nodes.intermediate.InstrNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.program.ClassNode;
+import fr.amvproject.group3.jajaCode.ast.nodes.program.ProgramNode;
+import fr.amvproject.group3.interpreter.ExecutionStep;
 import fr.amvproject.group3.interpreter.JajaCodeInterpreter;
-
-import static fr.amvproject.group3.JajaCodeExecuter.*;
 
 
 public class JajacodeInterpreterCaller {
+    private StringBuilder sb = new StringBuilder();
+
+
+    public void executeProgram(AstNode ast, JajaCodeInterpreter interpreter) {
+        if (ast instanceof ProgramNode programNode) {
+            Map<Integer, InstrNode> instructionMap = new HashMap<>();
+            List<ClassNode> classes = programNode.getClasses();
+
+            for (ClassNode classNode : classes) {
+                if (classNode != null && classNode.getAddress() != null && classNode.getInstr() != null) {
+                    instructionMap.put(classNode.getAddress().getValue(), classNode.getInstr());
+                }
+            }
+
+            int maxIterations = 10000;
+            int iterations = 0;
+
+            while (!interpreter.getState().isStopped() && iterations < maxIterations) {
+                int currentAddress = interpreter.getState().getAddressCounter();
+                InstrNode instruction = instructionMap.get(currentAddress);
+
+                if (instruction == null) {
+                    System.err.println("Warning: No instruction at address " + currentAddress);
+                    break;
+                }
+
+                instruction.accept(interpreter);
+                iterations++;
+            }
+
+            if (iterations >= maxIterations) {
+                System.err.println("Warning: Maximum iterations reached");
+            }
+        }
+    }
+
+    public void printExecutionSteps(JajaCodeInterpreter interpreter) {
+        List<ExecutionStep> steps = interpreter.getExecutionSteps();
+
+        if (steps.isEmpty()) {
+            sb.append("\n");
+            sb.append("No steps executed");
+            return;
+        }
+
+        for (ExecutionStep step : steps) {
+            sb.append("\n");
+            sb.append("Step " + step.getStepNumber() + ": " + step.getInstructionExecuted());
+            sb.append("\n");
+            sb.append("  Address Counter: " + step.getAddressCounter());
+            List<String> stackState = step.getStackState();
+            if (stackState.isEmpty()) {
+                sb.append("\n");
+                sb.append("  Stack: [[Empty]]");
+            } else {
+                sb.append("\n");
+                sb.append("  Stack: [" + String.join(", ", stackState) + "]");
+            }
+
+            String heapState = step.getHeapState();
+            if (heapState == null || heapState.isEmpty() || heapState.equals("[Heap managed by miniJaja Stack]")) {
+                sb.append("\n");
+                sb.append("  Heap: [No allocations]");
+            } else {
+                sb.append("\n");
+                sb.append("  Heap: " + heapState);
+            }
+
+            if (step.isStopped()) {
+                sb.append("\n");
+                sb.append("  STATUS: STOPPED");
+            }
+
+        }
+    }
+
+    public void printFinalState(JajaCodeInterpreter interpreter) {
+        List<String> stackStrings = interpreter.getState().getStackStateAsStrings();
+        if (stackStrings.isEmpty()) {
+            sb.append("\n");
+            sb.append("Stack: [[Empty]]");
+        } else {
+            sb.append("\n");
+            sb.append("Stack: " + String.join(", ", stackStrings));
+        }
+
+        String heapState = interpreter.getState().getHeapStateAsString();
+        sb.append("\n");
+        sb.append("Heap: " + heapState);
+        sb.append("\n");
+        sb.append("Address Counter: " + interpreter.getState().getAddressCounter());
+        sb.append("\n");
+        sb.append("Stopped: " + interpreter.getState().isStopped());
+    }
 
 /*
     public void execute(String input) {
@@ -24,20 +123,24 @@ public class JajacodeInterpreterCaller {
 
         JajaCodeInterpreter interpreter = new JajaCodeInterpreter();
 
-        System.out.println("✓ Interpreter created");
-        System.out.println();
-        System.out.println("--- Executing Program ---");
-        System.out.println();
+        sb.append("\n");
+        sb.append("✓ Interpreter created");
+        
+        sb.append("\n");
+        sb.append("--- Executing Program ---");
+        
 
         if (ast != null) {
             executeProgram(ast, interpreter);
 
-            System.out.println();
-            System.out.println("--- Execution Steps ---");
+            
+            sb.append("\n");
+            sb.append("--- Execution Steps ---");
             printExecutionSteps(interpreter);
 
-            System.out.println();
-            System.out.println("--- Final State ---");
+            
+            sb.append("\n");
+            sb.append("--- Final State ---");
             printFinalState(interpreter);
         }
 
@@ -52,10 +155,13 @@ public class JajacodeInterpreterCaller {
 
     public void execute(String inputText) {
 
-        System.out.println("===============================================");
-        System.out.println("JajaCode Interpreter - Semantic Execution");
-        System.out.println("===============================================");
-        System.out.println();
+        sb.append("\n");
+        sb.append("===============================================");
+        sb.append("\n");
+        sb.append("JajaCode Interpreter - Semantic Execution");
+        sb.append("\n");
+        sb.append("===============================================");
+        
 
         try {
             CharStream input = CharStreams.fromString(inputText);
@@ -67,43 +173,57 @@ public class JajacodeInterpreterCaller {
             JajaCodeAstBuilder builder = new JajaCodeAstBuilder();
             AstNode ast = builder.visit(tree);
 
-            System.out.println("✓ Program parsed successfully");
+            sb.append("\n");
+            sb.append("✓ Program parsed successfully");
 
             JajaCodeInterpreter interpreter = new JajaCodeInterpreter();
 
-            System.out.println("✓ Interpreter created");
-            System.out.println();
-            System.out.println("--- Executing Program ---");
-            System.out.println();
+            sb.append("\n");
+            sb.append("✓ Interpreter created");
+            
+            sb.append("\n");
+            sb.append("--- Executing Program ---");
+            
 
             if (ast != null) {
                 executeProgram(ast, interpreter);
 
-                System.out.println();
-                System.out.println("--- Execution Steps ---");
+                
+                sb.append("\n");
+                sb.append("--- Execution Steps ---");
                 printExecutionSteps(interpreter);
 
-                System.out.println();
-                System.out.println("--- Final State ---");
+                
+                sb.append("\n");
+                sb.append("--- Final State ---");
                 printFinalState(interpreter);
             }
 
-            System.out.println();
-            System.out.println("===============================================");
-            System.out.println("Execution finished successfully!");
-            System.out.println("===============================================");
+            
+            sb.append("\n");
+            sb.append("===============================================");
+            sb.append("\n");
+            sb.append("Execution finished successfully!");
+            sb.append("\n");
+            sb.append("===============================================");
 
             String output = interpreter.getState().getOutput();
             if (!output.isEmpty()) {
-                System.out.println("--- Program Output ---");
-                System.out.print(output);
-                System.out.println();
+                sb.append("\n");
+                sb.append("--- Program Output ---");
+                sb.append("\n");
+                sb.append(output);
+                
             }
 
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public String getString() {
+        return sb.toString();
     }
 
 }

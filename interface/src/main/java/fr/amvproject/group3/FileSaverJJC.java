@@ -71,7 +71,7 @@ public class FileSaverJJC {
         }
     }
 
-    private String compilation(String content) {
+    public String compilation(String content) {
         MiniJajaLexer lexer = new MiniJajaLexer(CharStreams.fromString(content));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         MiniJajaParser parser = new MiniJajaParser(tokens);
@@ -111,6 +111,42 @@ public class FileSaverJJC {
         }
 
         return stringBuilder.toString();
+    }
+
+    public String interpret(String content) {
+        MiniJajaLexer lexer = new MiniJajaLexer(CharStreams.fromString(content));
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        MiniJajaParser parser = new MiniJajaParser(tokens);
+
+        // 2) parse
+        MiniJajaParser.ProgramContext tree = null;
+        try {
+            tree = parser.program();
+        } catch (Exception ex) {
+            System.err.println("Erreur lors de l'analyse syntaxique : " + ex.getMessage());
+        }
+
+        // si le parse a produit des erreurs, signale et stoppe proprement
+        if (parser.getNumberOfSyntaxErrors() > 0 || tree == null) {
+            System.err.println("Le parse a échoué : nombre d'erreurs = " + parser.getNumberOfSyntaxErrors());
+        }
+
+
+        // 3) construire l'AST
+        MiniJajaAstBuilder builder = new MiniJajaAstBuilder();
+        AstNode ast = builder.visit(tree); // ou builder.parse(...) selon votre API
+
+        if (ast == null) {
+            System.err.println("Le constructeur d'AST a renvoyé null.");
+            return "Le constructeur d'AST a renvoyé null.";
+        }
+
+        // 4) compiler vers JajaCode
+
+        InterpreterVisitor interpreterVisitor = new InterpreterVisitor();
+        ast.accept(interpreterVisitor);
+
+        return interpreterVisitor.getStack().print();
     }
 
     /**

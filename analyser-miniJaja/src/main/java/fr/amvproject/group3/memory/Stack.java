@@ -309,7 +309,7 @@ public class Stack {
 
   /* Print stack */
 
-  public void print() {
+  public String print() {
     StringBuilder sb = new StringBuilder();
     sb.append("===== STACK DUMP =====\n");
 
@@ -324,7 +324,7 @@ public class Stack {
 
     sb.append("======================\n");
 
-    StringSaver.save(sb.toString(), "stackDump.txt", "main");
+    return sb.toString();
   }
 
   private void appendQuad(StringBuilder sb, Quad q, int index) {
@@ -388,4 +388,118 @@ public class Stack {
   public Heap getHeap() {
     return heap;
   }
+
+  /* Quick Print */
+  public String prettyPrint() {
+    StringBuilder sb = new StringBuilder();
+
+    sb.append("\n=========================\n");
+    sb.append("      MINIJAJA STACK     \n");
+    sb.append("=========================\n\n");
+
+    if (queue.isEmpty()) {
+        sb.append("[ EMPTY STACK ]\n");
+        return sb.toString();
+    }
+
+    int pos = queue.size();
+    for (Quad q : queue) {
+        sb.append("• Entry ").append(pos--).append("\n");
+        sb.append("  ├─ Identifier : ").append(q.ident != null ? q.ident.getName() : "<null>").append("\n");
+        sb.append("  ├─ Kind       : ").append(q.obj).append("\n");
+        sb.append("  ├─ Type       : ").append(q.type != null ? q.type.getType() : "<none>").append("\n");
+
+        switch (q.obj) {
+            case "var", "cst", "vcst" -> {
+                sb.append("  └─ Value      : ").append(q.value).append("\n");
+            }
+
+            case "tab" -> {
+                sb.append("  └─ Array      : ").append(formatArray(q)).append("\n");
+            }
+
+            case "meth" -> {
+                sb.append("  └─ Method:\n");
+                appendMethodPretty(sb, q);
+            }
+
+            case "frame" -> {
+                sb.append("  └─ <FRAME-BORDER>\n");
+            }
+
+            default -> {
+                sb.append("  └─ Value      : ").append(q.value).append("\n");
+            }
+        }
+
+        sb.append("\n");
+    }
+
+    sb.append("=========================\n");
+
+    return sb.toString();
+}
+
+private String formatArray(Quad q) {
+    int ref = (int) q.value;
+    Object arr = heap.get(ref);
+
+    if (arr == null) return "<null>";
+
+    // heap.get(ref) might return an Object[]
+    if (arr instanceof Object[] array) {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < array.length; i++) {
+            sb.append(array[i]);
+            if (i < array.length - 1) sb.append(", ");
+        }
+        return sb.append("]").toString();
+    }
+
+    return arr.toString();
+}
+
+private void appendMethodPretty(StringBuilder sb, Quad q) {
+    if (!(q.value instanceof MethodNode method)) {
+        sb.append("     <Invalid method data>\n");
+        return;
+    }
+
+    // Parameters
+    sb.append("     Parameters:\n");
+    if (method.getParams() != null) {
+        for (ParamNode p : method.getParams().getList()) {
+            sb.append("       - ")
+              .append(p.getIdent().getName())
+              .append(" : ")
+              .append(p.getType().getType())
+              .append("\n");
+        }
+    } else {
+        sb.append("       <none>\n");
+    }
+
+    // Local vars
+    sb.append("     Locals:\n");
+    if (method.getVars() != null) {
+        for (VarDeclNode v : method.getVars().getList()) {
+            sb.append("       - ")
+              .append(v.getIdent().getName())
+              .append(" : ")
+              .append(getTypeNameHelper(v))
+              .append("\n");
+        }
+    } else {
+        sb.append("       <none>\n");
+    }
+
+    // Instruction count
+    int count = method.getInstrs() != null
+              ? method.getInstrs().getList().size()
+              : 0;
+
+    sb.append("     Instructions: ").append(count).append("\n");
+}
+
+
 }
