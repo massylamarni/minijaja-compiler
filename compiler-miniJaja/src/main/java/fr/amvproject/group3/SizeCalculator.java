@@ -125,24 +125,25 @@ public class SizeCalculator implements AstVisitor<Integer> {
         s += safe(node.getInstrs()); // body
         s += 1; // push 0 (main return)
         int nLocals = node.getVars() != null && node.getVars().getList() != null ? node.getVars().getList().size() : 0;
-        s += 2 * nLocals; // retrait locaux (swap + pop) pour chaque
-        s += 1; // return
+        s += 2 * nLocals;
+        boolean b = containsReturn(node.getInstrs());
+        if (b) {
+            s += 1; // return
+        }
         return s;
     }
 
     @Override public Integer visitMethod(MethodNode node) {
-        // push meta (1) + new(method) (1) + ujp (1)  => total 3
-        // + pens (params new => 1 each) + pdvs + piss + prdvs + (swap+return if needed)
-        int s = 0;
-        s += 3; // push/new/ujp
+
+        int s = 0;// push/new/ujp
         int nParams = node.getParams() != null && node.getParams().getList() != null ? node.getParams().getList().size() : 0;
         s += nParams * 1; // each param new(...) is 1 instruction
         s += safe(node.getVars()); // allocation local vars
         s += safe(node.getInstrs()); // body
-        int nLocals = node.getVars() != null && node.getVars().getList() != null ? node.getVars().getList().size() : 0;
-        s += 2 * nLocals; // retrait locaux
+        int nLocals = node.getVars().getList().size() ;
+        s += 2 * nLocals;
         boolean hasRet = containsReturn(node.getInstrs());
-        if (!hasRet) s += 2; // swap + return
+        if (!hasRet) {s += 2;}; // swap + return
         return s;
     }
 
@@ -230,7 +231,6 @@ public class SizeCalculator implements AstVisitor<Integer> {
     @Override public Integer visitWhile(WhileNode node) {
         int ne = safe(node.getCondExp());
         int nBody = safe(node.getInstrs());
-        // cond + iffalse end + body + ujp back
         return ne + 1 + nBody + 1;
     }
 

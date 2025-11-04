@@ -70,7 +70,7 @@ public class App {
             // 4) compiler vers JajaCode
             CodeEmitter emitter = new CodeEmitter();
             LabelManager labels = new LabelManager();
-            JajaCodeCompiler compiler = new JajaCodeCompiler(emitter, labels);
+            MiniJajaCompiler compiler = new MiniJajaCompiler(emitter, labels);
             PrintVisitor printer = new PrintVisitor();
             System.out.println(ast.accept(printer));
             ast.accept(compiler);
