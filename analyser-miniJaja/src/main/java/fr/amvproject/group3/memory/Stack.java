@@ -108,12 +108,13 @@ public class Stack {
     public Object val(IdentNode ident, Quad quad) {
         if (quad == null)
             return null;
-        Quad q = queue.pop();
         if (quad.ident.sameAs(ident)) {
+            queue.push(quad);
             return quad.value;
         }
+        Quad q = queue.pop();
         Object resultat = val(ident, q);
-        queue.push(q);
+        queue.push(quad);
         return resultat;
     }
 
@@ -211,11 +212,13 @@ public class Stack {
     public TypeMethNode sorte(IdentNode ident, Quad quad) {
         if (quad == null)
             return null;
-        if (quad.ident.sameAs(ident))
+        if (quad.ident.sameAs(ident)) {
+            queue.push(quad);
             return quad.type;
+        }
         Quad q = queue.pop();
         TypeMethNode type = sorte(ident, q);
-        queue.push(q);
+        queue.push(quad);
         return type;
     }
 

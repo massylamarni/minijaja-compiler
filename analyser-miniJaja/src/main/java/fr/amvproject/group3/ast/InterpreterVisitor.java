@@ -413,12 +413,12 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     }
 
     /**
-     * [ident] : m eval⊢ ident(i) ⇒ Val(i,m)
+     * [ident] : m eval⊢ ident(i  ) ⇒ Val(i,m)
      */
     @Override
     public Object visitIdent(IdentNode node) {
         try {
-            return stack.val(node, getQuad(node, node.getName() ,"var")); // TODO
+            return stack.val(node, stack.pop()); // TODO
         } catch (RuntimeException e) {
             throw new RuntimeException(
                     "Variable '" + node.getName() + "' not declared", e);
@@ -525,7 +525,14 @@ public class InterpreterVisitor implements AstVisitor<Object> {
             );
         }
 
-        if (!(left instanceof Integer)) {
+        if (!(left instanceof Integer) && (node.getOp().isAdd() ||  node.getOp().isSub() || node.getOp().isMul() || node.getOp().isDiv() || node.getOp().isGt()) ) {
+            throw new RuntimeException(
+                    "Type error: arithmetic operator requires integer operands, got " +
+                            left.getClass().getSimpleName() + " and " + right.getClass().getSimpleName()
+            );
+        }
+
+        if (!(left instanceof Boolean) && (node.getOp().isAnd() ||  node.getOp().isOr()) ) {
             throw new RuntimeException(
                     "Type error: arithmetic operator requires integer operands, got " +
                             left.getClass().getSimpleName() + " and " + right.getClass().getSimpleName()
@@ -541,7 +548,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
             case DIV:
                 if ((int) right == 0) throw new RuntimeException("Runtime error: division by zero");
                 return (int) left / (int) right;
-            case EQ:  return (int) left == (int) right;
+            case EQ:  return  left == right;
             case GT:  return (int) left > (int) right;
             default:  throw new RuntimeException("Unknown binary operator: " + node.getOp());
         }
