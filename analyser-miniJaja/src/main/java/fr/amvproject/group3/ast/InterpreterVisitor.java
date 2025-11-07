@@ -1,5 +1,6 @@
 package fr.amvproject.group3.ast;
 
+import java.awt.geom.QuadCurve2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import fr.amvproject.group3.ast.nodes.intermediate.VarDeclNode;
 import fr.amvproject.group3.ast.nodes.other.*;
 import fr.amvproject.group3.ast.nodes.program.*;
 import fr.amvproject.group3.memory.Stack;
+import fr.amvproject.group3.utils.NodeOperations;
 
 /**
  * Interpréteur respectant les règles sémantiques du cours MiniJaja
@@ -28,6 +30,7 @@ import fr.amvproject.group3.memory.Stack;
 @SuppressWarnings("java:S6539") // Visitor pattern: large by design
 public class InterpreterVisitor implements AstVisitor<Object> {
     private final Stack stack = new Stack();
+    private VarDeclNode node;
 
     public Stack getStack() {
         return stack;
@@ -64,7 +67,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         retraitDecls(node.getDecls());
 
         // 5. RetirerDecl(ident(i), m4) - Retirer la variable de classe
-        stack.retirerDecl(node.getIdent(), stack.pop());
+        // stack.retirerDecl(node.getIdent(), TODO);
 
         return null;
     }
@@ -111,6 +114,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitVarDecl(VarDeclNode node) {
+        this.node = node;
         // Application de la règle selon le type
         if (node instanceof VarNode varNode) {
             // DeclVar(i, v, t, m)
@@ -128,7 +132,8 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     @Override
     public Object visitVar(VarNode node) {
         // TODO Auto-generated method stub
-        return null;
+        return visitVarDecl(node);
+
     }
 
     @Override
@@ -139,8 +144,8 @@ public class InterpreterVisitor implements AstVisitor<Object> {
 
     @Override
     public Object visitCst(CstNode node) {
-    // TODO Auto-generated method stub
-    return null;
+        // TODO Auto-generated method stub
+        return null;
     }
 
     /**
@@ -212,12 +217,13 @@ public class InterpreterVisitor implements AstVisitor<Object> {
 
         if (node.getLeftValue() instanceof IdentNode identNode) {
             // Règle [affectation]
-            stack.affecterVal(identNode, value, stack.pop());
+
+            stack.affecterVal(identNode, value, getQuad(identNode, node.getExp(), "var"));
         } else if (node.getLeftValue() instanceof ArrayAccessNode arrayAccessNode) {
             // Règle [affectationT]
             // m eval⊢ e1 ⇒ ind
             int index = (int) evalExp(arrayAccessNode.getIndexExp());
-            stack.affecterValT(arrayAccessNode.getIdent(), index, value, stack.pop());
+            stack.affecterValT(arrayAccessNode.getIdent(), index, value, getQuad(arrayAccessNode.getIdent(), node.getExp(), "tab"));
         }
         return null;
     }
@@ -232,23 +238,8 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitAddAssign(AddAssignNode node) {
-        Object addValue = evalExp(node.getExp());
-        // Vérification du type de la valeur à ajouter
-        if (!(addValue instanceof Integer)) {
-            throw new RuntimeException(
-                    "Type error: += operator requires integer operand, got " +
-                            addValue.getClass().getSimpleName()
-            );
-        }
-        if (node.getLeftValueNode() instanceof IdentNode identNode) {
-            // Règle [somme]: Val(i,m) + v
-            stack.affecterVal(identNode, (int) stack.val(identNode, stack.pop()) + (int) addValue, stack.pop());
-        } else if (node.getLeftValueNode() instanceof ArrayAccessNode arrayAccessNode) {
-            int index = (int) evalExp(arrayAccessNode.getIndexExp());
-            int result = (int) stack.valT(arrayAccessNode.getIdent(), index, stack.pop()) + (int) addValue;
-            stack.affecterValT(arrayAccessNode.getIdent(), index, result, stack.pop());
-        }
-        return null;
+        NodeOperations no = new NodeOperations();
+        return visitAssign(no.addAssignToAssign(node));
     }
 
     /**
@@ -257,7 +248,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitInc(IncNode node) {
-        Object currentValue = stack.val(node.getIdent(), stack.pop());
+        Object currentValue = stack.val(node.getIdent(), stack.pop() );
         // Vérification du type
         if (!(currentValue instanceof Integer)) {
             throw new RuntimeException(
@@ -266,7 +257,9 @@ public class InterpreterVisitor implements AstVisitor<Object> {
             );
         }
         int newValue = (int) currentValue + 1;
-        stack.affecterVal(node.getIdent(), newValue, stack.pop());
+        //if(node.)
+            stack.affecterVal(node.getIdent(), currentValue, getQuad(node.getIdent(), newValue, "var" ));
+
         return null;
     }
 
@@ -425,7 +418,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     @Override
     public Object visitIdent(IdentNode node) {
         try {
-            return stack.val(node, stack.pop());
+            return stack.val(node, getQuad(node, node.getName() ,"var")); // TODO
         } catch (RuntimeException e) {
             throw new RuntimeException(
                     "Variable '" + node.getName() + "' not declared", e);
@@ -436,8 +429,10 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      * [tab] : m eval⊢ e ⇒ v
      * m eval⊢ tab(ident(i), e) ⇒ ValT(i, v, m)
      */
+
     @Override
     public Object visitArrayAccess(ArrayAccessNode node) {
+        /*
         Object indexObj = evalExp(node.getIndexExp());
         if (!(indexObj instanceof Integer)) {
             throw new RuntimeException(
@@ -453,7 +448,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
             );
         }
         try {
-            return stack.valT(node.getIdent(), index, stack.pop());
+            return stack.valT(node.getIdent(), index, TODO);
         } catch (IndexOutOfBoundsException e) {
             throw new RuntimeException(
                     "Runtime error: array index " + index +
@@ -461,6 +456,9 @@ public class InterpreterVisitor implements AstVisitor<Object> {
                     e
             );
         }
+
+         */
+        return null;
     }
 
     /**
@@ -510,66 +508,46 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      * m eval⊢ op2(e, e1) ⇒ v op v1
      */
     private Object evalBinaryExp(BinaryExpNode node) {
-        // ========== PARTIE 1 : Opérateurs logiques (&&, ||) ==========
-        if (node.getOp().isAnd()) {
-            Object left = evalExp(node.getLeftExp());
-            Object right = evalExp(node.getRightExp());
-
-            if (!(left instanceof Boolean && right instanceof Boolean)) {
-                throw new RuntimeException(
-                        "Type error: logical operator '&&' requires boolean operands, got " +
-                                left.getClass().getSimpleName() + " and " +
-                                right.getClass().getSimpleName()
-                );
-            }
-
-            if (!(boolean) left) return false;
-            return right;
-
-        } else if (node.getOp().isOr()) {
-            Object left = evalExp(node.getLeftExp());
-            Object right = evalExp(node.getRightExp());
-            if (!(left instanceof Boolean && right instanceof Boolean)) {
-                throw new RuntimeException(
-                        "Type error: logical operator '||' requires boolean operands, got " +
-                                left.getClass().getSimpleName() + " and " +
-                                right.getClass().getSimpleName()
-                );
-            }
-            if ((boolean) left) return true;
-            return right;
-        }
-
-        // ========== PARTIE 2 : Opérateurs arithmétiques (+, -, *, /, ==, >) ==========
-        Object leftObj = evalExp(node.getLeftExp());
-        Object rightObj = evalExp(node.getRightExp());
-
-        if (!(leftObj instanceof Integer && rightObj instanceof Integer)) {
+        Object left = evalExp(node.getLeftExp());
+        Object right = evalExp(node.getRightExp());
+        // on compare le type si cest les memes avec la methodes deja existant
+        if (left.getClass() != right.getClass()) {
             throw new RuntimeException(
-                    "Type error: arithmetic operator requires integer operands, got " +
-                            leftObj.getClass().getSimpleName() + " and " +
-                            rightObj.getClass().getSimpleName()
+                    "Type mismatch: left is " + left.getClass().getSimpleName() +
+                            ", right is " + right.getClass().getSimpleName()
             );
         }
 
-        int left = (int) leftObj;
-        int right = (int) rightObj;
+        if ((node.getOp().isAnd() || node.getOp().isOr()) && !(left instanceof Boolean)) {
+            throw new RuntimeException(
+                    "Type error: logical operator requires boolean operands, got " +
+                            left.getClass().getSimpleName() + " and " + right.getClass().getSimpleName()
+            );
+        }
+
+        if (!(left instanceof Integer)) {
+            throw new RuntimeException(
+                    "Type error: arithmetic operator requires integer operands, got " +
+                            left.getClass().getSimpleName() + " and " + right.getClass().getSimpleName()
+            );
+        }
 
         switch (node.getOp().getOp()) {
-            case ADD: return left + right;
-            case SUB: return left - right;
-            case MUL: return left * right;
+            case AND: return (boolean) left && (boolean) right;
+            case OR:  return (boolean) left || (boolean) right;
+            case ADD: return (int) left + (int) right;
+            case SUB: return (int) left - (int) right;
+            case MUL: return (int) left * (int) right;
             case DIV:
-                if (right == 0) {
-                    throw new RuntimeException("Runtime error: division by zero");
-                }
-                return left / right;
-            case EQ: return left == right;
-            case GT: return left > right;
-            default:
-                throw new RuntimeException("Unknown binary operator: " + node.getOp());
+                if ((int) right == 0) throw new RuntimeException("Runtime error: division by zero");
+                return (int) left / (int) right;
+            case EQ:  return (int) left == (int) right;
+            case GT:  return (int) left > (int) right;
+            default:  throw new RuntimeException("Unknown binary operator: " + node.getOp());
         }
     }
+
+
 
     /**
      * Règle [op1] (page 43) :
@@ -609,16 +587,19 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      * m retrait⊢ decls(ds, dss) → m2
      */
     private void retraitDecls(DeclsNode decls) {
+        /*
         // Retrait en ordre inverse (comme dans la règle récursive)
         List<DeclNode> declList = decls.getDecls();
         for (int i = declList.size() - 1; i >= 0; i--) {
             DeclNode decl = declList.get(i);
             if (decl instanceof VarNode varNode) {
-                stack.retirerDecl(varNode.getIdent(), stack.pop());
+                stack.retirerDecl(varNode.getIdent(), TODO);
             } else if (decl instanceof MethodNode methodNode) {
-                stack.retirerDecl(methodNode.getIdent(), stack.pop());
+                stack.retirerDecl(methodNode.getIdent(), TODO);
             }
         }
+
+         */
     }
 
     /**
@@ -628,9 +609,31 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     private void retraitVars(VarsNode vars) {
         // Retrait en ordre inverse
+        /*
         List<VarDeclNode> varList = vars.getList();
         for (int i = varList.size() - 1; i >= 0; i--) {
-            stack.retirerDecl(varList.get(i).getIdent(), stack.pop());
+            stack.retirerDecl(varList.get(i).getIdent(), TODO);
         }
+
+         */
     }
+
+    /*
+    helper
+     */
+    public Stack.Quad getQuad(IdentNode identNode, ExpNode expNode, String obj) {
+        return  new Stack.Quad(identNode, expNode.evaluate(), obj, new TypeMethNode(stack.objet(identNode , stack.pop())));
+    }
+
+    public Stack.Quad getQuad(IdentNode identNode, int value, String obj) {
+        return  new Stack.Quad(identNode, value, obj, new TypeMethNode(stack.objet(identNode , stack.pop())));
+    }
+
+    public Stack.Quad getQuad(IdentNode identNode, String value, String obj) {
+        return  new Stack.Quad(identNode, value, obj, new TypeMethNode(stack.objet(identNode , stack.pop())));
+    }
+
+
+
+
 }

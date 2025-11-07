@@ -1,6 +1,7 @@
 package fr.amvproject.group3;
 
 import fr.amvproject.group3.ast.AstNode;
+import fr.amvproject.group3.ast.InterpreterVisitor;
 import fr.amvproject.group3.ast.MiniJajaAstBuilder;
 import fr.amvproject.group3.ast.PrintVisitor;
 import fr.amvproject.group3.memory.MemoryVisitor;
@@ -38,5 +39,11 @@ public class App {
         ast.accept(memoryVisitor);
         SymbolTable symbolTable = memoryVisitor.getSymbolTable();
         symbolTable.print();
+
+        System.out.println("\n===== EXECUTION =====");
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        ast.accept(interpreter);
+        interpreter.getStack().print();
+
     }
 }
