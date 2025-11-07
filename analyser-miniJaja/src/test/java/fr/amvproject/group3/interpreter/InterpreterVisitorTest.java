@@ -60,6 +60,6 @@ public class InterpreterVisitorTest {
 
         // Then
         String output = outContent.toString().trim();
-        //assertThat(output, is("5"));
+        assertThat(output, is("5"));
     }
 }

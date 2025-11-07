@@ -94,7 +94,7 @@ public class Stack {
         if (quad == null)
             return;
         Quad q = queue.pop();
-        if (quad.ident.equals(ident)) {
+        if (quad.ident.sameAs(ident)) {
             if (quad.obj.equals("tab"))
                 heap.remove((int) quad.value, quad.type);
         } else {
@@ -109,7 +109,7 @@ public class Stack {
         if (quad == null)
             return null;
         Quad q = queue.pop();
-        if (quad.ident.equals(ident)) {
+        if (quad.ident.sameAs(ident)) {
             return quad.value;
         }
         Object resultat = val(ident, q);
@@ -122,7 +122,7 @@ public class Stack {
         if (quad == null)
             return null;
         Quad q = queue.pop();
-        if (quad.ident.equals(ident)) {
+        if (quad.ident.sameAs(ident)) {
             return heap.get((int) quad.value);
         }
         Object resultat = valT(ident, index, q);
@@ -135,7 +135,7 @@ public class Stack {
         if (quad == null)
             return null;
         Quad q = queue.pop();
-        if (quad.ident.equals(ident)) {
+        if (quad.ident.sameAs(ident)) {
             return (int) heap.get((int) quad.value - 1);
         }
         int res = longT(ident, q);
@@ -146,7 +146,7 @@ public class Stack {
     // Assigns a new value to the identifier
     public void affecterVal(IdentNode ident, Object value, Quad quad) {
         Quad q = queue.pop();
-        if (!quad.ident.equals(ident))
+        if (!quad.ident.sameAs(ident))
             affecterVal(ident, value, q);
         else if (quad.obj.equals("vcst")) {
             queue.push(new Quad(ident, value, "cst", quad.type));
@@ -165,7 +165,7 @@ public class Stack {
     // Assigns a new value to an array at a specific index
     public void affecterValT(IdentNode ident, int index, Object value, Quad quad) {
         Quad q = queue.pop();
-        if (!quad.ident.equals(ident))
+        if (!quad.ident.sameAs(ident))
             affecterValT(ident, index, value, q);
         else
             heap.set((int) quad.value, index, value);
@@ -174,7 +174,7 @@ public class Stack {
     // Assigns a new type to an identifier
     public void affecterType(IdentNode ident, TypeMethNode type, Quad quad) {
         Quad q = queue.pop();
-        if (quad.ident.equals(ident))
+        if (quad.ident.sameAs(ident))
             queue.push(new Quad(ident, quad.value, quad.obj, type));
         else {
             affecterType(ident, type, q);
@@ -198,9 +198,8 @@ public class Stack {
     public String objet(IdentNode ident, Quad quad) {
         if (quad == null)
             return null;
-        if (quad.ident.equals(ident))
+        if (quad.ident.sameAs(ident))
             return quad.obj;
-
 
         Quad q = queue.pop();
         String obj = objet(ident, q);
@@ -212,7 +211,7 @@ public class Stack {
     public TypeMethNode sorte(IdentNode ident, Quad quad) {
         if (quad == null)
             return null;
-        if (quad.ident.equals(ident))
+        if (quad.ident.sameAs(ident))
             return quad.type;
         Quad q = queue.pop();
         TypeMethNode type = sorte(ident, q);
@@ -224,7 +223,7 @@ public class Stack {
     public ParamsNode parametre(IdentNode ident, Quad quad) {
         if (quad == null)
             return null;
-        if (!quad.ident.equals(ident)) {
+        if (!quad.ident.sameAs(ident)) {
             Quad q = queue.pop();
             ParamsNode params = parametre(ident, q);
             queue.push(q);
@@ -240,7 +239,7 @@ public class Stack {
     public VarsNode declaration(IdentNode ident, Quad quad) {
         if (quad == null)
             return null;
-        if (!quad.ident.equals(ident)) {
+        if (!quad.ident.sameAs(ident)) {
             Quad q = queue.pop();
             VarsNode vars = declaration(ident, q);
             queue.push(q);
@@ -256,7 +255,7 @@ public class Stack {
     public InstrsNode corps(IdentNode ident, Quad quad) {
         if (quad == null)
             return null;
-        if (!quad.ident.equals(ident)) {
+        if (!quad.ident.sameAs(ident)) {
             Quad q = queue.pop();
             InstrsNode intrs = corps(ident, q);
             queue.push(q);

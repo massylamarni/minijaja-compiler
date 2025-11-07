@@ -622,15 +622,15 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     helper
      */
     public Stack.Quad getQuad(IdentNode identNode, ExpNode expNode, String obj) {
-        return  new Stack.Quad(identNode, expNode.evaluate(), obj, new TypeMethNode(stack.objet(identNode , stack.pop())));
+        return  new Stack.Quad(identNode, expNode.evaluate(), obj, stack.sorte(identNode , stack.pop()));
     }
 
     public Stack.Quad getQuad(IdentNode identNode, int value, String obj) {
-        return  new Stack.Quad(identNode, value, obj, new TypeMethNode(stack.objet(identNode , stack.pop())));
+        return  new Stack.Quad(identNode, value, obj, stack.sorte(identNode , stack.pop()));
     }
 
     public Stack.Quad getQuad(IdentNode identNode, String value, String obj) {
-        return  new Stack.Quad(identNode, value, obj, new TypeMethNode(stack.objet(identNode , stack.pop())));
+        return  new Stack.Quad(identNode, value, obj, stack.sorte(identNode , stack.pop()));
     }
 
 
