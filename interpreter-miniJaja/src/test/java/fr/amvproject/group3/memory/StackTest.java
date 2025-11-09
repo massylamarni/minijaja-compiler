@@ -1,8 +1,9 @@
 package fr.amvproject.group3.memory;
 
-import fr.amvproject.group3.ast.nodes.finals.IdentNode;
-import fr.amvproject.group3.ast.nodes.other.TypeMethNode;
 import org.junit.Test;
+
+import fr.amvproject.group3.miniJaja.ast.nodes.finals.IdentNode;
+import fr.amvproject.group3.miniJaja.ast.nodes.other.TypeMethNode;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;

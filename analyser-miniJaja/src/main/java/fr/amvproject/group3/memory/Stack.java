@@ -21,10 +21,10 @@ import fr.amvproject.group3.utils.StringSaver;
 
 public class Stack {
     public static class Quad {
-        IdentNode ident;
-        Object value;
-        String obj; // var, cst, vcst, tab, meth, frame
-        TypeMethNode type; // int, boolean, void.
+        public IdentNode ident;
+        public Object value;
+        public String obj; // var, cst, vcst, tab, meth, frame
+        public TypeMethNode type; // int, boolean, void.
 
         public Quad(IdentNode ident, Object value, String obj, TypeMethNode type) {
             this.ident = ident;
@@ -36,6 +36,10 @@ public class Stack {
 
     private Deque<Quad> queue = new ArrayDeque<>();
     private Heap heap = new Heap();
+
+    public Heap getHeap() {
+      return heap;
+    }
 
     // --- Stack Operations ---
 

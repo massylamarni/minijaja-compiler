@@ -1,8 +1,11 @@
-package fr.amvproject.group3.interpreter;
+package fr.amvproject.group3;
 
 
+import fr.amvproject.group3.MiniJajaLexer;
+import fr.amvproject.group3.MiniJajaParser;
 import fr.amvproject.group3.miniJaja.ast.MiniJajaAstBuilder;
 import fr.amvproject.group3.miniJaja.ast.nodes.program.ProgramNode;
+
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -31,7 +34,7 @@ public class InterpreterVisitorTest {
 
     // ######################## ARIMTHMETIC ########################
 
-    @Ignore
+    @Test
     public void givenSimpleAdditionCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         String code = """
@@ -63,7 +66,7 @@ public class InterpreterVisitorTest {
 
     }
 
-    @Ignore
+    @Test
     public void givenSimpleSoustractionCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         String code = """
@@ -96,7 +99,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Ignore
+    @Test
     public void givenSimpleMultiplicationCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         String code = """
@@ -128,7 +131,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Ignore
+    @Test
     public void givenSimpleDivisionCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         String code = """
@@ -162,7 +165,7 @@ public class InterpreterVisitorTest {
 
     // ######################## COMPARAISON SUPERIOR ########################
 
-    @Ignore
+    @Test
     public void givenSimpleSuperiorComparaisonInt__whenInterpret__thenStackHaveResultFalse() throws Exception {
         // Given
         String code = """
@@ -193,7 +196,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("false"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleSuperiorComparaisonInt__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         String code = """
@@ -225,7 +228,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Ignore
+    @Test
     public void givenSimpleSuperiorComparaisonBool__whenInterpret__thenExceptionThrow() throws Exception {
         // Given
         String code = """
@@ -254,7 +257,7 @@ public class InterpreterVisitorTest {
 
     // ######################## COMPARAISON EQUALS ########################
 
-    @Ignore
+    @Test
     public void givenSimpleEqualComparaisonInt__whenInterpret__thenStackHaveResultFalse() throws Exception {
         // Given
         String code = """
@@ -285,7 +288,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("false"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleEqualComparaisonInt__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         String code = """
@@ -317,7 +320,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Ignore
+    @Test
     public void givenSimpleEqualComparaisonBool__whenInterpret__thenStackHaveResultFalse() throws Exception {
         // Given
         String code = """
@@ -348,7 +351,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("false"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleEqualComparaisonBool__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         String code = """
@@ -382,7 +385,7 @@ public class InterpreterVisitorTest {
 
     // ######################## CONDITIONAL ########################
 
-    @Ignore
+    @Test
     public void givenSimpleIfElseCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         String code = """
@@ -417,7 +420,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("11"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleIfCodeTrue__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         String code = """
@@ -449,7 +452,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("1"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleIfCodeFalse__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         String code = """
@@ -481,7 +484,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("1"));
     }
 
-    @Ignore
+    @Test
     public void givenMultipleIfElseCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         String code = """
@@ -523,7 +526,7 @@ public class InterpreterVisitorTest {
 
     }
 
-    @Ignore
+    @Test
     public void givenSimpleWhileCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         String code = """
@@ -558,7 +561,7 @@ public class InterpreterVisitorTest {
 
     // ######################## COMPARAISON LOGICAL CONNECTOR ########################
 
-    @Ignore
+    @Test
     public void givenSimpleAndComparaisonBool__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         String code = """
@@ -589,7 +592,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("true"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleAndComparaisonBool__whenInterpret__thenStackHaveResultFalse() throws Exception {
         // Given
         String code = """
@@ -621,7 +624,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Ignore
+    @Test
     public void givenSimpleOrComparaisonBool__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         String code = """
@@ -652,7 +655,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("true"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleOrComparaisonBoolTrueFalse__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         String code = """
@@ -684,7 +687,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Ignore
+    @Test
     public void givenSimpleNotComparaisonBool__whenInterpret__thenStackHaveResultFalse() throws Exception {
         // Given
         String code = """
@@ -714,7 +717,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("false"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleNotComparaisonBool__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         String code = """
