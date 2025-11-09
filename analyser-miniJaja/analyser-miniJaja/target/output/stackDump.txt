@@ -1,0 +1,14 @@
+===== STACK DUMP =====
+-- Entry #2 --
+  Ident : x
+  Obj   : var
+  Type  : INT
+  Value : 0
+
+-- Entry #1 --
+  Ident : Test
+  Obj   : var
+  Type  : VOID
+  Value : null
+
+======================

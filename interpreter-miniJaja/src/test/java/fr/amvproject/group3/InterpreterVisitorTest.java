@@ -1,11 +1,12 @@
-package fr.amvproject.group3;
+package fr.amvproject.group3.interpreter;
+
 
 import fr.amvproject.group3.miniJaja.ast.MiniJajaAstBuilder;
 import fr.amvproject.group3.miniJaja.ast.nodes.program.ProgramNode;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -246,8 +247,7 @@ public class InterpreterVisitorTest {
             program.accept(interpreter);
         } catch (RuntimeException e) {
             // Then
-            assertThat(e.getMessage(), is("class java.lang.Boolean cannot be cast to class java.lang.Number " +
-                    "(java.lang.Boolean and java.lang.Number are in module java.base of loader 'bootstrap')"));
+            assertThat(e.getMessage(), is("Type error: arithmetic operator requires integer operands, got Boolean and Boolean"));
         }
     }
 
