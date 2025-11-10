@@ -20,118 +20,36 @@
     </properties>
 
     <dependencies>
-        <!-- JavaFX dependencies -->
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>${javafx.version}</version>
-            <classifier>${javafx.platform}</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-fxml</artifactId>
-            <version>${javafx.version}</version>
-            <classifier>${javafx.platform}</classifier>
-        </dependency>
-
-        <!-- Your internal dependency -->
         <dependency>
             <groupId>fr.amvproject.group3</groupId>
-            <artifactId>analyser-miniJaja</artifactId>
+            <artifactId>minijaja-core</artifactId>
             <version>1.1-SNAPSHOT</version>
-        </dependency>
-
-        <!-- JUnit -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>fr.amvproject.group3</groupId>
-            <artifactId>compiler-miniJaja</artifactId>
+            <artifactId>minijaja-compiler</artifactId>
             <version>1.1-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>fr.amvproject.group3</groupId>
-            <artifactId>interpreter-miniJaja</artifactId>
+            <artifactId>minijaja-interpreter</artifactId>
             <version>1.1-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>fr.amvproject.group3</groupId>
-            <artifactId>analyser-JajaCode</artifactId>
+            <artifactId>jajacode-core</artifactId>
             <version>1.1-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>fr.amvproject.group3</groupId>
-            <artifactId>interpreter-JajaCode</artifactId>
+            <artifactId>jajacode-interpreter</artifactId>
             <version>1.1-SNAPSHOT</version>
-            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>fr.amvproject.group3</groupId>
+            <artifactId>memory-core</artifactId>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <!-- JavaFX Maven Plugin -->
-            <plugin>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-maven-plugin</artifactId>
-                <version>0.0.8</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <mainClass>fr.amvproject.group3.interface.MainApp</mainClass> <!-- Replace with your main class -->
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
-    <profiles>
-        <!-- Automatically detect OS for native libraries -->
-        <profile>
-            <id>windows</id>
-            <activation>
-                <os>
-                    <family>Windows</family>
-                </os>
-            </activation>
-            <properties>
-                <javafx.platform>win</javafx.platform>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>mac</id>
-            <activation>
-                <os>
-                    <family>mac</family>
-                </os>
-            </activation>
-            <properties>
-                <javafx.platform>mac</javafx.platform>
-            </properties>
-        </profile>
-
-        <profile>
-            <id>linux</id>
-            <activation>
-                <os>
-                    <family>unix</family>
-                </os>
-            </activation>
-            <properties>
-                <javafx.platform>linux</javafx.platform>
-            </properties>
-        </profile>
-    </profiles>
 
 </project>
