@@ -4,6 +4,7 @@ import java.awt.geom.QuadCurve2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.amvproject.group3.mjj.Quad;
 import fr.amvproject.group3.mjj.Stack;
 import fr.amvproject.group3.mjj.ast.AstVisitor;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.DeclsNode;
@@ -45,6 +46,7 @@ import fr.amvproject.group3.mjj.ast.nodes.other.UnaryOpNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
 import fr.amvproject.group3.mjj.utils.NodeOperations;
+import fr.amvproject.group3.nodes.ObjNode;
 
 /**
  * Interpréteur respectant les règles sémantiques du cours MiniJaja
@@ -145,7 +147,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         } else if (node instanceof CstNode cstNode) {
             // DeclCst(i, v, t, m)
             // Note : la distinction vcst/cst est gérée dans Stack
-            stack.declCst(cstNode.getIdent(), evalExp(cstNode.getInitExp()), new TypeMethNode(cstNode.getType().getName()));
+            stack.declCst(cstNode.getIdent(), evalExp(cstNode.getInitExp()), cstNode.getType());
         } else if (node instanceof TableNode tableNode) {
             stack.declTab(tableNode.getIdent(), (int) evalExp(tableNode.getSizeExp()), tableNode.getType());
         }
@@ -651,16 +653,16 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     /*
     helper
      */
-    public Stack.Quad getQuad(IdentNode identNode, ExpNode expNode, String obj) {
-        return  new Stack.Quad(identNode, expNode.evaluate(), obj, stack.sorte(identNode , stack.pop()));
+    public Quad getQuad(IdentNode identNode, ExpNode expNode, String obj) {
+        return  new Quad(identNode, expNode.evaluate(), new ObjNode(obj), stack.sorte(identNode , stack.pop()));
     }
 
-    public Stack.Quad getQuad(IdentNode identNode, int value, String obj) {
-        return  new Stack.Quad(identNode, value, obj, stack.sorte(identNode , stack.pop()));
+    public Quad getQuad(IdentNode identNode, int value, String obj) {
+        return  new Quad(identNode, value, new ObjNode(obj), stack.sorte(identNode , stack.pop()));
     }
 
-    public Stack.Quad getQuad(IdentNode identNode, String value, String obj) {
-        return  new Stack.Quad(identNode, value, obj, stack.sorte(identNode , stack.pop()));
+    public Quad getQuad(IdentNode identNode, String value, String obj) {
+        return  new Quad(identNode, value, new ObjNode(obj), stack.sorte(identNode , stack.pop()));
     }
 
 

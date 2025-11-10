@@ -6,35 +6,20 @@ import java.util.Iterator;
 
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.ParamsNode;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.VarsNode;
-import fr.amvproject.group3.mjj.ast.nodes.decls.CstNode;
 import fr.amvproject.group3.mjj.ast.nodes.decls.MethodNode;
-import fr.amvproject.group3.mjj.ast.nodes.decls.TableNode;
-import fr.amvproject.group3.mjj.ast.nodes.decls.VarNode;
 import fr.amvproject.group3.Heap;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.InstrsNode;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.ListExpNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.ParamNode;
 import fr.amvproject.group3.mjj.ast.nodes.intermediate.ExpNode;
-import fr.amvproject.group3.mjj.ast.nodes.intermediate.VarDeclNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.TypeMethNode;
+import fr.amvproject.group3.mjj.ast.nodes.other.TypeNode;
+import fr.amvproject.group3.nodes.ObjNode;
+import fr.amvproject.group3.nodes.TypeMemNode;
 import fr.amvproject.group3.utils.StringSaver;
 
 public class Stack {
-    public static class Quad {
-        public IdentNode ident;
-        public Object value;
-        public String obj; // var, cst, vcst, tab, meth, frame
-        public TypeMethNode type; // int, boolean, void.
-
-        public Quad(IdentNode ident, Object value, String obj, TypeMethNode type) {
-            this.ident = ident;
-            this.value = value;
-            this.obj = obj;
-            this.type = type;
-        }
-    }
-
     private Deque<Quad> queue = new ArrayDeque<>();
     private Heap heap = new Heap();
 
@@ -58,12 +43,12 @@ public class Stack {
     // --- Variable / Constant / Array / Method Declarations ---
 
     public void declVar(IdentNode ident, Object value, TypeMethNode type) {
-        queue.push(new Quad(ident, value, "var", type));
+        queue.push(new Quad(ident, value, new ObjNode("var"), type));
     }
 
-    public void declCst(IdentNode ident, Object value, TypeMethNode type) {
+    public void declCst(IdentNode ident, Object value, TypeNode type) {
         // Vcst = can be initialized later but not changed after
-        queue.push(new Quad(ident, value, value == null ? "vcst" : "cst", type));
+        queue.push(new Quad(ident, value, new ObjNode(value == null ? "vcst" : "cst"), type));
     }
 
     public Deque<Quad> getQueue() {
@@ -71,12 +56,12 @@ public class Stack {
     }
 
     public void declTab(IdentNode ident, int size, TypeMethNode type) {
-        int ref = heap.allocate(size, type);
-        queue.push(new Quad(ident, ref, "tab", type));
+        int ref = heap.allocate(size, new TypeMemNode(type.getName()));
+        queue.push(new Quad(ident, ref, new ObjNode("tab"), type));
     }
 
     public void declMeth(IdentNode ident, ParamsNode params, TypeMethNode returnType) {
-        queue.push(new Quad(ident, params, "meth", returnType));
+        queue.push(new Quad(ident, params, new ObjNode("meth"), returnType));
     }
 
     // --- Access / Assignment ---
@@ -87,7 +72,7 @@ public class Stack {
             return;
         Quad q = queue.pop();
         if (stackDepth == 0) {
-            queue.push(new Quad(ident, quad.value, "var", type));
+            queue.push(new Quad(ident, quad.getValue(), new ObjNode("var"), type));
         } else {
             identVal(ident, type, q, stackDepth - 1);
             queue.push(q);
@@ -99,9 +84,9 @@ public class Stack {
         if (quad == null)
             return;
         Quad q = queue.pop();
-        if (quad.ident.sameAs(ident)) {
-            if (quad.obj.equals("tab"))
-                heap.remove((int) quad.value, quad.type);
+        if (quad.getIdent().sameAs(ident)) {
+            if (quad.getObj().isTab())
+                heap.remove((int) quad.getValue(), new TypeMemNode(((TypeMethNode) quad.getType()).getName()));
         } else {
             retirerDecl(ident, q);
             queue.push(q);
@@ -113,9 +98,9 @@ public class Stack {
     public Object val(IdentNode ident, Quad quad) {
         if (quad == null)
             return null;
-        if (quad.ident.sameAs(ident)) {
+        if (quad.getIdent().sameAs(ident)) {
             queue.push(quad);
-            return quad.value;
+            return quad.getValue();
         }
         Quad q = queue.pop();
         Object resultat = val(ident, q);
@@ -128,8 +113,8 @@ public class Stack {
         if (quad == null)
             return null;
         Quad q = queue.pop();
-        if (quad.ident.sameAs(ident)) {
-            return heap.get((int) quad.value);
+        if (quad.getIdent().sameAs(ident)) {
+            return heap.get((int) quad.getValue());
         }
         Object resultat = valT(ident, index, q);
         queue.push(q);
@@ -141,8 +126,8 @@ public class Stack {
         if (quad == null)
             return null;
         Quad q = queue.pop();
-        if (quad.ident.sameAs(ident)) {
-            return (int) heap.get((int) quad.value - 1);
+        if (quad.getIdent().sameAs(ident)) {
+            return (int) heap.get((int) quad.getValue() - 1);
         }
         int res = longT(ident, q);
         queue.push(q);
@@ -152,36 +137,36 @@ public class Stack {
     // Assigns a new value to the identifier
     public void affecterVal(IdentNode ident, Object value, Quad quad) {
         Quad q = queue.pop();
-        if (!quad.ident.sameAs(ident))
+        if (!quad.getIdent().sameAs(ident))
             affecterVal(ident, value, q);
-        else if (quad.obj.equals("vcst")) {
-            queue.push(new Quad(ident, value, "cst", quad.type));
+        else if (quad.getObj().isVcst()) {
+            queue.push(new Quad(ident, value, new ObjNode("cst"), quad.getType()));
             return;
-        } else if (quad.obj.equals("tab")) {
-            int ref = heap.allocate((int) value, quad.type); // AjouterRef(v, t)
-            queue.push(new Quad(ident, ref, "tab", quad.type));
-            heap.remove((int) quad.value, quad.type); // RetirerTas
+        } else if (quad.getObj().isTab()) {
+            int ref = heap.allocate((int) value, new TypeMemNode(((TypeMethNode) quad.getType()).getName())); // AjouterRef(v, t)
+            queue.push(new Quad(ident, ref, new ObjNode("tab"), quad.getType()));
+            heap.remove((int) quad.getValue(), new TypeMemNode(((TypeMethNode) quad.getType()).getName())); // RetirerTas
             return;
-        } else if (quad.obj.equals("cst")) {
+        } else if (quad.getObj().isCst()) {
             return;
         }
-        queue.push(new Quad(ident, value, quad.obj, quad.type));
+        queue.push(new Quad(ident, value, quad.getObj(), quad.getType()));
     }
 
     // Assigns a new value to an array at a specific index
     public void affecterValT(IdentNode ident, int index, Object value, Quad quad) {
         Quad q = queue.pop();
-        if (!quad.ident.sameAs(ident))
+        if (!quad.getIdent().sameAs(ident))
             affecterValT(ident, index, value, q);
         else
-            heap.set((int) quad.value, index, value);
+            heap.set((int) quad.getValue(), index, value);
     }
 
     // Assigns a new type to an identifier
     public void affecterType(IdentNode ident, TypeMethNode type, Quad quad) {
         Quad q = queue.pop();
-        if (quad.ident.sameAs(ident))
-            queue.push(new Quad(ident, quad.value, quad.obj, type));
+        if (quad.getIdent().sameAs(ident))
+            queue.push(new Quad(ident, quad.getValue(), quad.getObj(), type));
         else {
             affecterType(ident, type, q);
         }
@@ -201,28 +186,28 @@ public class Stack {
     }
 
     // Return object type of identifier
-    public String objet(IdentNode ident, Quad quad) {
+    public ObjNode objet(IdentNode ident, Quad quad) {
         if (quad == null)
             return null;
-        if (quad.ident.sameAs(ident))
-            return quad.obj;
+        if (quad.getIdent().sameAs(ident))
+            return quad.getObj();
 
         Quad q = queue.pop();
-        String obj = objet(ident, q);
+        ObjNode obj = objet(ident, q);
         queue.push(q);
         return obj;
     }
 
     // Return type of identifier
-    public TypeMethNode sorte(IdentNode ident, Quad quad) {
+    public Object sorte(IdentNode ident, Quad quad) {
         if (quad == null)
             return null;
-        if (quad.ident.sameAs(ident)) {
+        if (quad.getIdent().sameAs(ident)) {
             queue.push(quad);
-            return quad.type;
+            return quad.getType();
         }
         Quad q = queue.pop();
-        TypeMethNode type = sorte(ident, q);
+        Object type = sorte(ident, q);
         queue.push(quad);
         return type;
     }
@@ -231,13 +216,13 @@ public class Stack {
     public ParamsNode parametre(IdentNode ident, Quad quad) {
         if (quad == null)
             return null;
-        if (!quad.ident.sameAs(ident)) {
+        if (!quad.getIdent().sameAs(ident)) {
             Quad q = queue.pop();
             ParamsNode params = parametre(ident, q);
             queue.push(q);
             return params;
-        } else if (quad.obj.equals("meth") && (quad.value instanceof MethodNode methodNode)
-                && methodNode.getIdent().sameAs(ident) && methodNode.getReturnType().sameAs(quad.type)) {
+        } else if (quad.getObj().isMeth() && (quad.getValue() instanceof MethodNode methodNode)
+                && methodNode.getIdent().sameAs(ident) && methodNode.getReturnType().sameAs((TypeMethNode) quad.getType())) {
             return methodNode.getParams();
         }
         return null;
@@ -247,13 +232,13 @@ public class Stack {
     public VarsNode declaration(IdentNode ident, Quad quad) {
         if (quad == null)
             return null;
-        if (!quad.ident.sameAs(ident)) {
+        if (!quad.getIdent().sameAs(ident)) {
             Quad q = queue.pop();
             VarsNode vars = declaration(ident, q);
             queue.push(q);
             return vars;
-        } else if (quad.obj.equals("meth") && (quad.value instanceof MethodNode methodNode)
-                && methodNode.getIdent().sameAs(ident) && methodNode.getReturnType().sameAs(quad.type)) {
+        } else if (quad.getObj().isMeth() && (quad.getValue() instanceof MethodNode methodNode)
+                && methodNode.getIdent().sameAs(ident) && methodNode.getReturnType().sameAs((TypeMethNode) quad.getType())) {
             return methodNode.getVars();
         }
         return null;
@@ -263,13 +248,13 @@ public class Stack {
     public InstrsNode corps(IdentNode ident, Quad quad) {
         if (quad == null)
             return null;
-        if (!quad.ident.sameAs(ident)) {
+        if (!quad.getIdent().sameAs(ident)) {
             Quad q = queue.pop();
             InstrsNode intrs = corps(ident, q);
             queue.push(q);
             return intrs;
-        } else if (quad.obj.equals("meth") && (quad.value instanceof MethodNode methodNode)
-                && methodNode.getIdent().sameAs(ident) && methodNode.getReturnType().sameAs(quad.type)) {
+        } else if (quad.getObj().isMeth() && (quad.getValue() instanceof MethodNode methodNode)
+                && methodNode.getIdent().sameAs(ident) && methodNode.getReturnType().sameAs((TypeMethNode) quad.getType())) {
             return methodNode.getInstrs();
         }
         return null;
@@ -298,53 +283,10 @@ public class Stack {
 
     private void appendQuad(StringBuilder sb, Quad q, int index) {
         sb.append("-- Entry #").append(index).append(" --\n");
-        sb.append("  Ident : ").append(q.ident != null ? q.ident.getName() : "null").append("\n");
-        sb.append("  Obj   : ").append(q.obj).append("\n");
-        sb.append("  Type  : ").append(q.type != null ? q.type.getType() : "null").append("\n");
-
-        switch (q.obj) {
-            case "tab" -> appendTab(sb, q);
-            case "meth" -> appendMethod(sb, q);
-            case "frame" -> sb.append("  <Method Frame Boundary>\n");
-            default -> sb.append("  Value : ").append(q.value).append("\n");
-        }
-        sb.append("\n");
-    }
-
-    private void appendTab(StringBuilder sb, Quad q) {
-        Object arr = heap.get((int) q.value);
-        sb.append("  Value : [").append(arr).append("]\n");
-    }
-
-    private String getTypeNameHelper(VarDeclNode v) {
-        if (v instanceof TableNode tableNode) return tableNode.getType().getName();
-        if (v instanceof VarNode varNode) return varNode.getType().getName();
-        if (v instanceof CstNode cstNode) return cstNode.getType().getName();
-        return null;
-    }
-
-    private void appendMethod(StringBuilder sb, Quad q) {
-        sb.append("  Method parameters:\n");
-        if (q.value instanceof ParamsNode params) {
-            for (ParamNode p : params.getList()) {
-                sb.append("    - ").append(p.getIdent().getName())
-                        .append(" : ").append(p.getType().getType()).append("\n");
-            }
-        }
-
-        sb.append("  Local vars:\n");
-        if (q.value instanceof MethodNode methodNode) {
-            VarsNode vars = methodNode.getVars();
-            if (vars != null) {
-                for (VarDeclNode v : vars.getList()) {
-                    sb.append("    - ").append(v.getIdent().getName())
-                            .append(" : ").append(getTypeNameHelper(v)).append("\n");
-                }
-            }
-
-            sb.append("  Instructions count: ")
-                    .append(methodNode.getInstrs() != null ? methodNode.getInstrs().getList().size() : 0)
-                    .append("\n");
-        }
+        sb.append("  Ident : ").append(q.getIdent().getName()).append("\n");
+        sb.append("  Obj   : ").append(q.getObj().getName()).append("\n");
+        sb.append("  Type  : ");
+        if (q.getObj().isCst()) sb.append(((TypeNode) q.getType()).getName()).append("\n");
+        else sb.append(((TypeMethNode) q.getType()).getName()).append("\n");
     }
 }

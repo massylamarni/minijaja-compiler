@@ -3,8 +3,7 @@ package fr.amvproject.group3;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.amvproject.group3.mjj.ast.nodes.other.TypeMethNode;
-
+import fr.amvproject.group3.nodes.TypeMemNode;
 
 public class Heap {
     private List<Object> queue;
@@ -16,7 +15,7 @@ public class Heap {
     }
 
     // Allocate memory in the heap and return its address, aka CreerTas
-    public int allocate(int size, TypeMethNode type) {
+    public int allocate(int size, TypeMemNode type) {
       int address = nextAddress;
       queue.add(size); // Store size at current address
       if (type.isInt()) {
@@ -34,7 +33,7 @@ public class Heap {
     }
 
     // Remove the allocated memory from specific address, aka RetirerTas
-    public void remove(int address, TypeMethNode type) {
+    public void remove(int address, TypeMemNode type) {
       if (type == null) return; // Unknown use case
       if (address < 0 || address >= nextAddress) throw new IndexOutOfBoundsException();
       int blockSize = (int) get(address - 1);

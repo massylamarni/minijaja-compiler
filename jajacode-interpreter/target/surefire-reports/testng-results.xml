@@ -2,10 +2,10 @@
 <testng-results ignored="0" total="0" passed="0" failed="0" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2025-11-10T11:44:32 CET" name="fr.amvproject.group3.JajaCodeInterpreterTest" finished-at="2025-11-10T11:44:32 CET" duration-ms="4">
+  <suite started-at="2025-11-10T15:15:10 CET" name="fr.amvproject.group3.JajaCodeInterpreterTest" finished-at="2025-11-10T15:15:10 CET" duration-ms="6">
     <groups>
     </groups>
-    <test started-at="2025-11-10T11:44:32 CET" name="Command line test" finished-at="2025-11-10T11:44:32 CET" duration-ms="4">
+    <test started-at="2025-11-10T15:15:10 CET" name="Command line test" finished-at="2025-11-10T15:15:10 CET" duration-ms="6">
     </test> <!-- Command line test -->
   </suite> <!-- fr.amvproject.group3.JajaCodeInterpreterTest -->
 </testng-results>
