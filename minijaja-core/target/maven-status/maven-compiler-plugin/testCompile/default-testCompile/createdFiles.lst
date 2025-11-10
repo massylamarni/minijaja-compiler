@@ -1,3 +1,4 @@
+fr/amvproject/group3/ast/AstNodeTest.class
 fr/amvproject/group3/antlr/MiniJajaLexerTest.class
-fr/amvproject/group3/FullAstTest.class
 fr/amvproject/group3/antlr/MiniJajaParserTest.class
+fr/amvproject/group3/ast/FullAstTest.class

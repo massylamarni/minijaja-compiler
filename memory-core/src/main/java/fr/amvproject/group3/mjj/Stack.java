@@ -1,6 +1,7 @@
 package fr.amvproject.group3.mjj;
 
 import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
 
@@ -61,7 +62,8 @@ public class Stack {
     }
 
     public void declMeth(IdentNode ident, ParamsNode params, TypeMethNode returnType) {
-        queue.push(new Quad(ident, params, new ObjNode("meth"), returnType));
+        queue.push(new Quad(ident, new MethodNode(returnType, ident, params, new VarsNode(Collections.emptyList()), new InstrsNode(Collections.emptyList())), new ObjNode("meth"), returnType));
+
     }
 
     // --- Access / Assignment ---
@@ -114,7 +116,7 @@ public class Stack {
             return null;
         Quad q = queue.pop();
         if (quad.getIdent().sameAs(ident)) {
-            return heap.get((int) quad.getValue());
+            return heap.get((int) quad.getValue()+index);
         }
         Object resultat = valT(ident, index, q);
         queue.push(q);
@@ -160,6 +162,7 @@ public class Stack {
             affecterValT(ident, index, value, q);
         else
             heap.set((int) quad.getValue(), index, value);
+        queue.push(q);
     }
 
     // Assigns a new type to an identifier
