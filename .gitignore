@@ -1,5 +1,5 @@
 # Maven output & compiled files
-/target/
+target/
 *.class
 *.jar
 

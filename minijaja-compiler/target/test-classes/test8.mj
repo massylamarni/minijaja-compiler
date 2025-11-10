@@ -1,8 +1,0 @@
-class C {
-  int x;
-  main {
-    x = 1;
-    x += 5;
-    x++;
-  }
-}
