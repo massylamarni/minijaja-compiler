@@ -208,7 +208,7 @@ public class PrintVisitor implements AstVisitor<String> {
   }
 
   public String visitInc(IncNode node) {
-    return indentManager.indent() + node.getIdent().accept(this) + "++";
+    return indentManager.indent() + node.getLeftValueNode().accept(this) + "++";
   }
 
   @Override

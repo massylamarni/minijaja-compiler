@@ -1,5 +1,7 @@
 package fr.amvproject.group3;
 
+import fr.amvproject.group3.jjc.ast.PrintVisitor;
+import fr.amvproject.group3.jjc.ast.nodes.program.ProgramNode;
 import fr.amvproject.group3.mjj.ast.AstNode;
 import fr.amvproject.group3.mjj.ast.MiniJajaAstBuilder;
 import fr.amvproject.group3.utils.StringSaver;
@@ -103,17 +105,12 @@ public class FileSaverJJC {
         }
 
         // 4) compiler vers JajaCode
-        CodeEmitter emitter = new CodeEmitter();
-        LabelManager labels = new LabelManager();
-        MiniJajaCompiler compiler = new MiniJajaCompiler(emitter, labels);
-        StringBuilder stringBuilder = new StringBuilder();
-        ast.accept(compiler);
-        for (String s : emitter.getCode()) {
-            stringBuilder.append(s);
-            stringBuilder.append("\n");
-        }
+        CompilerVisitor compilerVisitor = new CompilerVisitor();
+        ProgramNode programNode = new ProgramNode(ast.accept(compilerVisitor));
 
-        return stringBuilder.toString();
+        PrintVisitor printVisitor = new PrintVisitor();
+
+        return programNode.accept(printVisitor);
     }
 
     public String interpret(String content) {

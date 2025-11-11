@@ -7,6 +7,7 @@ public class ObjNode extends AstNode {
   protected enum ObjName {
     VAR("var"),
     TAB("tab"),
+    CST("cst"),
     METH("meth");
 
     private final String name;
@@ -41,6 +42,10 @@ public class ObjNode extends AstNode {
 
   public boolean isVar() {
     return obj == ObjName.VAR;
+  }
+
+  public boolean isCst() {
+    return obj == ObjName.CST;
   }
 
   public boolean isTab() {

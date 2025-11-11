@@ -7,6 +7,7 @@ public class TypeNode extends AstNode {
   protected enum TypeName {
     INT("entier"),
     BOOLEAN("boolean"),
+    VOID("vide"),
     STRING("string");
 
     private final String name;
@@ -45,6 +46,10 @@ public class TypeNode extends AstNode {
 
   public boolean isBoolean() {
     return type == TypeName.BOOLEAN;
+  }
+
+  public boolean isVoid() {
+    return type == TypeName.VOID;
   }
 
   public boolean isString() {

@@ -170,7 +170,7 @@ public class MemoryVisitor implements AstVisitor<AstNode> {
   }
 
   public AstNode visitInc(IncNode node) {
-    node.getIdent().accept(this);
+    node.getLeftValueNode().accept(this);
     return null;
   }
 

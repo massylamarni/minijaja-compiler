@@ -272,8 +272,8 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      * m ⊢ incrément(ident(i)) → AffecterVal(i, Val(i, m) + 1, m)
      */
     @Override
-    public Object visitInc(IncNode node) {
-        Object currentValue = stack.val(node.getIdent(), stack.pop() );
+    public Object visitInc(IncNode node) { // TODO Handle array case
+        Object currentValue = stack.val((IdentNode) node.getLeftValueNode(), stack.pop() );
         // Vérification du type
         if (!(currentValue instanceof Integer)) {
             throw new RuntimeException(
@@ -283,7 +283,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         }
         int newValue = (int) currentValue + 1;
         //if(node.)
-            stack.affecterVal(node.getIdent(), currentValue, getQuad(node.getIdent(), newValue, "var" ));
+            stack.affecterVal((IdentNode) node.getLeftValueNode(), currentValue, getQuad((IdentNode) node.getLeftValueNode(), newValue, "var" ));
 
         return null;
     }
