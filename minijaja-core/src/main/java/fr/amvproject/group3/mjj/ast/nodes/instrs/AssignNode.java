@@ -16,7 +16,7 @@ public class AssignNode extends InstrNode {
         this.expNode = expNode;
     }
 
-    public LeftValueNode getLeftValue() {
+    public LeftValueNode getLeftValueNode() {
         return leftValueNode;
     }
 

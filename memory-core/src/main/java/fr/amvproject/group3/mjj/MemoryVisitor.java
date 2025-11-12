@@ -45,7 +45,7 @@ public class MemoryVisitor implements AstVisitor<AstNode> {
 
   @Override
   public AstNode visitDecls(DeclsNode node) {
-    for (DeclNode declNode : node.getDecls()) {
+    for (DeclNode declNode : node.getList()) {
       declNode.accept(this);
     }
     return null;
@@ -157,7 +157,7 @@ public class MemoryVisitor implements AstVisitor<AstNode> {
 
   @Override
   public AstNode visitAssign(AssignNode node) {
-    node.getLeftValue().accept(this);
+    node.getLeftValueNode().accept(this);
     node.getExp().accept(this);
     return null;
   }

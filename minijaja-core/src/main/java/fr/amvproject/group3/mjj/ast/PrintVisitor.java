@@ -75,9 +75,9 @@ public class PrintVisitor implements AstVisitor<String> {
 
   @Override
   public String visitDecls(DeclsNode node) {
-    if (node.getDecls().isEmpty() && programDebug)
+    if (node.getList().isEmpty() && programDebug)
       return indentManager.indent() + "/* DECLS empty */\n";
-    return indentManager.indent() + joinChildren(node.getDecls());
+    return indentManager.indent() + joinChildren(node.getList());
   }
 
   @Override
@@ -192,7 +192,7 @@ public class PrintVisitor implements AstVisitor<String> {
   @Override
   public String visitAssign(AssignNode node) {
     StringBuilder sb = new StringBuilder(indentManager.indent());
-    sb.append(node.getLeftValue().accept(this));
+    sb.append(node.getLeftValueNode().accept(this));
     sb.append(" = ");
     sb.append(node.getExp().accept(this));
     return sb.toString();

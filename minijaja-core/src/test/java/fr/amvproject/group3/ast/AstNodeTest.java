@@ -57,7 +57,7 @@ public class AstNodeTest {
         // Then
         assertThat(classNode, is(notNullValue()));
         assertThat(classNode.getIdent().getName(), is("TestClass"));
-        assertThat(classNode.getDecls().getDecls(), is(empty()));
+        assertThat(classNode.getDecls().getList(), is(empty()));
         assertThat(classNode.getMain(), is(notNullValue()));
     }
 
@@ -72,7 +72,7 @@ public class AstNodeTest {
 
         // Then
         assertThat(declsNode, is(notNullValue()));
-        assertThat(declsNode.getDecls(), is(empty()));
+        assertThat(declsNode.getList(), is(empty()));
     }
 
     // ====================== VarNode ======================
@@ -330,7 +330,7 @@ public class AstNodeTest {
 
         // Then
         assertThat(assignNode, is(notNullValue()));
-        assertThat(assignNode.getLeftValue(), is(instanceOf(IdentNode.class)));
+        assertThat(assignNode.getLeftValueNode(), is(instanceOf(IdentNode.class)));
         assertThat(assignNode.getExp(), is(instanceOf(IntLiteralNode.class)));
     }
 

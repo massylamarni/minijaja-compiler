@@ -13,7 +13,7 @@ public class DeclsNode extends AstNode {
         this.list = list;
     }
 
-    public List<DeclNode> getDecls() {
+    public List<DeclNode> getList() {
         return list;
     }
 

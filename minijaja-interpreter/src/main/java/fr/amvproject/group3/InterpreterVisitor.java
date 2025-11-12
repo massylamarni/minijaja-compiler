@@ -106,7 +106,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitDecls(DeclsNode node) {
-        for (DeclNode decl : node.getDecls()) {
+        for (DeclNode decl : node.getList()) {
             decl.accept(this);
         }
         return null;
@@ -240,11 +240,11 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         // m eval⊢ e ⇒ v
         Object value = evalExp(node.getExp());
 
-        if (node.getLeftValue() instanceof IdentNode identNode) {
+        if (node.getLeftValueNode() instanceof IdentNode identNode) {
             // Règle [affectation]
 
             stack.affecterVal(identNode, value, getQuad(identNode, node.getExp(), "var"));
-        } else if (node.getLeftValue() instanceof ArrayAccessNode arrayAccessNode) {
+        } else if (node.getLeftValueNode() instanceof ArrayAccessNode arrayAccessNode) {
             // Règle [affectationT]
             // m eval⊢ e1 ⇒ ind
             int index = (int) evalExp(arrayAccessNode.getIndexExp());
