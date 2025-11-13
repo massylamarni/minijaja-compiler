@@ -32,4 +32,15 @@ public class Quad {
   public TypeNode getType() {
     return type;
   }
+
+  public String print(int index) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("-- Entry #").append(index).append(" --\n");
+    sb.append("  Ident : ").append(ident.getName()).append("\n");
+    sb.append("  Obj   : ").append(obj.getName()).append("\n");
+    sb.append("  Type  : ").append((type).getName()).append("\n");
+    sb.append("  Value : ").append(value).append("\n");
+    
+    return sb.toString();
+  }
 }

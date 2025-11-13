@@ -1,6 +1,5 @@
 package fr.amvproject.group3.jjc;
 
-import java.util.ArrayDeque;
 import java.util.Deque;
 
 import fr.amvproject.group3.Heap;
@@ -10,8 +9,8 @@ import fr.amvproject.group3.nodes.ObjNode;
 import fr.amvproject.group3.nodes.TypeMemNode;
 import fr.amvproject.group3.utils.StringSaver;
 
-public class Stack {
-    private Deque<Quad> queue = new ArrayDeque<>();
+public class Stack extends StackManager {
+    private Deque<Quad> queue = super.getQueue();
     private Heap heap = new Heap();
 
     public Heap getHeap() {
@@ -40,10 +39,6 @@ public class Stack {
     public void declCst(IdentNode ident, Object value, TypeNode type) {
         // Vcst = can be initialized later but not changed after
         queue.push(new Quad(ident, value, new ObjNode(value == null ? "vcst" : "cst"), type));
-    }
-
-    public Deque<Quad> getQueue() {
-        return queue;
     }
 
     public void declTab(IdentNode ident, int size, TypeNode type) {
@@ -197,19 +192,12 @@ public class Stack {
         } else {
             int i = queue.size();
             for (Quad q : queue) {
-                appendQuad(sb, q, i--);
+                sb.append(q.print(i--));
             }
         }
 
         sb.append("======================\n");
 
         StringSaver.save(sb.toString(), "stackDump.txt", "main");
-    }
-
-    private void appendQuad(StringBuilder sb, Quad q, int index) {
-        sb.append("-- Entry #").append(index).append(" --\n");
-        sb.append("  Ident : ").append(q.getIdent().getName()).append("\n");
-        sb.append("  Obj   : ").append(q.getObj().getName()).append("\n");
-        sb.append("  Type  : ").append((q.getType()).getName()).append("\n");
     }
 }

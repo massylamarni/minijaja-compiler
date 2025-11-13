@@ -5,10 +5,8 @@ import org.antlr.v4.runtime.*;
 import org.junit.Test;
 
 import fr.amvproject.group3.mjj.ast.ProgramGenerator;
-import fr.amvproject.group3.MiniJajaLexer;
-import fr.amvproject.group3.MiniJajaParser;
+import fr.amvproject.group3.mjj.utils.AstOperations;
 import fr.amvproject.group3.mjj.ast.AstNode;
-import fr.amvproject.group3.mjj.ast.MiniJajaAstBuilder;
 import fr.amvproject.group3.mjj.ast.PrintVisitor;
 import fr.amvproject.group3.utils.StringSaver;
 
@@ -28,14 +26,8 @@ public class FullAstTest {
     generator.print("test");
 
     // Build AST from generated program
-    Path path = Paths.get(System.getProperty("user.dir"), "src", "test", "resources", "generatedProgram.mjj");
-    CharStream input = CharStreams.fromFileName(path.toString());
-    MiniJajaLexer lexer = new MiniJajaLexer(input);
-    CommonTokenStream tokens = new CommonTokenStream(lexer);
-    MiniJajaParser parser = new MiniJajaParser(tokens);
-    MiniJajaParser.ProgramContext tree = parser.program();
-    MiniJajaAstBuilder builder = new MiniJajaAstBuilder();
-    AstNode ast = builder.visit(tree);
+    Path mjjProgramPath = Paths.get(System.getProperty("user.dir"), "src", "test", "resources", "generatedProgram.mjj");
+    AstNode ast = AstOperations.getAstFromFile(mjjProgramPath);
 
     // Print AST to file
     PrintVisitor printer = new PrintVisitor();
@@ -43,17 +35,12 @@ public class FullAstTest {
     StringSaver.save(printedProgram, "printedProgram.mjj", "test");
 
     // Compare line counts
-    long originalLines = input.toString().lines().count();
+    long originalLines = CharStreams.fromFileName(mjjProgramPath.toString()).toString().lines().count();
     long printedLines = printedProgram.lines().count();
     assertEquals(originalLines, printedLines);
 
     // Rebuild AST from printed program
-    CharStream printedInput = CharStreams.fromString(printedProgram);
-    MiniJajaLexer printedLexer = new MiniJajaLexer(printedInput);
-    CommonTokenStream printedTokens = new CommonTokenStream(printedLexer);
-    MiniJajaParser printedParser = new MiniJajaParser(printedTokens);
-    MiniJajaParser.ProgramContext printedTree = printedParser.program();
-    AstNode printedAst = builder.visit(printedTree);
+    AstNode printedAst = AstOperations.getAstFromString(printedProgram);
 
     // Compare ASTs
     assertTrue(ast.sameAs(printedAst));

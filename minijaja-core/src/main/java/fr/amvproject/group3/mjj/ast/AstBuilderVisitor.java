@@ -20,7 +20,7 @@ import fr.amvproject.group3.mjj.ast.nodes.other.UnaryOpNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
 
-public class MiniJajaAstBuilder extends MiniJajaParserBaseVisitor<AstNode> {
+public class AstBuilderVisitor extends MiniJajaParserBaseVisitor<AstNode> {
   @Override
   public AstNode visitProgram(MiniJajaParser.ProgramContext ctx) {
     List<ClassNode> classes = ctx.classe().stream().map(c -> (ClassNode) visit(c)).toList();

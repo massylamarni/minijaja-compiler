@@ -1,7 +1,7 @@
 package fr.amvproject.group3;
 
 
-import fr.amvproject.group3.mjj.ast.MiniJajaAstBuilder;
+import fr.amvproject.group3.mjj.ast.AstBuilderVisitor;
 import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
 
 import org.antlr.v4.runtime.CharStreams;
@@ -24,7 +24,7 @@ public class InterpreterVisitorTest {
         MiniJajaParser parser = new MiniJajaParser(tokens);
 
         ParseTree tree = parser.program();
-        MiniJajaAstBuilder builder = new MiniJajaAstBuilder();
+        AstBuilderVisitor builder = new AstBuilderVisitor();
 
         return (ProgramNode) builder.visit(tree);
     }

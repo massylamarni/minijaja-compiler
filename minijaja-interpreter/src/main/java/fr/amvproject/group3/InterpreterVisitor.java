@@ -55,15 +55,21 @@ import fr.amvproject.group3.nodes.ObjNode;
 @SuppressWarnings("java:S6539") // Visitor pattern: large by design
 public class InterpreterVisitor implements AstVisitor<Object> {
     private final Stack stack = new Stack();
-    private VarDeclNode node;
+    private ExecutionContext ctx = new ExecutionContext(stack); // final
 
     public Stack getStack() {
         return stack;
     }
 
+    public ExecutionContext getCtx() {
+      return ctx;
+    }
+
     // ========== PROGRAM ==========
     @Override
     public Object visitProgram(ProgramNode node) {
+        ctx.visitNode(node);
+        stack.update(false);
         for (ClassNode classe : node.getClasses()) {
             classe.accept(this);
         }
@@ -139,7 +145,6 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitVarDecl(VarDeclNode node) {
-        this.node = node;
         // Application de la règle selon le type
         if (node instanceof VarNode varNode) {
             // DeclVar(i, v, t, m)
@@ -263,8 +268,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitAddAssign(AddAssignNode node) {
-        NodeOperations no = new NodeOperations();
-        return visitAssign(no.addAssignToAssign(node));
+        return visitAssign(NodeOperations.addAssignToAssign(node));
     }
 
     /**

@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.antlr.v4.runtime.*;
 import fr.amvproject.group3.jjc.ast.AstNode;
-import fr.amvproject.group3.jjc.ast.JajaCodeAstBuilder;
+import fr.amvproject.group3.jjc.ast.AstBuilderVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.intermediate.InstrNode;
 import fr.amvproject.group3.jjc.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.jjc.ast.nodes.program.ProgramNode;
@@ -170,7 +170,7 @@ public class JajacodeInterpreterCaller {
             JajaCodeParser parser = new JajaCodeParser(tokens);
             JajaCodeParser.ProgramContext tree = parser.program();
 
-            JajaCodeAstBuilder builder = new JajaCodeAstBuilder();
+            AstBuilderVisitor builder = new AstBuilderVisitor();
             AstNode ast = builder.visit(tree);
 
             sb.append("\n");

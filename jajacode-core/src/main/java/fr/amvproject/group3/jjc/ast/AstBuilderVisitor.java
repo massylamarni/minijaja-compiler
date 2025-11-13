@@ -34,7 +34,7 @@ import fr.amvproject.group3.jjc.ast.nodes.other.UnaryOpNode;
 import fr.amvproject.group3.jjc.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.jjc.ast.nodes.program.ProgramNode;
 
-public class JajaCodeAstBuilder extends JajaCodeParserBaseVisitor<AstNode> {
+public class AstBuilderVisitor extends JajaCodeParserBaseVisitor<AstNode> {
   @Override
   public AstNode visitProgram(JajaCodeParser.ProgramContext ctx) {
     List<ClassNode> classes = ctx.classe().stream().map(c -> (ClassNode) visit(c)).toList();

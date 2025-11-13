@@ -11,7 +11,8 @@ import fr.amvproject.group3.mjj.ast.nodes.intermediate.LeftValueNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.BinaryOpNode;
 
 public class NodeOperations {
-  public AssignNode addAssignToAssign(AddAssignNode addAssignNode) throws NodeException {
+  private NodeOperations() {}
+  public static AssignNode addAssignToAssign(AddAssignNode addAssignNode) throws NodeException {
     LeftValueNode leftValueNode = addAssignNode.getLeftValueNode();
 
     ExpNode addExp;
