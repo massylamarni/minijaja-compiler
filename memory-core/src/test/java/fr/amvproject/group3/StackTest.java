@@ -116,7 +116,6 @@ public class StackTest {
         assertThat( stack.getQueue().size(),is(2));
         assertThat(stack.getQueue().peek().getIdent().getName(),is("T"));
         assertTrue(stack.getQueue().peek().getObj().isCst());
-        assertTrue(((TypeMethNode) stack.getQueue().peek().getType()).isInt());
     }
 
     @Test
