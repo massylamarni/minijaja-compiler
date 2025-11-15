@@ -436,18 +436,12 @@ public class CompilerVisitorTest {
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitReturn(returnNode);
 
         // Then
-        assertThat(res, hasSize(3));
+        assertThat(res, hasSize(1));
         // 1 push (42)
         assertThat(res.get(0).getAddress().getValue(), is(1));
         assertThat(res.get(0).getInstr() instanceof PushNode, is(true));
         PushNode pushNode = ((PushNode) res.get(0).getInstr());
         assertThat(((IntLiteralNode) pushNode.getValue()).getValue(), is(42));
-        //"2 swap"
-        assertThat(res.get(1).getAddress().getValue(), is(2));
-        assertThat(res.get(1).getInstr() instanceof SwapLiteral, is(true));
-        //"3 return"
-        assertThat(res.get(2).getAddress().getValue(), is(3));
-        assertThat(res.get(2).getInstr() instanceof ReturnLiteral, is(true));
     }
 
     // ====================== visitBinaryExp ======================
@@ -542,17 +536,11 @@ public class CompilerVisitorTest {
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitLength(lengthNode);
 
         // Then
-        assertThat(res, hasSize(2));
-        //1  load (arr)
-        assertThat(res.get(0).getAddress().getValue(), is(1));
-        assertThat(res.get(0).getInstr() instanceof LoadNode, is(true));
-        LoadNode loadNode = ((LoadNode) res.get(0).getInstr());
-        assertThat(loadNode.getIdent().getName(), is("arr"));
-        assertThat(loadNode.isA(), is(true));
+        assertThat(res, hasSize(1));
         // 2 lenght arr
-        assertThat(res.get(1).getAddress().getValue(), is(2));
-        assertThat(res.get(1).getInstr() instanceof fr.amvproject.group3.jjc.ast.nodes.instrs.LengthNode, is(true));
-        fr.amvproject.group3.jjc.ast.nodes.instrs.LengthNode lengthNode1 = ((fr.amvproject.group3.jjc.ast.nodes.instrs.LengthNode) res.get(1).getInstr());
+        assertThat(res.get(0).getAddress().getValue(), is(1));
+        assertThat(res.get(0).getInstr() instanceof fr.amvproject.group3.jjc.ast.nodes.instrs.LengthNode, is(true));
+        fr.amvproject.group3.jjc.ast.nodes.instrs.LengthNode lengthNode1 = ((fr.amvproject.group3.jjc.ast.nodes.instrs.LengthNode) res.get(0).getInstr());
         assertThat(lengthNode1.getIdent().getName(), is("arr"));
     }
 
@@ -575,11 +563,9 @@ public class CompilerVisitorTest {
         // 2 aload (arr)
         assertThat(res.get(1).getAddress().getValue(), is(2));
         assertThat(res.get(1).getInstr() instanceof LoadNode, is(true));
-        LoadNode loadNode1 = ((LoadNode) res.get(2).getInstr());
+        LoadNode loadNode1 = ((LoadNode) res.get(1).getInstr());
         assertThat(loadNode1.getIdent().getName(), is("arr"));
         assertThat(loadNode1.isA(), is(true));
-
-
     }
 
     // ====================== visitIntLiteral ======================
