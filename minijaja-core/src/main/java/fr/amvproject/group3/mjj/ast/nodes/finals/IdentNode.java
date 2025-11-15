@@ -22,11 +22,6 @@ public class IdentNode extends LeftValueNode {
     }
 
     @Override
-    public String evaluate() {
-        return name;
-    }
-
-    @Override
     public boolean sameAs(AstNode other) {
         if (other instanceof IdentNode identNode) {
             return this.name.equals(identNode.name);
@@ -37,7 +32,7 @@ public class IdentNode extends LeftValueNode {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (obj == null || !(obj instanceof IdentNode)) return false;
+        if (!(obj instanceof IdentNode)) return false;
         IdentNode other = (IdentNode) obj;
         return this.name.equals(other.name);
     }

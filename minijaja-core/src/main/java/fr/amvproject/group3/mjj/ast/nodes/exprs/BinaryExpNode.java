@@ -29,11 +29,6 @@ public class BinaryExpNode extends ExpNode {
     }
 
     @Override
-    public String evaluate() {
-        return leftExp.evaluate() + op.getOp().getName() + rightExp.evaluate();
-    }
-
-    @Override
     public boolean sameAs(AstNode other) {
         if (other instanceof BinaryExpNode binaryExpNode) {
             return this.leftExp.sameAs(binaryExpNode.leftExp) &&

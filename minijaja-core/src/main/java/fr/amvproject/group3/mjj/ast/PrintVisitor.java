@@ -92,7 +92,7 @@ public class PrintVisitor implements AstVisitor<String> {
 
   @Override
   public String visitVarDecl(VarDeclNode node) {
-    return indentManager.indent() + node.getIdent().accept(this);
+    return null;
   }
 
   @Override

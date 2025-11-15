@@ -23,11 +23,6 @@ public class UnaryExpNode extends ExpNode {
     }
 
     @Override
-    public String evaluate() {
-        return op.getOp().getName() + expNode.evaluate();
-    }
-
-    @Override
     public boolean sameAs(AstNode other) {
         if (other instanceof UnaryExpNode unaryExpNode) {
             return this.op.sameAs(unaryExpNode.op) && this.expNode.sameAs(unaryExpNode.expNode);

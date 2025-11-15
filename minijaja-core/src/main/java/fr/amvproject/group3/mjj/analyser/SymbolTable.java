@@ -1,4 +1,4 @@
-package fr.amvproject.group3.mjj;
+package fr.amvproject.group3.mjj.analyser;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -6,28 +6,36 @@ import java.util.List;
 import java.util.Map;
 
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.ParamsNode;
+import fr.amvproject.group3.mjj.ast.nodes.finals.ArrayAccessNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.ParamNode;
+import fr.amvproject.group3.mjj.ast.nodes.other.ObjNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.TypeMethNode;
-import fr.amvproject.group3.exceptions.SymbolTableException;
+import fr.amvproject.group3.mjj.exceptions.SemanticException;
 import fr.amvproject.group3.utils.StringSaver;
 
 public class SymbolTable {
   public static class Symbol {
     private final IdentNode ident;
     private final TypeMethNode type;
-    private final String dimension; // Table size can be defined by an expression
+    private final ObjNode obj;
+    private final Integer dimension; // Table size can be defined by an expression TODO
     private final ParamsNode entetes;
-    private final int lineOfDeclaration;
+    private final Object value;
     private List<Integer> linesOfUsage;
+    private List<Object> values;
 
-    public Symbol(IdentNode ident, TypeMethNode type, String dimension, ParamsNode entetes, int lineOfDeclaration) {
+    public Symbol(IdentNode ident, TypeMethNode type, ObjNode obj, Integer dimension, ParamsNode entetes, Object value) {
       this.ident = ident;
       this.type = type;
+      this.obj = obj;
       this.dimension = dimension;
       this.entetes = entetes;
-      this.lineOfDeclaration = lineOfDeclaration;
+      this.value = value;
       this.linesOfUsage = new ArrayList<>();
+      this.values = new ArrayList<>();
+      linesOfUsage.add(ident.getLine());
+      values.add(value);
     }
 
     public IdentNode getIdent() {
@@ -38,7 +46,11 @@ public class SymbolTable {
       return type;
     }
 
-    public String getDimension() {
+    public ObjNode getObj() {
+      return obj;
+    }
+
+    public int getDimension() {
       return dimension;
     }
 
@@ -46,12 +58,16 @@ public class SymbolTable {
       return entetes;
     }
 
-    public int getLineOfDeclaration() {
-      return lineOfDeclaration;
+    public Object getValue() {
+      return value;
     }
 
     public List<Integer> getLinesOfUsage() {
       return linesOfUsage;
+    }
+
+    public List<Object> getValues() {
+      return values;
     }
 
     public void addLineOfUsage(int lineOfUsage) {
@@ -59,28 +75,50 @@ public class SymbolTable {
     }
   }
 
-  private final Map<String, Symbol> symbols = new LinkedHashMap<>();
+  /* Utility */
 
-  public boolean addSymbol(IdentNode ident, TypeMethNode type, ParamsNode entetes, String dimension,
-      int lineOfDeclaration) throws SymbolTableException {
-    if (symbols.containsKey(ident.getName())) {
-      throw new SymbolTableException("Symbol " + ident.getName() + " already declared at line " + lineOfDeclaration);
+  public TypeMethNode getTypeFromValue(Object value) {
+     
+    return null;
+  }
+
+  /* Symbols */
+
+  private final Map<IdentNode, Symbol> symbols = new LinkedHashMap<>();
+
+  public Symbol lookup(IdentNode identNode) {
+    return symbols.get(identNode);
+  }
+
+  public Symbol lookup(ArrayAccessNode arrayAccessNode) {
+    return symbols.get(arrayAccessNode.getIdent()); // TODO complete this
+  }
+
+  public boolean addSymbol(IdentNode ident, TypeMethNode type, ObjNode obj, ParamsNode entetes, Integer dimension, Object value) throws SemanticException {
+    if (symbols.containsKey(ident)) {
+      throw new SemanticException("Symbol " + ident.getName() + " already declared at line " + ident.getLine());
     }
-    symbols.put(ident.getName(), new Symbol(ident, type, dimension, entetes, lineOfDeclaration));
+    TypeMethNode expType = getTypeFromValue(value);
+    if (!type.equals(expType)) {
+      throw new SemanticException("Value of Type " + expType + " not compatible with declaration of type " + type + " at line " + ident.getLine());
+    }
+    symbols.put(ident, new Symbol(ident, type, obj, dimension, entetes, value));
     return true;
   }
 
-  public Symbol lookup(IdentNode ident) {
-    return symbols.get(ident.getName());
-  }
-
-  public boolean recordUsage(IdentNode ident, int lineOfUsage) throws SymbolTableException {
-    Symbol sym = symbols.get(ident.getName());
+  public boolean recordUsage(IdentNode ident) throws SemanticException {
+    Symbol sym = symbols.get(ident);
 
     if (sym == null) {
-      throw new SymbolTableException("Symbol " + ident.getName() + " not declared but used at line " + lineOfUsage);
+      throw new SemanticException("Symbol " + ident.getName() + " not declared but used at line " + ident.getLine());
     }
-    sym.addLineOfUsage(lineOfUsage);
+
+    TypeMethNode expType = getTypeFromValue(sym.getValue());
+    if (!sym.getType().equals(expType)) {
+      throw new SemanticException("Value of Type " + expType + " not compatible with declaration of type " + sym.getType() + " at line " + ident.getLine());
+    }
+
+    sym.addLineOfUsage(ident.getLine());
 
     return true;
   }
@@ -113,7 +151,7 @@ public class SymbolTable {
 
       String type = sym.getType() != null ? sym.getType().getName() : "<?>";
 
-      String dim = sym.getDimension();
+      int dim = sym.getDimension();
 
       // Format parameters as "type name;type name;..."
       StringBuilder params = getParams(sym);
@@ -123,12 +161,12 @@ public class SymbolTable {
           : String.join(";", sym.getLinesOfUsage().stream().map(String::valueOf).toList());
 
       // Append CSV row
-      sb.append(String.format("%s,%s,%s,%s,%d,%s%n",
+      sb.append(String.format("%s,%s,%d,%s,%d,%s%n",
           name,
           type,
           dim,
           params,
-          sym.getLineOfDeclaration(),
+          sym.getIdent().getLine(),
           usageLines));
     }
 

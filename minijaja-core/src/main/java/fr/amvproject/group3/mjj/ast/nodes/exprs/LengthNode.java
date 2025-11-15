@@ -17,11 +17,6 @@ public class LengthNode extends ExpNode {
     }
 
     @Override
-    public String evaluate() {
-        return identNode.getName();
-    }
-
-    @Override
     public boolean sameAs(AstNode other) {
         if (other instanceof LengthNode lengthNode) {
             return this.identNode.sameAs(lengthNode.identNode);

@@ -3,9 +3,9 @@ package fr.amvproject.group3;
 import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.PrintVisitor;
 import fr.amvproject.group3.jjc.utils.AstOperations;
+import fr.amvproject.group3.mjj.analyser.MemoryVisitor;
+import fr.amvproject.group3.mjj.analyser.SymbolTable;
 import fr.amvproject.group3.utils.StringSaver;
-import fr.amvproject.group3.mjj.MemoryVisitor;
-import fr.amvproject.group3.mjj.SymbolTable;
 import fr.amvproject.group3.nodes.TypeMemNode;
 
 public class App {
