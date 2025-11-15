@@ -40,7 +40,8 @@ import fr.amvproject.group3.mjj.ast.nodes.intermediate.VarDeclNode;
 @SuppressWarnings("java:S6539") // Visitor pattern: large by design
 public class CompilerVisitor implements fr.amvproject.group3.mjj.ast.AstVisitor<List<ClassNode>> {
   private int instrCount = 0;
-  private int counterSilencer = 0;
+  private int counterSilencer = 0;  // Used to get the instruction count before adding them
+  private int k = 0; // Used for parameters
 
   // A Jjc program is a list of classes
   private ClassNode newClass(InstrNode node) {
@@ -167,7 +168,7 @@ public class CompilerVisitor implements fr.amvproject.group3.mjj.ast.AstVisitor<
   }
 
   @Override
-  public List<ClassNode> visitMethod(fr.amvproject.group3.mjj.ast.nodes.decls.MethodNode node) { // TODO What is methodeR ?
+  public List<ClassNode> visitMethod(fr.amvproject.group3.mjj.ast.nodes.decls.MethodNode node) {
     List<ClassNode> classNodes = new ArrayList<>();
     int instrBlockCount = instrCount+1;
     counterSilencer++;
@@ -188,6 +189,7 @@ public class CompilerVisitor implements fr.amvproject.group3.mjj.ast.AstVisitor<
     classNodes.addAll(pens);
     classNodes.addAll(pdvs);
     classNodes.addAll(piss);
+    if (node.getReturnType().isVoid()) classNodes.add(newClass(new PushNode(new IntLiteralNode(0))));
     classNodes.addAll(prdvs);
     classNodes.add(newClass(new SwapLiteral()));
     classNodes.add(newClass(new ReturnLiteral()));
@@ -214,6 +216,7 @@ public class CompilerVisitor implements fr.amvproject.group3.mjj.ast.AstVisitor<
     for (ParamNode paramNode : node.getList()) {
       classNodes.addAll(paramNode.accept(this));
     }
+    k = 0;
     return classNodes;
   }
 
@@ -221,7 +224,7 @@ public class CompilerVisitor implements fr.amvproject.group3.mjj.ast.AstVisitor<
   public List<ClassNode> visitParam(fr.amvproject.group3.mjj.ast.nodes.finals.ParamNode node) {
     List<ClassNode> classNodes = new ArrayList<>();
     classNodes.add(newClass(new NewNode(new IdentNode(node.getIdent().getName(), node.getIdent().getLine()),
-        typeMapper(node.getType()), new ObjNode("var"), new IntLiteralNode(0)))); // TODO What is k ?
+        typeMapper(node.getType()), new ObjNode("var"), new IntLiteralNode(++k))));
     return classNodes;
   }
 
