@@ -3,7 +3,10 @@ package fr.amvproject.group3;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.amvproject.group3.mjj.ast.nodes.other.TypeMethNode;
+import fr.amvproject.group3.mjj.ast.nodes.other.TypeNode;
 import fr.amvproject.group3.nodes.TypeMemNode;
+import fr.amvproject.group3.utils.StringSaver;
 
 public class Heap {
     private List<Object> queue = new ArrayList<>();
@@ -58,5 +61,42 @@ public class Heap {
 
     public int getNextAddress() {
       return nextAddress;
+    }
+
+    public List<Object> getReverseQueue() {
+      List<Object> reverseQueue = new ArrayList<>();
+      for (int i = queue.size() - 1; i >= 0; i--) {
+        reverseQueue.add(queue.get(i));
+      }
+      return reverseQueue;
+    }
+
+    /* Print Heap */
+
+    public String print() {
+      StringBuilder sb = new StringBuilder();
+      sb.append("===== HEAP =====\n");
+
+      if (queue.isEmpty()) {
+        sb.append("[Empty Heap]\n");
+      } else {
+        int address = 0;
+        int blockStartAddress = 1;
+        int blockSize;
+        for (Object value : queue) {
+          if (address == blockStartAddress-1) {
+            sb.append("#");
+            blockSize = (int) value;
+            blockStartAddress = blockStartAddress + blockSize + 1;
+          } else {
+            sb.append("@");
+          }
+          sb.append(address).append(": ").append(value).append("\n");
+          address++;
+        }
+      }
+
+      sb.append("======================\n");      
+      return sb.toString();
     }
   }

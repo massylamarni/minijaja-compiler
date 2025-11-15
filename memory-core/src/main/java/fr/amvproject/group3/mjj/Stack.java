@@ -260,7 +260,7 @@ public class Stack extends StackManager {
     }
 
     sb.append("======================\n");
-
+    sb.append(heap.print());
     StringSaver.save(sb.toString(), "stackDump.txt", "main");
     return sb.toString();
   }
