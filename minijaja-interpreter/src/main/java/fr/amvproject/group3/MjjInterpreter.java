@@ -10,6 +10,10 @@ public class MjjInterpreter {
   private Stack stack;
   private ExecutionContext ctx;
 
+  public Stack getStack() {
+    return stack;
+  }
+
   public MjjInterpreter(String mjjProgram) {
     ast = AstOperations.getAstFromString(mjjProgram);
     interpreterVisitor = new InterpreterVisitor();
