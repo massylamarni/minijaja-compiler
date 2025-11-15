@@ -6,13 +6,8 @@ import java.util.List;
 import fr.amvproject.group3.nodes.TypeMemNode;
 
 public class Heap {
-    private List<Object> queue;
-    private int nextAddress;
-
-    public Heap() {
-      queue = new ArrayList<>();
-      nextAddress = 0;
-    }
+    private List<Object> queue = new ArrayList<>();
+    private int nextAddress = 0;
 
     // Allocate memory in the heap and return its address, aka CreerTas
     public int allocate(int size, TypeMemNode type) {
@@ -50,9 +45,9 @@ public class Heap {
     }
 
     // Set the object at a specific index starting from the ref address
-    public void set(int address, int index, Object value) {
+    public void set(int address, Object value) {
       if (address < 0 || address >= nextAddress) throw new IndexOutOfBoundsException();
-      queue.set(address+index, value);
+      queue.set(address, value);
     }
 
     // --- Getters for inspection ---

@@ -35,57 +35,57 @@ public class StackTest {
     public void givenStack__whenSorteOfLast__thenSameSizeQueueSameOrder() {
         // Given
         Stack stack = new Stack();
-        stack.getQueue().push(new Quad(new IdentNode("Test",1), null, new ObjNode("var"), new TypeMethNode("void")));
-        stack.getQueue().push(new Quad(new IdentNode("x",2), 2, new ObjNode("var"), new TypeMethNode("int")));
-        stack.getQueue().push(new Quad(new IdentNode("y",3), 3, new ObjNode("var"), new TypeMethNode("int")));
+        stack.push(new Quad(new IdentNode("Test",1), null, new ObjNode("var"), new TypeMethNode("void")));
+        stack.push(new Quad(new IdentNode("x",2), 2, new ObjNode("var"), new TypeMethNode("int")));
+        stack.push(new Quad(new IdentNode("y",3), 3, new ObjNode("var"), new TypeMethNode("int")));
 
         // When
-        TypeMethNode res = (TypeMethNode) stack.sorte(new IdentNode("Test", 2), stack.pop());
+        TypeMethNode res = (TypeMethNode) stack.sorte(new IdentNode("Test", 2));
         // Then
         assertTrue(res.isVoid());
         assertThat(stack.getQueue().size(), is(3));
-        assertThat(stack.getQueue().pop().getIdent().getName(), is("y"));
-        assertThat(stack.getQueue().pop().getIdent().getName(), is("x"));
-        assertThat(stack.getQueue().pop().getIdent().getName(), is("Test"));
+        assertThat(stack.pop().getIdent().getName(), is("y"));
+        assertThat(stack.pop().getIdent().getName(), is("x"));
+        assertThat(stack.pop().getIdent().getName(), is("Test"));
     }
 
     @Test
     public void givenStack__whenValOfX__thenSameSizeQueueSameOrder() {
         // Given
         Stack stack = new Stack();
-        stack.getQueue().push(new Quad(new IdentNode("Test",1), null, new ObjNode("var"), new TypeMethNode("void")));
-        stack.getQueue().push(new Quad(new IdentNode("x",2), 2, new ObjNode("var"), new TypeMethNode("int")));
-        stack.getQueue().push(new Quad(new IdentNode("y",3), 3, new ObjNode("var"), new TypeMethNode("int")));
+        stack.push(new Quad(new IdentNode("Test",1), null, new ObjNode("var"), new TypeMethNode("void")));
+        stack.push(new Quad(new IdentNode("x",2), 2, new ObjNode("var"), new TypeMethNode("int")));
+        stack.push(new Quad(new IdentNode("y",3), 3, new ObjNode("var"), new TypeMethNode("int")));
 
         // When
-        Object res = stack.val(new IdentNode("x", 2), stack.pop());
+        Object res = stack.val(new IdentNode("x", 2));
         // Then
         assertThat(res instanceof Integer, is(true));
         assertThat(stack.getQueue().size(), is(3));
-        assertThat(stack.getQueue().pop().getIdent().getName(), is("y"));
-        assertThat(stack.getQueue().pop().getIdent().getName(), is("x"));
-        assertThat(stack.getQueue().pop().getIdent().getName(), is("Test"));
+        assertThat(stack.pop().getIdent().getName(), is("y"));
+        assertThat(stack.pop().getIdent().getName(), is("x"));
+        assertThat(stack.pop().getIdent().getName(), is("Test"));
     }
 
     @Test
     public void givenStack__whenMultipleSort__thenSameSizeQueueSameOrder() {
         // Given
         Stack stack = new Stack();
-        stack.getQueue().push(new Quad(new IdentNode("Test",1), null, new ObjNode("var"), new TypeMethNode("void")));
-        stack.getQueue().push(new Quad(new IdentNode("x",2), 2, new ObjNode("var"), new TypeMethNode("int")));
-        stack.getQueue().push(new Quad(new IdentNode("y",3), 3, new ObjNode("var"), new TypeMethNode("int")));
+        stack.push(new Quad(new IdentNode("Test",1), null, new ObjNode("var"), new TypeMethNode("void")));
+        stack.push(new Quad(new IdentNode("x",2), 2, new ObjNode("var"), new TypeMethNode("int")));
+        stack.push(new Quad(new IdentNode("y",3), 3, new ObjNode("var"), new TypeMethNode("int")));
 
         // When
-        TypeMethNode resX = (TypeMethNode) stack.sorte(new IdentNode("x", 2), stack.pop());
-        TypeMethNode resY = (TypeMethNode) stack.sorte(new IdentNode("y", 3), stack.pop());
+        TypeMethNode resX = (TypeMethNode) stack.sorte(new IdentNode("x", 2));
+        TypeMethNode resY = (TypeMethNode) stack.sorte(new IdentNode("y", 3));
         // Then
 
         assertTrue(resX.isInt());
         assertTrue(resY.isInt());
         assertThat(stack.getQueue().size(), is(3));
-        assertThat(stack.getQueue().pop().getIdent().getName(), is("y"));
-        assertThat(stack.getQueue().pop().getIdent().getName(), is("x"));
-        assertThat(stack.getQueue().pop().getIdent().getName(), is("Test"));
+        assertThat(stack.pop().getIdent().getName(), is("y"));
+        assertThat(stack.pop().getIdent().getName(), is("x"));
+        assertThat(stack.pop().getIdent().getName(), is("Test"));
     }
 
 
@@ -93,46 +93,46 @@ public class StackTest {
     public void givenStack__whenDeclVar__thenVarIsDeclOnTop() {
         // Given
         Stack stack = new Stack();
-        stack.getQueue().push(new Quad(new IdentNode("Test",1), null, new ObjNode("var"), new TypeMethNode("void")));
+        stack.push(new Quad(new IdentNode("Test",1), null, new ObjNode("var"), new TypeMethNode("void")));
         IdentNode ident = new IdentNode("z", 4);
         // When
         stack.declVar(ident, 4, new TypeMethNode("int"));
         // Then
         assertThat( stack.getQueue().size(),is(2));
-        assertThat(stack.getQueue().peek().getIdent().getName(),is("z"));
-        assertTrue(stack.getQueue().peek().getObj().isVar());
-        assertTrue(((TypeMethNode) stack.getQueue().peek().getType()).isInt());
+        assertThat(stack.peek().getIdent().getName(),is("z"));
+        assertTrue(stack.peek().getObj().isVar());
+        assertTrue(((TypeMethNode) stack.peek().getType()).isInt());
     }
 
     @Test
     public void givenStack__whenDeclCst__thenVarIsDeclOnTop() {
         // Given
         Stack stack = new Stack();
-        stack.getQueue().push(new Quad(new IdentNode("Test",1), null, new ObjNode("var"), new TypeMethNode("void")));
+        stack.push(new Quad(new IdentNode("Test",1), null, new ObjNode("var"), new TypeMethNode("void")));
         IdentNode ident = new IdentNode("T", 5);
         // When
         stack.declCst(ident, 4, new TypeNode("int"));
         // Then
         assertThat( stack.getQueue().size(),is(2));
-        assertThat(stack.getQueue().peek().getIdent().getName(),is("T"));
-        assertTrue(stack.getQueue().peek().getObj().isCst());
+        assertThat(stack.peek().getIdent().getName(),is("T"));
+        assertTrue(stack.peek().getObj().isCst());
     }
 
     @Test
     public void givenStack__whenDeclTab__thenTabIsDeclOnTop() {
         // Given
         Stack stack = new Stack();
-        stack.getQueue().push(new Quad(new IdentNode("Test",1), null, new ObjNode("var"), new TypeMethNode("void")));
+        stack.push(new Quad(new IdentNode("Test",1), null, new ObjNode("var"), new TypeMethNode("void")));
 
         IdentNode ident = new IdentNode("arr", 18);
         // When
         stack.declTab(ident, 5, new TypeMethNode("int"));
         // Then
         assertThat( stack.getQueue().size(),is(2));
-        assertThat(stack.getQueue().peek().getIdent().getName(),is("arr"));
-        assertTrue(stack.getQueue().peek().getObj().isTab());
-        assertTrue(((TypeMethNode) stack.getQueue().peek().getType()).isInt());
-        assertThat(stack.getQueue().peek().getValue(),is(1));
+        assertThat(stack.peek().getIdent().getName(),is("arr"));
+        assertTrue(stack.peek().getObj().isTab());
+        assertTrue(((TypeMethNode) stack.peek().getType()).isInt());
+        assertThat(stack.peek().getValue(),is(1));
 
     }
 
@@ -141,13 +141,13 @@ public class StackTest {
         // Given
         Stack stack = new Stack();
         IdentNode ident = new IdentNode("x", 2);
-        stack.getQueue().push(new Quad(new IdentNode("x",2), 2, new ObjNode("var"), new TypeMethNode("int")));
-        stack.getQueue().push(new Quad(new IdentNode("x",2), 3, new ObjNode("var"), new TypeMethNode("int")));
+        stack.push(new Quad(new IdentNode("x",2), 2, new ObjNode("var"), new TypeMethNode("int")));
+        stack.push(new Quad(new IdentNode("x",2), 3, new ObjNode("var"), new TypeMethNode("int")));
 
         // When
-        stack.affecterVal(ident, 5, stack.pop());
+        stack.affecterVal(ident, 5);
         // Then
-        assertThat(stack.getQueue().pop().getValue(),is(5));
+        assertThat(stack.pop().getValue(),is(5));
     }
 
     @Test
@@ -156,9 +156,9 @@ public class StackTest {
         Stack stack = new Stack();
         IdentNode ident = new IdentNode("arr", 6);
         stack.declTab(ident, 5, new TypeMethNode("int"));
-        stack.affecterValT(ident, 2, 10, stack.getQueue().peek());
+        stack.affecterValT(ident, 2, 10);
         // When
-        Object val = stack.valT(ident, 2, stack.getQueue().peek());
+        Object val = stack.valT(ident, 2);
         // Then
         assertThat(val,is(10));
     }
@@ -170,8 +170,8 @@ public class StackTest {
         IdentNode ident = new IdentNode("arr", 6);
         stack.declTab(ident, 5, new TypeMethNode("int"));
         // When
-        stack.affecterValT(ident, 2, 10, stack.getQueue().peek());
-        assertThat(stack.valT(ident,2,stack.getQueue().peek()),is(10));
+        stack.affecterValT(ident, 2, 10);
+        assertThat(stack.valT(ident,2),is(10));
     }
 
 
@@ -182,7 +182,7 @@ public class StackTest {
         IdentNode ident = new IdentNode("arr", 6);
         stack.declTab(ident, 5, new TypeMethNode("int"));
         // When
-        Integer length = stack.longT(ident, stack.getQueue().peek());
+        Integer length = stack.longT(ident);
         // Then
         assertEquals(5, length.intValue());
     }
@@ -194,7 +194,7 @@ public class StackTest {
         IdentNode ident = new IdentNode("x", 2);
         stack.declVar(ident, 2, new TypeMethNode("int"));
         // When
-        stack.retirerDecl(ident, stack.getQueue().peek());
+        stack.retirerDecl(ident);
         // Then
         assertThat( stack.getQueue().size(),is(0));
     }
@@ -203,13 +203,13 @@ public class StackTest {
     public void givenStack__whenSwap__thenTopTwoElementsAreSwapped() {
         // Given
         Stack stack = new Stack();
-        stack.getQueue().push(new Quad(new IdentNode("x", 2), 2, new ObjNode("var"), new TypeMethNode("int")));
-        stack.getQueue().push(new Quad(new IdentNode("y", 3), 3, new ObjNode("var"), new TypeMethNode("int")));
+        stack.push(new Quad(new IdentNode("x", 2), 2, new ObjNode("var"), new TypeMethNode("int")));
+        stack.push(new Quad(new IdentNode("y", 3), 3, new ObjNode("var"), new TypeMethNode("int")));
         // When
         stack.swap();
         // Then
-        assertThat(stack.getQueue().pop().getIdent().getName(),is("x"));
-        assertThat(stack.getQueue().pop().getIdent().getName(),is("y"));
+        assertThat(stack.pop().getIdent().getName(),is("x"));
+        assertThat(stack.pop().getIdent().getName(),is("y"));
     }
 
     public void setUpMethod() {
@@ -231,9 +231,9 @@ public class StackTest {
         stack.declMeth(identMeth, params, returnType);
         // Then
         assertThat(stack.getQueue().size(),is(1));
-        assertThat(stack.getQueue().peek().getIdent().getName(),is("maMethode"));
-        assertTrue(stack.getQueue().peek().getObj().isMeth());
-        assertTrue(((TypeMethNode) stack.getQueue().peek().getType()).isInt());
+        assertThat(stack.peek().getIdent().getName(),is("maMethode"));
+        assertTrue(stack.peek().getObj().isMeth());
+        assertTrue(((TypeMethNode) stack.peek().getType()).isInt());
     }
 
     @Test
@@ -243,7 +243,7 @@ public class StackTest {
         stack.declVar(new IdentNode("x", 2), 2, new TypeMethNode("int"));
         stack.declVar(new IdentNode("y", 3), 3, new TypeMethNode("int"));
         // When
-        stack.identVal(new IdentNode("x", 2), new TypeMethNode("int"), stack.getQueue().peek(), 1);
+        stack.identVal(new IdentNode("x", 2), new TypeMethNode("int"), 1, 1);
         // Then
         assertThat(stack.getQueue().size(), is(2));
         assertThat(stack.pop().getIdent().getName(), is("y"));
@@ -258,9 +258,9 @@ public class StackTest {
         // Given
         stack.declVar(new IdentNode("x", 2), 2, new TypeMethNode("int"));
         // When
-        stack.affecterType(new IdentNode("x", 2), new TypeMethNode("boolean"), stack.getQueue().peek());
+        stack.affecterType(new IdentNode("x", 2), new TypeMethNode("boolean"));
         // Then
-        assertTrue(((TypeMethNode) stack.getQueue().peek().getType()).isBoolean());
+        assertTrue(((TypeMethNode) stack.peek().getType()).isBoolean());
     }
 
     @Test
@@ -315,7 +315,7 @@ public class StackTest {
 
         // Then
         assertThat(stack.getQueue().size(), is(2));
-        assertThat(stack.getQueue().peek().getIdent().getName(), is("param2"));
+        assertThat(stack.peek().getIdent().getName(), is("param2"));
     }
 
 
@@ -325,7 +325,7 @@ public class StackTest {
         Stack stack = new Stack();
         stack.declVar(new IdentNode("x", 2), 2, new TypeMethNode("int"));
         // When
-        ObjNode obj = stack.objet(new IdentNode("x", 2), stack.getQueue().peek());
+        ObjNode obj = stack.objet(new IdentNode("x", 2));
         // Then
         assertTrue(obj.isVar());
     }
@@ -343,7 +343,7 @@ public class StackTest {
         ParamsNode params = new ParamsNode(paramList);
         stack.declMeth(identMeth, params, returnType);
         // When
-        ParamsNode resultParams = stack.parametre(identMeth, stack.getQueue().peek());
+        ParamsNode resultParams = stack.parametre(identMeth);
         // Then
         assertThat(resultParams.getList().size(),is(2));
     }
@@ -361,7 +361,7 @@ public class StackTest {
         ParamsNode params = new ParamsNode(paramList);
         stack.declMeth(identMeth, params, returnType);
         // When
-        VarsNode resultVars = stack.declaration(identMeth, stack.getQueue().peek());
+        VarsNode resultVars = stack.declaration(identMeth);
         // Then
         assertThat(resultVars,notNullValue());
     }
@@ -380,7 +380,7 @@ public class StackTest {
 
         stack.declMeth(identMeth, params, returnType);
         // When
-        InstrsNode resultInstrs = stack.corps(identMeth, stack.getQueue().peek());
+        InstrsNode resultInstrs = stack.corps(identMeth);
         // Then
         assertThat(resultInstrs,is(notNullValue()));
     }

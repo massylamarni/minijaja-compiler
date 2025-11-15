@@ -1,7 +1,5 @@
 package fr.amvproject.group3;
 
-import fr.amvproject.group3.Heap;
-import fr.amvproject.group3.mjj.ast.nodes.other.TypeMethNode;
 import fr.amvproject.group3.nodes.TypeMemNode;
 
 import org.junit.Before;
@@ -59,7 +57,7 @@ public class HeapTest {
     public void givenHeap__whenGet__thenValueIsCorrect() {
         // Given
         int address = heap.allocate(2, new TypeMemNode("int"));
-        heap.set(address, 0, 42);
+        heap.set(address + 0, 42);
 
         // When
         Object value = heap.get(address);
@@ -74,7 +72,7 @@ public class HeapTest {
         // Given
         int address = heap.allocate(2, new TypeMemNode("int"));
         // When
-        heap.set(address, 0, 100);
+        heap.set(address + 0, 100);
 
         // Then
         assertThat(heap.get(address), is(100));
@@ -116,7 +114,7 @@ public class HeapTest {
     @Test(expected = IndexOutOfBoundsException.class)
     public void givenHeap__whenSetInvalidAddress__thenThrowsException() {
         // When
-        heap.set(-1, 0, 42);
+        heap.set(-1 + 0, 42);
     }
 
     // Test 10 : Exception pour `remove` avec une adresse invalide
