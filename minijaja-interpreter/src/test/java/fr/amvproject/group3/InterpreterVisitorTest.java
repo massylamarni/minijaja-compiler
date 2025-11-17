@@ -1114,4 +1114,36 @@ public class InterpreterVisitorTest {
         assertThat(output, is("01011"));
     }
 
+    @Test
+    public void testLengthSimple() {
+        // Given
+        String code = """
+        class C {
+            int tab[5];
+            
+        main {
+            int size = length(tab);
+            write(size);
+        }
+        }
+        """;
+
+        ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        // Then
+        String output = outContent.toString().trim();
+        assertThat(output, is("5"));
+    }
+
 }

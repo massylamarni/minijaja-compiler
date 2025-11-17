@@ -421,8 +421,13 @@ public class InterpreterVisitor implements AstVisitor<Object> {
 
     @Override
     public Object visitLength(LengthNode node) {
-        // TODO: Implémenter
-        return 0;
+        Integer length = stack.longT(node.getIdent());
+        if (length == null) {
+            throw new RuntimeException(
+                    "Array '" + node.getIdent().getName() + "' not found or is not an array"
+            );
+        }
+        return length;
     }
 
     /**
