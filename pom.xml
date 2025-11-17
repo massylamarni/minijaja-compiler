@@ -6,22 +6,47 @@
 
     <packaging>pom</packaging>
     <modules>
-        <module>analyser-miniJaja</module>
-        <module>interpreter-miniJaja</module>
-        <module>analyser-JajaCode</module>
+        <module>gui</module>
         <module>interface</module>
-        <module>compiler-miniJaja</module>
-        <module>interpreter-JajaCode</module>
+        <module>shared</module>
+        <module>memory-core</module>
+        <module>minijaja-core</module>
+        <module>minijaja-interpreter</module>
+        <module>minijaja-compiler</module>
+        <module>jajacode-core</module>
+        <module>jajacode-interpreter</module>
     </modules>
     <version>1.1-SNAPSHOT</version>
 
     <name>miniJaja-project</name>
 
     <dependencies>
+        <!-- Antlr -->
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4</artifactId>
+            <version>4.13.2</version>
+        </dependency>
+
+        <!-- JUnit -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.1</version>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Tests -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>7.1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version>2.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -38,42 +63,25 @@
     </distributionManagement>
 
     <build>
-        <pluginManagement>
             <plugins>
                 <plugin>
                     <groupId>org.antlr</groupId>
                     <artifactId>antlr4-maven-plugin</artifactId>
-                    <version>4.13.1</version>
+                    <version>4.13.2</version>
                     <executions>
                         <execution>
+                            <id>generate-antlr-sources</id>
+                            <phase>generate-sources</phase> <!-- important -->
                             <goals>
                                 <goal>antlr4</goal>
                             </goals>
                             <configuration>
+                                <sourceDirectory>src/main/antlr4</sourceDirectory>
+                                <outputDirectory>${project.build.directory}/generated-sources/antlr4</outputDirectory>
+                                <packageName>fr.amvproject.group3</packageName>
                                 <visitor>true</visitor>
                                 <listener>true</listener>
-                                <outputDirectory>target/generated-sources/antlr4</outputDirectory>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>3.4.0</version>
-                    <executions>
-                        <execution>
-                            <id>add-source</id>
-                            <phase>generate-sources</phase>
-                            <goals>
-                                <goal>add-source</goal>
-                            </goals>
-                            <configuration>
-                                <outputDirectory>target/generated-sources/antlr4</outputDirectory>
-                                <sources>
-                                    <source>target/generated-sources/antlr4</source>
-                                </sources>
+                                <addOutputDirectory>true</addOutputDirectory>
                             </configuration>
                         </execution>
                     </executions>
@@ -98,7 +106,6 @@
                     </configuration>
                 </plugin>
             </plugins>
-        </pluginManagement>
     </build>
     <scm>
         <developerConnection>

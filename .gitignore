@@ -1,7 +1,16 @@
-.idea
-compiler-miniJaja/target
-interface/target
-interpreter-miniJaja/target
-interpreter-JajaCode/target
-analyser-JajaCode/target
-analyser-miniJaja/target
+# Maven output & compiled files
+target/
+*.class
+*.jar
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Logs
+*.log
+
+# JavaFX plugin cache
+javafx-sdk/
