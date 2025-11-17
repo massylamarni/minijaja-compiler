@@ -269,9 +269,8 @@ public class AstBuilderVisitor extends MiniJajaParserBaseVisitor<AstNode> {
   }
 
   public AstNode visitInc(MiniJajaParser.InstrContext ctx) {
-    IdentNode ident = new IdentNode(ctx.ident1().ident().getText(),
-          ctx.ident1().ident().IDENTIFICATEUR().getSymbol().getLine());
-      return new IncNode(ident);
+      LeftValueNode leftValue = (LeftValueNode) visit(ctx.ident1());
+      return new IncNode(leftValue);
   }
 
   public AstNode visitMethodCall(MiniJajaParser.InstrContext ctx) {

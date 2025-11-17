@@ -98,7 +98,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         retraitDecls(node.getDecls());
 
         // 5. RetirerDecl(ident(i), m4) - Retirer la variable de classe
-        // stack.retirerDecl(node.getIdent(), TODO);
+        stack.retirerDecl(node.getIdent());
 
         return null;
     }
@@ -148,45 +148,37 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         // Application de la règle selon le type
         if (node instanceof VarNode varNode) {
             // DeclVar(i, v, t, m)
-            stack.declVar(varNode.getIdent(), evalExp(varNode.getInitExp()), varNode.getType());
+            visitVar(varNode);
         } else if (node instanceof CstNode cstNode) {
             // DeclCst(i, v, t, m)
             // Note : la distinction vcst/cst est gérée dans Stack
-            stack.declCst(cstNode.getIdent(), evalExp(cstNode.getInitExp()), cstNode.getType());
+            visitCst(cstNode);
         } else if (node instanceof TableNode tableNode) {
-            stack.declTab(tableNode.getIdent(), (int) evalExp(tableNode.getSizeExp()), tableNode.getType());
+            visitTable(tableNode);
         }
         return null;
     }
 
     @Override
     public Object visitVar(VarNode node) {
-        // TODO Auto-generated method stub
-        return visitVarDecl(node);
+        stack.declVar(node.getIdent(), evalExp(node.getInitExp()), node.getType());
+        return null;
 
     }
 
     @Override
     public Object visitTable(TableNode node) {
-        // TODO Auto-generated method stub
+        stack.declTab(node.getIdent(), (int) evalExp(node.getSizeExp()), node.getType());
         return null;
     }
 
     @Override
     public Object visitCst(CstNode node) {
-        // TODO Auto-generated method stub
+        stack.declCst(node.getIdent(), evalExp(node.getInitExp()), node.getType());
         return null;
     }
 
-    /**
-     * Règle [méthode] (page 39) :
-     * m ⊢ méthode(t, ident(i), ent, dvs, iss) → DeclMeth(i, méthode(...), t, m)
-     */
-    @Override
-    public Object visitMethod(MethodNode node) {
-        stack.declMeth(node.getIdent(), node.getParams(), node.getReturnType());
-        return null;
-    }
+
 
     /**
      * Règle [main] (page 39) :
@@ -207,13 +199,118 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         return null;
     }
 
+    /**
+     * Règle [méthode] (page 39) :
+     * m ⊢ méthode(t, ident(i), ent, dvs, iss) → DeclMeth(i, méthode(...), t, m)
+     */
+    public Object visitMethod(MethodNode node) {
+        // Je lui passe le node complet comme dans le cour
+        stack.declMeth(node.getIdent(), node, node.getReturnType());
+        return null;
+    }
+
+    /**
+     * Règle [retour] (page 41) :
+     * m eval⊢ e ⇒ v
+     * m ⊢ retour(e) → AffecterVal(VariableClasse(m), v, m)
+     */
+    @Override
+    public Object visitReturn(ReturnNode node) { // Si jamais sa marche toujours pas , il faudrait que jutilise $return
+        Object returnValue = evalExp(node.getExp());
+        IdentNode classVar = stack.variableClasse();
+        stack.affecterVal(classVar, returnValue);
+        return returnValue;
+    }
+
+    private Object executeMethodCall(IdentNode methodIdent, ListExpNode args) {
+        // ✅ CORRIGÉ : Ne PAS pop le MethodNode
+        ParamsNode params = stack.parametre(methodIdent);
+        VarsNode vars = stack.declaration(methodIdent);
+        InstrsNode body = stack.corps(methodIdent);
+
+        if (params == null || body == null) {
+            throw new RuntimeException("Method '" + methodIdent.getName() + "' not found");
+        }
+
+        // ExpParam - Déclarer les paramètres
+        if (!params.getList().isEmpty()) {
+            List<ExpNode> argList = (args != null) ? args.getList() : new ArrayList<>();
+
+            if (argList.size() != params.getList().size()) {
+                throw new RuntimeException(
+                        "Method '" + methodIdent.getName() + "' expects " +
+                                params.getList().size() + " arguments, got " + argList.size()
+                );
+            }
+
+            for (int i = 0; i < argList.size(); i++) {
+                ExpNode argExp = argList.get(i);
+                ParamNode param = params.getList().get(i);
+                Object argValue = evalExp(argExp);
+                stack.declVar(param.getIdent(), argValue, new TypeMethNode(param.getType().getName()));
+            }
+        }
+
+        // Variables locales
+        if (vars != null && !vars.getList().isEmpty()) {
+            vars.accept(this);
+        }
+
+        // Exécuter le corps
+        body.accept(this);
+
+        // Récupérer la valeur de retour
+        IdentNode returnVar = stack.variableClasse();
+        Object returnValue = stack.val(returnVar);
+
+        // Nettoyer
+        if (vars != null && !vars.getList().isEmpty()) {
+            retraitVars(vars);
+        }
+        retraitParams(params);
+
+        return returnValue;
+    }
+
+    /**
+     * Règle [appelI] (page 41) - Appel comme instruction
+     */
+    @Override
+    public Object visitCallInstr(CallInstrNode node) {
+        executeMethodCall(node.getIdent(), node.getListExp());
+        return null;
+    }
+
+    /**
+     * Règle [appelE] (page 43) - Appel comme expression
+     */
+    @Override
+    public Object visitCallExp(CallExpNode node) {
+        return executeMethodCall(node.getIdent(), node.getListExp());
+    }
+
+    private void retraitParams(ParamsNode params) {
+        if (params == null) return;
+        List<ParamNode> paramList = params.getList();
+        for (int i = paramList.size() - 1; i >= 0; i--) {
+            stack.retirerDecl(paramList.get(i).getIdent());
+        }
+    }
+
+
+
+
     @Override
     public Object visitParams(ParamsNode node) {
+        for (ParamNode paramNode : node.getList()) {
+            paramNode.accept(this);
+        }
         return null;
     }
 
     @Override
     public Object visitParam(ParamNode node) {
+        node.accept(this);
         return null;
     }
 
@@ -269,32 +366,62 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     @Override
     public Object visitAddAssign(AddAssignNode node) {
         return visitAssign(NodeOperations.addAssignToAssign(node));
+
     }
 
     /**
      * Règle [incrément] (page 40) :
      * m ⊢ incrément(ident(i)) → AffecterVal(i, Val(i, m) + 1, m)
+     * m ⊢ incrément(tab(ident(i), e)) → AffecterValT(i, ind, ValT(i, ind, m) + 1, m)
      */
     @Override
-    public Object visitInc(IncNode node) { // TODO Handle array case
-        Object currentValue = stack.val((IdentNode) node.getLeftValueNode());
-        // Vérification du type
-        if (!(currentValue instanceof Integer)) {
+    public Object visitInc(IncNode node) {
+        // Je verifie c'est une variable simple ou un tableau
+        if (node.getLeftValueNode() instanceof IdentNode identNode) {
+            Object currentValue = stack.val(identNode);
+            if (!(currentValue instanceof Integer)) {
+                throw new RuntimeException(
+                        "Type error: increment operator requires integer variable, got " +
+                                currentValue.getClass().getSimpleName()
+                );
+            }
+            int newValue = (int) currentValue + 1;
+            stack.affecterVal(identNode, newValue);
+
+        } else if (node.getLeftValueNode() instanceof ArrayAccessNode arrayAccessNode) {
+            Object indexObj = evalExp(arrayAccessNode.getIndexExp());
+            if (!(indexObj instanceof Integer)) {
+                throw new RuntimeException(
+                        "Type error: array index must be integer, got " +
+                                indexObj.getClass().getSimpleName()
+                );
+            }
+            int index = (int) indexObj;
+            if (index < 0) {
+                throw new RuntimeException(
+                        "Runtime error: array index cannot be negative, got " + index
+                );
+            }
+            Object currentValue = stack.valT(arrayAccessNode.getIdent(), index);
+            if (!(currentValue instanceof Integer)) {
+                throw new RuntimeException(
+                        "Type error: increment operator requires integer, got " +
+                                currentValue.getClass().getSimpleName()
+                );
+            }
+            int newValue = (int) currentValue + 1;
+            stack.affecterValT(arrayAccessNode.getIdent(), index, newValue);
+        } else {
             throw new RuntimeException(
-                    "Type error: increment operator requires integer variable, got " +
-                            currentValue.getClass().getSimpleName()
+                    "Increment operator can only be applied to variables or array elements"
             );
         }
-        int newValue = (int) currentValue + 1;
-        //if(node.)
-            stack.affecterVal((IdentNode) node.getLeftValueNode(), newValue);
-
         return null;
     }
 
     @Override
     public Object visitLength(LengthNode node) {
-        // TODO: Implémenter Long(i, m) selon page 31
+        // TODO: Implémenter
         return 0;
     }
 
@@ -372,32 +499,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         return null;
     }
 
-    /**
-     * Règle [retour] (page 41) :
-     * m eval⊢ e ⇒ v
-     * m ⊢ retour(e) → AffecterVal(VariableClasse(m), v, m)
-     */
-    @Override
-    public Object visitReturn(ReturnNode node) {
-        // m eval⊢ e ⇒ v
-        // AffecterVal(VariableClasse(m), v, m)
-        // Note : Cette fonctionnalité doit être gérée par Stack.callMethod
-        return evalExp(node.getExp());
-    }
 
-    /**
-     * Règle [appelI] (page 41) :
-     * ExpParam(lexp, Paramètre(i, m), m) ⊢ Déclaration(i, m) → m1
-     * m1 ⊢ Corps(i, m) → m2
-     * m2 retrait⊢ Déclaration(i, m) → m3
-     * m3 retrait⊢ Paramètre(i, m) → m4
-     * m ⊢ appelI(ident(i), lexp) → m4
-     */
-    @Override
-    public Object visitCallInstr(CallInstrNode node) {
-        // La logique complète est dans Stack.callMethod
-        return null;
-    }
 
     // ========== EXPRESSIONS ==========
 
@@ -447,7 +549,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     @Override
     public Object visitIdent(IdentNode node) {
         try {
-            return stack.val(node); // TODO
+            return stack.val(node);
         } catch (RuntimeException e) {
             throw new RuntimeException(
                     "Variable '" + node.getName() + "' not declared", e);
@@ -461,7 +563,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
 
     @Override
     public Object visitArrayAccess(ArrayAccessNode node) {
-        /*
+
         Object indexObj = evalExp(node.getIndexExp());
         if (!(indexObj instanceof Integer)) {
             throw new RuntimeException(
@@ -477,7 +579,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
             );
         }
         try {
-            return stack.valT(node.getIdent(), index, TODO);
+            return stack.valT(node.getIdent(), index);
         } catch (IndexOutOfBoundsException e) {
             throw new RuntimeException(
                     "Runtime error: array index " + index +
@@ -486,20 +588,9 @@ public class InterpreterVisitor implements AstVisitor<Object> {
             );
         }
 
-         */
-        return null;
     }
 
-    /**
-     * Règle [appelE] (page 43) :
-     * m ⊢ appelI(ident(i), lexp) → m1
-     * m1 eval⊢ VariableClasse(m1) ⇒ v
-     * m eval⊢ appelE(ident(i), lexp) ⇒ v
-     */
-    @Override
-    public Object visitCallExp(CallExpNode node) {
-        return null;
-    }
+
 
     // ========== OTHER NODES ==========
     @Override
@@ -623,19 +714,11 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      * m retrait⊢ decls(ds, dss) → m2
      */
     private void retraitDecls(DeclsNode decls) {
-        /*
-        // Retrait en ordre inverse (comme dans la règle récursive)
-        List<DeclNode> declList = decls.getDecls();
+        if (decls == null) return;
+        List<DeclNode> declList = decls.getList();
         for (int i = declList.size() - 1; i >= 0; i--) {
-            DeclNode decl = declList.get(i);
-            if (decl instanceof VarNode varNode) {
-                stack.retirerDecl(varNode.getIdent(), TODO);
-            } else if (decl instanceof MethodNode methodNode) {
-                stack.retirerDecl(methodNode.getIdent(), TODO);
-            }
+            stack.retirerDecl(declList.get(i).getIdent());
         }
-
-         */
     }
 
     /**
@@ -644,13 +727,13 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      * m retrait⊢ vars(dv, dvs) → m2
      */
     private void retraitVars(VarsNode vars) {
+        if (vars == null) return;
         // Retrait en ordre inverse
-        /*
         List<VarDeclNode> varList = vars.getList();
         for (int i = varList.size() - 1; i >= 0; i--) {
-            stack.retirerDecl(varList.get(i).getIdent(), TODO);
+            stack.retirerDecl(varList.get(i).getIdent());
         }
 
-         */
+
     }
 }

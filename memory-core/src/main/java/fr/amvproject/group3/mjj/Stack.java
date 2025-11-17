@@ -69,13 +69,11 @@ public class Stack extends StackManager {
   public void declTab(IdentNode ident, int size, TypeMethNode type) {
     int ref = heap.allocate(size, new TypeMemNode(type.getName()));
     this.push(new Quad(ident, ref, new ObjNode("tab"), type));
-  }
+  } //tab[3]  T1 T2
 
-  public void declMeth(IdentNode ident, ParamsNode params, TypeMethNode returnType) {
-    this.push(new Quad(ident, new MethodNode(returnType, ident, params, new VarsNode(Collections.emptyList()),
-        new InstrsNode(Collections.emptyList())), new ObjNode("meth"), returnType));
-
-  }
+    public void declMeth(IdentNode ident, MethodNode methodNode, TypeMethNode returnType) {
+        this.push(new Quad(ident, methodNode, new ObjNode("meth"), returnType));
+    }
 
   // --- Access / Assignment ---
 
@@ -94,7 +92,7 @@ public class Stack extends StackManager {
   public void retirerDecl(IdentNode ident) {
     for (int i = queue.size() - 1; i >= 0; i--) {
       Quad quad = queue.get(i);
-      if (quad.getIdent().equals(ident)) {
+      if (quad.getIdent().equals(ident)) { // Pourquoi tu nutilises pas sameAs ici Mr Massyl?
         if (quad.getObj().isTab())
           heap.remove((int) quad.getValue(), new TypeMemNode(((TypeMethNode) quad.getType()).getName()));
         queue.remove(i);
@@ -264,4 +262,15 @@ public class Stack extends StackManager {
     StringSaver.save(sb.toString(), "stackDump.txt", "main");
     return sb.toString();
   }
+
+    /**
+     * Retourne l'identifiant de la variable classe pour stocker les retours
+     *
+     */
+    public IdentNode variableClasse() {
+        if (queue.isEmpty()) {
+            return null;
+        }
+        return queue.get(0).getIdent();
+    }
 }

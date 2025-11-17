@@ -744,4 +744,374 @@ public class InterpreterVisitorTest {
         assertThat(output, is("true"));
     }
 
+    @Test
+    public void givenFunction__whenExecute__thenCorrectResult() {
+        // Given
+        String code = """
+                class C {
+                    int x = 5 ;
+                
+                int fct(int var) {
+                    int y = 5 + var;
+                    write(y)
+                    return y ;
+                } ;
+                main {
+                    fct(x);
+                }
+                }
+                
+                """;
+
+        ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        // Then
+        String output = outContent.toString().trim();
+        assertThat(output, is("10"));
+    }
+
+
+    @Test
+    public void givenFunction__whenExecute__thenAffectResultAndPrint() {
+        // Given
+        String code = """
+                class C {
+                    int x = 5 ;
+                
+                int fct(int var) {
+                    int y = 5 + var;
+                    return y ;
+                } ;
+                main {
+                    x = fct(x);
+                    write(x);
+                }
+                }
+                
+                """;
+
+        ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        // Then
+        String output = outContent.toString().trim();
+        assertThat(output, is("10"));
+    }
+
+    @Test
+    public void givenFunction__whenExecute__thenPrintResult() {
+        // Given
+        String code = """
+                class C {
+                    int x = 5 ;
+                
+                int fct(int var) {
+                    int y = 5 + var;
+                    return y ;
+                } ;
+                main {
+                    int res = fct(x);
+                    write(res);
+                }
+                }
+                
+                """;
+
+        ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        // Then
+        String output = outContent.toString().trim();
+        assertThat(output, is("10"));
+    }
+
+    @Test
+    public void testTabSimple() {
+        // Given
+        String code = """
+                class C {
+                    int x = 5 ;
+                    int tab[3] ;
+    
+                main {
+                    tab[0] = x ;
+                    write(tab[0]);
+                }
+                }
+                
+                """;
+
+        ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        // Then
+        String output = outContent.toString().trim();
+        assertThat(output, is("5"));
+    }
+
+    @Test
+    public void testTabBoolean() {
+        // Given
+        String code = """
+                class C {
+                    boolean tab[2] ;
+    
+                main {
+                    tab[0] = true ;
+                    tab[1] = false ;
+                    write(tab[0]);
+                }
+                }
+                
+                """;
+
+        ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        // Then
+        String output = outContent.toString().trim();
+        assertThat(output, is("true"));
+    }
+
+    @Test
+    public void testTabInLoop() {
+        // Given
+        String code = """
+                class C {
+                    int tab[3] ;
+                    int i = 0 ;
+    
+                main {
+                    while (3 > i) {
+                        tab[i] = i * 10 ;
+                        i++ ;
+                    }
+                    write(tab[2]);
+                }
+                }
+                
+                """;
+
+        ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        // Then
+        String output = outContent.toString().trim();
+        assertThat(output, is("20"));
+    }
+
+    @Test
+    public void testTabAffectation() {
+        // Given
+        String code = """
+                class C {
+                    int tab1[1] ;
+                    int tab2[1] ;
+    
+                main {
+                    tab1[0] = 10 ;
+                    tab2[0] += tab1[0] ;
+                    write(tab2[0]);
+                }
+                }
+                
+                """;
+
+        ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        // Then
+        String output = outContent.toString().trim();
+        assertThat(output, is("10"));
+    }
+
+    @Test
+    public void testTabIncrement() {
+        // Given
+        String code = """
+                class C {
+                    int tab1[1] ;
+                    
+    
+                main {
+                    tab1[0] = 10 ;
+                    tab1[0]++ ;
+                    write(tab1[0]);
+                }
+                }
+                
+                """;
+
+        ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        // Then
+        String output = outContent.toString().trim();
+        assertThat(output, is("11"));
+    }
+
+    @Test
+    public void testIncVariable() {
+        String code = """
+        class C {
+            main {
+                int x = 5;
+                x++;
+                write(x);
+            }
+        }
+        """;
+
+        ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+
+        try {
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        String output = outContent.toString().trim();
+        assertThat(output, is("6"));
+    }
+
+    @Test
+    public void testTabAffectationSimple() {
+        String code = """
+            class C {
+                int tab1[1];
+                
+            main {
+                tab1[0] = 10;
+                write(tab1[0]);
+            }
+            }
+            """;
+
+        ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+
+        try {
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        String output = outContent.toString().trim();
+        assertThat(output, is("10"));
+    }
+
+    @Test
+    public void testDebugTabIncrement() {
+        String code = """
+            class C {
+                int tab1[1];
+                
+            main {
+                write(tab1[0]);    // 1. Valeur initiale
+                tab1[0] = 10;
+                write(tab1[0]);    // 2. Après affectation
+                tab1[0]++;
+                write(tab1[0]);    // 3. Après incrément
+            }
+            }
+            """;
+
+        ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+
+        try {
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        String output = outContent.toString().trim();
+        System.out.println("DEBUG OUTPUT: [" + output + "]");
+
+        assertThat(output, is("01011"));
+    }
+
 }
