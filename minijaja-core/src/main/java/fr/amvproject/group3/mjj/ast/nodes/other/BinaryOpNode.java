@@ -76,6 +76,24 @@ public class BinaryOpNode extends AstNode {
     return binaryOp == BinaryOpName.DIV;
   }
 
+  public boolean takesInteger() {
+    return binaryOp == BinaryOpName.ADD || binaryOp == BinaryOpName.SUB || binaryOp == BinaryOpName.MUL
+        || binaryOp == BinaryOpName.DIV || binaryOp == BinaryOpName.GT || binaryOp == BinaryOpName.EQ;
+  }
+
+  public boolean takesBoolean() {
+    return binaryOp == BinaryOpName.AND || binaryOp == BinaryOpName.OR || binaryOp == BinaryOpName.EQ;
+  }
+
+  public boolean givesInteger() {
+    return binaryOp == BinaryOpName.ADD || binaryOp == BinaryOpName.SUB || binaryOp == BinaryOpName.MUL
+        || binaryOp == BinaryOpName.DIV;
+  }
+
+  public boolean givesBoolean() {
+    return binaryOp == BinaryOpName.AND || binaryOp == BinaryOpName.OR || binaryOp == BinaryOpName.EQ;
+  }
+
   @Override
   public boolean sameAs(AstNode other) {
     if (other instanceof BinaryOpNode binaryOpNode) {

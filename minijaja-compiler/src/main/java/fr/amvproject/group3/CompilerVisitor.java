@@ -405,7 +405,7 @@ public class CompilerVisitor implements fr.amvproject.group3.mjj.ast.AstVisitor<
     List<ClassNode> classNodes = new ArrayList<>();
     List<ClassNode> pe = node.getIndexExp().accept(this);
     classNodes.addAll(pe);
-    newClass(new LoadNode(new IdentNode(node.getIdent().getName(), node.getIdent().getLine()), true));
+    classNodes.add(newClass(new LoadNode(new IdentNode(node.getIdent().getName(), node.getIdent().getLine()), true)));
     return classNodes;
   }
 

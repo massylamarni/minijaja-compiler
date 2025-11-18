@@ -17,11 +17,6 @@ public class StringLiteralNode extends ExpNode {
     }
 
     @Override
-    public String evaluate() {
-        return value;
-    }
-
-    @Override
     public boolean sameAs(AstNode other) {
         if (other instanceof StringLiteralNode stringLiteralNode) {
             return this.value.equals(stringLiteralNode.value);

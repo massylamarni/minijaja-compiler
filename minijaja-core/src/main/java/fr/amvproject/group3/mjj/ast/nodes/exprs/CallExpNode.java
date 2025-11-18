@@ -24,15 +24,6 @@ public class CallExpNode extends ExpNode {
     }
 
     @Override
-    public String evaluate() {
-        StringBuilder sb = new StringBuilder(identNode.getName());
-        for (ExpNode expNode : listExpNode.getList()) {
-            sb.append(expNode.evaluate());
-        }
-        return sb.toString();
-    }
-
-    @Override
     public boolean sameAs(AstNode other) {
         if (other instanceof CallExpNode callExpNode) {
             return this.identNode.sameAs(callExpNode.identNode) && this.listExpNode.sameAs(callExpNode.listExpNode);

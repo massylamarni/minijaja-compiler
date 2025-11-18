@@ -143,7 +143,7 @@ public class ExecutionState {
                 break;
             case "meth":
                 Quad methQuad = new Quad(ident, value, new ObjNode("meth"), type);
-                stack.getQueue().push(methQuad);
+                stack.push(methQuad);
                 break;
             default:
                 stack.declCst(ident, value, type);
@@ -194,7 +194,7 @@ public class ExecutionState {
         }
 
         Quad topQuad = stack.pop();
-        Object value = stack.val(ident, topQuad);
+        Object value = stack.val(ident);
         pushQuadBack(topQuad);
 
         if (value == null) {
@@ -208,7 +208,7 @@ public class ExecutionState {
             throw new RuntimeException("Stack is empty, cannot set identifier: " + identName);
         }
 
-        java.util.Deque<Quad> queue = stack.getQueue();
+        java.util.List<Quad> queue = stack.getQueue();
         boolean found = false;
 
         for (Quad quad : queue) {
@@ -249,7 +249,7 @@ public class ExecutionState {
         Quad quad = stack.pop();
         Object result = null;
         if (quad != null && "tab".equals(quad.getObj())) {
-            result = stack.valT(ident, index, quad);
+            result = stack.valT(ident, index);
         }
         pushQuadBack(quad);
         return result;
@@ -258,14 +258,14 @@ public class ExecutionState {
     public void setArrayValue(String identName, int index, Object value) {
         IdentNode ident = new IdentNode(identName, -1);
         Quad quad = stack.pop();
-        stack.affecterValT(ident, index, value, quad);
+        stack.affecterValT(ident, index, value);
         pushQuadBack(quad);
     }
 
     public int getArrayLength(String identName) {
         IdentNode ident = new IdentNode(identName, -1);
         Quad quad = stack.pop();
-        Integer length = stack.longT(ident, quad);
+        Integer length = stack.longT(ident);
         pushQuadBack(quad);
         return length != null ? length : 0;
     }
@@ -305,7 +305,7 @@ public class ExecutionState {
     public List<String> getStackStateAsStrings() {
         List<String> stackStrings = new ArrayList<>();
 
-        java.util.Deque<Quad> queue = stack.getQueue();
+        java.util.List<Quad> queue = stack.getQueue();
 
         if (queue.isEmpty()) {
             return stackStrings;

@@ -16,11 +16,6 @@ public class BoolLiteralNode extends ExpNode {
     }
 
     @Override
-    public String evaluate() {
-        return value ? "true" : "false";
-    }
-
-    @Override
     public boolean sameAs(AstNode other) {
         if (other instanceof BoolLiteralNode boolLiteralNode) {
             return this.value == boolLiteralNode.value;

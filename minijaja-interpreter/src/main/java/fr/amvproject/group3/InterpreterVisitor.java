@@ -248,12 +248,12 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         if (node.getLeftValueNode() instanceof IdentNode identNode) {
             // Règle [affectation]
 
-            stack.affecterVal(identNode, value, getQuad(identNode, node.getExp(), "var"));
+            stack.affecterVal(identNode, value);
         } else if (node.getLeftValueNode() instanceof ArrayAccessNode arrayAccessNode) {
             // Règle [affectationT]
             // m eval⊢ e1 ⇒ ind
             int index = (int) evalExp(arrayAccessNode.getIndexExp());
-            stack.affecterValT(arrayAccessNode.getIdent(), index, value, getQuad(arrayAccessNode.getIdent(), node.getExp(), "tab"));
+            stack.affecterValT(arrayAccessNode.getIdent(), index, value);
         }
         return null;
     }
@@ -277,7 +277,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitInc(IncNode node) { // TODO Handle array case
-        Object currentValue = stack.val((IdentNode) node.getLeftValueNode(), stack.pop() );
+        Object currentValue = stack.val((IdentNode) node.getLeftValueNode());
         // Vérification du type
         if (!(currentValue instanceof Integer)) {
             throw new RuntimeException(
@@ -287,7 +287,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         }
         int newValue = (int) currentValue + 1;
         //if(node.)
-            stack.affecterVal((IdentNode) node.getLeftValueNode(), currentValue, getQuad((IdentNode) node.getLeftValueNode(), newValue, "var" ));
+            stack.affecterVal((IdentNode) node.getLeftValueNode(), newValue);
 
         return null;
     }
@@ -447,7 +447,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     @Override
     public Object visitIdent(IdentNode node) {
         try {
-            return stack.val(node, stack.pop()); // TODO
+            return stack.val(node); // TODO
         } catch (RuntimeException e) {
             throw new RuntimeException(
                     "Variable '" + node.getName() + "' not declared", e);
@@ -653,23 +653,4 @@ public class InterpreterVisitor implements AstVisitor<Object> {
 
          */
     }
-
-    /*
-    helper
-     */
-    public Quad getQuad(IdentNode identNode, ExpNode expNode, String obj) {
-        return  new Quad(identNode, expNode.evaluate(), new ObjNode(obj), stack.sorte(identNode , stack.pop()));
-    }
-
-    public Quad getQuad(IdentNode identNode, int value, String obj) {
-        return  new Quad(identNode, value, new ObjNode(obj), stack.sorte(identNode , stack.pop()));
-    }
-
-    public Quad getQuad(IdentNode identNode, String value, String obj) {
-        return  new Quad(identNode, value, new ObjNode(obj), stack.sorte(identNode , stack.pop()));
-    }
-
-
-
-
 }

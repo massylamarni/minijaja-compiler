@@ -1,203 +1,195 @@
 package fr.amvproject.group3.jjc;
 
-import java.util.Deque;
+import java.util.List;
 
-import fr.amvproject.group3.Heap;
 import fr.amvproject.group3.jjc.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.jjc.ast.nodes.other.TypeNode;
 import fr.amvproject.group3.nodes.ObjNode;
 import fr.amvproject.group3.nodes.TypeMemNode;
 import fr.amvproject.group3.utils.StringSaver;
+import fr.amvproject.group3.Heap;
 
 public class Stack extends StackManager {
-    private Deque<Quad> queue = super.getQueue();
-    private Heap heap = new Heap();
+  private List<Quad> queue = super.getQueue();
+  private Heap heap = new Heap();
 
-    public Heap getHeap() {
-      return heap;
+  public Heap getHeap() {
+    return heap;
+  }
+
+  // --- Stack Operations ---
+  public void push(Quad q) {
+    queue.add(q);
+  }
+
+  public Quad pop() {
+    if (queue.isEmpty())
+      throw new IllegalStateException("Stack is empty");
+    return queue.remove(queue.size() - 1);
+  }
+
+  public void swap() {
+    int size = queue.size();
+    if (size < 2)
+      throw new IllegalStateException("Stack has fewer than 2 elements");
+
+    Quad first = queue.get(size - 1);
+    Quad second = queue.get(size - 2);
+
+    queue.set(size - 1, second);
+    queue.set(size - 2, first);
+  }
+
+  public Quad peek() {
+    if (queue.isEmpty()) return null;
+    return queue.get(queue.size() - 1);
+  }
+
+  // --- Variable / Constant / Array / Method Declarations ---
+
+  public void declVar(IdentNode ident, Object value, TypeNode type) {
+    this.push(new Quad(ident, value, new ObjNode("var"), type));
+  }
+
+  public void declCst(IdentNode ident, Object value, TypeNode type) {
+    // Vcst = can be initialized later but not changed after
+    this.push(new Quad(ident, value, new ObjNode(value == null ? "vcst" : "cst"), type));
+  }
+
+  public void declTab(IdentNode ident, int size, TypeNode type) {
+    int ref = heap.allocate(size, new TypeMemNode(type.getName()));
+    this.push(new Quad(ident, ref, new ObjNode("tab"), type));
+  }
+
+  // --- Access / Assignment ---
+
+  // Replaces the Quad at stackDepth
+  public void identVal(IdentNode ident, TypeNode type, Object newValue, int stackDepth) {
+    int index = queue.size() - 1 - stackDepth;
+    if (index < 0 || index >= queue.size())
+      return;
+
+    Quad replaced = new Quad(ident, newValue, new ObjNode("var"), type);
+
+    queue.set(index, replaced);
+  }
+
+  // Remove Declaration from Stack
+  public void retirerDecl(IdentNode ident) {
+    for (int i = queue.size() - 1; i >= 0; i--) {
+      Quad quad = queue.get(i);
+      if (quad.getIdent().equals(ident)) {
+        if (quad.getObj().isTab())
+          heap.remove((int) quad.getValue(), new TypeMemNode(quad.getType().getName()));
+        queue.remove(i);
+        return;
+      }
     }
+  }
 
-    // --- Stack Operations ---
-
-    public void swap() {
-        Quad first = queue.pop();
-        Quad second = queue.pop();
-        queue.push(first);
-        queue.push(second);
+  // Return value of identifier
+  public Object val(IdentNode ident) {
+    for (Quad quad : queue) {
+      if (quad.getIdent().equals(ident))
+        return quad.getValue();
     }
+    return null;
+  }
 
-    public Quad pop() {
-        return queue.pop();
+  // Return value of identifier (array)
+  public Object valT(IdentNode ident, int index) {
+    for (Quad quad : queue) {
+      if (quad.getIdent().equals(ident))
+        return heap.get((int) quad.getValue() + index);
     }
+    return null;
+  }
 
-    // --- Variable / Constant / Array / Method Declarations ---
-
-    public void declVar(IdentNode ident, Object value, TypeNode type) {
-        queue.push(new Quad(ident, value, new ObjNode("var"), type));
+  // Return length of array, long is reserved word
+  public Integer longT(IdentNode ident) {
+    for (Quad quad : queue) {
+      if (quad.getIdent().equals(ident))
+        return (int) heap.get((int) quad.getValue() - 1);
     }
+    return null;
+  }
 
-    public void declCst(IdentNode ident, Object value, TypeNode type) {
-        // Vcst = can be initialized later but not changed after
-        queue.push(new Quad(ident, value, new ObjNode(value == null ? "vcst" : "cst"), type));
-    }
-
-    public void declTab(IdentNode ident, int size, TypeNode type) {
-        int ref = heap.allocate(size, new TypeMemNode(type.getName()));
-        queue.push(new Quad(ident, ref, new ObjNode("tab"), type));
-    }
-
-    // --- Access / Assignment ---
-
-    // Replaces the Quad at stackDepth
-    public void identVal(IdentNode ident, TypeNode type, Quad quad, int stackDepth) {
-        if (quad == null || stackDepth < 0)
-            return;
-        Quad q = queue.pop();
-        if (stackDepth == 0) {
-            queue.push(new Quad(ident, quad.getValue(), new ObjNode("var"), type));
-        } else {
-            identVal(ident, type, q, stackDepth - 1);
-            queue.push(q);
-        }
-    }
-
-    // Remove Declaration from Stack
-    public void retirerDecl(IdentNode ident, Quad quad) {
-        if (quad == null)
-            return;
-        Quad q = queue.pop();
-        if (quad.getIdent().sameAs(ident)) {
-            if (quad.getObj().isTab())
-                heap.remove((int) quad.getValue(), new TypeMemNode((quad.getType()).getName()));
-        } else {
-            retirerDecl(ident, q);
-            queue.push(q);
-        }
-
-    }
-
-    // Return value of identifier
-    public Object val(IdentNode ident, Quad quad) {
-        if (quad == null)
-            return null;
-        if (quad.getIdent().sameAs(ident)) {
-            queue.push(quad);
-            return quad.getValue();
-        }
-        Quad q = queue.pop();
-        Object resultat = val(ident, q);
-        queue.push(quad);
-        return resultat;
-    }
-
-    // Return value of identifier (array)
-    public Object valT(IdentNode ident, int index, Quad quad) {
-        if (quad == null)
-            return null;
-        Quad q = queue.pop();
-        if (quad.getIdent().sameAs(ident)) {
-            return heap.get((int) quad.getValue());
-        }
-        Object resultat = valT(ident, index, q);
-        queue.push(q);
-        return resultat;
-    }
-
-    // Return length of array, long is reserved word
-    public Integer longT(IdentNode ident, Quad quad) {
-        if (quad == null)
-            return null;
-        Quad q = queue.pop();
-        if (quad.getIdent().sameAs(ident)) {
-            return (int) heap.get((int) quad.getValue() - 1);
-        }
-        int res = longT(ident, q);
-        queue.push(q);
-        return res;
-    }
-
-    // Assigns a new value to the identifier
-    public void affecterVal(IdentNode ident, Object value, Quad quad) {
-        Quad q = queue.pop();
-        if (!quad.getIdent().sameAs(ident))
-            affecterVal(ident, value, q);
-        else if (quad.getObj().isVcst()) {
-            queue.push(new Quad(ident, value, new ObjNode("cst"), quad.getType()));
-            return;
+  // Assigns a new value to the identifier
+  public void affecterVal(IdentNode ident, Object value) {
+    for (int i = queue.size() - 1; i >= 0; i--) {
+      Quad quad = queue.get(i);
+      if (quad.getIdent().equals(ident)) {
+        if (quad.getObj().isVcst()) {
+          queue.set(i, new Quad(ident, value, new ObjNode("cst"), quad.getType()));
+          return;
         } else if (quad.getObj().isTab()) {
-            int ref = heap.allocate((int) value, new TypeMemNode((quad.getType()).getName())); // AjouterRef(v, t)
-            queue.push(new Quad(ident, ref, new ObjNode("tab"), quad.getType()));
-            heap.remove((int) quad.getValue(), new TypeMemNode((quad.getType()).getName())); // RetirerTas
-            return;
+          int ref = heap.allocate((int) value, new TypeMemNode(quad.getType().getName())); // AjouterRef(v, t)
+          queue.set(i, new Quad(ident, ref, new ObjNode("tab"), quad.getType()));
+          heap.remove((int) quad.getValue(), new TypeMemNode(quad.getType().getName())); // RetirerTas
+          return;
         } else if (quad.getObj().isCst()) {
-            return;
+          return;
         }
-        queue.push(new Quad(ident, value, quad.getObj(), quad.getType()));
+        queue.set(i, new Quad(ident, value, quad.getObj(), quad.getType()));
+        return;
+      }
+    }
+  }
+
+  // Assigns a new value to an array at a specific index
+  public void affecterValT(IdentNode ident, int index, Object value) {
+    for (Quad quad : queue) {
+      if (quad.getIdent().equals(ident))
+        heap.set((int) quad.getValue() + index, value);
+    }
+  }
+
+  // Assigns a new type to an identifier
+  public void affecterType(IdentNode ident, TypeNode type) {
+    for (int i = queue.size() - 1; i >= 0; i--) {
+      Quad quad = queue.get(i);
+      if (quad.getIdent().equals(ident)) {
+        queue.set(i, new Quad(ident, quad.getValue(), quad.getObj(), type));
+      }
+    }
+  }
+
+  // Return object type of identifier
+  public ObjNode objet(IdentNode ident) {
+    for (Quad quad : queue) {
+      if (quad.getIdent().equals(ident))
+        return quad.getObj();
+    }
+    return null;
+  }
+
+  // Return type of identifier
+  public Object sorte(IdentNode ident) {
+    for (Quad quad : queue) {
+      if (quad.getIdent().equals(ident))
+        return quad.getType();
+    }
+    return null;
+  }
+
+  /* Print stack */
+
+  public String print() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("===== STACK DUMP =====\n");
+
+    if (queue.isEmpty()) {
+      sb.append("[Empty Stack]\n");
+    } else {
+      int i = queue.size();
+      for (Quad q : queue) {
+        sb.append(q.print(i--));
+      }
     }
 
-    // Assigns a new value to an array at a specific index
-    public void affecterValT(IdentNode ident, int index, Object value, Quad quad) {
-        Quad q = queue.pop();
-        if (!quad.getIdent().sameAs(ident))
-            affecterValT(ident, index, value, q);
-        else
-            heap.set((int) quad.getValue(), index, value);
-    }
+    sb.append("======================\n");
 
-    // Assigns a new type to an identifier
-    public void affecterType(IdentNode ident, TypeNode type, Quad quad) {
-        Quad q = queue.pop();
-        if (quad.getIdent().sameAs(ident))
-            queue.push(new Quad(ident, quad.getValue(), quad.getObj(), type));
-        else {
-            affecterType(ident, type, q);
-        }
-    }
-
-    // Return object type of identifier
-    public ObjNode objet(IdentNode ident, Quad quad) {
-        if (quad == null)
-            return null;
-        if (quad.getIdent().sameAs(ident))
-            return quad.getObj();
-
-        Quad q = queue.pop();
-        ObjNode obj = objet(ident, q);
-        queue.push(q);
-        return obj;
-    }
-
-    // Return type of identifier
-    public TypeNode sorte(IdentNode ident, Quad quad) {
-        if (quad == null)
-            return null;
-        if (quad.getIdent().sameAs(ident)) {
-            queue.push(quad);
-            return quad.getType();
-        }
-        Quad q = queue.pop();
-        TypeNode type = sorte(ident, q);
-        queue.push(quad);
-        return type;
-    }
-
-    /* Print stack */
-
-    public void print() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("===== STACK DUMP =====\n");
-
-        if (queue.isEmpty()) {
-            sb.append("[Empty Stack]\n");
-        } else {
-            int i = queue.size();
-            for (Quad q : queue) {
-                sb.append(q.print(i--));
-            }
-        }
-
-        sb.append("======================\n");
-
-        StringSaver.save(sb.toString(), "stackDump.txt", "main");
-    }
+    StringSaver.save(sb.toString(), "stackDump.txt", "main");
+    return sb.toString();
+  }
 }

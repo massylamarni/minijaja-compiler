@@ -27,11 +27,6 @@ public class ArrayAccessNode extends LeftValueNode {
     }
 
     @Override
-    public String evaluate() {
-        return ident.getName() + "[" + indexExp.evaluate() + "]";
-    }
-
-    @Override
     public boolean sameAs(AstNode other) {
         if (other instanceof ArrayAccessNode arrayAccessNode) {
             return this.ident.sameAs(arrayAccessNode.ident) && this.indexExp.sameAs(arrayAccessNode.indexExp);
