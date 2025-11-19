@@ -1,8 +1,6 @@
 package fr.amvproject.group3.jjc;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -11,11 +9,11 @@ public class StackManager {
   private int updatingInstrCount = 0;
   private int instrCount = 0;
   private int currentInstrNum = 0;
-  private TreeMap<Integer, Deque<Quad>> stackSnapshots = new TreeMap<>();
+  private TreeMap<Integer, List<Quad>> stackSnapshots = new TreeMap<>();
   private TreeMap<Integer, List<Object>> heapSnapshots = new TreeMap<>();
-  private Deque<Quad> queue = new ArrayDeque<>();
+  private List<Quad> queue = new ArrayList<>();
 
-  public Deque<Quad> getQueue() {
+  public List<Quad> getQueue() {
     return queue;
   }
 
@@ -34,8 +32,8 @@ public class StackManager {
     currentInstrNum--;
   }
 
-  public Deque<Quad> getStackSnapshot() {
-    return new ArrayDeque<>(stackSnapshots.get(stackSnapshots.floorKey(currentInstrNum)));
+  public List<Quad> getStackSnapshot() {
+    return new ArrayList<>(stackSnapshots.get(stackSnapshots.floorKey(currentInstrNum)));
   }
 
   public List<Object> getHeapSnapshot() {
@@ -43,7 +41,7 @@ public class StackManager {
   }
 
   private void takeSnapshot() {
-    stackSnapshots.put(instrCount, new ArrayDeque<>(queue));
+    stackSnapshots.put(instrCount, new ArrayList<>(queue));
     heapSnapshots.put(instrCount, new ArrayList<>(queue));
   }
 }

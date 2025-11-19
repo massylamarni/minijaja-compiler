@@ -1,5 +1,7 @@
 package fr.amvproject.group3.mjj.ast.nodes.other;
 
+import org.antlr.v4.runtime.Token;
+
 import fr.amvproject.group3.mjj.ast.AstNode;
 import fr.amvproject.group3.mjj.ast.AstVisitor;
 
@@ -35,9 +37,23 @@ public class BinaryOpNode extends AstNode {
   }
 
   private final BinaryOpName binaryOp;
+  private final Token binaryOpToken;
 
-  public BinaryOpNode(String name) {
-    this.binaryOp = BinaryOpName.fromString(name);
+  public BinaryOpNode(Token binaryOpToken) {
+    super(binaryOpToken.getLine(), binaryOpToken.getCharPositionInLine());
+    this.binaryOpToken = binaryOpToken;
+    this.binaryOp = BinaryOpName.fromString(binaryOpToken.getText());
+  }
+
+  // Helper
+  public BinaryOpNode(String op, int line, int column) {
+    super(line, column);
+    this.binaryOpToken = null;
+    this.binaryOp = BinaryOpName.fromString(op);
+  }
+
+  public Token getBinaryOpToken() {
+    return binaryOpToken;
   }
 
   public BinaryOpName getOp() {
@@ -74,6 +90,24 @@ public class BinaryOpNode extends AstNode {
 
   public boolean isDiv() {
     return binaryOp == BinaryOpName.DIV;
+  }
+
+  public boolean takesInteger() {
+    return binaryOp == BinaryOpName.ADD || binaryOp == BinaryOpName.SUB || binaryOp == BinaryOpName.MUL
+        || binaryOp == BinaryOpName.DIV || binaryOp == BinaryOpName.GT || binaryOp == BinaryOpName.EQ;
+  }
+
+  public boolean takesBoolean() {
+    return binaryOp == BinaryOpName.AND || binaryOp == BinaryOpName.OR || binaryOp == BinaryOpName.EQ;
+  }
+
+  public boolean givesInteger() {
+    return binaryOp == BinaryOpName.ADD || binaryOp == BinaryOpName.SUB || binaryOp == BinaryOpName.MUL
+        || binaryOp == BinaryOpName.DIV;
+  }
+
+  public boolean givesBoolean() {
+    return binaryOp == BinaryOpName.AND || binaryOp == BinaryOpName.OR || binaryOp == BinaryOpName.EQ;
   }
 
   @Override

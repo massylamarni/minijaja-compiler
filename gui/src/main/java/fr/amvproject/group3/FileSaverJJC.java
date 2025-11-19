@@ -2,6 +2,7 @@ package fr.amvproject.group3;
 
 import fr.amvproject.group3.jjc.ast.PrintVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.program.ProgramNode;
+import fr.amvproject.group3.jjc.utils.NodeOperations;
 import fr.amvproject.group3.mjj.utils.AstOperations;
 import fr.amvproject.group3.mjj.ast.AstNode;
 import fr.amvproject.group3.mjj.ast.AstBuilderVisitor;
@@ -81,7 +82,7 @@ public class FileSaverJJC {
         AstNode ast = AstOperations.getAstFromString(content);
 
         CompilerVisitor compilerVisitor = new CompilerVisitor();
-        ProgramNode programNode = new ProgramNode(ast.accept(compilerVisitor));
+        ProgramNode programNode = new ProgramNode(ast.accept(compilerVisitor), new NodeOperations.MockToken(null, 0, 0));
 
         PrintVisitor printVisitor = new PrintVisitor();
 

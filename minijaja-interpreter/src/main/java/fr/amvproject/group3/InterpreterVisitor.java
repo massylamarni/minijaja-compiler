@@ -1,10 +1,8 @@
 package fr.amvproject.group3;
 
-import java.awt.geom.QuadCurve2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.amvproject.group3.mjj.Quad;
 import fr.amvproject.group3.mjj.Stack;
 import fr.amvproject.group3.mjj.ast.AstVisitor;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.DeclsNode;
@@ -46,7 +44,6 @@ import fr.amvproject.group3.mjj.ast.nodes.other.UnaryOpNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
 import fr.amvproject.group3.mjj.utils.NodeOperations;
-import fr.amvproject.group3.nodes.ObjNode;
 
 /**
  * Interpréteur respectant les règles sémantiques du cours MiniJaja
@@ -86,7 +83,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     @Override
     public Object visitClass(ClassNode node) {
         // 1. DeclVar(i, w, w, []) - Déclarer une variable pour la classe (omega)
-        stack.declVar(node.getIdent(), null, new TypeMethNode("void"));
+        stack.declVar(node.getIdent(), null, new TypeMethNode("void", node.getLine(), node.getColumn()));
 
         // 2. m1 ⊢ dss → m2 - Traiter les déclarations
         node.getDecls().accept(this);
@@ -118,7 +115,6 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         return null;
     }
 
-    @Override
     public Object visitDecl(DeclNode node) {
         // Dispatch vers le bon type de déclaration
         return null;
@@ -143,7 +139,6 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      * [cst] : m eval⊢ e ⇒ v, m ⊢ cst(t, ident(i), e) → DeclCst(i, v, t, m)
      * [tableau] : m eval⊢ e ⇒ v, m ⊢ tableau(t, ident(i), e) → DeclTab(i, v, t, m)
      */
-    @Override
     public Object visitVarDecl(VarDeclNode node) {
         // Application de la règle selon le type
         if (node instanceof VarNode varNode) {
@@ -248,12 +243,12 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         if (node.getLeftValueNode() instanceof IdentNode identNode) {
             // Règle [affectation]
 
-            stack.affecterVal(identNode, value, getQuad(identNode, node.getExp(), "var"));
+            stack.affecterVal(identNode, value);
         } else if (node.getLeftValueNode() instanceof ArrayAccessNode arrayAccessNode) {
             // Règle [affectationT]
             // m eval⊢ e1 ⇒ ind
             int index = (int) evalExp(arrayAccessNode.getIndexExp());
-            stack.affecterValT(arrayAccessNode.getIdent(), index, value, getQuad(arrayAccessNode.getIdent(), node.getExp(), "tab"));
+            stack.affecterValT(arrayAccessNode.getIdent(), index, value);
         }
         return null;
     }
@@ -277,7 +272,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitInc(IncNode node) { // TODO Handle array case
-        Object currentValue = stack.val((IdentNode) node.getLeftValueNode(), stack.pop() );
+        Object currentValue = stack.val((IdentNode) node.getLeftValueNode());
         // Vérification du type
         if (!(currentValue instanceof Integer)) {
             throw new RuntimeException(
@@ -287,7 +282,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         }
         int newValue = (int) currentValue + 1;
         //if(node.)
-            stack.affecterVal((IdentNode) node.getLeftValueNode(), currentValue, getQuad((IdentNode) node.getLeftValueNode(), newValue, "var" ));
+            stack.affecterVal((IdentNode) node.getLeftValueNode(), newValue);
 
         return null;
     }
@@ -447,7 +442,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     @Override
     public Object visitIdent(IdentNode node) {
         try {
-            return stack.val(node, stack.pop()); // TODO
+            return stack.val(node); // TODO
         } catch (RuntimeException e) {
             throw new RuntimeException(
                     "Variable '" + node.getName() + "' not declared", e);
@@ -653,23 +648,4 @@ public class InterpreterVisitor implements AstVisitor<Object> {
 
          */
     }
-
-    /*
-    helper
-     */
-    public Quad getQuad(IdentNode identNode, ExpNode expNode, String obj) {
-        return  new Quad(identNode, expNode.evaluate(), new ObjNode(obj), stack.sorte(identNode , stack.pop()));
-    }
-
-    public Quad getQuad(IdentNode identNode, int value, String obj) {
-        return  new Quad(identNode, value, new ObjNode(obj), stack.sorte(identNode , stack.pop()));
-    }
-
-    public Quad getQuad(IdentNode identNode, String value, String obj) {
-        return  new Quad(identNode, value, new ObjNode(obj), stack.sorte(identNode , stack.pop()));
-    }
-
-
-
-
 }

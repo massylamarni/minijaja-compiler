@@ -1,29 +1,29 @@
 package fr.amvproject.group3.jjc.ast.nodes.finals;
 
+import org.antlr.v4.runtime.Token;
+
 import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.AstVisitor;
 
 public class IdentNode extends AstNode {
-    private final String name;
-    private final int line;
+    private final Token identToken;
 
-    public IdentNode(String name, int line) {
-        this.name = name;
-        this.line = line;   // -1 is used for temp stack nodes
+    public IdentNode(Token identToken) {
+        this.identToken = identToken;
+    }
+
+    public Token getIdentToken() {
+      return identToken;
     }
 
     public String getName() {
-        return name;
-    }
-
-    public int getLine() {
-        return line;
+        return identToken.getText();
     }
 
     @Override
     public boolean sameAs(AstNode other) {
         if (other instanceof IdentNode identNode) {
-            return this.name.equals(identNode.name);
+            return this.getName().equals(identNode.getName());
         }
         return false;
     }
@@ -31,14 +31,14 @@ public class IdentNode extends AstNode {
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (obj == null || !(obj instanceof IdentNode)) return false;
+        if (!(obj instanceof IdentNode)) return false;
         IdentNode other = (IdentNode) obj;
-        return this.name.equals(other.name);
+        return this.getName().equals(other.getName());
     }
 
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return getName().hashCode();
     }
 
     @Override

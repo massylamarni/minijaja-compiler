@@ -1,29 +1,31 @@
 package fr.amvproject.group3.mjj.ast.nodes.finals;
 
+import org.antlr.v4.runtime.Token;
+
 import fr.amvproject.group3.mjj.ast.AstNode;
 import fr.amvproject.group3.mjj.ast.AstVisitor;
 import fr.amvproject.group3.mjj.ast.nodes.intermediate.ExpNode;
 
 public class IntLiteralNode extends ExpNode {
-    private final int value;
+    private final Token intToken;
 
-    public IntLiteralNode(int value) {
-        this.value = value;
+    public IntLiteralNode(Token intToken) {
+        super(intToken.getLine(), intToken.getCharPositionInLine());
+        this.intToken = intToken;
+    }
+
+    public Token getIntToken() {
+      return intToken;
     }
 
     public int getValue() {
-      return value;
-    }
-
-    @Override
-    public String evaluate() {
-        return String.valueOf(value);
+      return Integer.parseInt(intToken.getText());
     }
 
     @Override
     public boolean sameAs(AstNode other) {
         if (other instanceof IntLiteralNode intLiteralNode) {
-            return this.value == intLiteralNode.value;
+            return this.getValue() == intLiteralNode.getValue();
         }
         return false;
     }

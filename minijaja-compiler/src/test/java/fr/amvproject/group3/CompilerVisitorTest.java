@@ -26,6 +26,8 @@ import fr.amvproject.group3.mjj.ast.nodes.other.TypeNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.UnaryOpNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
+import fr.amvproject.group3.mjj.utils.NodeOperations.MockToken;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -50,13 +52,17 @@ public class CompilerVisitorTest {
     @Test
     public void givenProgramNode__whenVisitProgram__thenCorrectCodeIsEmitted() {
         // Given
+        MockToken classToken = new MockToken("class", 0, 0);
+        MockToken identToken = new MockToken("TestClass", 1, 0);
+        MockToken mainToken = new MockToken("main", 0, 0);
+        MockToken eofToken = new MockToken(null, 0, 0);
         ProgramNode programNode = new ProgramNode(Arrays.asList(
-                new ClassNode(
-                        new IdentNode("TestClass", 1),
+                new ClassNode(classToken,
+                        new IdentNode(identToken),
                         new DeclsNode(new ArrayList<>()),
-                        new MainNode(new VarsNode(new ArrayList<>()), new InstrsNode(new ArrayList<>()))
+                        new MainNode(mainToken, new VarsNode(new ArrayList<>()), new InstrsNode(new ArrayList<>()))
                 )
-        ));
+        ), eofToken);
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitProgram(programNode);
@@ -79,13 +85,15 @@ public class CompilerVisitorTest {
         assertThat(res.get(3).getInstr() instanceof JcstopLiteral, is(true));
     }
 
+
+
     // ====================== visitClass ======================
     @Test
     public void givenClassNode__whenVisitClass__thenCorrectCodeIsEmitted() {
         // Given
         DeclsNode decls = new DeclsNode(new ArrayList<>());
-        MainNode main = new MainNode(new VarsNode(new ArrayList<>()), new InstrsNode(new ArrayList<>()));
-        ClassNode classNode = new ClassNode(new IdentNode("TestClass", 1), decls, main);
+        MainNode main = new MainNode(new MockToken("main",1,0),new VarsNode(new ArrayList<>()), new InstrsNode(new ArrayList<>()));
+        ClassNode classNode = new ClassNode(new MockToken("TestClass", 1, 0),new IdentNode(new MockToken("TestClass", 1,0)), decls, main);
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitClass(classNode);
@@ -112,7 +120,9 @@ public class CompilerVisitorTest {
     @Test
     public void givenVarNodeWithInit__whenVisitVar__thenCorrectCodeIsEmitted() {
         // Given
-        VarNode varNode = new VarNode(new TypeMethNode("int"), new IdentNode("x", 1), new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(42));
+        VarNode varNode = new VarNode(new TypeMethNode(new MockToken("int",1,0)),
+                new IdentNode(new MockToken("x", 1,0)),new MockToken("",1,0),
+                new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(new MockToken("42",1,0)));
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitVar(varNode);
@@ -132,14 +142,14 @@ public class CompilerVisitorTest {
         assertThat(newNode.getIdent().getName(),is("x"));
         assertThat(newNode.getType().getName(),is("entier"));
         assertThat(newNode.getObj().getName(),is("var"));
-        assertThat(newNode.getValue().sameAs(new IntLiteralNode(0)),is(true));
+        assertThat(newNode.getValue().sameAs(new IntLiteralNode(new MockToken("0",0,0))),is(true));
 
     }
 
     @Test
     public void givenVarNodeWithoutInit__whenVisitVar__thenCorrectCodeIsEmitted() {
         // Given
-        VarNode varNode = new VarNode(new TypeMethNode("int"), new IdentNode("x", 1), null);
+        VarNode varNode = new VarNode(new TypeMethNode(new MockToken("int",1,0)), new IdentNode(new MockToken("x", 1,0)));
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitVar(varNode);
@@ -154,14 +164,14 @@ public class CompilerVisitorTest {
         assertThat(newNode.getIdent().getName(),is("x"));
         assertThat(newNode.getType().getName(),is("entier"));
         assertThat(newNode.getObj().getName(),is("var"));
-        assertThat(newNode.getValue().sameAs(new IntLiteralNode(0)),is(true));
+        assertThat(newNode.getValue().sameAs(new IntLiteralNode(new MockToken("0",0,0))),is(true));
     }
 
     // ====================== visitCst ======================
     @Test
     public void givenCstNodeWithInit__whenVisitCst__thenCorrectCodeIsEmitted() {
         // Given
-        CstNode cstNode = new CstNode(new TypeNode("int"), new IdentNode("T", 1), new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(3));
+        CstNode cstNode = new CstNode(new MockToken("cst",1,0),new TypeNode(new MockToken("int",1,0)), new IdentNode(new MockToken("T", 1,0)),new MockToken("entier",1,0), new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(new MockToken("3",1,0)));
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitCst(cstNode);
@@ -180,14 +190,14 @@ public class CompilerVisitorTest {
         assertThat(newNode.getIdent().getName(),is("T"));
         assertThat(newNode.getType().getName(),is("entier"));
         assertThat(newNode.getObj().getName(),is("cst"));
-        assertThat(newNode.getValue().sameAs(new IntLiteralNode(0)),is(true));
+        assertThat(newNode.getValue().sameAs(new IntLiteralNode(new MockToken("0",0,0))),is(true));
     }
 
 
     @Test
     public void givenCstNodeWithoutInit__whenVisitCst__thenCorrectCodeIsEmitted() {
         // Given
-        CstNode cstNode = new CstNode(new TypeNode("int"), new IdentNode("T", 1), null);
+        CstNode cstNode = new CstNode(new MockToken("",1,0),new TypeNode(new MockToken("int",1,0)), new IdentNode(new MockToken("T", 1,0)));
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitCst(cstNode);
@@ -201,13 +211,15 @@ public class CompilerVisitorTest {
         assertThat(newNode.getIdent().getName(),is("T"));
         assertThat(newNode.getType().getName(),is("entier"));
         assertThat(newNode.getObj().getName(),is("cst"));
-        assertThat(newNode.getValue().sameAs(new IntLiteralNode(0)),is(true));
+        assertThat(newNode.getValue().sameAs(new IntLiteralNode(new MockToken("0",0,0))),is(true));
     }
     // ====================== visitTable ======================
     @Test
     public void givenTableNodeWithSize__whenVisitTable__thenCorrectCodeIsEmitted() {
         // Given
-        TableNode tableNode = new TableNode(new TypeMethNode("int"), new IdentNode("arr", 1), new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(5));
+        TableNode tableNode = new TableNode(new TypeMethNode(new MockToken("int",1,0)),
+                new IdentNode(new MockToken("arr", 1,0)),
+                new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(new MockToken("5",1,0)));
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitTable(tableNode);
@@ -233,7 +245,7 @@ public class CompilerVisitorTest {
         // Given
         VarsNode vars = new VarsNode(new ArrayList<>());
         InstrsNode instrs = new InstrsNode(new ArrayList<>());
-        MainNode mainNode = new MainNode(vars, instrs);
+        MainNode mainNode = new MainNode(new MockToken("main",1,0),vars, instrs);
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitMain(mainNode);
@@ -251,7 +263,8 @@ public class CompilerVisitorTest {
     @Test
     public void givenAssignNodeWithIdent__whenVisitAssign__thenCorrectCodeIsEmitted() {
         // Given
-        AssignNode assignNode = new AssignNode(new IdentNode("x", 1), new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(42));
+        AssignNode assignNode = new AssignNode(new IdentNode(new MockToken("x", 1,0)), new MockToken("",1,0),
+                new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(new MockToken("42",1,0)));
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res =compiler.visitAssign(assignNode);
@@ -275,7 +288,9 @@ public class CompilerVisitorTest {
     @Test
     public void givenAssignNodeWithArrayAccess__whenVisitAssign__thenCorrectCodeIsEmitted() {
         // Given
-        AssignNode assignNode = new AssignNode(new ArrayAccessNode(new IdentNode("arr", 1), new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(0)), new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(42));
+        AssignNode assignNode = new AssignNode(new ArrayAccessNode(new IdentNode(new MockToken("arr", 1,0)),
+                new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(new MockToken("0",1,0))),new MockToken("",1,0),
+                new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(new MockToken("42",1,0)));
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitAssign(assignNode);
@@ -304,7 +319,8 @@ public class CompilerVisitorTest {
     @Test
     public void givenAddAssignNodeWithIdent__whenVisitAddAssign__thenCorrectCodeIsEmitted() {
         // Given
-        AddAssignNode addAssignNode = new AddAssignNode(new IdentNode("x", 1), new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(42));
+        AddAssignNode addAssignNode = new AddAssignNode(new IdentNode(new MockToken("x", 1,0)), new MockToken("",1,0),
+                new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(new MockToken("42",1,0)));
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitAddAssign(addAssignNode);
@@ -327,7 +343,7 @@ public class CompilerVisitorTest {
     @Test
     public void givenIncNode__whenVisitInc__thenCorrectCodeIsEmitted() {
         // Given
-        fr.amvproject.group3.mjj.ast.nodes.instrs.IncNode incNode = new fr.amvproject.group3.mjj.ast.nodes.instrs.IncNode(new IdentNode("x", 1));
+        fr.amvproject.group3.mjj.ast.nodes.instrs.IncNode incNode = new fr.amvproject.group3.mjj.ast.nodes.instrs.IncNode(new IdentNode(new MockToken("x", 1,0)),new MockToken("inc",1,0));
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitInc(incNode);
@@ -349,7 +365,7 @@ public class CompilerVisitorTest {
     @Test
     public void givenCallInstrNode__whenVisitCallInstr__thenCorrectCodeIsEmitted() {
         // Given
-        CallInstrNode callInstrNode = new CallInstrNode(new IdentNode("foo", 1), new ListExpNode(Arrays.asList(new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(42))));
+        CallInstrNode callInstrNode = new CallInstrNode(new IdentNode(new MockToken("foo", 1,0)), new ListExpNode(Arrays.asList(new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(new MockToken("42",1,0)))));
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitCallInstr(callInstrNode);
@@ -382,7 +398,7 @@ public class CompilerVisitorTest {
     @Test
     public void givenWriteNode__whenVisitWrite__thenCorrectCodeIsEmitted() {
         // Given
-        WriteNode writeNode = new WriteNode(new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(42), false);
+        WriteNode writeNode = new WriteNode(new MockToken("write",1,0),new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(new MockToken("42",1,0)), false);
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitWrite(writeNode);
@@ -406,7 +422,7 @@ public class CompilerVisitorTest {
     @Test
     public void givenWriteNodeWithLn__whenVisitWrite__thenCorrectCodeIsEmitted() {
         // Given
-        WriteNode writeNode = new WriteNode(new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(42), true);
+        WriteNode writeNode = new WriteNode(new MockToken("",1,0),new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(new MockToken("42",1,0)), true);
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitWrite(writeNode);
@@ -430,31 +446,27 @@ public class CompilerVisitorTest {
     @Test
     public void givenReturnNode__whenVisitReturn__thenCorrectCodeIsEmitted() {
         // Given
-        ReturnNode returnNode = new ReturnNode(new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(42));
+        ReturnNode returnNode = new ReturnNode(new MockToken("return",1,0),new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(new MockToken("42",1,0)));
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitReturn(returnNode);
 
         // Then
-        assertThat(res, hasSize(3));
+        assertThat(res, hasSize(1));
         // 1 push (42)
         assertThat(res.get(0).getAddress().getValue(), is(1));
         assertThat(res.get(0).getInstr() instanceof PushNode, is(true));
         PushNode pushNode = ((PushNode) res.get(0).getInstr());
         assertThat(((IntLiteralNode) pushNode.getValue()).getValue(), is(42));
-        //"2 swap"
-        assertThat(res.get(1).getAddress().getValue(), is(2));
-        assertThat(res.get(1).getInstr() instanceof SwapLiteral, is(true));
-        //"3 return"
-        assertThat(res.get(2).getAddress().getValue(), is(3));
-        assertThat(res.get(2).getInstr() instanceof ReturnLiteral, is(true));
     }
 
     // ====================== visitBinaryExp ======================
     @Test
     public void givenBinaryExpNode__whenVisitBinaryExp__thenCorrectCodeIsEmitted() {
         // Given
-        BinaryExpNode binaryExpNode = new BinaryExpNode(new BinaryOpNode("+"), new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(1), new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(2));
+        BinaryExpNode binaryExpNode = new BinaryExpNode(new BinaryOpNode(new MockToken("+",1,0)),
+                new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(new MockToken("1",1,0)),
+                        new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(new MockToken("2",1,0)));
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitBinaryExp(binaryExpNode);
@@ -482,7 +494,7 @@ public class CompilerVisitorTest {
     @Test
     public void givenUnaryExpNode__whenVisitUnaryExp__thenCorrectCodeIsEmitted() {
         // Given
-        UnaryExpNode unaryExpNode = new UnaryExpNode(new UnaryOpNode("!"), new BoolLiteralNode(true));
+        UnaryExpNode unaryExpNode = new UnaryExpNode(new UnaryOpNode(new MockToken("!",1,0)), new BoolLiteralNode(new MockToken("true",1,0)));
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitUnaryExp(unaryExpNode);
@@ -507,7 +519,7 @@ public class CompilerVisitorTest {
     @Test
     public void givenCallExpNode__whenVisitCallExp__thenCorrectCodeIsEmitted() {
         // Given
-        CallExpNode callExpNode = new CallExpNode(new IdentNode("foo", 1), new ListExpNode(Arrays.asList(new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(42))));
+        CallExpNode callExpNode = new CallExpNode(new IdentNode(new MockToken("foo", 1,0)), new ListExpNode(Arrays.asList(new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(new MockToken("42",1,0)))));
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitCallExp(callExpNode);
@@ -536,23 +548,17 @@ public class CompilerVisitorTest {
     @Test
     public void givenLengthNode__whenVisitLength__thenCorrectCodeIsEmitted() {
         // Given
-        fr.amvproject.group3.mjj.ast.nodes.exprs.LengthNode lengthNode = new fr.amvproject.group3.mjj.ast.nodes.exprs.LengthNode(new IdentNode("arr", 1));
+        fr.amvproject.group3.mjj.ast.nodes.exprs.LengthNode lengthNode = new fr.amvproject.group3.mjj.ast.nodes.exprs.LengthNode(new MockToken("",1,0),new IdentNode(new MockToken("arr", 1,0)));
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitLength(lengthNode);
 
         // Then
-        assertThat(res, hasSize(2));
-        //1  load (arr)
-        assertThat(res.get(0).getAddress().getValue(), is(1));
-        assertThat(res.get(0).getInstr() instanceof LoadNode, is(true));
-        LoadNode loadNode = ((LoadNode) res.get(0).getInstr());
-        assertThat(loadNode.getIdent().getName(), is("arr"));
-        assertThat(loadNode.isA(), is(true));
+        assertThat(res, hasSize(1));
         // 2 lenght arr
-        assertThat(res.get(1).getAddress().getValue(), is(2));
-        assertThat(res.get(1).getInstr() instanceof fr.amvproject.group3.jjc.ast.nodes.instrs.LengthNode, is(true));
-        fr.amvproject.group3.jjc.ast.nodes.instrs.LengthNode lengthNode1 = ((fr.amvproject.group3.jjc.ast.nodes.instrs.LengthNode) res.get(1).getInstr());
+        assertThat(res.get(0).getAddress().getValue(), is(1));
+        assertThat(res.get(0).getInstr() instanceof fr.amvproject.group3.jjc.ast.nodes.instrs.LengthNode, is(true));
+        fr.amvproject.group3.jjc.ast.nodes.instrs.LengthNode lengthNode1 = ((fr.amvproject.group3.jjc.ast.nodes.instrs.LengthNode) res.get(0).getInstr());
         assertThat(lengthNode1.getIdent().getName(), is("arr"));
     }
 
@@ -560,7 +566,8 @@ public class CompilerVisitorTest {
     @Test
     public void givenArrayAccessNode__whenVisitArrayAccess__thenCorrectCodeIsEmitted() {
         // Given
-        ArrayAccessNode arrayAccessNode = new ArrayAccessNode(new IdentNode("arr", 1), new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(0));
+        ArrayAccessNode arrayAccessNode = new ArrayAccessNode(new IdentNode(new MockToken("arr", 1,0)),
+                new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(new MockToken("0",1,0)));
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res =compiler.visitArrayAccess(arrayAccessNode);
@@ -575,18 +582,16 @@ public class CompilerVisitorTest {
         // 2 aload (arr)
         assertThat(res.get(1).getAddress().getValue(), is(2));
         assertThat(res.get(1).getInstr() instanceof LoadNode, is(true));
-        LoadNode loadNode1 = ((LoadNode) res.get(2).getInstr());
+        LoadNode loadNode1 = ((LoadNode) res.get(1).getInstr());
         assertThat(loadNode1.getIdent().getName(), is("arr"));
         assertThat(loadNode1.isA(), is(true));
-
-
     }
 
     // ====================== visitIntLiteral ======================
     @Test
     public void givenIntLiteralNode__whenVisitIntLiteral__thenCorrectCodeIsEmitted() {
         // Given
-        fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode intLiteralNode = new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(42);
+        fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode intLiteralNode = new fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode(new MockToken("42",1,0));
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitIntLiteral(intLiteralNode);
@@ -603,7 +608,7 @@ public class CompilerVisitorTest {
     @Test
     public void givenBoolLiteralNode__whenVisitBoolLiteral__thenCorrectCodeIsEmitted() {
         // Given
-        BoolLiteralNode boolLiteralNode = new BoolLiteralNode(true);
+        BoolLiteralNode boolLiteralNode = new BoolLiteralNode(new MockToken("true",1,0));
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitBoolLiteral(boolLiteralNode);
@@ -621,7 +626,7 @@ public class CompilerVisitorTest {
     @Test
     public void givenStringLiteralNode__whenVisitStringLiteral__thenCorrectCodeIsEmitted() {
         // Given
-        StringLiteralNode stringLiteralNode = new StringLiteralNode("test");
+        StringLiteralNode stringLiteralNode = new StringLiteralNode(new MockToken("test",1,0));
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitStringLiteral(stringLiteralNode);
@@ -639,7 +644,7 @@ public class CompilerVisitorTest {
     @Test
     public void givenIdentNode__whenVisitIdent__thenCorrectCodeIsEmitted() {
         // Given
-        IdentNode identNode = new IdentNode("x", 1);
+        IdentNode identNode = new IdentNode(new MockToken("x", 1,0));
 
         // When
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res =compiler.visitIdent(identNode);
@@ -652,4 +657,5 @@ public class CompilerVisitorTest {
         LoadNode loadNode = ((LoadNode) res.get(0).getInstr());
         assertThat(loadNode.getIdent().getName(), is("x"));
     }
+
 }

@@ -1,5 +1,7 @@
 package fr.amvproject.group3.mjj.ast.nodes.other;
 
+import org.antlr.v4.runtime.Token;
+
 import fr.amvproject.group3.mjj.ast.AstNode;
 import fr.amvproject.group3.mjj.ast.AstVisitor;
 
@@ -29,9 +31,23 @@ public class UnaryOpNode extends AstNode {
   }
 
   private final UnaryOpName unaryOp;
+  private final Token unaryOpToken;
 
-  public UnaryOpNode(String name) {
-    this.unaryOp = UnaryOpName.fromString(name);
+  public UnaryOpNode(Token unaryOpToken) {
+    super(unaryOpToken.getLine(), unaryOpToken.getCharPositionInLine());
+    this.unaryOpToken = unaryOpToken;
+    this.unaryOp = UnaryOpName.fromString(unaryOpToken.getText());
+  }
+
+  // Helper
+  public UnaryOpNode(String op, int line, int column) {
+    super(line, column);
+    this.unaryOpToken = null;
+    this.unaryOp = UnaryOpName.fromString(op);
+  }
+
+  public Token getUnaryOpToken() {
+    return unaryOpToken;
   }
 
   public UnaryOpName getOp() {

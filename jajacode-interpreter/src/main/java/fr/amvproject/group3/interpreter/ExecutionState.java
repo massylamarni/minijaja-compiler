@@ -5,6 +5,7 @@ import java.util.List;
 
 import fr.amvproject.group3.jjc.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.jjc.ast.nodes.other.TypeNode;
+import fr.amvproject.group3.jjc.utils.NodeOperations.MockToken;
 import fr.amvproject.group3.nodes.ObjNode;
 import fr.amvproject.group3.jjc.Stack;
 import fr.amvproject.group3.jjc.Quad;
@@ -116,16 +117,20 @@ public class ExecutionState {
     // <m,a> ⊢ push(v) –» <<w, v, cst,*>.m, a+1>
     public void push(Object value) {
         // Push a constant value with empty identifier
-        IdentNode emptyIdent = new IdentNode("", -1);
+        MockToken identToken = new MockToken("", -1, 0);
+        IdentNode emptyIdent = new IdentNode(identToken);
         String typeStr = inferType(value);
-        TypeNode type = new TypeNode(typeStr);
+        MockToken typeToken = new MockToken(typeStr, 0, 0);
+        TypeNode type = new TypeNode(typeToken);
         stack.declCst(emptyIdent, value, type);
     }
 
     public void push(String name, Object value, String objectType, String typeStr) {
-        IdentNode ident = new IdentNode(name, -1);
+        MockToken identToken = new MockToken(name, -1, 0);
+        IdentNode ident = new IdentNode(identToken);
         String normalizedType = normalizeTypeName(typeStr);
-        TypeNode type = new TypeNode(normalizedType);
+        MockToken typeToken = new MockToken(normalizedType, 0, 0);
+        TypeNode type = new TypeNode(typeToken);
 
         switch (objectType) {
             case "var":
@@ -143,7 +148,7 @@ public class ExecutionState {
                 break;
             case "meth":
                 Quad methQuad = new Quad(ident, value, new ObjNode("meth"), type);
-                stack.getQueue().push(methQuad);
+                stack.push(methQuad);
                 break;
             default:
                 stack.declCst(ident, value, type);
@@ -157,7 +162,8 @@ public class ExecutionState {
         String name = quad.getIdent() != null ? quad.getIdent().getName() : "";
         String typeStr = quad.getType() != null ? quad.getType().getName() : "void";
 
-        return new StackValue(name, quad.getValue(), quad.getObj(), new TypeNode(typeStr));
+        MockToken typeToken = new MockToken(typeStr, 0, 0);
+        return new StackValue(name, quad.getValue(), quad.getObj(), new TypeNode(typeToken));
     }
 
     public StackValue peek() {
@@ -168,7 +174,8 @@ public class ExecutionState {
 
         pushQuadBack(quad);
 
-        return new StackValue(name, quad.getValue(), quad.getObj(), new TypeNode(typeStr));
+        MockToken typeToken = new MockToken(typeStr, 0, 0);
+        return new StackValue(name, quad.getValue(), quad.getObj(), new TypeNode(typeToken));
     }
 
     public boolean isEmpty() {
@@ -187,14 +194,15 @@ public class ExecutionState {
     }
 
     public Object getValue(String identName) {
-        IdentNode ident = new IdentNode(identName, -1);
+        MockToken identToken = new MockToken(identName, -1, 0);
+        IdentNode ident = new IdentNode(identToken);
 
         if (isEmpty()) {
             throw new RuntimeException("Stack is empty, cannot find identifier: " + identName);
         }
 
         Quad topQuad = stack.pop();
-        Object value = stack.val(ident, topQuad);
+        Object value = stack.val(ident);
         pushQuadBack(topQuad);
 
         if (value == null) {
@@ -208,7 +216,7 @@ public class ExecutionState {
             throw new RuntimeException("Stack is empty, cannot set identifier: " + identName);
         }
 
-        java.util.Deque<Quad> queue = stack.getQueue();
+        java.util.List<Quad> queue = stack.getQueue();
         boolean found = false;
 
         for (Quad quad : queue) {
@@ -245,27 +253,30 @@ public class ExecutionState {
     }
 
     public Object getArrayValue(String identName, int index) {
-        IdentNode ident = new IdentNode(identName, -1);
+        MockToken identToken = new MockToken(identName, -1, 0);
+        IdentNode ident = new IdentNode(identToken);
         Quad quad = stack.pop();
         Object result = null;
         if (quad != null && "tab".equals(quad.getObj())) {
-            result = stack.valT(ident, index, quad);
+            result = stack.valT(ident, index);
         }
         pushQuadBack(quad);
         return result;
     }
 
     public void setArrayValue(String identName, int index, Object value) {
-        IdentNode ident = new IdentNode(identName, -1);
+        MockToken identToken = new MockToken(identName, -1, 0);
+        IdentNode ident = new IdentNode(identToken);
         Quad quad = stack.pop();
-        stack.affecterValT(ident, index, value, quad);
+        stack.affecterValT(ident, index, value);
         pushQuadBack(quad);
     }
 
     public int getArrayLength(String identName) {
-        IdentNode ident = new IdentNode(identName, -1);
+        MockToken identToken = new MockToken(identName, -1, 0);
+        IdentNode ident = new IdentNode(identToken);
         Quad quad = stack.pop();
-        Integer length = stack.longT(ident, quad);
+        Integer length = stack.longT(ident);
         pushQuadBack(quad);
         return length != null ? length : 0;
     }
@@ -305,7 +316,7 @@ public class ExecutionState {
     public List<String> getStackStateAsStrings() {
         List<String> stackStrings = new ArrayList<>();
 
-        java.util.Deque<Quad> queue = stack.getQueue();
+        java.util.List<Quad> queue = stack.getQueue();
 
         if (queue.isEmpty()) {
             return stackStrings;

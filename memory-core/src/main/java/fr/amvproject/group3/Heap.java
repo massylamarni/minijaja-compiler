@@ -6,13 +6,8 @@ import java.util.List;
 import fr.amvproject.group3.nodes.TypeMemNode;
 
 public class Heap {
-    private List<Object> queue;
-    private int nextAddress;
-
-    public Heap() {
-      queue = new ArrayList<>();
-      nextAddress = 0;
-    }
+    private List<Object> queue = new ArrayList<>();
+    private int nextAddress = 0;
 
     // Allocate memory in the heap and return its address, aka CreerTas
     public int allocate(int size, TypeMemNode type) {
@@ -50,9 +45,9 @@ public class Heap {
     }
 
     // Set the object at a specific index starting from the ref address
-    public void set(int address, int index, Object value) {
+    public void set(int address, Object value) {
       if (address < 0 || address >= nextAddress) throw new IndexOutOfBoundsException();
-      queue.set(address+index, value);
+      queue.set(address, value);
     }
 
     // --- Getters for inspection ---
@@ -63,5 +58,42 @@ public class Heap {
 
     public int getNextAddress() {
       return nextAddress;
+    }
+
+    public List<Object> getReverseQueue() {
+      List<Object> reverseQueue = new ArrayList<>();
+      for (int i = queue.size() - 1; i >= 0; i--) {
+        reverseQueue.add(queue.get(i));
+      }
+      return reverseQueue;
+    }
+
+    /* Print Heap */
+
+    public String print() {
+      StringBuilder sb = new StringBuilder();
+      sb.append("===== HEAP =====\n");
+
+      if (queue.isEmpty()) {
+        sb.append("[Empty Heap]\n");
+      } else {
+        int address = 0;
+        int blockStartAddress = 1;
+        int blockSize;
+        for (Object value : queue) {
+          if (address == blockStartAddress-1) {
+            sb.append("#");
+            blockSize = (int) value;
+            blockStartAddress = blockStartAddress + blockSize + 1;
+          } else {
+            sb.append("@");
+          }
+          sb.append(address).append(": ").append(value).append("\n");
+          address++;
+        }
+      }
+
+      sb.append("======================\n");      
+      return sb.toString();
     }
   }

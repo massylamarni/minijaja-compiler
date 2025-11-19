@@ -1,15 +1,24 @@
 package fr.amvproject.group3.jjc.ast.nodes.instrs;
 
+import org.antlr.v4.runtime.Token;
+
 import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.AstVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.intermediate.InstrNode;
 import fr.amvproject.group3.jjc.ast.nodes.intermediate.ValueNode;
 
 public class PushNode extends InstrNode {
+    private final Token pushToken;
     private final ValueNode valueNode;
 
-    public PushNode(ValueNode valueNode) {
+    public PushNode(Token pushToken, ValueNode valueNode) {
+        super(pushToken.getLine(), pushToken.getCharPositionInLine());
+        this.pushToken = pushToken;
         this.valueNode = valueNode;
+    }
+
+    public Token getPushToken() {
+      return pushToken;
     }
 
     public ValueNode getValue() {

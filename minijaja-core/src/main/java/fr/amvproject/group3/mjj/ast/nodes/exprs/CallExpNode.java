@@ -11,6 +11,7 @@ public class CallExpNode extends ExpNode {
     private final ListExpNode listExpNode;
 
     public CallExpNode(IdentNode identNode, ListExpNode listExpNode) {
+        super(identNode.getLine(), identNode.getColumn());
         this.identNode = identNode;
         this.listExpNode = listExpNode;
     }
@@ -21,15 +22,6 @@ public class CallExpNode extends ExpNode {
 
     public ListExpNode getListExp() {
         return listExpNode;
-    }
-
-    @Override
-    public String evaluate() {
-        StringBuilder sb = new StringBuilder(identNode.getName());
-        for (ExpNode expNode : listExpNode.getList()) {
-            sb.append(expNode.evaluate());
-        }
-        return sb.toString();
     }
 
     @Override
