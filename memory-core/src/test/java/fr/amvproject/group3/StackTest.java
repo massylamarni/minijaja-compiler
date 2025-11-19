@@ -55,7 +55,6 @@ public class StackTest {
         assertThat(stack.pop().getIdent().getName(), is("x"));
         assertThat(stack.pop().getIdent().getName(), is("Test"));
     }
-    // TODO TEST
 
     @Test
     public void givenStack__whenValOfX__thenSameSizeQueueSameOrder() {
