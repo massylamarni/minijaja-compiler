@@ -1,5 +1,7 @@
 package fr.amvproject.group3.mjj.ast.nodes.decls;
 
+import org.antlr.v4.runtime.Token;
+
 import fr.amvproject.group3.mjj.ast.AstNode;
 import fr.amvproject.group3.mjj.ast.AstVisitor;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
@@ -8,19 +10,26 @@ import fr.amvproject.group3.mjj.ast.nodes.intermediate.VarDeclNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.TypeMethNode;
 
 public class VarNode extends VarDeclNode {
-    private final ExpNode initExp;
+    private final Token assignToken;
     private final TypeMethNode typeMethNode;
+    private final ExpNode initExp;
 
     public VarNode(TypeMethNode typeMethNode, IdentNode ident) {
       super(ident);
       this.typeMethNode = typeMethNode;
       this.initExp = null;
+      this.assignToken = null;
     }
 
-    public VarNode(TypeMethNode typeMethNode, IdentNode ident, ExpNode initExp) {
+    public VarNode(TypeMethNode typeMethNode, IdentNode ident, Token assignToken, ExpNode initExp) {
       super(ident);
+      this.assignToken = assignToken;
       this.typeMethNode = typeMethNode;
       this.initExp = initExp;
+    }
+
+    public Token getAssignToken() {
+      return assignToken;
     }
 
     public ExpNode getInitExp() {

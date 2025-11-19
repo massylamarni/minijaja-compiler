@@ -11,6 +11,7 @@ public class BinaryExpNode extends ExpNode {
     private final ExpNode rightExp;
 
     public BinaryExpNode(BinaryOpNode op, ExpNode leftExp, ExpNode rightExp) {
+        super(op.getLine(), op.getColumn());
         this.op = op;
         this.leftExp = leftExp;
         this.rightExp = rightExp;

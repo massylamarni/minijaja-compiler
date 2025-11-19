@@ -1,4 +1,4 @@
-// Generated from /home/dhk/Desktop/UFC/Compilation/groupe-3/minijaja-core/antlr4/MiniJajaLexer.g4 by ANTLR 4.13.1
+// Generated from /home/dhk/Desktop/UFC/Compilation/groupe-3/minijaja-core/src/main/antlr4/fr/amvproject/group3/MiniJajaLexer.g4 by ANTLR 4.13.1
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;

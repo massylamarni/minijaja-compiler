@@ -1,5 +1,7 @@
 package fr.amvproject.group3.jjc.ast.nodes.other;
 
+import org.antlr.v4.runtime.Token;
+
 import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.AstVisitor;
 
@@ -27,9 +29,22 @@ public class ObjNode extends AstNode {
   }
 
   private final ObjName obj;
+  private final Token objToken;
 
-  public ObjNode(String name) {
-    this.obj = ObjName.fromString(name);
+  public ObjNode(Token objToken) {
+    this.objToken = objToken;
+    this.obj = ObjName.fromString(objToken.getText());
+  }
+
+  // Helper
+  public ObjNode(String obj, int line, int column) {
+    super(line, column);
+    this.objToken = null;
+    this.obj = ObjName.fromString(obj);
+  }
+
+  public Token getObjToken() {
+    return objToken;
   }
 
   public String getName() {

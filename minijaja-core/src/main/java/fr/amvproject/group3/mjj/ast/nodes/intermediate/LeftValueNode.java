@@ -5,5 +5,7 @@ package fr.amvproject.group3.mjj.ast.nodes.intermediate;
  * Classe abstraite pour tout ce qui peut être assigné (gauche d'une affectation)
  */
 public abstract class LeftValueNode extends ExpNode {
-
+  protected LeftValueNode(int line, int column) {
+    super(line, column);
+  }
 }

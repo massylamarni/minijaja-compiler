@@ -1,4 +1,4 @@
-// Generated from /home/dhk/Desktop/UFC/Compilation/groupe-3/lexer-parser/jaja-code/JajaCodeLexer.g4 by ANTLR 4.13.1
+// Generated from /home/dhk/Desktop/UFC/Compilation/groupe-3/jajacode-core/src/main/antlr4/fr/amvproject/group3/JajaCodeLexer.g4 by ANTLR 4.13.1
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;

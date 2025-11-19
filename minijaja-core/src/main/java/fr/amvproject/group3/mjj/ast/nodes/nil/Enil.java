@@ -5,6 +5,10 @@ import fr.amvproject.group3.mjj.ast.AstVisitor;
 
 // Null params
 public class Enil extends AstNode {
+  public Enil(int line, int column) {
+    super(line, column);
+  }
+
   @Override
   public boolean sameAs(AstNode other) {
       return other instanceof Enil;

@@ -99,31 +99,9 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   }
 
   @Override
-  public TypeNode visitDecl(DeclNode node) {
-    if (node instanceof VarDeclNode varDeclNode) {
-      varDeclNode.accept(this);
-    } else {
-      ((MethodNode) node).accept(this);
-    }
-    return null;
-  }
-
-  @Override
   public TypeNode visitVars(VarsNode node) {
     for (VarDeclNode varDeclNode : node.getList()) {
       varDeclNode.accept(this);
-    }
-    return null;
-  }
-
-  @Override
-  public TypeNode visitVarDecl(VarDeclNode node) {
-    if (node instanceof CstNode cstNode) {
-      cstNode.accept(this);
-    } else if (node instanceof VarNode varNode) {
-      varNode.accept(this);
-    } else {
-      ((TableNode) node).accept(this);
     }
     return null;
   }

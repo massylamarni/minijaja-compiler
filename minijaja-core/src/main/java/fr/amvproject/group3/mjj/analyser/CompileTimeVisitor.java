@@ -55,31 +55,9 @@ public class CompileTimeVisitor implements AstVisitor<Object> {
   }
 
   @Override
-  public Object visitDecl(DeclNode node) {
-    if (node instanceof VarDeclNode varDeclNode) {
-      varDeclNode.accept(this);
-    } else {
-      ((MethodNode) node).accept(this);
-    }
-    return null;
-  }
-
-  @Override
   public Object visitVars(VarsNode node) {
     for (VarDeclNode varDeclNode : node.getList()) {
       varDeclNode.accept(this);
-    }
-    return null;
-  }
-
-  @Override
-  public Object visitVarDecl(VarDeclNode node) {
-    if (node instanceof CstNode cstNode) {
-      cstNode.accept(this);
-    } else if (node instanceof VarNode varNode) {
-      varNode.accept(this);
-    } else {
-      ((TableNode) node).accept(this);
     }
     return null;
   }

@@ -3,10 +3,7 @@ package fr.amvproject.group3;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.amvproject.group3.mjj.ast.nodes.other.TypeMethNode;
-import fr.amvproject.group3.mjj.ast.nodes.other.TypeNode;
 import fr.amvproject.group3.nodes.TypeMemNode;
-import fr.amvproject.group3.utils.StringSaver;
 
 public class Heap {
     private List<Object> queue = new ArrayList<>();

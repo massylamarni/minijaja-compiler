@@ -1,5 +1,7 @@
 package fr.amvproject.group3.mjj.ast.nodes.other;
 
+import org.antlr.v4.runtime.Token;
+
 import fr.amvproject.group3.mjj.ast.AstNode;
 import fr.amvproject.group3.mjj.ast.AstVisitor;
 
@@ -25,9 +27,23 @@ public class TypeNode extends AstNode {
   }
 
   private final TypeName type;
+  private final Token typeToken;
 
-  public TypeNode(String name) {
-    this.type = TypeName.fromString(name);
+  public TypeNode(Token typeToken) {
+    super(typeToken.getLine(), typeToken.getCharPositionInLine());
+    this.typeToken = typeToken;
+    this.type = TypeName.fromString(typeToken.getText());
+  }
+
+  // Helper
+  public TypeNode(String type, int line, int column) {
+    super(line, column);
+    this.typeToken = null;
+    this.type = TypeName.fromString(type);
+  }
+
+  public Token getTypeToken() {
+    return typeToken;
   }
 
   public String getName() {
