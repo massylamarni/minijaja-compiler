@@ -10,8 +10,6 @@ import fr.amvproject.group3.mjj.ast.nodes.exprs.LengthNode;
 import fr.amvproject.group3.mjj.ast.nodes.exprs.UnaryExpNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.*;
 import fr.amvproject.group3.mjj.ast.nodes.instrs.*;
-import fr.amvproject.group3.mjj.ast.nodes.intermediate.DeclNode;
-import fr.amvproject.group3.mjj.ast.nodes.intermediate.VarDeclNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.BinaryOpNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.TypeMethNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.TypeNode;
@@ -79,20 +77,9 @@ public class PrintVisitor implements AstVisitor<String> {
       return indentManager.indent() + "/* DECLS empty */\n";
     return indentManager.indent() + joinChildren(node.getList());
   }
-
-  @Override
-  public String visitDecl(DeclNode node) {
-    return indentManager.indent() + node.getIdent().accept(this);
-  }
-
   @Override
   public String visitVars(VarsNode node) {
     return joinChildren(node.getList());
-  }
-
-  @Override
-  public String visitVarDecl(VarDeclNode node) {
-    return null;
   }
 
   @Override

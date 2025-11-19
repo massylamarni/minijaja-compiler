@@ -1,10 +1,8 @@
 package fr.amvproject.group3;
 
-import java.awt.geom.QuadCurve2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.amvproject.group3.mjj.Quad;
 import fr.amvproject.group3.mjj.Stack;
 import fr.amvproject.group3.mjj.ast.AstVisitor;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.DeclsNode;
@@ -46,7 +44,6 @@ import fr.amvproject.group3.mjj.ast.nodes.other.UnaryOpNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
 import fr.amvproject.group3.mjj.utils.NodeOperations;
-import fr.amvproject.group3.nodes.ObjNode;
 
 /**
  * Interpréteur respectant les règles sémantiques du cours MiniJaja
@@ -118,7 +115,6 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         return null;
     }
 
-    @Override
     public Object visitDecl(DeclNode node) {
         // Dispatch vers le bon type de déclaration
         return null;
@@ -143,7 +139,6 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      * [cst] : m eval⊢ e ⇒ v, m ⊢ cst(t, ident(i), e) → DeclCst(i, v, t, m)
      * [tableau] : m eval⊢ e ⇒ v, m ⊢ tableau(t, ident(i), e) → DeclTab(i, v, t, m)
      */
-    @Override
     public Object visitVarDecl(VarDeclNode node) {
         // Application de la règle selon le type
         if (node instanceof VarNode varNode) {

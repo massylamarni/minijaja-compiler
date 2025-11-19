@@ -137,22 +137,12 @@ public class CompilerVisitor implements fr.amvproject.group3.mjj.ast.AstVisitor<
   }
 
   @Override
-  public List<ClassNode> visitDecl(fr.amvproject.group3.mjj.ast.nodes.intermediate.DeclNode node) {
-    return null;
-  }
-
-  @Override
   public List<ClassNode> visitVars(fr.amvproject.group3.mjj.ast.nodes.abstracts.VarsNode node) {
     List<ClassNode> classNodes = new ArrayList<>();
     for (VarDeclNode varDeclNode : node.getList()) {
       classNodes.addAll(varDeclNode.accept(this));
     }
     return classNodes;
-  }
-
-  @Override
-  public List<ClassNode> visitVarDecl(fr.amvproject.group3.mjj.ast.nodes.intermediate.VarDeclNode node) {
-    return null;
   }
 
   @Override

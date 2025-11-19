@@ -8,8 +8,6 @@ import fr.amvproject.group3.mjj.ast.nodes.exprs.LengthNode;
 import fr.amvproject.group3.mjj.ast.nodes.exprs.UnaryExpNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.*;
 import fr.amvproject.group3.mjj.ast.nodes.instrs.*;
-import fr.amvproject.group3.mjj.ast.nodes.intermediate.DeclNode;
-import fr.amvproject.group3.mjj.ast.nodes.intermediate.VarDeclNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.BinaryOpNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.TypeMethNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.TypeNode;
@@ -32,9 +30,6 @@ public interface AstVisitor<T> {
     T visitMethod(MethodNode node);
     T visitTable(TableNode node);
     T visitVar(VarNode node);
-
-    T visitDecl(DeclNode node);
-    T visitVarDecl(VarDeclNode node);
 
     T visitBinaryExp(BinaryExpNode node);
     T visitCallExp(CallExpNode node);
