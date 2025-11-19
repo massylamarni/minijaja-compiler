@@ -10,16 +10,17 @@ import fr.amvproject.group3.mjj.ast.nodes.intermediate.LeftValueNode;
  * Exemple : tab[i]
  */
 public class ArrayAccessNode extends LeftValueNode {
-    private final IdentNode ident;
+    private final IdentNode identNode;
     private final ExpNode indexExp; // expression d’index (i, 2, etc.)
 
-    public ArrayAccessNode(IdentNode ident, ExpNode indexExp) {
-        this.ident = ident;
+    public ArrayAccessNode(IdentNode identNode, ExpNode indexExp) {
+        super(identNode.getLine(), identNode.getColumn());
+        this.identNode = identNode;
         this.indexExp = indexExp;
     }
 
     public IdentNode getIdent() {
-        return ident;
+        return identNode;
     }
 
     public ExpNode getIndexExp() {
@@ -29,7 +30,7 @@ public class ArrayAccessNode extends LeftValueNode {
     @Override
     public boolean sameAs(AstNode other) {
         if (other instanceof ArrayAccessNode arrayAccessNode) {
-            return this.ident.sameAs(arrayAccessNode.ident) && this.indexExp.sameAs(arrayAccessNode.indexExp);
+            return this.identNode.sameAs(arrayAccessNode.identNode) && this.indexExp.sameAs(arrayAccessNode.indexExp);
         }
         return false;
     }

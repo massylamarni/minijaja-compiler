@@ -86,7 +86,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     @Override
     public Object visitClass(ClassNode node) {
         // 1. DeclVar(i, w, w, []) - Déclarer une variable pour la classe (omega)
-        stack.declVar(node.getIdent(), null, new TypeMethNode("void"));
+        stack.declVar(node.getIdent(), null, new TypeMethNode("void", node.getLine(), node.getColumn()));
 
         // 2. m1 ⊢ dss → m2 - Traiter les déclarations
         node.getDecls().accept(this);

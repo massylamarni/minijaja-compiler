@@ -180,7 +180,7 @@ public class Stack extends StackManager {
     while (expIt.hasNext() && paramIt.hasNext()) {
       ExpNode exp = expIt.next();
       ParamNode param = paramIt.next();
-      declVar(param.getIdent(), exp, new TypeMethNode(param.getType().getName()));
+      declVar(param.getIdent(), exp, new TypeMethNode(param.getType().getTypeToken()));
     }
   }
 

@@ -11,6 +11,7 @@ public class DeclNode extends AstNode {
     private final IdentNode identNode;
 
     public DeclNode(IdentNode identNode) {
+        super(identNode.getLine(), identNode.getColumn());
         this.identNode = identNode;
     }
 

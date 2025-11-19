@@ -10,6 +10,7 @@ public class UnaryExpNode extends ExpNode {
     private final ExpNode expNode;
 
     public UnaryExpNode(UnaryOpNode op, ExpNode expNode) {
+        super(op.getLine(), op.getColumn());
         this.op = op;
         this.expNode = expNode;
     }

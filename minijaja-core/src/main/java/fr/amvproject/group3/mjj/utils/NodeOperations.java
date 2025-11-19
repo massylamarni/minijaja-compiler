@@ -17,12 +17,12 @@ public class NodeOperations {
 
     ExpNode addExp;
     if (leftValueNode instanceof IdentNode identNode) { // Var
-      addExp = new BinaryExpNode(new BinaryOpNode("+"), identNode, addAssignNode.getExp());
+      addExp = new BinaryExpNode(new BinaryOpNode("+", addAssignNode.getAddAssignToken().getLine(), addAssignNode.getAddAssignToken().getCharPositionInLine()), identNode, addAssignNode.getExp());
     } else if (leftValueNode instanceof ArrayAccessNode arrayAccessNode) { // Array
-      addExp = new BinaryExpNode(new BinaryOpNode("+"), arrayAccessNode, addAssignNode.getExp());
+      addExp = new BinaryExpNode(new BinaryOpNode("+", addAssignNode.getAddAssignToken().getLine(), addAssignNode.getAddAssignToken().getCharPositionInLine()), arrayAccessNode, addAssignNode.getExp());
     } else {
       throw new NodeException("Unexpected left-hand side in +=");
     }
-    return new AssignNode(leftValueNode, addExp);
+    return new AssignNode(leftValueNode, addAssignNode.getAddAssignToken(), addExp);
   }
 }

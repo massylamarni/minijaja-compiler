@@ -11,6 +11,7 @@ public class CallInstrNode extends InstrNode {
     private final ListExpNode listExpNode;
 
     public CallInstrNode(IdentNode identNode, ListExpNode listExpNode) {
+        super(identNode.getLine(), identNode.getLine());
         this.identNode = identNode;
         this.listExpNode = listExpNode;
     }
