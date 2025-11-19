@@ -2,8 +2,10 @@ package fr.amvproject.group3;
 
 import fr.amvproject.group3.jjc.ast.PrintVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.program.ProgramNode;
+import fr.amvproject.group3.jjc.utils.NodeOperations;
 import fr.amvproject.group3.mjj.ast.AstNode;
 import fr.amvproject.group3.mjj.utils.AstOperations;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -15,7 +17,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 public class CompilerVisitorIntegrationTest {
-
 
     private String loadResource(String filename) throws IOException {
         InputStream is = getClass().getClassLoader()
@@ -49,7 +50,7 @@ public class CompilerVisitorIntegrationTest {
 
         //When
         String jajacode = "";
-        ProgramNode programNode = new ProgramNode(ast.accept(compilerVisitor));
+        ProgramNode programNode = new ProgramNode(ast.accept(compilerVisitor),new NodeOperations.MockToken("",1,0));
         PrintVisitor printVisitor = new PrintVisitor();
         jajacode = programNode.accept(printVisitor);
 
@@ -87,7 +88,7 @@ public class CompilerVisitorIntegrationTest {
 
         //When
         String jajacode = "";
-        ProgramNode programNode = new ProgramNode(ast.accept(compilerVisitor));
+        ProgramNode programNode = new ProgramNode(ast.accept(compilerVisitor),new NodeOperations.MockToken("",1,0));
         PrintVisitor printVisitor = new PrintVisitor();
         jajacode = programNode.accept(printVisitor);
 
@@ -131,7 +132,7 @@ public class CompilerVisitorIntegrationTest {
 
         //When
         String jajacode = "";
-        ProgramNode programNode = new ProgramNode(ast.accept(compilerVisitor));
+        ProgramNode programNode = new ProgramNode(ast.accept(compilerVisitor),new NodeOperations.MockToken("",1,0));
         PrintVisitor printVisitor = new PrintVisitor();
         jajacode = programNode.accept(printVisitor);
 
@@ -171,7 +172,7 @@ public class CompilerVisitorIntegrationTest {
 
         //When
         String jajacode = "";
-        ProgramNode programNode = new ProgramNode(ast.accept(compilerVisitor));
+        ProgramNode programNode = new ProgramNode(ast.accept(compilerVisitor),new NodeOperations.MockToken("",1,0));
         PrintVisitor printVisitor = new PrintVisitor();
         jajacode = programNode.accept(printVisitor);
 
@@ -216,7 +217,7 @@ public class CompilerVisitorIntegrationTest {
 
         //When
         String jajacode = "";
-        ProgramNode programNode = new ProgramNode(ast.accept(compilerVisitor));
+        ProgramNode programNode = new ProgramNode(ast.accept(compilerVisitor),new NodeOperations.MockToken("",1,0));
         PrintVisitor printVisitor = new PrintVisitor();
         jajacode = programNode.accept(printVisitor);
 
