@@ -1,25 +1,32 @@
 package fr.amvproject.group3.jjc.ast.nodes.finals;
 
+import org.antlr.v4.runtime.Token;
+
 import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.AstVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.intermediate.ValueNode;
 
 public class StringLiteralNode extends ValueNode {
-    private final String value;
+    private final Token stringToken;
 
-    public StringLiteralNode(String value) {
-        // Enlever les guillemets si présents
-        this.value = value.replaceAll("(^\")|(\"$)", "");
+    public StringLiteralNode(Token stringToken) {
+        super(stringToken.getLine(), stringToken.getCharPositionInLine());
+        this.stringToken = stringToken;
+    }
+
+    public Token getStringToken() {
+      return stringToken;
     }
 
     public String getValue() {
-        return value;
+        // Enlever les guillemets si présents
+        return stringToken.getText().replaceAll("(^\")|(\"$)", "");
     }
 
     @Override
     public boolean sameAs(AstNode other) {
         if (other instanceof StringLiteralNode stringLiteralNode) {
-            return this.value.equals(stringLiteralNode.value);
+            return this.getValue().equals(stringLiteralNode.getValue());
         }
         return false;
     }

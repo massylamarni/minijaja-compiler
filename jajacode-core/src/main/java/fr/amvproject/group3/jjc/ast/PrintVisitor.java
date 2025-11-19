@@ -4,8 +4,6 @@ import java.util.List;
 
 import fr.amvproject.group3.jjc.ast.nodes.finals.*;
 import fr.amvproject.group3.jjc.ast.nodes.instrs.*;
-import fr.amvproject.group3.jjc.ast.nodes.finals.*;
-import fr.amvproject.group3.jjc.ast.nodes.instrs.*;
 import fr.amvproject.group3.jjc.ast.nodes.literals.InitLiteral;
 import fr.amvproject.group3.jjc.ast.nodes.literals.JcstopLiteral;
 import fr.amvproject.group3.jjc.ast.nodes.literals.NopLiteral;
@@ -13,8 +11,6 @@ import fr.amvproject.group3.jjc.ast.nodes.literals.PopLiteral;
 import fr.amvproject.group3.jjc.ast.nodes.literals.ReturnLiteral;
 import fr.amvproject.group3.jjc.ast.nodes.literals.SwapLiteral;
 import fr.amvproject.group3.jjc.ast.nodes.literals.WriteLiteral;
-import fr.amvproject.group3.jjc.ast.nodes.other.*;
-import fr.amvproject.group3.jjc.ast.nodes.program.*;
 import fr.amvproject.group3.jjc.ast.nodes.other.BinaryOpNode;
 import fr.amvproject.group3.jjc.ast.nodes.other.ObjNode;
 import fr.amvproject.group3.jjc.ast.nodes.other.TypeNode;

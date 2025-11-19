@@ -16,6 +16,7 @@ import fr.amvproject.group3.jjc.ast.AstNode;
 
 public class AstOperations {
   private AstOperations() {}
+  
   public static AstNode getAstFromString(String string) {
     JajaCodeLexer lexer = new JajaCodeLexer(CharStreams.fromString(string));
     CommonTokenStream tokens = new CommonTokenStream(lexer);

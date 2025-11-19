@@ -1,12 +1,11 @@
-package fr.amvproject.group3.utils;
+package fr.amvproject.group3.jjc.utils;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.TokenSource;
 
 public class NodeOperations {
-  private NodeOperations() {
-  }
+  private NodeOperations() {}
 
   public static class MockToken implements Token {
     private final String text;
@@ -69,4 +68,5 @@ public class NodeOperations {
       return null;
     }
   }
+
 }

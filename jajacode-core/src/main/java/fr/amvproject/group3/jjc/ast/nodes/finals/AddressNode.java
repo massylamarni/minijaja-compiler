@@ -1,23 +1,29 @@
 package fr.amvproject.group3.jjc.ast.nodes.finals;
 
+import org.antlr.v4.runtime.Token;
+
 import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.AstVisitor;
 
 public class AddressNode extends AstNode {
-    private final int value;
+    private final Token intToken;
 
-    public AddressNode(int value) {
-        this.value = value;
+    public AddressNode(Token intToken) {
+        this.intToken = intToken;
+    }
+
+    public Token getAddressToken() {
+      return intToken;
     }
 
     public int getValue() {
-      return value;
+      return Integer.parseInt(intToken.getText());
     }
 
     @Override
     public boolean sameAs(AstNode other) {
         if (other instanceof AddressNode addressNode) {
-            return this.value == addressNode.value;
+            return this.getValue() == addressNode.getValue();
         }
         return false;
     }

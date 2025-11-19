@@ -1,17 +1,26 @@
 package fr.amvproject.group3.jjc.ast.nodes.instrs;
 
+import org.antlr.v4.runtime.Token;
+
 import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.AstVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.jjc.ast.nodes.intermediate.InstrNode;
 
 public class IncNode extends InstrNode {
+    private final Token incToken;
     private final IdentNode identNode;
     private final boolean isA;
 
-    public IncNode(IdentNode identNode, boolean isA) {
+    public IncNode(Token incToken, IdentNode identNode, boolean isA) {
+        super(incToken.getLine(), incToken.getCharPositionInLine());
+        this.incToken = incToken;
         this.identNode = identNode;
         this.isA = isA;
+    }
+
+    public Token getIncToken() {
+      return incToken;
     }
 
     public IdentNode getIdent() {

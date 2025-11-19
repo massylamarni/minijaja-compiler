@@ -1,15 +1,24 @@
 package fr.amvproject.group3.jjc.ast.nodes.instrs;
 
+import org.antlr.v4.runtime.Token;
+
 import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.AstVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.finals.AddressNode;
 import fr.amvproject.group3.jjc.ast.nodes.intermediate.InstrNode;
 
 public class IfNode extends InstrNode {
+    private final Token ifToken;
     private final AddressNode addressNode;
 
-    public IfNode(AddressNode addressNode) {
+    public IfNode(Token ifToken, AddressNode addressNode) {
+        super(ifToken.getLine(), ifToken.getCharPositionInLine());
+        this.ifToken = ifToken;
         this.addressNode = addressNode;
+    }
+
+    public Token getIfToken() {
+      return ifToken;
     }
 
     public AddressNode getAddress() {

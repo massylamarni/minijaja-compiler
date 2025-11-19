@@ -26,7 +26,7 @@ import fr.amvproject.group3.mjj.ast.nodes.other.TypeNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.UnaryOpNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
-import fr.amvproject.group3.utils.NodeOperations.MockToken;
+import fr.amvproject.group3.mjj.utils.NodeOperations.MockToken;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -39,6 +39,13 @@ public class UnaryOpNode extends AstNode {
     this.unaryOp = UnaryOpName.fromString(unaryOpToken.getText());
   }
 
+  // Helper
+  public UnaryOpNode(String op, int line, int column) {
+    super(line, column);
+    this.unaryOpToken = null;
+    this.unaryOp = UnaryOpName.fromString(op);
+  }
+
   public Token getUnaryOpToken() {
     return unaryOpToken;
   }
