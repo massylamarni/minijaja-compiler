@@ -1,4 +1,4 @@
-package fr.amvproject.group3;
+package fr.amvproject.group3.jjc;
 
 import fr.amvproject.group3.jjc.Quad;
 import fr.amvproject.group3.jjc.Stack;
