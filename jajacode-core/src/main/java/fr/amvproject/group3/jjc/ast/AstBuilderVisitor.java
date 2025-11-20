@@ -142,12 +142,14 @@ public class AstBuilderVisitor extends JajaCodeParserBaseVisitor<AstNode> {
 
   public AstNode visitLoad(JajaCodeParser.InstrContext ctx) {
     IdentNode identNode = (IdentNode) visit(ctx.ident());
-    return new LoadNode(getTokenOrNull(ctx.LOAD()), identNode, ctx.LOAD() == null);
+    if (ctx.LOAD() != null) return new LoadNode(ctx.LOAD().getSymbol(), identNode, false);
+    return new LoadNode(ctx.ALOAD().getSymbol(), identNode, true);
   }
 
   public AstNode visitStore(JajaCodeParser.InstrContext ctx) {
     IdentNode identNode = (IdentNode) visit(ctx.ident());
-    return new StoreNode(getTokenOrNull(ctx.STORE()), identNode, ctx.STORE() == null);
+    if (ctx.STORE() != null) return new StoreNode(ctx.STORE().getSymbol(), identNode, false);
+    return new StoreNode(ctx.ASTORE().getSymbol(), identNode, true);
   }
 
   public AstNode visitIf(JajaCodeParser.InstrContext ctx) {
@@ -162,7 +164,8 @@ public class AstBuilderVisitor extends JajaCodeParserBaseVisitor<AstNode> {
 
   public AstNode visitInc(JajaCodeParser.InstrContext ctx) {
     IdentNode identNode = (IdentNode) visit(ctx.ident());
-    return new IncNode(getTokenOrNull(ctx.INC()), identNode, ctx.INC() == null);
+    if (ctx.INC() != null) return new IncNode(ctx.INC().getSymbol(), identNode, false);
+    return new IncNode(ctx.AINC().getSymbol(), identNode, true);
   }
 
   /* Helper functions */
