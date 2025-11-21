@@ -62,7 +62,7 @@ public class AstBuilderVisitor extends MiniJajaParserBaseVisitor<AstNode> {
           (ExpNode) visit(ctx.exp()));
     } else if (ctx.FINAL() != null) {
       // Const
-      return new CstNode(getTokenOrNull(ctx.FINAL()), new TypeNode(ctx.type().getStart()),
+      return new CstNode(ctx.FINAL().getSymbol(), new TypeNode(ctx.type().getStart()),
           new IdentNode(getTokenOrNull(ctx.ident().IDENTIFICATEUR())), getTokenOrNull(ctx.vexp().ASSIGN()), exp);
     }
     // Var
@@ -151,7 +151,7 @@ public class AstBuilderVisitor extends MiniJajaParserBaseVisitor<AstNode> {
     ExpNode result = (ExpNode) visit(ctx.expAnd(0));
     for (int i = 1; i < ctx.expAnd().size(); i++) {
       ExpNode right = (ExpNode) visit(ctx.expAnd(i));
-      result = new BinaryExpNode(new BinaryOpNode(getTokenOrNull(ctx.OR(i-1))), result, right);
+      result = new BinaryExpNode(new BinaryOpNode(ctx.OR(i-1).getSymbol()), result, right);
     }
     return result;
   }
@@ -163,7 +163,7 @@ public class AstBuilderVisitor extends MiniJajaParserBaseVisitor<AstNode> {
     ExpNode result = (ExpNode) visit(ctx.expEq(0));
     for (int i = 1; i < ctx.expEq().size(); i++) {
       ExpNode right = (ExpNode) visit(ctx.expEq(i));
-      result = new BinaryExpNode(new BinaryOpNode(getTokenOrNull(ctx.AND(i-1))), result, right);
+      result = new BinaryExpNode(new BinaryOpNode(ctx.AND(i-1).getSymbol()), result, right);
     }
     return result;
   }
@@ -173,8 +173,10 @@ public class AstBuilderVisitor extends MiniJajaParserBaseVisitor<AstNode> {
     // expEq : expRel ( (EQ | GT) expRel )*
     if (ctx.expRel().size() == 1) return visit(ctx.expRel(0));
     ExpNode result = (ExpNode) visit(ctx.expRel(0));
+    int eqIndex = 0;
+    int gtIndex = 0;
     for (int i = 1; i < ctx.expRel().size(); i++) {
-      Token op = ctx.EQ(i - 1) != null ? getTokenOrNull(ctx.EQ(i - 1)) : getTokenOrNull(ctx.GT(i - 1));
+      Token op = ctx.EQ(eqIndex) != null ? ctx.EQ(eqIndex++).getSymbol() : ctx.GT(gtIndex++).getSymbol();
       ExpNode right = (ExpNode) visit(ctx.expRel(i));
       result = new BinaryExpNode(new BinaryOpNode(op), result, right);
     }
@@ -190,9 +192,11 @@ public class AstBuilderVisitor extends MiniJajaParserBaseVisitor<AstNode> {
   public AstNode visitExpAdd(MiniJajaParser.ExpAddContext ctx) {
     // expAdd : expMul ( (ADD | SUB) expMul )*
     if (ctx.expMul().size() == 1) return visit(ctx.expMul(0));
+    int addIndex = 0;
+    int subIndex = 0;
     ExpNode result = (ExpNode) visit(ctx.expMul(0));
     for (int i = 1; i < ctx.expMul().size(); i++) {
-      Token op = ctx.ADD(i - 1) != null ? getTokenOrNull(ctx.ADD(i - 1)) : getTokenOrNull(ctx.SUB(i - 1));
+      Token op = ctx.ADD(addIndex) != null ? ctx.ADD(addIndex++).getSymbol() : ctx.SUB(subIndex++).getSymbol();
       ExpNode right = (ExpNode) visit(ctx.expMul(i));
       result = new BinaryExpNode(new BinaryOpNode(op), result, right);
     }
@@ -204,8 +208,10 @@ public class AstBuilderVisitor extends MiniJajaParserBaseVisitor<AstNode> {
     // expMul : expUnary ((MUL | DIV) expUnary)*
     if (ctx.expUnary().size() == 1) return visit(ctx.expUnary(0));
     ExpNode result = (ExpNode) visit(ctx.expUnary(0));
+    int mulIndex = 0;
+    int divIndex = 0;
     for (int i = 1; i < ctx.expUnary().size(); i++) {
-      Token op = ctx.MUL(i - 1) != null ? getTokenOrNull(ctx.MUL(i - 1)) : getTokenOrNull(ctx.DIV(i - 1));
+      Token op = ctx.MUL(mulIndex) != null ? ctx.MUL(mulIndex++).getSymbol() : ctx.DIV(divIndex++).getSymbol();
       ExpNode right = (ExpNode) visit(ctx.expUnary(i));
       result = new BinaryExpNode(new BinaryOpNode(op), result, right);
     }
@@ -217,10 +223,10 @@ public class AstBuilderVisitor extends MiniJajaParserBaseVisitor<AstNode> {
     // expUnary : (NOT | SUB) expUnary | fact
     if (ctx.NOT() != null) {
       ExpNode right = (ExpNode) visit(ctx.expUnary());
-      return new UnaryExpNode(new UnaryOpNode(getTokenOrNull(ctx.NOT())), right);
+      return new UnaryExpNode(new UnaryOpNode(ctx.NOT().getSymbol()), right);
     } else if (ctx.SUB() != null) {
       ExpNode right = (ExpNode) visit(ctx.expUnary());
-      return new UnaryExpNode(new UnaryOpNode(getTokenOrNull(ctx.SUB())), right);
+      return new UnaryExpNode(new UnaryOpNode(ctx.SUB().getSymbol()), right);
     } else {
       return visit(ctx.fact());
     }
@@ -229,9 +235,9 @@ public class AstBuilderVisitor extends MiniJajaParserBaseVisitor<AstNode> {
   @Override
   public AstNode visitFact(MiniJajaParser.FactContext ctx) {
     // Literals
-    if (ctx.NOMBRE() != null) return new IntLiteralNode(getTokenOrNull(ctx.NOMBRE()));
-    if (ctx.TRUE() != null) return new BoolLiteralNode(getTokenOrNull(ctx.TRUE()));
-    if (ctx.FALSE() != null) return new BoolLiteralNode(getTokenOrNull(ctx.FALSE()));
+    if (ctx.NOMBRE() != null) return new IntLiteralNode(ctx.NOMBRE().getSymbol());
+    if (ctx.TRUE() != null) return new BoolLiteralNode(ctx.TRUE().getSymbol());
+    if (ctx.FALSE() != null) return new BoolLiteralNode(ctx.FALSE().getSymbol());
 
     // Ident1
     if (ctx.ident1() != null) return visit(ctx.ident1());
@@ -243,8 +249,8 @@ public class AstBuilderVisitor extends MiniJajaParserBaseVisitor<AstNode> {
 
     // Length(ident)
     if (ctx.LENGTH() != null && ctx.ident() != null) return new LengthNode(
-          getTokenOrNull(ctx.LENGTH()),
-          new IdentNode(getTokenOrNull(ctx.ident().IDENTIFICATEUR())));
+          ctx.LENGTH().getSymbol(),
+          new IdentNode(ctx.ident().IDENTIFICATEUR().getSymbol()));
 
     // (exp)
     if (ctx.exp() != null) return visit(ctx.exp());
@@ -268,13 +274,13 @@ public class AstBuilderVisitor extends MiniJajaParserBaseVisitor<AstNode> {
   public AstNode visitAssign(MiniJajaParser.InstrContext ctx) {
     LeftValueNode left = (LeftValueNode) visit(ctx.ident1());
     ExpNode exp = (ExpNode) visit(ctx.exp());
-    if (ctx.ASSIGN() != null) return new AssignNode(left, getTokenOrNull(ctx.ASSIGN()), exp);
-    return new AddAssignNode(left, getTokenOrNull(ctx.ADDASSIGN()), exp);
+    if (ctx.ASSIGN() != null) return new AssignNode(left, ctx.ASSIGN().getSymbol(), exp);
+    return new AddAssignNode(left, ctx.ADDASSIGN().getSymbol(), exp);
   }
 
   public AstNode visitInc(MiniJajaParser.InstrContext ctx) {
-    IdentNode ident = new IdentNode(getTokenOrNull(ctx.ident1().ident().IDENTIFICATEUR()));
-    return new IncNode(ident, getTokenOrNull(ctx.INC()));
+    LeftValueNode left = (LeftValueNode) visit(ctx.ident1());
+    return new IncNode(left, ctx.INC().getSymbol());
   }
 
   public AstNode visitMethodCall(MiniJajaParser.InstrContext ctx) {
@@ -284,7 +290,7 @@ public class AstBuilderVisitor extends MiniJajaParserBaseVisitor<AstNode> {
   }
 
   public AstNode visitReturn(MiniJajaParser.InstrContext ctx) {
-    return new ReturnNode(getTokenOrNull(ctx.RETURN()), (ExpNode) visit(ctx.exp()));
+    return new ReturnNode(ctx.RETURN().getSymbol(), (ExpNode) visit(ctx.exp()));
   }
 
   public AstNode visitWrite(MiniJajaParser.InstrContext ctx) {
@@ -292,23 +298,23 @@ public class AstBuilderVisitor extends MiniJajaParserBaseVisitor<AstNode> {
     if (ctx.ident1() != null) {
       exp = (ExpNode) visit(ctx.ident1());
     } else if (ctx.STRING() != null) {
-      exp = new StringLiteralNode(getTokenOrNull(ctx.STRING()));
+      exp = new StringLiteralNode(ctx.STRING().getSymbol());
     } else {
       exp = null;
     }
-    if (ctx.WRITELN() != null) return new WriteNode(getTokenOrNull(ctx.WRITELN()), exp, true);
-    return new WriteNode(getTokenOrNull(ctx.WRITE()), exp, false);
+    if (ctx.WRITELN() != null) return new WriteNode(ctx.WRITELN().getSymbol(), exp, true);
+    return new WriteNode(ctx.WRITE().getSymbol(), exp, false);
   }
 
   public AstNode visitIf(MiniJajaParser.InstrContext ctx) {
     ExpNode cond = (ExpNode) visit(ctx.exp());
     InstrsNode thenInstrs = (InstrsNode) visit(ctx.instrs(0));
     InstrsNode elseInstrs = (ctx.instrs().size() > 1) ? (InstrsNode) visit(ctx.instrs(1)) : null;
-    return new IfNode(getTokenOrNull(ctx.IF()), cond, thenInstrs, getTokenOrNull(ctx.ELSE()), elseInstrs);
+    return new IfNode(ctx.IF().getSymbol(), cond, thenInstrs, getTokenOrNull(ctx.ELSE()), elseInstrs);
   }
 
   public AstNode visitWhile(MiniJajaParser.InstrContext ctx) {
-    return new WhileNode(getTokenOrNull(ctx.WHILE()), (ExpNode) visit(ctx.exp()), (InstrsNode) visit(ctx.instrs(0)));
+    return new WhileNode(ctx.WHILE().getSymbol(), (ExpNode) visit(ctx.exp()), (InstrsNode) visit(ctx.instrs(0)));
   }
 
   /* Helper functions */

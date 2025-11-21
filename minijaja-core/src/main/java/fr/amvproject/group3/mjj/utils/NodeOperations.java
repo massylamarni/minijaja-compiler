@@ -8,8 +8,10 @@ import fr.amvproject.group3.exceptions.NodeException;
 import fr.amvproject.group3.mjj.ast.nodes.exprs.BinaryExpNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.ArrayAccessNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
+import fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode;
 import fr.amvproject.group3.mjj.ast.nodes.instrs.AddAssignNode;
 import fr.amvproject.group3.mjj.ast.nodes.instrs.AssignNode;
+import fr.amvproject.group3.mjj.ast.nodes.instrs.IncNode;
 import fr.amvproject.group3.mjj.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.mjj.ast.nodes.intermediate.LeftValueNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.BinaryOpNode;
@@ -17,18 +19,38 @@ import fr.amvproject.group3.mjj.ast.nodes.other.BinaryOpNode;
 public class NodeOperations {
   private NodeOperations() {}
   
-  public static AssignNode addAssignToAssign(AddAssignNode addAssignNode) throws NodeException {
+  public static AssignNode addAssignToAssign(AddAssignNode addAssignNode) {
     LeftValueNode leftValueNode = addAssignNode.getLeftValueNode();
+    BinaryOpNode binaryOpNode = new BinaryOpNode("+", addAssignNode.getLine(), addAssignNode.getColumn());
+    ExpNode leftExpNode = null;
+    ExpNode rightExpNode = addAssignNode.getExp();
 
-    ExpNode addExp;
-    if (leftValueNode instanceof IdentNode identNode) { // Var
-      addExp = new BinaryExpNode(new BinaryOpNode("+", addAssignNode.getAddAssignToken().getLine(), addAssignNode.getAddAssignToken().getCharPositionInLine()), identNode, addAssignNode.getExp());
-    } else if (leftValueNode instanceof ArrayAccessNode arrayAccessNode) { // Array
-      addExp = new BinaryExpNode(new BinaryOpNode("+", addAssignNode.getAddAssignToken().getLine(), addAssignNode.getAddAssignToken().getCharPositionInLine()), arrayAccessNode, addAssignNode.getExp());
-    } else {
-      throw new NodeException("Unexpected left-hand side in +=");
+    if (leftValueNode instanceof IdentNode identNode) {
+      leftExpNode = identNode;
+    } else if (leftValueNode instanceof ArrayAccessNode arrayAccessNode) {
+      leftExpNode = arrayAccessNode;
     }
-    return new AssignNode(leftValueNode, addAssignNode.getAddAssignToken(), addExp);
+
+    ExpNode newExpNode = new BinaryExpNode(binaryOpNode, leftExpNode, rightExpNode);
+    return new AssignNode(leftValueNode, addAssignNode.getAddAssignToken(), newExpNode);
+  }
+
+  public static AssignNode incToAssign(IncNode incNode) throws NodeException {
+    LeftValueNode leftValueNode = incNode.getLeftValueNode();
+    BinaryOpNode binaryOpNode = new BinaryOpNode("+", incNode.getLine(), incNode.getColumn());
+    ExpNode leftExpNode = null;
+    MockToken intToken = new MockToken("1", incNode.getLine(), incNode.getColumn());
+    MockToken addToken = new MockToken("+", incNode.getLine(), incNode.getColumn());
+    ExpNode rightExpNode = new IntLiteralNode(intToken);
+
+    if (leftValueNode instanceof IdentNode identNode) {
+      leftExpNode = identNode;
+    } else if (leftValueNode instanceof ArrayAccessNode arrayAccessNode) {
+      leftExpNode = arrayAccessNode;
+    }
+
+    ExpNode newExpNode = new BinaryExpNode(binaryOpNode, leftExpNode, rightExpNode);
+    return new AssignNode(leftValueNode, addToken, newExpNode);
   }
 
   public static class MockToken implements Token {

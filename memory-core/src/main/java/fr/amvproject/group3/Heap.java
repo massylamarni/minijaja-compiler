@@ -30,7 +30,7 @@ public class Heap {
     // Remove the allocated memory from specific address, aka RetirerTas
     public void remove(int address, TypeMemNode type) {
       if (type == null) return; // Unknown use case
-      if (address < 0 || address >= nextAddress) throw new IndexOutOfBoundsException();
+      if (address < 0 || address >= nextAddress) throw new IndexOutOfBoundsException(); // Will never happen if semantic analysis is correct
       int blockSize = (int) get(address - 1);
       for (int i = 0; i < blockSize; i++) {
         queue.set(address+i, null);
