@@ -48,19 +48,17 @@ public class AstNodeTest {
         assertThat(programNode.getClasses(), hasSize(1));
         assertThat(programNode.getClasses().get(0).getIdent().getName(), is("TestClass"));
     }
-    // TODO TEST
-    /*
 
     // ====================== ClassNode ======================
     @Test
     public void givenClassComponents__whenCreateClassNode__thenClassNodeIsCorrect() {
         // Given
-        IdentNode ident = new IdentNode("TestClass", 1);
+        IdentNode ident = new IdentNode(new MockToken("TestClass", 1, 0));
         DeclsNode decls = new DeclsNode(new ArrayList<>());
-        MainNode main = new MainNode(new VarsNode(new ArrayList<>()), new InstrsNode(new ArrayList<>()));
+        MainNode main = new MainNode(new MockToken("main",1,0),new VarsNode(new ArrayList<>()), new InstrsNode(new ArrayList<>()));
 
         // When
-        ClassNode classNode = new ClassNode(ident, decls, main);
+        ClassNode classNode = new ClassNode(new MockToken("class",1,0),ident, decls, main);
 
         // Then
         assertThat(classNode, is(notNullValue()));
@@ -87,11 +85,11 @@ public class AstNodeTest {
     @Test
     public void givenVarComponents__whenCreateVarNode__thenVarNodeIsCorrect() {
         // Given
-        IdentNode ident = new IdentNode("x", 1);
-        TypeMethNode type = new TypeMethNode("int");
+        IdentNode ident = new IdentNode(new MockToken("x", 1,0));
+        TypeMethNode type = new TypeMethNode(new MockToken("int", 1,0));
 
         // When
-        VarNode varNode = new VarNode(type, ident, null);
+        VarNode varNode = new VarNode(type, ident);
 
         // Then
         assertThat(varNode, is(notNullValue()));
@@ -104,12 +102,12 @@ public class AstNodeTest {
     @Test
     public void givenConstComponents__whenCreateCstNode__thenCstNodeIsCorrect() {
         // Given
-        IdentNode ident = new IdentNode("T", 1);
-        TypeNode type = new TypeNode("int");
-        ExpNode exp = new IntLiteralNode(3);
+        IdentNode ident =new IdentNode(new MockToken("T", 1,0));
+        TypeNode type = new TypeNode(new MockToken("int", 1,0));
+        ExpNode exp = new IntLiteralNode(new MockToken("3", 1,0));
 
         // When
-        CstNode cstNode = new CstNode(type, ident, exp);
+        CstNode cstNode = new CstNode(new MockToken("cst",1,0),type, ident,new MockToken("",1,0), exp);
 
         // Then
         assertThat(cstNode, is(notNullValue()));
@@ -122,9 +120,9 @@ public class AstNodeTest {
     @Test
     public void givenTableComponents__whenCreateTableNode__thenTableNodeIsCorrect() {
         // Given
-        IdentNode ident = new IdentNode("arr", 1);
-        TypeMethNode type = new TypeMethNode("int");
-        ExpNode exp = new IntLiteralNode(5);
+        IdentNode ident = new IdentNode(new MockToken("arr", 1,0));
+        TypeMethNode type = new TypeMethNode(new MockToken("int", 1,0));
+        ExpNode exp = new IntLiteralNode(new MockToken("5", 1,0));
 
         // When
         TableNode tableNode = new TableNode(type, ident, exp);
@@ -140,8 +138,8 @@ public class AstNodeTest {
     @Test
     public void givenMethodComponents__whenCreateMethodNode__thenMethodNodeIsCorrect() {
         // Given
-        IdentNode ident = new IdentNode("foo", 1);
-        TypeMethNode returnType = new TypeMethNode("int");
+        IdentNode ident = new IdentNode(new MockToken("foo", 1,0));
+        TypeMethNode returnType = new TypeMethNode(new MockToken("int", 1,0));
         ParamsNode params = new ParamsNode(new ArrayList<>());
         VarsNode vars = new VarsNode(new ArrayList<>());
         InstrsNode instrs = new InstrsNode(new ArrayList<>());
@@ -166,7 +164,7 @@ public class AstNodeTest {
         InstrsNode instrs = new InstrsNode(new ArrayList<>());
 
         // When
-        MainNode mainNode = new MainNode(vars, instrs);
+        MainNode mainNode = new MainNode(new MockToken("main",1,0),vars, instrs);
 
         // Then
         assertThat(mainNode, is(notNullValue()));
@@ -192,8 +190,8 @@ public class AstNodeTest {
     @Test
     public void givenParamComponents__whenCreateParamNode__thenParamNodeIsCorrect() {
         // Given
-        IdentNode ident = new IdentNode("param", 1);
-        TypeNode type = new TypeNode("int");
+        IdentNode ident = new IdentNode(new MockToken("param", 1,0));
+        TypeNode type = new TypeNode(new MockToken("int", 1,0));
 
         // When
         ParamNode paramNode = new ParamNode(type, ident);
@@ -250,9 +248,9 @@ public class AstNodeTest {
     @Test
     public void givenBinaryExpComponents__whenCreateBinaryExpNode__thenBinaryExpNodeIsCorrect() {
         // Given
-        ExpNode left = new IntLiteralNode(1);
-        ExpNode right = new IntLiteralNode(2);
-        BinaryOpNode op = new BinaryOpNode("+");
+        ExpNode left = new IntLiteralNode(new MockToken("1", 1,0));
+        ExpNode right = new IntLiteralNode(new MockToken("2", 1,0));
+        BinaryOpNode op = new BinaryOpNode(new MockToken("+", 1,0));
 
         // When
         BinaryExpNode binaryExpNode = new BinaryExpNode(op, left, right);
@@ -268,8 +266,8 @@ public class AstNodeTest {
     @Test
     public void givenUnaryExpComponents__whenCreateUnaryExpNode__thenUnaryExpNodeIsCorrect() {
         // Given
-        ExpNode exp = new IntLiteralNode(42);
-        UnaryOpNode op = new UnaryOpNode("-");
+        ExpNode exp = new IntLiteralNode(new MockToken("42", 1,0));
+        UnaryOpNode op =new UnaryOpNode(new MockToken("-", 1,0));
 
         // When
         UnaryExpNode unaryExpNode = new UnaryExpNode(op, exp);
@@ -284,8 +282,8 @@ public class AstNodeTest {
     @Test
     public void givenCallExpComponents__whenCreateCallExpNode__thenCallExpNodeIsCorrect() {
         // Given
-        IdentNode ident = new IdentNode("foo", 1);
-        ListExpNode listExp = new ListExpNode(Arrays.asList(new IntLiteralNode(42)));
+        IdentNode ident = new IdentNode(new MockToken("foo", 1,0));
+        ListExpNode listExp = new ListExpNode(Arrays.asList(new IntLiteralNode(new MockToken("42", 1,0))));
 
         // When
         CallExpNode callExpNode = new CallExpNode(ident, listExp);
@@ -300,10 +298,10 @@ public class AstNodeTest {
     @Test
     public void givenLengthComponents__whenCreateLengthNode__thenLengthNodeIsCorrect() {
         // Given
-        IdentNode ident = new IdentNode("arr", 1);
+        IdentNode ident = new IdentNode(new MockToken("arr", 1,0));
 
         // When
-        LengthNode lengthNode = new LengthNode(ident);
+        LengthNode lengthNode = new LengthNode(new MockToken("lenght",1,0),ident);
 
         // Then
         assertThat(lengthNode, is(notNullValue()));
@@ -314,8 +312,8 @@ public class AstNodeTest {
     @Test
     public void givenArrayAccessComponents__whenCreateArrayAccessNode__thenArrayAccessNodeIsCorrect() {
         // Given
-        IdentNode ident = new IdentNode("arr", 1);
-        ExpNode exp = new IntLiteralNode(0);
+        IdentNode ident = new IdentNode(new MockToken("arr", 1,0));
+        ExpNode exp = new IntLiteralNode(new MockToken("0",1,0));
 
         // When
         ArrayAccessNode arrayAccessNode = new ArrayAccessNode(ident, exp);
@@ -330,11 +328,11 @@ public class AstNodeTest {
     @Test
     public void givenAssignComponents__whenCreateAssignNode__thenAssignNodeIsCorrect() {
         // Given
-        LeftValueNode left = new IdentNode("x", 1);
-        ExpNode exp = new IntLiteralNode(42);
+        LeftValueNode left = new IdentNode(new MockToken("x", 1,0));
+        ExpNode exp = new IntLiteralNode(new MockToken("42", 1,0));
 
         // When
-        AssignNode assignNode = new AssignNode(left, exp);
+        AssignNode assignNode = new AssignNode(left,new MockToken("",1,0), exp);
 
         // Then
         assertThat(assignNode, is(notNullValue()));
@@ -346,10 +344,10 @@ public class AstNodeTest {
     @Test
     public void givenIncComponents__whenCreateIncNode__thenIncNodeIsCorrect() {
         // Given
-        IdentNode ident = new IdentNode("x", 1);
+        IdentNode ident = new IdentNode(new MockToken("x", 1,0));
 
         // When
-        IncNode incNode = new IncNode(ident);
+        IncNode incNode = new IncNode(ident,new MockToken("inc",1,0));
 
         // Then
         assertThat(incNode, is(notNullValue()));
@@ -360,8 +358,8 @@ public class AstNodeTest {
     @Test
     public void givenCallInstrComponents__whenCreateCallInstrNode__thenCallInstrNodeIsCorrect() {
         // Given
-        IdentNode ident = new IdentNode("foo", 1);
-        ListExpNode listExp = new ListExpNode(Arrays.asList(new IntLiteralNode(42)));
+        IdentNode ident = new IdentNode(new MockToken("foo", 1,0));
+        ListExpNode listExp = new ListExpNode(Arrays.asList(new IntLiteralNode(new MockToken("42", 1,0))));
 
         // When
         CallInstrNode callInstrNode = new CallInstrNode(ident, listExp);
@@ -376,10 +374,10 @@ public class AstNodeTest {
     @Test
     public void givenReturnComponents__whenCreateReturnNode__thenReturnNodeIsCorrect() {
         // Given
-        ExpNode exp = new IntLiteralNode(42);
+        ExpNode exp = new IntLiteralNode(new MockToken("42", 1,0));
 
         // When
-        ReturnNode returnNode = new ReturnNode(exp);
+        ReturnNode returnNode = new ReturnNode(new MockToken("return",1,0),exp);
 
         // Then
         assertThat(returnNode, is(notNullValue()));
@@ -390,11 +388,11 @@ public class AstNodeTest {
     @Test
     public void givenWriteComponents__whenCreateWriteNode__thenWriteNodeIsCorrect() {
         // Given
-        ExpNode exp = new IdentNode("x", 1);
+        ExpNode exp = new IdentNode(new MockToken("x", 1,0));
         boolean isLn = false;
 
         // When
-        WriteNode writeNode = new WriteNode(exp, isLn);
+        WriteNode writeNode = new WriteNode(new MockToken("write",1,0),exp, isLn);
 
         // Then
         assertThat(writeNode, is(notNullValue()));
@@ -406,12 +404,12 @@ public class AstNodeTest {
     @Test
     public void givenIfComponents__whenCreateIfNode__thenIfNodeIsCorrect() {
         // Given
-        ExpNode cond = new BoolLiteralNode(true);
+        ExpNode cond = new BoolLiteralNode(new MockToken("true",1,0));
         InstrsNode thenInstrs = new InstrsNode(new ArrayList<>());
         InstrsNode elseInstrs = new InstrsNode(new ArrayList<>());
 
         // When
-        IfNode ifNode = new IfNode(cond, thenInstrs, elseInstrs);
+        IfNode ifNode = new IfNode(new MockToken("if",1,0),cond, thenInstrs,new MockToken("else",1,0), elseInstrs);
 
         // Then
         assertThat(ifNode, is(notNullValue()));
@@ -424,11 +422,11 @@ public class AstNodeTest {
     @Test
     public void givenWhileComponents__whenCreateWhileNode__thenWhileNodeIsCorrect() {
         // Given
-        ExpNode cond = new BoolLiteralNode(true);
+        ExpNode cond = new BoolLiteralNode(new MockToken("true",1,0));
         InstrsNode instrs = new InstrsNode(new ArrayList<>());
 
         // When
-        WhileNode whileNode = new WhileNode(cond, instrs);
+        WhileNode whileNode = new WhileNode(new MockToken("while",1,0),cond, instrs);
 
         // Then
         assertThat(whileNode, is(notNullValue()));
@@ -440,10 +438,10 @@ public class AstNodeTest {
     @Test
     public void givenIntLiteralValue__whenCreateIntLiteralNode__thenIntLiteralNodeIsCorrect() {
         // Given
-        int value = 42;
+        String value = "42";
 
         // When
-        IntLiteralNode intLiteralNode = new IntLiteralNode(value);
+        IntLiteralNode intLiteralNode = new IntLiteralNode(new MockToken(value,1,0));
 
         // Then
         assertThat(intLiteralNode, is(notNullValue()));
@@ -454,10 +452,10 @@ public class AstNodeTest {
     @Test
     public void givenBoolLiteralValue__whenCreateBoolLiteralNode__thenBoolLiteralNodeIsCorrect() {
         // Given
-        boolean value = true;
+        String value = "true";
 
         // When
-        BoolLiteralNode boolLiteralNode = new BoolLiteralNode(value);
+        BoolLiteralNode boolLiteralNode = new BoolLiteralNode(new MockToken(value,1,0));
 
         // Then
         assertThat(boolLiteralNode, is(notNullValue()));
@@ -472,12 +470,11 @@ public class AstNodeTest {
         int line = 1;
 
         // When
-        IdentNode identNode = new IdentNode(name, line);
+        IdentNode identNode = new IdentNode(new MockToken(name,line,0));
 
         // Then
         assertThat(identNode, is(notNullValue()));
         assertThat(identNode.getName(), is("x"));
         assertThat(identNode.getLine(), is(1));
     }
-        */
 }
