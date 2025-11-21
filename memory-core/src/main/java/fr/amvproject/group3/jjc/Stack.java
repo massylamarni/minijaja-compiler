@@ -57,7 +57,7 @@ public class Stack extends StackManager {
   }
 
   public void declTab(IdentNode ident, int size, TypeNode type) {
-    int ref = heap.allocate(size, new TypeMemNode(type.getName()));
+    int ref = heap.allocate(size, typeMapper(type));
     this.push(new Quad(ident, ref, new ObjNode("tab"), type));
   }
 
@@ -80,7 +80,7 @@ public class Stack extends StackManager {
       Quad quad = queue.get(i);
       if (quad.getIdent().equals(ident)) {
         if (quad.getObj().isTab())
-          heap.remove((int) quad.getValue(), new TypeMemNode(quad.getType().getName()));
+          heap.remove((int) quad.getValue(), typeMapper(quad.getType()));
         queue.remove(i);
         return;
       }
@@ -123,9 +123,9 @@ public class Stack extends StackManager {
           queue.set(i, new Quad(ident, value, new ObjNode("cst"), quad.getType()));
           return;
         } else if (quad.getObj().isTab()) {
-          int ref = heap.allocate((int) value, new TypeMemNode(quad.getType().getName())); // AjouterRef(v, t)
+          int ref = heap.allocate((int) value, typeMapper(quad.getType())); // AjouterRef(v, t)
           queue.set(i, new Quad(ident, ref, new ObjNode("tab"), quad.getType()));
-          heap.remove((int) quad.getValue(), new TypeMemNode(quad.getType().getName())); // RetirerTas
+          heap.remove((int) quad.getValue(), typeMapper(quad.getType())); // RetirerTas
           return;
         } else if (quad.getObj().isCst()) {
           return;
@@ -170,6 +170,14 @@ public class Stack extends StackManager {
         return quad.getType();
     }
     return null;
+  }
+
+  /* Helper */
+  private TypeMemNode typeMapper(TypeNode node) {
+    if (node.isInt()) return new TypeMemNode("int");
+    if (node.isBoolean()) return new TypeMemNode("boolean");
+    if (node.isString()) return new TypeMemNode("string");
+    return new TypeMemNode("void");
   }
 
   /* Print stack */

@@ -28,7 +28,8 @@ public class ObjNode extends AstNode {
 
   private final ObjName obj;
 
-  public ObjNode(String name) {
+  public ObjNode(String name, int line, int column) {
+    super(line, column);
     this.obj = ObjName.fromString(name);
   }
 

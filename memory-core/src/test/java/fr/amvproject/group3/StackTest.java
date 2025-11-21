@@ -8,9 +8,11 @@ import fr.amvproject.group3.mjj.ast.nodes.abstracts.InstrsNode;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.ListExpNode;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.ParamsNode;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.VarsNode;
+import fr.amvproject.group3.mjj.ast.nodes.decls.MethodNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.ParamNode;
 import fr.amvproject.group3.mjj.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.TypeNode;
+import fr.amvproject.group3.mjj.utils.NodeOperations.MockToken;
 import fr.amvproject.group3.nodes.ObjNode;
 
 import org.junit.Ignore;
@@ -30,18 +32,23 @@ import static org.junit.Assert.assertTrue;
 
 public class StackTest {
 
-
-
     @Test
     public void givenStack__whenSorteOfLast__thenSameSizeQueueSameOrder() {
         // Given
+        MockToken identToken1 = new MockToken("Test", 1, 0);
+        MockToken identToken2 = new MockToken("x", 2, 0);
+        MockToken identToken3 = new MockToken("y", 3, 0);
+        MockToken identToken4 = new MockToken("Test", 2, 0);
+        MockToken typeMethToken1 = new MockToken("void", 0, 0);
+        MockToken typeMethToken2 = new MockToken("int", 0, 0);
+
         Stack stack = new Stack();
-        stack.push(new Quad(new IdentNode("Test",1), null, new ObjNode("var"), new TypeMethNode("void")));
-        stack.push(new Quad(new IdentNode("x",2), 2, new ObjNode("var"), new TypeMethNode("int")));
-        stack.push(new Quad(new IdentNode("y",3), 3, new ObjNode("var"), new TypeMethNode("int")));
+        stack.push(new Quad(new IdentNode(identToken1), null, new ObjNode("var"), new TypeMethNode(typeMethToken1)));
+        stack.push(new Quad(new IdentNode(identToken2), 2, new ObjNode("var"), new TypeMethNode(typeMethToken2)));
+        stack.push(new Quad(new IdentNode(identToken3), 3, new ObjNode("var"), new TypeMethNode(typeMethToken2)));
 
         // When
-        TypeMethNode res = (TypeMethNode) stack.sorte(new IdentNode("Test", 2));
+        TypeMethNode res = (TypeMethNode) stack.sorte(new IdentNode(identToken4));
         // Then
         assertTrue(res.isVoid());
         assertThat(stack.getQueue().size(), is(3));
@@ -54,12 +61,12 @@ public class StackTest {
     public void givenStack__whenValOfX__thenSameSizeQueueSameOrder() {
         // Given
         Stack stack = new Stack();
-        stack.push(new Quad(new IdentNode("Test",1), null, new ObjNode("var"), new TypeMethNode("void")));
-        stack.push(new Quad(new IdentNode("x",2), 2, new ObjNode("var"), new TypeMethNode("int")));
-        stack.push(new Quad(new IdentNode("y",3), 3, new ObjNode("var"), new TypeMethNode("int")));
+        stack.push(new Quad(new IdentNode(new MockToken("Test",1,0)), null, new ObjNode("var"), new TypeMethNode(new MockToken("void",1,0))));
+        stack.push(new Quad(new IdentNode(new MockToken("x",2,0)), 2, new ObjNode("var"), new TypeMethNode(new MockToken("int",1,0))));
+        stack.push(new Quad(new IdentNode(new MockToken("y",3,0)), 3, new ObjNode("var"), new TypeMethNode(new MockToken("int",1,0))));
 
         // When
-        Object res = stack.val(new IdentNode("x", 2));
+        Object res = stack.val(new IdentNode(new MockToken("x", 2,0)));
         // Then
         assertThat(res instanceof Integer, is(true));
         assertThat(stack.getQueue().size(), is(3));
@@ -72,13 +79,13 @@ public class StackTest {
     public void givenStack__whenMultipleSort__thenSameSizeQueueSameOrder() {
         // Given
         Stack stack = new Stack();
-        stack.push(new Quad(new IdentNode("Test",1), null, new ObjNode("var"), new TypeMethNode("void")));
-        stack.push(new Quad(new IdentNode("x",2), 2, new ObjNode("var"), new TypeMethNode("int")));
-        stack.push(new Quad(new IdentNode("y",3), 3, new ObjNode("var"), new TypeMethNode("int")));
+        stack.push(new Quad(new IdentNode(new MockToken("Test",1,0)), null, new ObjNode("var"),  new TypeMethNode(new MockToken("void",1,0))));
+        stack.push(new Quad(new IdentNode(new MockToken("x",2,0)), 2, new ObjNode("var"), new TypeMethNode(new MockToken("int",1,0))));
+        stack.push(new Quad(new IdentNode(new MockToken("y",3,0)), 3, new ObjNode("var"), new TypeMethNode(new MockToken("int",1,0))));
 
         // When
-        TypeMethNode resX = (TypeMethNode) stack.sorte(new IdentNode("x", 2));
-        TypeMethNode resY = (TypeMethNode) stack.sorte(new IdentNode("y", 3));
+        TypeMethNode resX = (TypeMethNode) stack.sorte(new IdentNode(new MockToken("x",2,0)));
+        TypeMethNode resY = (TypeMethNode) stack.sorte(new IdentNode(new MockToken("y",3,0)));
         // Then
 
         assertTrue(resX.isInt());
@@ -94,10 +101,10 @@ public class StackTest {
     public void givenStack__whenDeclVar__thenVarIsDeclOnTop() {
         // Given
         Stack stack = new Stack();
-        stack.push(new Quad(new IdentNode("Test",1), null, new ObjNode("var"), new TypeMethNode("void")));
-        IdentNode ident = new IdentNode("z", 4);
+        stack.push(new Quad(new IdentNode(new MockToken("Test",1,0)), null, new ObjNode("var"),  new TypeMethNode(new MockToken("void",1,0))));
+        IdentNode ident = new IdentNode(new MockToken("z", 4,0));
         // When
-        stack.declVar(ident, 4, new TypeMethNode("int"));
+        stack.declVar(ident, 4, new TypeMethNode(new MockToken("int",1,0)));
         // Then
         assertThat( stack.getQueue().size(),is(2));
         assertThat(stack.peek().getIdent().getName(),is("z"));
@@ -109,10 +116,10 @@ public class StackTest {
     public void givenStack__whenDeclCst__thenVarIsDeclOnTop() {
         // Given
         Stack stack = new Stack();
-        stack.push(new Quad(new IdentNode("Test",1), null, new ObjNode("var"), new TypeMethNode("void")));
-        IdentNode ident = new IdentNode("T", 5);
+        stack.push(new Quad(new IdentNode(new MockToken("Test",1,0)), null, new ObjNode("var"),  new TypeMethNode(new MockToken("void",1,0))));
+        IdentNode ident = new IdentNode(new MockToken("T", 5,0));
         // When
-        stack.declCst(ident, 4, new TypeNode("int"));
+        stack.declCst(ident, 4, new TypeNode(new MockToken("int",1,0)));
         // Then
         assertThat( stack.getQueue().size(),is(2));
         assertThat(stack.peek().getIdent().getName(),is("T"));
@@ -123,11 +130,11 @@ public class StackTest {
     public void givenStack__whenDeclTab__thenTabIsDeclOnTop() {
         // Given
         Stack stack = new Stack();
-        stack.push(new Quad(new IdentNode("Test",1), null, new ObjNode("var"), new TypeMethNode("void")));
+        stack.push(new Quad(new IdentNode(new MockToken("Test",1,0)), null, new ObjNode("var"),  new TypeMethNode(new MockToken("void",1,0))));
 
-        IdentNode ident = new IdentNode("arr", 18);
+        IdentNode ident = new IdentNode(new MockToken("arr", 18,0));
         // When
-        stack.declTab(ident, 5, new TypeMethNode("int"));
+        stack.declTab(ident, 5, new TypeMethNode(new MockToken("int",1,0)));
         // Then
         assertThat( stack.getQueue().size(),is(2));
         assertThat(stack.peek().getIdent().getName(),is("arr"));
@@ -141,9 +148,9 @@ public class StackTest {
     public void givenStack__whenAffecterVal__thenValueIsUpdated() {
         // Given
         Stack stack = new Stack();
-        IdentNode ident = new IdentNode("x", 2);
-        stack.push(new Quad(new IdentNode("x",2), 2, new ObjNode("var"), new TypeMethNode("int")));
-        stack.push(new Quad(new IdentNode("x",2), 3, new ObjNode("var"), new TypeMethNode("int")));
+        IdentNode ident = new IdentNode(new MockToken("x",2,0));
+        stack.push(new Quad(new IdentNode(new MockToken("x",2,0)), 2, new ObjNode("var"), new TypeMethNode(new MockToken("int",1,0))));
+        stack.push(new Quad(new IdentNode(new MockToken("x",2,0)), 3, new ObjNode("var"), new TypeMethNode(new MockToken("int",1,0))));
 
         // When
         stack.affecterVal(ident, 5);
@@ -155,8 +162,8 @@ public class StackTest {
     public void givenStack__whenValT__thenArrayValueIsReturned() {
         // Given
         Stack stack = new Stack();
-        IdentNode ident = new IdentNode("arr", 6);
-        stack.declTab(ident, 5, new TypeMethNode("int"));
+        IdentNode ident = new IdentNode(new MockToken("arr", 6,0));
+        stack.declTab(ident, 5, new TypeMethNode(new MockToken("int",1,0)));
         stack.affecterValT(ident, 2, 10);
         // When
         Object val = stack.valT(ident, 2);
@@ -168,8 +175,8 @@ public class StackTest {
     public void givenStack__whenAffecterValT__thenArrayValueIsUpdated() {
         // Given
         Stack stack = new Stack();
-        IdentNode ident = new IdentNode("arr", 6);
-        stack.declTab(ident, 5, new TypeMethNode("int"));
+        IdentNode ident = new IdentNode(new MockToken("arr", 6,0));
+        stack.declTab(ident, 5, new TypeMethNode(new MockToken("int",1,0)));
         // When
         stack.affecterValT(ident, 2, 10);
         assertThat(stack.valT(ident,2),is(10));
@@ -180,8 +187,8 @@ public class StackTest {
     public void givenStack__whenLongT__thenArrayLengthIsReturned() {
         // Given
         Stack stack = new Stack();
-        IdentNode ident = new IdentNode("arr", 6);
-        stack.declTab(ident, 5, new TypeMethNode("int"));
+        IdentNode ident = new IdentNode(new MockToken("arr", 6,0));
+        stack.declTab(ident, 5, new TypeMethNode(new MockToken("int",1,0)));
         // When
         Integer length = stack.longT(ident);
         // Then
@@ -192,8 +199,8 @@ public class StackTest {
     public void givenStack__whenRetirerDecl__thenDeclarationIsRemoved() {
         // Given
         Stack stack = new Stack();
-        IdentNode ident = new IdentNode("x", 2);
-        stack.declVar(ident, 2, new TypeMethNode("int"));
+        IdentNode ident = new IdentNode(new MockToken("x",2,0));
+        stack.declVar(ident, 2, new TypeMethNode(new MockToken("int",1,0)));
         // When
         stack.retirerDecl(ident);
         // Then
@@ -204,8 +211,8 @@ public class StackTest {
     public void givenStack__whenSwap__thenTopTwoElementsAreSwapped() {
         // Given
         Stack stack = new Stack();
-        stack.push(new Quad(new IdentNode("x", 2), 2, new ObjNode("var"), new TypeMethNode("int")));
-        stack.push(new Quad(new IdentNode("y", 3), 3, new ObjNode("var"), new TypeMethNode("int")));
+        stack.push(new Quad(new IdentNode(new MockToken("x",2,0)), 2, new ObjNode("var"), new TypeMethNode(new MockToken("int",1,0))));
+        stack.push(new Quad(new IdentNode(new MockToken("y",3,0)), 3, new ObjNode("var"), new TypeMethNode(new MockToken("int",1,0))));
         // When
         stack.swap();
         // Then
@@ -221,15 +228,15 @@ public class StackTest {
     public void givenStack__whenDeclMeth__thenMethIsOnTop() {
         // Given
         Stack stack = new Stack();
-        IdentNode identMeth = new IdentNode("maMethode", 1);
-        TypeMethNode returnType = new TypeMethNode("int");
+        IdentNode identMeth = new IdentNode(new MockToken("maMethode", 1,0));
+        TypeMethNode returnType = new TypeMethNode(new MockToken("int",1,0));
 
         List<ParamNode> paramList = new ArrayList<>();
-        paramList.add(new ParamNode(new TypeNode("int"),new IdentNode("param1", 2)));
-        paramList.add(new ParamNode( new TypeNode("boolean"),new IdentNode("param2", 3)));
+        paramList.add(new ParamNode(new TypeNode(new MockToken("int",1,0)),new IdentNode(new MockToken("param1", 2,0))));
+        paramList.add(new ParamNode( new TypeNode(new MockToken("boolean",1,0)),new IdentNode(new MockToken("param2", 3,0))));
         ParamsNode params = new ParamsNode(paramList);
         // When
-        stack.declMeth(identMeth, params, returnType);
+        stack.declMeth(new MethodNode(returnType, identMeth, params, null, null));
         // Then
         assertThat(stack.getQueue().size(),is(1));
         assertThat(stack.peek().getIdent().getName(),is("maMethode"));
@@ -241,10 +248,10 @@ public class StackTest {
     public void givenStack__whenIdentVal__thenValueIsReplacedAtDepth() {
         // Given
         Stack stack = new Stack();
-        stack.declVar(new IdentNode("x", 2), 2, new TypeMethNode("int"));
-        stack.declVar(new IdentNode("y", 3), 3, new TypeMethNode("int"));
+        stack.declVar(new IdentNode(new MockToken("x",2,0)), 2, new TypeMethNode(new MockToken("int",1,0)));
+        stack.declVar(new IdentNode(new MockToken("y",3,0)), 3, new TypeMethNode(new MockToken("int",1,0)));
         // When
-        stack.identVal(new IdentNode("x", 2), new TypeMethNode("int"), 1, 1);
+        stack.identVal(new IdentNode(new MockToken("x",2,0)), new TypeMethNode(new MockToken("int",1,0)), 1, 1);
         // Then
         assertThat(stack.getQueue().size(), is(2));
         assertThat(stack.pop().getIdent().getName(), is("y"));
@@ -257,9 +264,9 @@ public class StackTest {
     public void givenStack__whenAffecterType__thenTypeIsUpdated() {
         Stack stack = new Stack();
         // Given
-        stack.declVar(new IdentNode("x", 2), 2, new TypeMethNode("int"));
+        stack.declVar(new IdentNode(new MockToken("x",2,0)), 2, new TypeMethNode(new MockToken("int",1,0)));
         // When
-        stack.affecterType(new IdentNode("x", 2), new TypeMethNode("boolean"));
+        stack.affecterType(new IdentNode(new MockToken("x",2,0)), new TypeMethNode(new MockToken("boolean",1,0)));
         // Then
         assertTrue(((TypeMethNode) stack.peek().getType()).isBoolean());
     }
@@ -270,8 +277,8 @@ public class StackTest {
         Stack stack = new Stack();
 
         List<ParamNode> paramList = new ArrayList<>();
-        paramList.add(new ParamNode(new TypeNode("int"), new IdentNode("param1", 2)));
-        paramList.add(new ParamNode(new TypeNode("boolean"), new IdentNode("param2", 3)));
+        paramList.add(new ParamNode(new TypeNode(new MockToken("int",1,0)), new IdentNode(new MockToken("param1", 2,0))));
+        paramList.add(new ParamNode(new TypeNode(new MockToken("boolean",1,0)), new IdentNode(new MockToken("param2", 3,0))));
         ParamsNode params = new ParamsNode(paramList);
 
         List<ExpNode> expList = new ArrayList<>();
@@ -291,9 +298,9 @@ public class StackTest {
     public void givenStack__whenObjet__thenObjTypeIsReturned() {
         // Given
         Stack stack = new Stack();
-        stack.declVar(new IdentNode("x", 2), 2, new TypeMethNode("int"));
+        stack.declVar(new IdentNode(new MockToken("x",2,0)), 2, new TypeMethNode(new MockToken("int",1,0)));
         // When
-        ObjNode obj = stack.objet(new IdentNode("x", 2));
+        ObjNode obj = stack.objet(new IdentNode(new MockToken("x",2,0)));
         // Then
         assertTrue(obj.isVar());
     }
@@ -302,14 +309,14 @@ public class StackTest {
     public void givenStack__whenParametre__thenParamsAreReturned() {
         // Given
         Stack stack = new Stack();
-        IdentNode identMeth = new IdentNode("maMethode", 1);
-        TypeMethNode returnType = new TypeMethNode("int");
+        IdentNode identMeth = new IdentNode(new MockToken("maMethode", 1,0));
+        TypeMethNode returnType = new TypeMethNode(new MockToken("int",1,0));
 
         List<ParamNode> paramList = new ArrayList<>();
-        paramList.add(new ParamNode(new TypeNode("int"),new IdentNode("param1", 2)));
-        paramList.add(new ParamNode( new TypeNode("boolean"),new IdentNode("param2", 3)));
+        paramList.add(new ParamNode(new TypeNode(new MockToken("int",1,0)),new IdentNode(new MockToken("param1", 2,0))));
+        paramList.add(new ParamNode( new TypeNode(new MockToken("boolean",1,0)),new IdentNode(new MockToken("param2", 3,0))));
         ParamsNode params = new ParamsNode(paramList);
-        stack.declMeth(identMeth, params, returnType);
+        stack.declMeth(new MethodNode(returnType, identMeth, params, null, null));
         // When
         ParamsNode resultParams = stack.parametre(identMeth);
         // Then
@@ -320,14 +327,14 @@ public class StackTest {
     public void givenStack__whenDeclaration__thenVarsAreReturned() {
         // Given
         Stack stack = new Stack();
-        IdentNode identMeth = new IdentNode("maMethode", 1);
-        TypeMethNode returnType = new TypeMethNode("int");
+        IdentNode identMeth = new IdentNode(new MockToken("maMethode", 1,0));
+        TypeMethNode returnType = new TypeMethNode(new MockToken("int",1,0));
 
         List<ParamNode> paramList = new ArrayList<>();
-        paramList.add(new ParamNode(new TypeNode("int"),new IdentNode("param1", 2)));
-        paramList.add(new ParamNode( new TypeNode("boolean"),new IdentNode("param2", 3)));
+        paramList.add(new ParamNode(new TypeNode(new MockToken("int",1,0)),new IdentNode(new MockToken("param1", 2,0))));
+        paramList.add(new ParamNode( new TypeNode(new MockToken("boolean",1,0)),new IdentNode(new MockToken("param2", 3,0))));
         ParamsNode params = new ParamsNode(paramList);
-        stack.declMeth(identMeth, params, returnType);
+        stack.declMeth(new MethodNode(returnType, identMeth, params, null, null));
         // When
         VarsNode resultVars = stack.declaration(identMeth);
         // Then
@@ -338,15 +345,15 @@ public class StackTest {
     public void givenStack__whenCorps__thenInstrsAreReturned() {
         // Given
         Stack stack = new Stack();
-        IdentNode identMeth = new IdentNode("maMethode", 1);
-        TypeMethNode returnType = new TypeMethNode("int");
+        IdentNode identMeth = new IdentNode(new MockToken("maMethode", 1,0));
+        TypeMethNode returnType = new TypeMethNode(new MockToken("int",1,0));
 
         List<ParamNode> paramList = new ArrayList<>();
-        paramList.add(new ParamNode(new TypeNode("int"),new IdentNode("param1", 2)));
-        paramList.add(new ParamNode( new TypeNode("boolean"),new IdentNode("param2", 3)));
+        paramList.add(new ParamNode(new TypeNode(new MockToken("int",1,0)),new IdentNode(new MockToken("param1", 2,0))));
+        paramList.add(new ParamNode( new TypeNode(new MockToken("boolean",1,0)),new IdentNode(new MockToken("param2", 3,0))));
         ParamsNode params = new ParamsNode(paramList);
 
-        stack.declMeth(identMeth, params, returnType);
+        stack.declMeth(new MethodNode(returnType, identMeth, params, null, null));
         // When
         InstrsNode resultInstrs = stack.corps(identMeth);
         // Then

@@ -5,6 +5,10 @@ import fr.amvproject.group3.mjj.ast.AstVisitor;
 
 // Null vexp
 public class Omega extends AstNode {
+  public Omega(int line, int column) {
+    super(line, column);
+  }
+
   @Override
   public boolean sameAs(AstNode other) {
       return other instanceof Omega;

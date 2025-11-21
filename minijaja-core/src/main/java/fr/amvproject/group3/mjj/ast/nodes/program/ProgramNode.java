@@ -5,11 +5,19 @@ import fr.amvproject.group3.mjj.ast.AstVisitor;
 
 import java.util.List;
 
+import org.antlr.v4.runtime.Token;
+
 public class ProgramNode extends AstNode {
     private final List<ClassNode> list;
+    private final Token eofToken;
 
-    public ProgramNode(List<ClassNode> list) {
+    public ProgramNode(List<ClassNode> list, Token eofToken) {
         this.list = list;
+        this.eofToken = eofToken;
+    }
+
+    public Token getEofToken() {
+      return eofToken;
     }
 
     public List<ClassNode> getClasses() {

@@ -1,5 +1,7 @@
 package fr.amvproject.group3.mjj.ast.nodes.other;
 
+import org.antlr.v4.runtime.Token;
+
 import fr.amvproject.group3.mjj.ast.AstNode;
 import fr.amvproject.group3.mjj.ast.AstVisitor;
 
@@ -26,9 +28,23 @@ public class TypeMethNode extends AstNode {
   }
 
   private final TypeMethName typeMeth;
+  private final Token typeMethToken;
 
-  public TypeMethNode(String name) {
-    this.typeMeth = TypeMethName.fromString(name);
+  public TypeMethNode(Token typeMethToken) {
+    super(typeMethToken.getLine(), typeMethToken.getCharPositionInLine());
+    this.typeMethToken = typeMethToken;
+    this.typeMeth = TypeMethName.fromString(typeMethToken.getText());
+  }
+
+  // Helper
+  public TypeMethNode(String typeMeth, int line, int column) {
+    super(line, column);
+    this.typeMethToken = null;
+    this.typeMeth = TypeMethName.fromString(typeMeth);
+  }
+
+  public Token getTypeMethToken() {
+    return typeMethToken;
   }
 
   public String getName() {

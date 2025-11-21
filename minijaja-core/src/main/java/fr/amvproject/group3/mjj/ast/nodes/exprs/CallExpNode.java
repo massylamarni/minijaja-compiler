@@ -11,6 +11,7 @@ public class CallExpNode extends ExpNode {
     private final ListExpNode listExpNode;
 
     public CallExpNode(IdentNode identNode, ListExpNode listExpNode) {
+        super(identNode.getLine(), identNode.getColumn());
         this.identNode = identNode;
         this.listExpNode = listExpNode;
     }
