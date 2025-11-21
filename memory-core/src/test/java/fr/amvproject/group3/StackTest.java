@@ -334,7 +334,7 @@ public class StackTest {
         paramList.add(new ParamNode(new TypeNode(new MockToken("int",1,0)),new IdentNode(new MockToken("param1", 2,0))));
         paramList.add(new ParamNode( new TypeNode(new MockToken("boolean",1,0)),new IdentNode(new MockToken("param2", 3,0))));
         ParamsNode params = new ParamsNode(paramList);
-        stack.declMeth(new MethodNode(returnType, identMeth, params, null, null));
+        stack.declMeth(new MethodNode(returnType, identMeth, params, new VarsNode(null), null));
         // When
         VarsNode resultVars = stack.declaration(identMeth);
         // Then
@@ -353,7 +353,7 @@ public class StackTest {
         paramList.add(new ParamNode( new TypeNode(new MockToken("boolean",1,0)),new IdentNode(new MockToken("param2", 3,0))));
         ParamsNode params = new ParamsNode(paramList);
 
-        stack.declMeth(new MethodNode(returnType, identMeth, params, null, null));
+        stack.declMeth(new MethodNode(returnType, identMeth, params, null, new InstrsNode(null)));
         // When
         InstrsNode resultInstrs = stack.corps(identMeth);
         // Then
