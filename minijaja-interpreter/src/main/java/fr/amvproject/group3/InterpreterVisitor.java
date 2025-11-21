@@ -52,6 +52,9 @@ import fr.amvproject.group3.mjj.utils.NodeOperations;
  */
 @SuppressWarnings("java:S6539") // Visitor pattern: large by design
 public class InterpreterVisitor implements AstVisitor<Object> {
+    private static final int LOOP_LIMIT = 1000000;
+    private static final int RECURSION_LIMIT = 10000;
+    private int recursionCount = 0;
     private final Stack stack = new Stack();
     private ExecutionContext ctx = new ExecutionContext(stack); // final
 
@@ -201,6 +204,8 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitCallExp(CallExpNode node) {
+        if (recursionCount++ > RECURSION_LIMIT) throw new RuntimeException("Infinite recursion detected !"); // TODO Replace by custom runtime exception
+
         ParamsNode paramsNode = stack.parametre(node.getIdent());
         List<ParamNode> listParamNodes = paramsNode.getList();
         List<ExpNode> listExpNodes = (node.getListExp() != null) ? node.getListExp().getList() : new ArrayList<>();
@@ -362,9 +367,12 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitWhile(WhileNode node) {
+        int loopCount = 0;
         boolean condValue = (boolean) evalExp(node.getCondExp());
         while (condValue) { // Règle [tantquevrai]
+            if (loopCount++ > LOOP_LIMIT) throw new RuntimeException("Infinite loop detected !"); // TODO Replace by custom runtime exception
             node.getInstrs().accept(this);
+            condValue = (boolean) evalExp(node.getCondExp());
         }
         return null; // Règle [tantquefaux] : retourne m inchangé
     }

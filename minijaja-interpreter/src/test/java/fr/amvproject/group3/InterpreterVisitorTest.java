@@ -7,6 +7,7 @@ import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -225,7 +226,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Test
+    @Ignore("This check is made at compilation, it is unnecessary here")
     public void givenSimpleSuperiorComparaisonBool__whenInterpret__thenExceptionThrow() throws Exception {
         // Given
         String code = """
@@ -1147,3 +1148,5 @@ public class InterpreterVisitorTest {
     }
 
 }
+
+// TODO add zero division, index out of bounds, infinite loop and infinite recursion tests

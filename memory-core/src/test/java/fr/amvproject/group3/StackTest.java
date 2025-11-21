@@ -8,6 +8,7 @@ import fr.amvproject.group3.mjj.ast.nodes.abstracts.InstrsNode;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.ListExpNode;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.ParamsNode;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.VarsNode;
+import fr.amvproject.group3.mjj.ast.nodes.decls.MethodNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.ParamNode;
 import fr.amvproject.group3.mjj.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.TypeNode;
@@ -235,7 +236,7 @@ public class StackTest {
         paramList.add(new ParamNode( new TypeNode(new MockToken("boolean",1,0)),new IdentNode(new MockToken("param2", 3,0))));
         ParamsNode params = new ParamsNode(paramList);
         // When
-        stack.declMeth(identMeth, params, returnType);
+        stack.declMeth(new MethodNode(returnType, identMeth, params, null, null));
         // Then
         assertThat(stack.getQueue().size(),is(1));
         assertThat(stack.peek().getIdent().getName(),is("maMethode"));
@@ -315,7 +316,7 @@ public class StackTest {
         paramList.add(new ParamNode(new TypeNode(new MockToken("int",1,0)),new IdentNode(new MockToken("param1", 2,0))));
         paramList.add(new ParamNode( new TypeNode(new MockToken("boolean",1,0)),new IdentNode(new MockToken("param2", 3,0))));
         ParamsNode params = new ParamsNode(paramList);
-        stack.declMeth(identMeth, params, returnType);
+        stack.declMeth(new MethodNode(returnType, identMeth, params, null, null));
         // When
         ParamsNode resultParams = stack.parametre(identMeth);
         // Then
@@ -333,7 +334,7 @@ public class StackTest {
         paramList.add(new ParamNode(new TypeNode(new MockToken("int",1,0)),new IdentNode(new MockToken("param1", 2,0))));
         paramList.add(new ParamNode( new TypeNode(new MockToken("boolean",1,0)),new IdentNode(new MockToken("param2", 3,0))));
         ParamsNode params = new ParamsNode(paramList);
-        stack.declMeth(identMeth, params, returnType);
+        stack.declMeth(new MethodNode(returnType, identMeth, params, null, null));
         // When
         VarsNode resultVars = stack.declaration(identMeth);
         // Then
@@ -352,7 +353,7 @@ public class StackTest {
         paramList.add(new ParamNode( new TypeNode(new MockToken("boolean",1,0)),new IdentNode(new MockToken("param2", 3,0))));
         ParamsNode params = new ParamsNode(paramList);
 
-        stack.declMeth(identMeth, params, returnType);
+        stack.declMeth(new MethodNode(returnType, identMeth, params, null, null));
         // When
         InstrsNode resultInstrs = stack.corps(identMeth);
         // Then
