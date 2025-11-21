@@ -1,6 +1,5 @@
 package fr.amvproject.group3.mjj;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -55,6 +54,11 @@ public class Stack extends StackManager {
     return queue.get(queue.size() - 1);
   }
 
+  public Quad peekTail() {
+    if (queue.isEmpty()) return null;
+    return queue.get(0);
+  }
+
   // --- Variable / Constant / Array / Method Declarations ---
 
   public void declVar(IdentNode ident, Object value, TypeMethNode type) {
@@ -69,10 +73,10 @@ public class Stack extends StackManager {
   public void declTab(IdentNode ident, int size, TypeMethNode type) {
     int ref = heap.allocate(size, new TypeMemNode(type.getName()));
     this.push(new Quad(ident, ref, new ObjNode("tab"), type));
-  } //tab[3]  T1 T2
+  }
 
-    public void declMeth(IdentNode ident, MethodNode methodNode, TypeMethNode returnType) {
-        this.push(new Quad(ident, methodNode, new ObjNode("meth"), returnType));
+    public void declMeth(MethodNode methodNode) {
+        this.push(new Quad(methodNode.getIdent(), methodNode, new ObjNode("meth"), methodNode.getReturnType()));
     }
 
   // --- Access / Assignment ---
@@ -89,10 +93,10 @@ public class Stack extends StackManager {
   }
 
   // Remove Declaration from Stack
-  public void retirerDecl(IdentNode ident) {
+  public void retirerDecl(IdentNode ident) throws IndexOutOfBoundsException {
     for (int i = queue.size() - 1; i >= 0; i--) {
       Quad quad = queue.get(i);
-      if (quad.getIdent().equals(ident)) { // Pourquoi tu nutilises pas sameAs ici Mr Massyl?
+      if (quad.getIdent().sameAs(ident)) {
         if (quad.getObj().isTab())
           heap.remove((int) quad.getValue(), new TypeMemNode(((TypeMethNode) quad.getType()).getName()));
         queue.remove(i);
@@ -104,25 +108,25 @@ public class Stack extends StackManager {
   // Return value of identifier
   public Object val(IdentNode ident) {
     for (Quad quad : queue) {
-      if (quad.getIdent().equals(ident))
+      if (quad.getIdent().sameAs(ident))
         return quad.getValue();
     }
     return null;
   }
 
   // Return value of identifier (array)
-  public Object valT(IdentNode ident, int index) {
+  public Object valT(IdentNode ident, int index) throws IndexOutOfBoundsException {
     for (Quad quad : queue) {
-      if (quad.getIdent().equals(ident))
+      if (quad.getIdent().sameAs(ident))
         return heap.get((int) quad.getValue() + index);
     }
     return null;
   }
 
   // Return length of array, long is reserved word
-  public Integer longT(IdentNode ident) {
+  public Integer longT(IdentNode ident) throws IndexOutOfBoundsException {
     for (Quad quad : queue) {
-      if (quad.getIdent().equals(ident))
+      if (quad.getIdent().sameAs(ident))
         return (int) heap.get((int) quad.getValue() - 1);
     }
     return null;
@@ -132,7 +136,7 @@ public class Stack extends StackManager {
   public void affecterVal(IdentNode ident, Object value) {
     for (int i = queue.size() - 1; i >= 0; i--) {
       Quad quad = queue.get(i);
-      if (quad.getIdent().equals(ident)) {
+      if (quad.getIdent().sameAs(ident)) {
         if (quad.getObj().isVcst()) {
           queue.set(i, new Quad(ident, value, new ObjNode("cst"), quad.getType()));
           return;
@@ -152,9 +156,9 @@ public class Stack extends StackManager {
   }
 
   // Assigns a new value to an array at a specific index
-  public void affecterValT(IdentNode ident, int index, Object value) {
+  public void affecterValT(IdentNode ident, int index, Object value) throws IndexOutOfBoundsException {
     for (Quad quad : queue) {
-      if (quad.getIdent().equals(ident))
+      if (quad.getIdent().sameAs(ident))
         heap.set((int) quad.getValue() + index, value);
     }
   }
@@ -163,7 +167,7 @@ public class Stack extends StackManager {
   public void affecterType(IdentNode ident, TypeMethNode type) {
     for (int i = queue.size() - 1; i >= 0; i--) {
       Quad quad = queue.get(i);
-      if (quad.getIdent().equals(ident)) {
+      if (quad.getIdent().sameAs(ident)) {
         queue.set(i, new Quad(ident, quad.getValue(), quad.getObj(), type));
       }
     }
@@ -185,7 +189,7 @@ public class Stack extends StackManager {
   // Return object type of identifier
   public ObjNode objet(IdentNode ident) {
     for (Quad quad : queue) {
-      if (quad.getIdent().equals(ident))
+      if (quad.getIdent().sameAs(ident))
         return quad.getObj();
     }
     return null;
@@ -194,7 +198,7 @@ public class Stack extends StackManager {
   // Return type of identifier
   public Object sorte(IdentNode ident) {
     for (Quad quad : queue) {
-      if (quad.getIdent().equals(ident))
+      if (quad.getIdent().sameAs(ident))
         return quad.getType();
     }
     return null;
@@ -203,7 +207,7 @@ public class Stack extends StackManager {
   // Return params of method
   public ParamsNode parametre(IdentNode ident) {
     for (Quad quad : queue) {
-      if (quad.getIdent().equals(ident) &&
+      if (quad.getIdent().sameAs(ident) &&
           quad.getObj().isMeth() &&
           (quad.getValue() instanceof MethodNode methodNode) &&
           methodNode.getIdent().sameAs(ident) &&
@@ -217,7 +221,7 @@ public class Stack extends StackManager {
   // Return declarations of method
   public VarsNode declaration(IdentNode ident) {
     for (Quad quad : queue) {
-      if (quad.getIdent().equals(ident) &&
+      if (quad.getIdent().sameAs(ident) &&
           quad.getObj().isMeth() &&
           (quad.getValue() instanceof MethodNode methodNode) &&
           methodNode.getIdent().sameAs(ident) &&
@@ -231,7 +235,7 @@ public class Stack extends StackManager {
   // Return instructions of method
   public InstrsNode corps(IdentNode ident) {
     for (Quad quad : queue) {
-      if (quad.getIdent().equals(ident) &&
+      if (quad.getIdent().sameAs(ident) &&
           quad.getObj().isMeth() &&
           (quad.getValue() instanceof MethodNode methodNode) &&
           methodNode.getIdent().sameAs(ident) &&
@@ -262,15 +266,4 @@ public class Stack extends StackManager {
     StringSaver.save(sb.toString(), "stackDump.txt", "main");
     return sb.toString();
   }
-
-    /**
-     * Retourne l'identifiant de la variable classe pour stocker les retours
-     *
-     */
-    public IdentNode variableClasse() {
-        if (queue.isEmpty()) {
-            return null;
-        }
-        return queue.get(0).getIdent();
-    }
 }

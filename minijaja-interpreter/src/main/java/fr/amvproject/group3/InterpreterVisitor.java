@@ -44,6 +44,7 @@ import fr.amvproject.group3.mjj.ast.nodes.other.UnaryOpNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
 import fr.amvproject.group3.mjj.utils.NodeOperations;
+// TODO infinite recursions
 
 /**
  * Interpréteur respectant les règles sémantiques du cours MiniJaja
@@ -78,33 +79,24 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      * DeclVar(i, w, w, []) ⊢ dss → m1
      * m1 ⊢ mma → m2
      * m2 retrait⊢ dss → m3
+     * ---
      * [] ⊢ classe(ident(i), dss, mma) → RetirerDecl(ident(i), m3)
      */
     @Override
     public Object visitClass(ClassNode node) {
-        // 1. DeclVar(i, w, w, []) - Déclarer une variable pour la classe (omega)
         stack.declVar(node.getIdent(), null, new TypeMethNode("void", node.getLine(), node.getColumn()));
-
-        // 2. m1 ⊢ dss → m2 - Traiter les déclarations
         node.getDecls().accept(this);
-
-        // 3. m2 ⊢ mma → m3 - Exécuter le main
         node.getMain().accept(this);
 
-        // 4. m3 retrait⊢ dss → m4 - Retrait des déclarations
         retraitDecls(node.getDecls());
-
-        // 5. RetirerDecl(ident(i), m4) - Retirer la variable de classe
         stack.retirerDecl(node.getIdent());
-
         return null;
     }
-
-    // ========== DECLARATIONS ==========
 
     /**
      * Règle [decls] (page 38) :
      * m ⊢ ds → m1, m1 ⊢ dss → m2
+     * ---
      * m ⊢ decls(ds, dss) → m2
      */
     @Override
@@ -115,14 +107,10 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         return null;
     }
 
-    public Object visitDecl(DeclNode node) {
-        // Dispatch vers le bon type de déclaration
-        return null;
-    }
-
     /**
      * Règle [vars] (page 38) :
      * m ⊢ dv → m1, m1 ⊢ dvs → m2
+     * ---
      * m ⊢ vars(dv, dvs) → m2
      */
     @Override
@@ -134,186 +122,136 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     }
 
     /**
-     * Règles du cours (page 38-39) :
-     * [var] : m eval⊢ e ⇒ v, m ⊢ var(t, ident(i), e) → DeclVar(i, v, t, m)
-     * [cst] : m eval⊢ e ⇒ v, m ⊢ cst(t, ident(i), e) → DeclCst(i, v, t, m)
-     * [tableau] : m eval⊢ e ⇒ v, m ⊢ tableau(t, ident(i), e) → DeclTab(i, v, t, m)
+     * Règle [var] (page 39) :
+     * m eval⊢ e ⇒ v
+     * ---
+     * m ⊢ var(t, ident(i), e) → DeclVar(i, v, t, m)
      */
-    public Object visitVarDecl(VarDeclNode node) {
-        // Application de la règle selon le type
-        if (node instanceof VarNode varNode) {
-            // DeclVar(i, v, t, m)
-            visitVar(varNode);
-        } else if (node instanceof CstNode cstNode) {
-            // DeclCst(i, v, t, m)
-            // Note : la distinction vcst/cst est gérée dans Stack
-            visitCst(cstNode);
-        } else if (node instanceof TableNode tableNode) {
-            visitTable(tableNode);
-        }
-        return null;
-    }
-
     @Override
     public Object visitVar(VarNode node) {
         stack.declVar(node.getIdent(), evalExp(node.getInitExp()), node.getType());
         return null;
-
     }
 
+    /**
+     * Règle [tab] (page ?) :
+     * m eval⊢ e ⇒ v
+     * m eval⊢ e1 ⇒ ind
+     * ---
+     * m ⊢ tableau(t, ident(i), e1, e) → DeclTab(i, ind, v, t, m)
+     */
     @Override
     public Object visitTable(TableNode node) {
         stack.declTab(node.getIdent(), (int) evalExp(node.getSizeExp()), node.getType());
         return null;
     }
 
+    /**
+     * Règle [cst] (page 39) :
+     * m eval⊢ e ⇒ v
+     * ---
+     * m ⊢ cst(t, ident(i), e) → DeclCst(i, v, t, m)
+     */
     @Override
     public Object visitCst(CstNode node) {
         stack.declCst(node.getIdent(), evalExp(node.getInitExp()), node.getType());
         return null;
     }
 
-
-
     /**
      * Règle [main] (page 39) :
-     * m ⊢ dvs → m1, m1 ⊢ iss → m2, m2 retrait⊢ dvs → m3
-     * m ⊢ main(dvs, iss) → m3
+     * m ⊢ méthode(t, ident(t), ent, dvs, iss) → DeclMeth(i, méthode(t, ident(i), ent, dvs, iss), t, m)
      */
-    @Override
-    public Object visitMain(MainNode node) {
-        // 1. m ⊢ dvs → m1 : Traiter les variables locales
-        node.getVars().accept(this);
-
-        // 2. m1 ⊢ iss → m2 : Exécuter les instructions
-        node.getInstrs().accept(this);
-
-        // 3. m2 retrait⊢ dvs → m3 : Retirer les variables locales
-        retraitVars(node.getVars());
-
+    public Object visitMethod(MethodNode node) {
+        stack.declMeth(node);
         return null;
     }
 
     /**
-     * Règle [méthode] (page 39) :
-     * m ⊢ méthode(t, ident(i), ent, dvs, iss) → DeclMeth(i, méthode(...), t, m)
+     * Règle [main] (page 39) :
+     * m ⊢ dvs → m1, m1 ⊢ iss → m2, m2 retrait⊢ dvs → m3
+     * ---
+     * m ⊢ main(dvs, iss) → m3
      */
-    public Object visitMethod(MethodNode node) {
-        // Je lui passe le node complet comme dans le cour
-        stack.declMeth(node.getIdent(), node, node.getReturnType());
+    @Override
+    public Object visitMain(MainNode node) {
+        node.getVars().accept(this);
+        node.getInstrs().accept(this);
+        retraitVars(node.getVars());
         return null;
     }
 
     /**
      * Règle [retour] (page 41) :
      * m eval⊢ e ⇒ v
+     * ---
      * m ⊢ retour(e) → AffecterVal(VariableClasse(m), v, m)
      */
     @Override
-    public Object visitReturn(ReturnNode node) { // Si jamais sa marche toujours pas , il faudrait que jutilise $return
+    public Object visitReturn(ReturnNode node) {
+        IdentNode classVar = stack.peekTail().getIdent();
         Object returnValue = evalExp(node.getExp());
-        IdentNode classVar = stack.variableClasse();
-        stack.affecterVal(classVar, returnValue);
-        return returnValue;
-    }
-
-    private Object executeMethodCall(IdentNode methodIdent, ListExpNode args) {
-        // ✅ CORRIGÉ : Ne PAS pop le MethodNode
-        ParamsNode params = stack.parametre(methodIdent);
-        VarsNode vars = stack.declaration(methodIdent);
-        InstrsNode body = stack.corps(methodIdent);
-
-        if (params == null || body == null) {
-            throw new RuntimeException("Method '" + methodIdent.getName() + "' not found");
-        }
-
-        // ExpParam - Déclarer les paramètres
-        if (!params.getList().isEmpty()) {
-            List<ExpNode> argList = (args != null) ? args.getList() : new ArrayList<>();
-
-            if (argList.size() != params.getList().size()) {
-                throw new RuntimeException(
-                        "Method '" + methodIdent.getName() + "' expects " +
-                                params.getList().size() + " arguments, got " + argList.size()
-                );
-            }
-
-            for (int i = 0; i < argList.size(); i++) {
-                ExpNode argExp = argList.get(i);
-                ParamNode param = params.getList().get(i);
-                Object argValue = evalExp(argExp);
-                stack.declVar(param.getIdent(), argValue, new TypeMethNode(param.getType().getName()));
-            }
-        }
-
-        // Variables locales
-        if (vars != null && !vars.getList().isEmpty()) {
-            vars.accept(this);
-        }
-
-        // Exécuter le corps
-        body.accept(this);
-
-        // Récupérer la valeur de retour
-        IdentNode returnVar = stack.variableClasse();
-        Object returnValue = stack.val(returnVar);
-
-        // Nettoyer
-        if (vars != null && !vars.getList().isEmpty()) {
-            retraitVars(vars);
-        }
-        retraitParams(params);
-
-        return returnValue;
-    }
-
-    /**
-     * Règle [appelI] (page 41) - Appel comme instruction
-     */
-    @Override
-    public Object visitCallInstr(CallInstrNode node) {
-        executeMethodCall(node.getIdent(), node.getListExp());
+        stack.affecterVal(classVar, returnValue); // La valeur de retour est sauvegardé dans la classe
         return null;
     }
 
     /**
-     * Règle [appelE] (page 43) - Appel comme expression
+     * Règle [appelE] (page 43)
+     * TODO Règle
      */
     @Override
     public Object visitCallExp(CallExpNode node) {
-        return executeMethodCall(node.getIdent(), node.getListExp());
-    }
+        ParamsNode paramsNode = stack.parametre(node.getIdent());
+        List<ParamNode> listParamNodes = paramsNode.getList();
+        List<ExpNode> listExpNodes = (node.getListExp() != null) ? node.getListExp().getList() : new ArrayList<>();
 
-    private void retraitParams(ParamsNode params) {
-        if (params == null) return;
-        List<ParamNode> paramList = params.getList();
-        for (int i = paramList.size() - 1; i >= 0; i--) {
-            stack.retirerDecl(paramList.get(i).getIdent());
+        // ExpParam - Déclarer les paramètres
+        if (!listParamNodes.isEmpty()) {
+            for (int i = 0; i < listExpNodes.size(); i++) {
+                ParamNode param = listParamNodes.get(i);
+                ExpNode argExp = listExpNodes.get(i);
+                stack.declVar(param.getIdent(), evalExp(argExp), new TypeMethNode(param.getType().getTypeToken()));
+            }
         }
+
+        // Déclarer les Variables locales
+        VarsNode varsNode = stack.declaration(node.getIdent());
+        List<VarDeclNode> listVarDeclNodes = varsNode.getList();
+        if (varsNode != null && !listVarDeclNodes.isEmpty()) {
+            varsNode.accept(this);
+        }
+
+        // Exécuter le corps
+        InstrsNode instrsNode = stack.corps(node.getIdent());
+        instrsNode.accept(this);
+
+        // Récupérer la valeur de retour
+        IdentNode returnIdentNode = stack.peekTail().getIdent();
+        Object returnValue = stack.val(returnIdentNode);
+
+        // Nettoyer
+        if (varsNode != null && !listVarDeclNodes.isEmpty()) {
+            retraitVars(varsNode);
+        }
+        retraitParams(paramsNode);
+
+        return returnValue;
     }
 
-
-
-
+    /**
+     * Règle [appelI] (page 41)
+     * TODO Règle
+     */
     @Override
-    public Object visitParams(ParamsNode node) {
-        for (ParamNode paramNode : node.getList()) {
-            paramNode.accept(this);
-        }
+    public Object visitCallInstr(CallInstrNode node) {
+        visitCallExp(new CallExpNode(node.getIdent(), node.getListExp()));
         return null;
     }
-
-    @Override
-    public Object visitParam(ParamNode node) {
-        node.accept(this);
-        return null;
-    }
-
-    // ========== INSTRUCTIONS ==========
 
     /**
      * Règle [instrs] (page 40) :
      * m ⊢ is → m1, m1 ⊢ iss → m2
+     * ---
      * m ⊢ instrs(is, iss) → m2
      */
     @Override
@@ -327,25 +265,26 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     /**
      * Règles [affectation] et [affectationT] (page 40) :
      * m eval⊢ e ⇒ v
+     * ---
      * m ⊢ affectation(ident(i), e) → AffecterVal(i, v, m)
      *
      * m eval⊢ e ⇒ v, m eval⊢ e1 ⇒ ind
+     * ---
      * m ⊢ affectation(tab(ident(i), e1), e) → AffecterValT(i, ind, v, m)
      */
     @Override
     public Object visitAssign(AssignNode node) {
-        // m eval⊢ e ⇒ v
         Object value = evalExp(node.getExp());
-
         if (node.getLeftValueNode() instanceof IdentNode identNode) {
-            // Règle [affectation]
-
             stack.affecterVal(identNode, value);
         } else if (node.getLeftValueNode() instanceof ArrayAccessNode arrayAccessNode) {
-            // Règle [affectationT]
-            // m eval⊢ e1 ⇒ ind
             int index = (int) evalExp(arrayAccessNode.getIndexExp());
-            stack.affecterValT(arrayAccessNode.getIdent(), index, value);
+            try {
+                stack.affecterValT(arrayAccessNode.getIdent(), index, value);
+            } catch (Exception e) {
+                throw new RuntimeException("Index out of bounds"); // TODO Replace by custom runtime exception
+            }
+            
         }
         return null;
     }
@@ -353,103 +292,59 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     /**
      * Règles [somme] et [sommeT] (page 41) :
      * m eval⊢ e ⇒ v
+     * ---
      * m ⊢ somme(ident(i), e) → AffecterVal(i, Val(i, m) + v, m)
      *
      * m eval⊢ e ⇒ v, m eval⊢ e1 ⇒ ind
+     * ---
      * m ⊢ somme(tab(ident(i), e1), e) → AffecterValT(i, ind, ValT(i, ind, m) + v, m)
      */
     @Override
     public Object visitAddAssign(AddAssignNode node) {
-        return visitAssign(NodeOperations.addAssignToAssign(node));
-
+        visitAssign(NodeOperations.addAssignToAssign(node));
+        return null;
     }
 
     /**
-     * Règle [incrément] (page 40) :
+     * Règle [incrément] et [incrémentT] (page 40) :
      * m ⊢ incrément(ident(i)) → AffecterVal(i, Val(i, m) + 1, m)
+     * 
      * m ⊢ incrément(tab(ident(i), e)) → AffecterValT(i, ind, ValT(i, ind, m) + 1, m)
      */
     @Override
     public Object visitInc(IncNode node) {
-        // Je verifie c'est une variable simple ou un tableau
-        if (node.getLeftValueNode() instanceof IdentNode identNode) {
-            Object currentValue = stack.val(identNode);
-            if (!(currentValue instanceof Integer)) {
-                throw new RuntimeException(
-                        "Type error: increment operator requires integer variable, got " +
-                                currentValue.getClass().getSimpleName()
-                );
-            }
-            int newValue = (int) currentValue + 1;
-            stack.affecterVal(identNode, newValue);
-
-        } else if (node.getLeftValueNode() instanceof ArrayAccessNode arrayAccessNode) {
-            Object indexObj = evalExp(arrayAccessNode.getIndexExp());
-            if (!(indexObj instanceof Integer)) {
-                throw new RuntimeException(
-                        "Type error: array index must be integer, got " +
-                                indexObj.getClass().getSimpleName()
-                );
-            }
-            int index = (int) indexObj;
-            if (index < 0) {
-                throw new RuntimeException(
-                        "Runtime error: array index cannot be negative, got " + index
-                );
-            }
-            Object currentValue = stack.valT(arrayAccessNode.getIdent(), index);
-            if (!(currentValue instanceof Integer)) {
-                throw new RuntimeException(
-                        "Type error: increment operator requires integer, got " +
-                                currentValue.getClass().getSimpleName()
-                );
-            }
-            int newValue = (int) currentValue + 1;
-            stack.affecterValT(arrayAccessNode.getIdent(), index, newValue);
-        } else {
-            throw new RuntimeException(
-                    "Increment operator can only be applied to variables or array elements"
-            );
-        }
+        visitAssign(NodeOperations.incToAssign(node));
         return null;
     }
 
+    /**
+     * TODO Règle
+     */
     @Override
     public Object visitLength(LengthNode node) {
-        Integer length = stack.longT(node.getIdent());
-        if (length == null) {
-            throw new RuntimeException(
-                    "Array '" + node.getIdent().getName() + "' not found or is not an array"
-            );
+        try {
+            return stack.longT(node.getIdent());
+        } catch (Exception e) {
+            throw new RuntimeException("Index out of bounds"); // TODO Replace by custom runtime exception
         }
-        return length;
     }
 
     /**
      * Règles [sivrai] et [sifaux] (page 42) :
      * m eval⊢ e ⇒ true, m ⊢ iss → m1
+     * ---
      * m ⊢ si(e, iss, iss1) → m1
      *
      * m eval⊢ e ⇒ false, m ⊢ iss1 → m1
+     * ---
      * m ⊢ si(e, iss, iss1) → m1
      */
     @Override
     public Object visitIf(IfNode node) {
-        Object condValue = evalExp(node.getCondExp());
-
-        // Verification du type de la condition
-        if (!(condValue instanceof Boolean)){
-            throw new RuntimeException(
-                    "Type error: if condition must be boolean, got " +
-                            condValue.getClass().getSimpleName()
-            );
-        }
-        // m eval⊢ e ⇒ condition
-        if ((boolean) condValue) {
-            // Règle [sivrai]
+        boolean condValue = (boolean) evalExp(node.getCondExp());
+        if (condValue) { // Règle [sivrai]
             node.getThenInstrs().accept(this);
-        } else if (node.getElseInstrs() != null) {
-            // Règle [sifaux]
+        } else if (node.getElseInstrs() != null) { // Règle [sifaux]
             node.getElseInstrs().accept(this);
         }
         return null;
@@ -458,206 +353,61 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     /**
      * Règles [tantquevrai] et [tantquefaux] (page 42) :
      * m eval⊢ e ⇒ true, m ⊢ iss → m1, m1 ⊢ tantque(e, iss) → m2
+     * ---
      * m ⊢ tantque(e, iss) → m2
      *
      * m eval⊢ e ⇒ false
+     * ---
      * m ⊢ tantque(e, iss) → m
      */
     @Override
     public Object visitWhile(WhileNode node) {
-        // Verification du type de la condition
-        if (!(evalExp(node.getCondExp()) instanceof Boolean)) {
-            throw new RuntimeException(
-                    "Type error: while condition must be boolean, got " +
-                            evalExp(node.getCondExp()).getClass().getSimpleName()
-            );
-        }
-        // m eval⊢ e ⇒ condition
-        while ((boolean) evalExp(node.getCondExp())) {
-            // Règle [tantquevrai]
+        boolean condValue = (boolean) evalExp(node.getCondExp());
+        while (condValue) { // Règle [tantquevrai]
             node.getInstrs().accept(this);
         }
-        // Règle [tantquefaux] : retourne m inchangé
-        return null;
+        return null; // Règle [tantquefaux] : retourne m inchangé
     }
 
     /**
      * Règle [ecrire] (page 42) :
      * m eval⊢ e ⇒ v
+     * ---
      * m ⊢ ecrire(e) → Afficher(v, m)
      */
     @Override
     public Object visitWrite(WriteNode node) {
-        // m eval⊢ e ⇒ v
         Object value = evalExp(node.getExp());
-        // Afficher(v, m)
         if (node.isLn()) {
-            System.out.println(value);
+            System.out.println(value);  // TODO Write in an output buffer instead
         } else {
             System.out.print(value);
         }
         return null;
     }
 
-
-
-    // ========== EXPRESSIONS ==========
-
+    /**
+     * TODO Règle
+     */
     @Override
     public Object visitListExp(ListExpNode node) {
-        List<Object> values = new ArrayList<>();
+        List<Object> listExpValues = new ArrayList<>();
         for (ExpNode exp : node.getList()) {
-            values.add(evalExp(exp));
+            listExpValues.add(evalExp(exp));
         }
-        return values;
-    }
-
-    @Override
-    public Object visitBinaryExp(BinaryExpNode node) {
-        return evalBinaryExp(node);
-    }
-
-    @Override
-    public Object visitUnaryExp(UnaryExpNode node) {
-        return evalUnaryExp(node);
-    }
-
-    /**
-     * Règles MEM eval⊢ EXP ⇒ VAL (page 43)
-     */
-    @Override
-    public Object visitIntLiteral(IntLiteralNode node) {
-        // [nbre] : m eval⊢ nbre(n) ⇒ n
-        return node.getValue();
-    }
-
-    @Override
-    public Object visitBoolLiteral(BoolLiteralNode node) {
-        // [vrai] / [faux]
-        return node.getValue();
-    }
-
-    @Override
-    public Object visitStringLiteral(StringLiteralNode node) {
-        // [chaine] : m eval⊢ chaine(string) ⇒ string
-        return node.getValue();
-    }
-
-    /**
-     * [ident] : m eval⊢ ident(i  ) ⇒ Val(i,m)
-     */
-    @Override
-    public Object visitIdent(IdentNode node) {
-        try {
-            return stack.val(node);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(
-                    "Variable '" + node.getName() + "' not declared", e);
-        }
-    }
-
-    /**
-     * [tab] : m eval⊢ e ⇒ v
-     * m eval⊢ tab(ident(i), e) ⇒ ValT(i, v, m)
-     */
-
-    @Override
-    public Object visitArrayAccess(ArrayAccessNode node) {
-
-        Object indexObj = evalExp(node.getIndexExp());
-        if (!(indexObj instanceof Integer)) {
-            throw new RuntimeException(
-                    "Type error: array index must be integer, got " +
-                            indexObj.getClass().getSimpleName()
-            );
-        }
-        // Je cast apres vérification
-        int index = (int) indexObj;
-        if (index < 0) {
-            throw new RuntimeException(
-                    "Runtime error: array index cannot be negative, got " + index
-            );
-        }
-        try {
-            return stack.valT(node.getIdent(), index);
-        } catch (IndexOutOfBoundsException e) {
-            throw new RuntimeException(
-                    "Runtime error: array index " + index +
-                            " out of bounds for array '" + node.getIdent().getName() + "'",
-                    e
-            );
-        }
-
-    }
-
-
-
-    // ========== OTHER NODES ==========
-    @Override
-    public Object visitType(TypeNode node) {
-        return node;
-    }
-
-    @Override
-    public Object visitTypeMeth(TypeMethNode node) {
-        return node;
-    }
-
-    @Override
-    public Object visitBinaryOp(BinaryOpNode node) {
-        return node;
-    }
-
-    @Override
-    public Object visitUnaryOp(UnaryOpNode node) {
-        return node;
-    }
-
-    // ========== MÉTHODES AUXILIAIRES ==========
-
-    /**
-     * Évalue une expression selon les règles MEM eval⊢ EXP ⇒ VAL (page 43)
-     */
-    private Object evalExp(ExpNode exp) {
-        return exp.accept(this);
+        return listExpValues;
     }
 
     /**
      * Règle [op2] (page 43) :
      * m eval⊢ e ⇒ v, m eval⊢ e1 ⇒ v1
+     * ---
      * m eval⊢ op2(e, e1) ⇒ v op v1
      */
-    private Object evalBinaryExp(BinaryExpNode node) {
+    @Override
+    public Object visitBinaryExp(BinaryExpNode node) {
         Object left = evalExp(node.getLeftExp());
         Object right = evalExp(node.getRightExp());
-        // on compare le type si cest les memes avec la methodes deja existant
-        if (left.getClass() != right.getClass()) {
-            throw new RuntimeException(
-                    "Type mismatch: left is " + left.getClass().getSimpleName() +
-                            ", right is " + right.getClass().getSimpleName()
-            );
-        }
-
-        if ((node.getOp().isAnd() || node.getOp().isOr()) && !(left instanceof Boolean)) {
-            throw new RuntimeException(
-                    "Type error: logical operator requires boolean operands, got " +
-                            left.getClass().getSimpleName() + " and " + right.getClass().getSimpleName()
-            );
-        }
-
-        if (!(left instanceof Integer) && (node.getOp().isAdd() ||  node.getOp().isSub() || node.getOp().isMul() || node.getOp().isDiv() || node.getOp().isGt()) ) {
-            throw new RuntimeException(
-                    "Type error: arithmetic operator requires integer operands, got " +
-                            left.getClass().getSimpleName() + " and " + right.getClass().getSimpleName()
-            );
-        }
-
-        if (!(left instanceof Boolean) && (node.getOp().isAnd() ||  node.getOp().isOr()) ) {
-            throw new RuntimeException(
-                    "Type error: arithmetic operator requires integer operands, got " +
-                            left.getClass().getSimpleName() + " and " + right.getClass().getSimpleName()
-            );
-        }
 
         switch (node.getOp().getOp()) {
             case AND: return (boolean) left && (boolean) right;
@@ -666,7 +416,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
             case SUB: return (int) left - (int) right;
             case MUL: return (int) left * (int) right;
             case DIV:
-                if ((int) right == 0) throw new RuntimeException("Runtime error: division by zero");
+                if ((int) right == 0) throw new RuntimeException("Runtime error: division by zero"); // TODO Replace by custom runtime exception
                 return (int) left / (int) right;
             case EQ:  return  left == right;
             case GT:  return (int) left > (int) right;
@@ -674,43 +424,137 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         }
     }
 
-
-
     /**
-     * Règle [op1] (page 43) :
+     * Règle [op1] (page ?) :
      * m eval⊢ e ⇒ v
+     * ---
      * m eval⊢ op1(e) ⇒ op1 v
      */
-    private Object evalUnaryExp(UnaryExpNode node) {
-        // m eval⊢ e ⇒ v
+    @Override
+    public Object visitUnaryExp(UnaryExpNode node) {
         Object operand = evalExp(node.getExp());
         String op = node.getOp().getOp().getName();
 
-        // op1 v
         switch (op) {
             case "-":
-                if (!(operand instanceof Integer)) {
-                    throw new RuntimeException(
-                            "Type error: unary minus requires integer operand, got " +
-                                    operand.getClass().getSimpleName()
-                    );
-                }
-                return -(int) operand;
+                return (int) operand * -1;
             case "!":
-                if (!(operand instanceof Boolean)) {
-                    throw new RuntimeException(
-                            "Type error: logical NOT requires boolean operand, got " +
-                                    operand.getClass().getSimpleName()
-                    );
-                }
-                return !(boolean) operand;             // [non]
+                return !(boolean) operand;
             default: throw new RuntimeException("Unknown unary operator: " + op);
         }
     }
 
     /**
-     * Retrait des déclarations : MEM retrait⊢ DECLS → MEM (page 44)
-     * [rdecls] : m retrait⊢ dss → m1, m1 retrait⊢ ds → m2
+     * Règle [nbre] (page 43)
+     * m eval⊢ nbre(n) ⇒ n
+     */
+    @Override
+    public Object visitIntLiteral(IntLiteralNode node) {
+        return node.getValue();
+    }
+
+    /**
+     * Règles [vrai] et [faux] (page 43)
+     * m eval⊢ vrai ⇒ true
+     * 
+     * m eval⊢ faux ⇒ false
+     */
+    @Override
+    public Object visitBoolLiteral(BoolLiteralNode node) {
+        return node.getValue();
+    }
+
+    /**
+     * Règle [chaine] (page 43)
+     * m eval⊢ chaine(string) ⇒ string
+     */
+    @Override
+    public Object visitStringLiteral(StringLiteralNode node) {
+        return node.getValue();
+    }
+
+    /**
+     * Règle [ident] (page 43)
+     * m eval⊢ ident(i) ⇒ Val(i,m)
+     */
+    @Override
+    public Object visitIdent(IdentNode node) {
+        return stack.val(node);
+    }
+
+    /**
+     * Règle [tab] (page 43)
+     * m eval⊢ e ⇒ v
+     * ---
+     * m eval⊢ tab(ident(i), e) ⇒ ValT(i, v, m)
+     */
+    @Override
+    public Object visitArrayAccess(ArrayAccessNode node) {
+        Object indexObj = evalExp(node.getIndexExp());
+        int index = (int) indexObj;
+        try {
+            return stack.valT(node.getIdent(), index);
+        } catch (Exception e) {
+            throw new RuntimeException("Index out of bounds"); // TODO Replace by custom runtime exception
+        }
+    }
+
+    @Override
+    public Object visitParams(ParamsNode node) {
+        return null;
+    }
+
+    @Override
+    public Object visitParam(ParamNode node) {
+        return null;
+    }
+
+    // ========== OTHER NODES ==========
+
+    @Override
+    public Object visitType(TypeNode node) {
+        return null;
+    }
+
+    @Override
+    public Object visitTypeMeth(TypeMethNode node) {
+        return null;
+    }
+
+    @Override
+    public Object visitBinaryOp(BinaryOpNode node) {
+        return null;
+    }
+
+    @Override
+    public Object visitUnaryOp(UnaryOpNode node) {
+        return null;
+    }
+
+    // ========== MÉTHODES AUXILIAIRES ==========
+
+    /**
+     * Évalue une expression
+     */
+    private Object evalExp(ExpNode exp) {
+        return exp.accept(this);
+    }
+
+    /**
+     * TODO Règle
+     */
+    private void retraitParams(ParamsNode params) {
+        if (params == null) return;
+        List<ParamNode> paramList = params.getList();
+        for (int i = paramList.size() - 1; i >= 0; i--) {
+            stack.retirerDecl(paramList.get(i).getIdent());
+        }
+    }
+
+    /**
+     * Règle [rdecls] (page 44)
+     * m retrait⊢ dss → m1, m1 retrait⊢ ds → m2
+     * ---
      * m retrait⊢ decls(ds, dss) → m2
      */
     private void retraitDecls(DeclsNode decls) {
@@ -722,18 +566,16 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     }
 
     /**
-     * Retrait des variables : MEM retrait⊢ VARS → MEM (page 44)
-     * [rvars] : m retrait⊢ dvs → m1, m1 retrait⊢ dv → m2
+     * Règle [rvars] (page 44)
+     * m retrait⊢ dvs → m1, m1 retrait⊢ dv → m2
+     * ---
      * m retrait⊢ vars(dv, dvs) → m2
      */
     private void retraitVars(VarsNode vars) {
         if (vars == null) return;
-        // Retrait en ordre inverse
         List<VarDeclNode> varList = vars.getList();
         for (int i = varList.size() - 1; i >= 0; i--) {
             stack.retirerDecl(varList.get(i).getIdent());
         }
-
-
     }
 }
