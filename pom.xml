@@ -50,6 +50,13 @@
             <version>7.18.1</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-core</artifactId>
+            <version>7.18.1</version>
+        </dependency>
+
     </dependencies>
 
     <distributionManagement>
