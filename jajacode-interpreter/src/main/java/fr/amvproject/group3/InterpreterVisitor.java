@@ -36,6 +36,8 @@ import fr.amvproject.group3.jjc.ast.nodes.other.UnaryOpNode;
 import fr.amvproject.group3.jjc.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.jjc.ast.nodes.program.ProgramNode;
 
+// TODO gestion boucles et recursions infinie, recuperation de l'exception index out of bounds
+
 public class InterpreterVisitor implements AstVisitor<Object> {
   private static final String PUSH_FRAME = "__PUSH__";
   private static final String INVK_FRAME = "__INVK__";

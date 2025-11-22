@@ -428,7 +428,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
                 return (int) left / (int) right;
             case EQ:  return  left == right;
             case GT:  return (int) left > (int) right;
-            default:  throw new RuntimeException("Unknown binary operator: " + node.getOp());
+            default:  throw new RuntimeException("Unknown binary operator: " + node.getOp().getOp().getName());
         }
     }
 
@@ -441,14 +441,13 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     @Override
     public Object visitUnaryExp(UnaryExpNode node) {
         Object operand = evalExp(node.getExp());
-        String op = node.getOp().getOp().getName();
 
-        switch (op) {
-            case "-":
+        switch (node.getOp().getOp()) {
+            case NEG:
                 return (int) operand * -1;
-            case "!":
+            case NOT:
                 return !(boolean) operand;
-            default: throw new RuntimeException("Unknown unary operator: " + op);
+            default: throw new RuntimeException("Unknown unary operator: " + node.getOp().getOp().getName());
         }
     }
 

@@ -97,11 +97,7 @@ public class TextEdit extends Application {
         });
 
         interpretJjcButton.setOnAction(e -> {
-            /*TODO
-            JajacodeInterpreterCaller jajacodeInterpreterCaller = new JajacodeInterpreterCaller();
-            jajacodeInterpreterCaller.execute(textArea.getText());
-            outputArea.setText(jajacodeInterpreterCaller.getString());
-            */
+            // TODO interpretation jjc, afficher le output buffer
             openOutputPane();
         });
 

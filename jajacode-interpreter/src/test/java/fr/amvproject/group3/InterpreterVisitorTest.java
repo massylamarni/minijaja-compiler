@@ -16,7 +16,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import fr.amvproject.group3.jjc.ast.AstBuilderVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.program.ProgramNode;
 
-public class JajaCodeInterpreterTest {
+public class InterpreterVisitorTest {
 
     private ProgramNode buildAstFromCode(String code) {
         JajaCodeLexer lexer = new JajaCodeLexer(CharStreams.fromString(code));
@@ -1834,3 +1834,5 @@ public class JajaCodeInterpreterTest {
         assertThat(output, is("5"));
     }
 }
+
+// TODO ajouter les nouveaux tests de l'interpreteur minijaja
