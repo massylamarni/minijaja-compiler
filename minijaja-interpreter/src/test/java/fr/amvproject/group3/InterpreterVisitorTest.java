@@ -395,7 +395,7 @@ public class InterpreterVisitorTest {
                     }
                     else {
                     x+=10;
-                    }
+                    };
                     write(x);
                 }
             }
@@ -427,7 +427,7 @@ public class InterpreterVisitorTest {
                 main {
                     if(x == 0){
                     x+=1;
-                    }
+                    };
                     write(x);
                 }
             }
@@ -459,7 +459,7 @@ public class InterpreterVisitorTest {
                 main {
                     if(x == 0){
                     x+=1;
-                    }
+                    };
                     write(x);
                 }
             }
@@ -494,13 +494,13 @@ public class InterpreterVisitorTest {
                     }
                     else {
                     x+=10;
-                    }
+                    };
                     if(x == 10){
                     x = 20;
                     }
                     else {
                     x += 1;
-                    }
+                    };
                     write(x);
                 }
             }
@@ -533,7 +533,7 @@ public class InterpreterVisitorTest {
                 main {
                    while(10 > x){
                    x+=1;
-                    }
+                    };
                     write(x);
                 }
             }
@@ -754,7 +754,7 @@ public class InterpreterVisitorTest {
                 
                 int fct(int var) {
                     int y = 5 + var;
-                    write(y)
+                    write(y) ;
                     return y ;
                 } ;
                 main {
@@ -932,7 +932,7 @@ public class InterpreterVisitorTest {
                     while (3 > i) {
                         tab[i] = i * 10 ;
                         i++ ;
-                    }
+                    };
                     write(tab[2]);
                 }
                 }

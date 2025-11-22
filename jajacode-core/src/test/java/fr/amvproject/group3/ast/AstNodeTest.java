@@ -114,7 +114,7 @@ public class AstNodeTest {
         assertThat(newNode.getIdent().getName(), is("var"));
         assertThat(newNode.getType().getName(), is("entier"));
         assertThat(newNode.getObj().getName(), is("var"));
-        assertThat(newNode.getValue(), is(instanceOf(IntLiteralNode.class)));
+        assertThat(newNode.getValueNode(), is(instanceOf(IntLiteralNode.class)));
     }
 
     // ====================== NewArrayNode ======================

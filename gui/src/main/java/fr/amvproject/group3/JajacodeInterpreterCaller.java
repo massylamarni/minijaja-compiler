@@ -10,15 +10,15 @@ import fr.amvproject.group3.jjc.ast.AstBuilderVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.intermediate.InstrNode;
 import fr.amvproject.group3.jjc.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.jjc.ast.nodes.program.ProgramNode;
+/*
 import fr.amvproject.group3.interpreter.ExecutionStep;
-import fr.amvproject.group3.interpreter.JajaCodeInterpreter;
 
 
 public class JajacodeInterpreterCaller {
     private StringBuilder sb = new StringBuilder();
 
 
-    public void executeProgram(AstNode ast, JajaCodeInterpreter interpreter) {
+    public void executeProgram(AstNode ast, InterpreterVisitor interpreter) {
         if (ast instanceof ProgramNode programNode) {
             Map<Integer, InstrNode> instructionMap = new HashMap<>();
             List<ClassNode> classes = programNode.getClasses();
@@ -51,7 +51,7 @@ public class JajacodeInterpreterCaller {
         }
     }
 
-    public void printExecutionSteps(JajaCodeInterpreter interpreter) {
+    public void printExecutionSteps(InterpreterVisitor interpreter) {
         List<ExecutionStep> steps = interpreter.getExecutionSteps();
 
         if (steps.isEmpty()) {
@@ -91,7 +91,7 @@ public class JajacodeInterpreterCaller {
         }
     }
 
-    public void printFinalState(JajaCodeInterpreter interpreter) {
+    public void printFinalState(InterpreterVisitor interpreter) {
         List<String> stackStrings = interpreter.getState().getStackStateAsStrings();
         if (stackStrings.isEmpty()) {
             sb.append("\n");
@@ -153,6 +153,8 @@ public class JajacodeInterpreterCaller {
     }
     */
 
+    /*
+
     public void execute(String inputText) {
 
         sb.append("\n");
@@ -176,7 +178,7 @@ public class JajacodeInterpreterCaller {
             sb.append("\n");
             sb.append("✓ Program parsed successfully");
 
-            JajaCodeInterpreter interpreter = new JajaCodeInterpreter();
+            InterpreterVisitor interpreter = new InterpreterVisitor();
 
             sb.append("\n");
             sb.append("✓ Interpreter created");
@@ -225,5 +227,5 @@ public class JajacodeInterpreterCaller {
     public String getString() {
         return sb.toString();
     }
-
 }
+    */
