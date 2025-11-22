@@ -75,9 +75,9 @@ public class Stack extends StackManager {
     this.push(new Quad(ident, ref, new ObjNode("tab"), type));
   }
 
-    public void declMeth(MethodNode methodNode) {
-        this.push(new Quad(methodNode.getIdent(), methodNode, new ObjNode("meth"), methodNode.getReturnType()));
-    }
+  public void declMeth(MethodNode methodNode) {
+      this.push(new Quad(methodNode.getIdent(), methodNode, new ObjNode("meth"), methodNode.getReturnType()));
+  }
 
   // --- Access / Assignment ---
 

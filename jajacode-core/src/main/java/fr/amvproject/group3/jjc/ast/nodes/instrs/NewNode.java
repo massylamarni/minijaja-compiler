@@ -42,7 +42,7 @@ public class NewNode extends InstrNode {
         return objNode;
     }
 
-    public ValueNode getValue() {
+    public ValueNode getValueNode() {
         return valueNode;
     }
 

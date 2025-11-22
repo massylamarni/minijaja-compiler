@@ -4,6 +4,7 @@ import java.util.List;
 
 import fr.amvproject.group3.jjc.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.jjc.ast.nodes.other.TypeNode;
+import fr.amvproject.group3.jjc.utils.NodeOperations.MockToken;
 import fr.amvproject.group3.nodes.ObjNode;
 import fr.amvproject.group3.nodes.TypeMemNode;
 import fr.amvproject.group3.utils.StringSaver;
@@ -20,6 +21,12 @@ public class Stack extends StackManager {
   // --- Stack Operations ---
   public void push(Quad q) {
     queue.add(q);
+  }
+
+  public void push(String name, Object value) {
+    MockToken identToken = new MockToken(name, 0, 0);
+    Quad newQuad = new Quad(new IdentNode(identToken), value, new ObjNode("cst"), null);
+    queue.add(newQuad);
   }
 
   public Quad pop() {
@@ -61,15 +68,19 @@ public class Stack extends StackManager {
     this.push(new Quad(ident, ref, new ObjNode("tab"), type));
   }
 
+  public void declMeth(IdentNode ident, Object value, TypeNode type) {
+    this.push(new Quad(ident, value, new ObjNode("meth"), type));
+  }
+
   // --- Access / Assignment ---
 
   // Replaces the Quad at stackDepth
-  public void identVal(IdentNode ident, TypeNode type, Object newValue, int stackDepth) {
+  public void identVal(IdentNode ident, TypeNode type, int stackDepth) {
     int index = queue.size() - 1 - stackDepth;
     if (index < 0 || index >= queue.size())
       return;
 
-    Quad replaced = new Quad(ident, newValue, new ObjNode("var"), type);
+    Quad replaced = new Quad(ident, queue.get(index).getValue(), new ObjNode("var"), type);
 
     queue.set(index, replaced);
   }
