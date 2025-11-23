@@ -1,4 +1,4 @@
-package fr.amvproject.group3;
+package fr.amvproject.group3.mjj;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,6 @@ import fr.amvproject.group3.mjj.ast.nodes.other.UnaryOpNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
 import fr.amvproject.group3.mjj.utils.NodeOperations;
-// TODO infinite recursions
 
 /**
  * Interpréteur respectant les règles sémantiques du cours MiniJaja
@@ -53,7 +52,7 @@ import fr.amvproject.group3.mjj.utils.NodeOperations;
 @SuppressWarnings("java:S6539") // Visitor pattern: large by design
 public class InterpreterVisitor implements AstVisitor<Object> {
     private static final int LOOP_LIMIT = 1000000;
-    private static final int RECURSION_LIMIT = 10000;
+    private static final int RECURSION_LIMIT = 100;
     private int recursionCount = 0;
     private final Stack stack = new Stack();
     private ExecutionContext ctx = new ExecutionContext(stack); // final
@@ -200,17 +199,22 @@ public class InterpreterVisitor implements AstVisitor<Object> {
 
     /**
      * Règle [appelE] (page 43)
-     * TODO Règle
+     *  m ⊢ appelI(ident(i), lexp) ⇒ m1
+     *  m1 eval⊢ Val(VariableClasse(m1)) ⇒ v
+     *  ---
+     *  m ⊢ appelE(ident(i), lexp) ⇒ v
      */
     @Override
     public Object visitCallExp(CallExpNode node) {
-        if (recursionCount++ > RECURSION_LIMIT) throw new RuntimeException("Infinite recursion detected !"); // TODO Replace by custom runtime exception
+        if (recursionCount++ > RECURSION_LIMIT) {
+            throw new fr.amvproject.group3.exceptions.RuntimeException("Infinite recursion detected !", node.getLine(), node.getColumn());
+        }
 
         ParamsNode paramsNode = stack.parametre(node.getIdent());
         List<ParamNode> listParamNodes = paramsNode.getList();
         List<ExpNode> listExpNodes = (node.getListExp() != null) ? node.getListExp().getList() : new ArrayList<>();
 
-        // ExpParam - Déclarer les paramètres
+        // ExpParam - declaration des paramètres
         if (!listParamNodes.isEmpty()) {
             for (int i = 0; i < listExpNodes.size(); i++) {
                 ParamNode param = listParamNodes.get(i);
@@ -219,22 +223,22 @@ public class InterpreterVisitor implements AstVisitor<Object> {
             }
         }
 
-        // Déclarer les Variables locales
+        // declaration des variables locales
         VarsNode varsNode = stack.declaration(node.getIdent());
         List<VarDeclNode> listVarDeclNodes = varsNode.getList();
         if (varsNode != null && !listVarDeclNodes.isEmpty()) {
             varsNode.accept(this);
         }
 
-        // Exécuter le corps
+        // execute les iss
         InstrsNode instrsNode = stack.corps(node.getIdent());
         instrsNode.accept(this);
 
-        // Récupérer la valeur de retour
+        // on recupere la valeur de retour
         IdentNode returnIdentNode = stack.peekTail().getIdent();
         Object returnValue = stack.val(returnIdentNode);
 
-        // Nettoyer
+        // retrait
         if (varsNode != null && !listVarDeclNodes.isEmpty()) {
             retraitVars(varsNode);
         }
@@ -245,7 +249,12 @@ public class InterpreterVisitor implements AstVisitor<Object> {
 
     /**
      * Règle [appelI] (page 41)
-     * TODO Règle
+     * ExpParam - m ⊢ ExpParam(lexp, Parametre(i,m), m) ⊢ Déclaration(i, m)  ⇒ m1
+     * m1 ⊢ corps(i, m) ⇒ m2
+     * m2 retrait⊢ Déclaration(i, m) → m3
+     * m3 retrait⊢ Parametre(i,m) → m4
+     * ---
+     * m ⊢ appelI(ident(i), lexp) ⇒ m4
      */
     @Override
     public Object visitCallInstr(CallInstrNode node) {
@@ -287,9 +296,8 @@ public class InterpreterVisitor implements AstVisitor<Object> {
             try {
                 stack.affecterValT(arrayAccessNode.getIdent(), index, value);
             } catch (Exception e) {
-                throw new RuntimeException("Index out of bounds"); // TODO Replace by custom runtime exception
-            }
-            
+                throw new fr.amvproject.group3.exceptions.RuntimeException("Index out of bounds", node.getLine(), node.getColumn());
+            }   
         }
         return null;
     }
@@ -323,14 +331,14 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     }
 
     /**
-     * TODO Règle
+     * 	m ⊢eval longeur(ident(i)) ⇒ long(I,m)
      */
     @Override
     public Object visitLength(LengthNode node) {
         try {
             return stack.longT(node.getIdent());
         } catch (Exception e) {
-            throw new RuntimeException("Index out of bounds"); // TODO Replace by custom runtime exception
+            throw new fr.amvproject.group3.exceptions.RuntimeException("Index out of bounds", node.getLine(), node.getColumn());
         }
     }
 
@@ -370,7 +378,9 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         int loopCount = 0;
         boolean condValue = (boolean) evalExp(node.getCondExp());
         while (condValue) { // Règle [tantquevrai]
-            if (loopCount++ > LOOP_LIMIT) throw new RuntimeException("Infinite loop detected !"); // TODO Replace by custom runtime exception
+            if (loopCount++ > LOOP_LIMIT) {
+                throw new fr.amvproject.group3.exceptions.RuntimeException("Infinite loop detected !", node.getLine(), node.getColumn());
+            }
             node.getInstrs().accept(this);
             condValue = (boolean) evalExp(node.getCondExp());
         }
@@ -394,9 +404,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         return null;
     }
 
-    /**
-     * TODO Règle
-     */
+
     @Override
     public Object visitListExp(ListExpNode node) {
         List<Object> listExpValues = new ArrayList<>();
@@ -424,11 +432,11 @@ public class InterpreterVisitor implements AstVisitor<Object> {
             case SUB: return (int) left - (int) right;
             case MUL: return (int) left * (int) right;
             case DIV:
-                if ((int) right == 0) throw new RuntimeException("Runtime error: division by zero"); // TODO Replace by custom runtime exception
+                if ((int) right == 0) throw new fr.amvproject.group3.exceptions.RuntimeException("Runtime error: division by zero", node.getLine(), node.getColumn());
                 return (int) left / (int) right;
             case EQ:  return  left == right;
             case GT:  return (int) left > (int) right;
-            default:  throw new RuntimeException("Unknown binary operator: " + node.getOp());
+            default:  throw new IllegalArgumentException("Unknown binary operator: " + node.getOp().getOp().getName());
         }
     }
 
@@ -441,14 +449,13 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     @Override
     public Object visitUnaryExp(UnaryExpNode node) {
         Object operand = evalExp(node.getExp());
-        String op = node.getOp().getOp().getName();
 
-        switch (op) {
-            case "-":
+        switch (node.getOp().getOp()) {
+            case NEG:
                 return (int) operand * -1;
-            case "!":
+            case NOT:
                 return !(boolean) operand;
-            default: throw new RuntimeException("Unknown unary operator: " + op);
+            default: throw new IllegalArgumentException("Unknown unary operator: " + node.getOp().getOp().getName());
         }
     }
 
@@ -503,7 +510,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         try {
             return stack.valT(node.getIdent(), index);
         } catch (Exception e) {
-            throw new RuntimeException("Index out of bounds"); // TODO Replace by custom runtime exception
+            throw new fr.amvproject.group3.exceptions.RuntimeException("Index out of bounds", node.getLine(), node.getColumn());
         }
     }
 
@@ -549,7 +556,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     }
 
     /**
-     * TODO Règle
+     * [rentête] :	m ⊢retrait entête(t, ident(i)) → RetirerDecl(i, m)
      */
     private void retraitParams(ParamsNode params) {
         if (params == null) return;

@@ -95,7 +95,7 @@ public class PrintVisitor implements AstVisitor<String> {
     sb.append(node.getIdent().accept(this)).append(", ");
     sb.append(node.getType().accept(this)).append(", ");
     sb.append(node.getObj().accept(this)).append(", ");
-    sb.append(node.getValue().accept(this)).append(")");
+    sb.append(node.getValueNode().accept(this)).append(")");
     return sb.toString();
   }
 

@@ -142,7 +142,7 @@ public class CompilerVisitorTest {
         assertThat(newNode.getIdent().getName(),is("x"));
         assertThat(newNode.getType().getName(),is("entier"));
         assertThat(newNode.getObj().getName(),is("var"));
-        assertThat(newNode.getValue().sameAs(new IntLiteralNode(new MockToken("0",0,0))),is(true));
+        assertThat(newNode.getValueNode().sameAs(new IntLiteralNode(new MockToken("0",0,0))),is(true));
 
     }
 
@@ -164,7 +164,7 @@ public class CompilerVisitorTest {
         assertThat(newNode.getIdent().getName(),is("x"));
         assertThat(newNode.getType().getName(),is("entier"));
         assertThat(newNode.getObj().getName(),is("var"));
-        assertThat(newNode.getValue().sameAs(new IntLiteralNode(new MockToken("0",0,0))),is(true));
+        assertThat(newNode.getValueNode().sameAs(new IntLiteralNode(new MockToken("0",0,0))),is(true));
     }
 
     // ====================== visitCst ======================
@@ -190,7 +190,7 @@ public class CompilerVisitorTest {
         assertThat(newNode.getIdent().getName(),is("T"));
         assertThat(newNode.getType().getName(),is("entier"));
         assertThat(newNode.getObj().getName(),is("cst"));
-        assertThat(newNode.getValue().sameAs(new IntLiteralNode(new MockToken("0",0,0))),is(true));
+        assertThat(newNode.getValueNode().sameAs(new IntLiteralNode(new MockToken("0",0,0))),is(true));
     }
 
 
@@ -211,7 +211,7 @@ public class CompilerVisitorTest {
         assertThat(newNode.getIdent().getName(),is("T"));
         assertThat(newNode.getType().getName(),is("entier"));
         assertThat(newNode.getObj().getName(),is("cst"));
-        assertThat(newNode.getValue().sameAs(new IntLiteralNode(new MockToken("0",0,0))),is(true));
+        assertThat(newNode.getValueNode().sameAs(new IntLiteralNode(new MockToken("0",0,0))),is(true));
     }
     // ====================== visitTable ======================
     @Test

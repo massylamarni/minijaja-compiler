@@ -1,6 +1,7 @@
 package fr.amvproject.group3;
 
 
+import fr.amvproject.group3.mjj.InterpreterVisitor;
 import fr.amvproject.group3.mjj.ast.AstBuilderVisitor;
 import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
 
@@ -395,7 +396,7 @@ public class InterpreterVisitorTest {
                     }
                     else {
                     x+=10;
-                    }
+                    };
                     write(x);
                 }
             }
@@ -427,7 +428,7 @@ public class InterpreterVisitorTest {
                 main {
                     if(x == 0){
                     x+=1;
-                    }
+                    };
                     write(x);
                 }
             }
@@ -459,7 +460,7 @@ public class InterpreterVisitorTest {
                 main {
                     if(x == 0){
                     x+=1;
-                    }
+                    };
                     write(x);
                 }
             }
@@ -494,13 +495,13 @@ public class InterpreterVisitorTest {
                     }
                     else {
                     x+=10;
-                    }
+                    };
                     if(x == 10){
                     x = 20;
                     }
                     else {
                     x += 1;
-                    }
+                    };
                     write(x);
                 }
             }
@@ -533,7 +534,7 @@ public class InterpreterVisitorTest {
                 main {
                    while(10 > x){
                    x+=1;
-                    }
+                    };
                     write(x);
                 }
             }
@@ -754,7 +755,7 @@ public class InterpreterVisitorTest {
                 
                 int fct(int var) {
                     int y = 5 + var;
-                    write(y)
+                    write(y) ;
                     return y ;
                 } ;
                 main {
@@ -932,7 +933,7 @@ public class InterpreterVisitorTest {
                     while (3 > i) {
                         tab[i] = i * 10 ;
                         i++ ;
-                    }
+                    };
                     write(tab[2]);
                 }
                 }
@@ -1145,8 +1146,286 @@ public class InterpreterVisitorTest {
         // Then
         String output = outContent.toString().trim();
         assertThat(output, is("5"));
+        assertThat(interpreter.getStack().getQueue().size(), is(0));
     }
 
-}
+    @Test
+    public void testMethodeHard() {
+        // Given
+        String code = """
+                class C {
+                    int x = 5 ;
+                    
+                int fct2(int var2) {
+                    int z =  var2 * 2 ;
+                    return z ;
+                } ;
+                
+                int fct(int var) {
+                    int y = fct2(var);
+                    return y ;
+                } ;
+                
+                main {
+                    int res1 = fct(x);
+                    write(res1);
+                }
+                }
+                
+                """;
 
-// TODO add zero division, index out of bounds, infinite loop and infinite recursion tests
+        ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        // Then
+        String output = outContent.toString().trim();
+        assertThat(output, is("10"));
+    }
+
+    // ######################## ERROR HANDLING ########################
+
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    public void givenDivisionByZero__whenInterpret__thenThrowRuntimeException() throws Exception {
+        // Given
+        String code = """
+            class Test {
+                int x = 10;
+                int y = 0;
+                main {
+                    x = x / y;
+                    write(x);
+                }
+            }
+            """;
+        ProgramNode program = buildAstFromCode(code);
+
+        // When
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        program.accept(interpreter);
+
+        // Then - exception should be thrown
+    }
+
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    public void givenDivisionByZeroInExpression__whenInterpret__thenThrowRuntimeException() throws Exception {
+        // Given
+        String code = """
+            class Test {
+                main {
+                    int result = 5 / (3 - 3);
+                    write(result);
+                }
+            }
+            """;
+        ProgramNode program = buildAstFromCode(code);
+
+        // When
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        program.accept(interpreter);
+
+        // Then - exception should be thrown
+    }
+
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    public void givenArrayIndexOutOfBounds__whenInterpret__thenThrowRuntimeException() throws Exception {
+        // Given
+        String code = """
+            class Test {
+                int tab[3];
+                main {
+                    tab[5] = 10;
+                    write(tab[5]);
+                }
+            }
+            """;
+        ProgramNode program = buildAstFromCode(code);
+
+        // When
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        program.accept(interpreter);
+
+        // Then - exception should be thrown
+    }
+
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    public void givenNegativeArrayIndex__whenInterpret__thenThrowRuntimeException() throws Exception {
+        // Given
+        String code = """
+            class Test {
+                int tab[3];
+                main {
+                    int value = tab[-1];
+                    write(value);
+                }
+            }
+            """;
+        ProgramNode program = buildAstFromCode(code);
+
+        // When
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        program.accept(interpreter);
+
+        // Then - exception should be thrown
+    }
+
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    public void givenArrayIndexOutOfBoundsInLoop__whenInterpret__thenThrowRuntimeException() throws Exception {
+        // Given
+        String code = """
+            class Test {
+                int tab[3];
+                int i = 0;
+                main {
+                    while (5 > i) {
+                        tab[i] = i * 10;
+                        i++;
+                    };
+                }
+            }
+            """;
+        ProgramNode program = buildAstFromCode(code);
+
+        // When
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        program.accept(interpreter);
+
+        // Then - exception should be thrown
+    }
+
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    public void givenInfiniteLoop__whenInterpret__thenThrowRuntimeException() throws Exception {
+        // Given
+        String code = """
+            class Test {
+                int x = 0;
+                main {
+                    while (x == 0) {
+                        x = 0;
+                    };
+                    write(x);
+                }
+            }
+            """;
+        ProgramNode program = buildAstFromCode(code);
+
+        // When
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        program.accept(interpreter);
+
+        // Then - exception should be thrown after LOOP_LIMIT iterations
+    }
+
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    public void givenInfiniteLoopWithIncrement__whenInterpret__thenThrowRuntimeException() throws Exception {
+        // Given
+        String code = """
+            class Test {
+                int x = 1;
+                main {
+                    while (x > 0) {
+                        x++;
+                    };
+                    write(x);
+                }
+            }
+            """;
+        ProgramNode program = buildAstFromCode(code);
+
+        // When
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        program.accept(interpreter);
+
+        // Then - exception should be thrown after LOOP_LIMIT iterations
+    }
+
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    public void givenInfiniteRecursion__whenInterpret__thenThrowRuntimeException() throws Exception {
+        // Given
+        String code = """
+            class Test {
+                int fct(int n) {
+                    return fct(n + 1);
+                };
+                main {
+                    int result = fct(0);
+                    write(result);
+                }
+            }
+            """;
+        ProgramNode program = buildAstFromCode(code);
+
+        // When
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        program.accept(interpreter);
+
+        // Then - exception should be thrown after RECURSION_LIMIT calls
+    }
+
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    public void givenInfiniteRecursionWithoutCondition__whenInterpret__thenThrowRuntimeException() throws Exception {
+        // Given
+        String code = """
+            class Test {
+                int factorial(int n) {
+                    return n * factorial(n - 1);
+                };
+                main {
+                    int result = factorial(5);
+                    write(result);
+                }
+            }
+            """;
+        ProgramNode program = buildAstFromCode(code);
+
+        // When
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        program.accept(interpreter);
+
+        // Then - exception should be thrown after RECURSION_LIMIT calls
+    }
+
+    @Test
+    public void givenValidRecursion__whenInterpret__thenCorrectResult() throws Exception {
+        // Given
+        String code = """
+            class Test {
+                int factorial(int n) {
+                    if (n == 0) {
+                        return 1;
+                    } else {
+                        return n * factorial(n - 1);
+                    };
+                };
+                main {
+                    int result = factorial(5);
+                    write(result);
+                }
+            }
+            """;
+        ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        try {
+            // When
+            program.accept(interpreter);
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        // Then
+        String output = outContent.toString().trim();
+        assertThat(output, is("120"));
+    }
+}

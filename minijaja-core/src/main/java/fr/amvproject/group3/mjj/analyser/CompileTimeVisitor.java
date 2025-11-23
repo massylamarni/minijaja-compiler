@@ -1,9 +1,10 @@
 package fr.amvproject.group3.mjj.analyser;
 
+import fr.amvproject.group3.exceptions.SemanticException;
 import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
 import fr.amvproject.group3.mjj.analyser.symbols.MethodSymbol;
 import fr.amvproject.group3.mjj.analyser.symbols.Symbols;
-import fr.amvproject.group3.mjj.analyser.symbols.TabSymbol;
+import fr.amvproject.group3.mjj.analyser.symbols.TableSymbol;
 import fr.amvproject.group3.mjj.analyser.symbols.VarSymbol;
 import fr.amvproject.group3.mjj.ast.AstVisitor;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.*;
@@ -22,7 +23,6 @@ import fr.amvproject.group3.mjj.ast.nodes.other.TypeMethNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.UnaryOpNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
-import fr.amvproject.group3.mjj.exceptions.SemanticException;
 
 public class CompileTimeVisitor implements AstVisitor<Object> {
   private SymbolTable symbolTable;
@@ -118,13 +118,13 @@ public class CompileTimeVisitor implements AstVisitor<Object> {
     Object rightExpValue = node.getRightExp().accept(this);
 
     if (leftExpValue instanceof Boolean != rightExpValue instanceof Boolean) {
-      throw new SemanticException("Type mismatch !");
+      throw new SemanticException("Type mismatch !", node.getLine(), node.getColumn());
     }
     if (leftExpValue instanceof Integer && !node.getOp().takesInteger()) {
-      throw new SemanticException("Incompatible operand, expecting Boolean, Integer given !");
+      throw new SemanticException("Incompatible operand, expecting Boolean, Integer given !", node.getLine(), node.getColumn());
     }
     if (leftExpValue instanceof Boolean && !node.getOp().takesBoolean()) {
-      throw new SemanticException("Incompatible operand, expecting Integer, Boolean given !");
+      throw new SemanticException("Incompatible operand, expecting Integer, Boolean given !", node.getLine(), node.getColumn());
     }
     switch (node.getOp().getOp()) {
       case AND: return (boolean) leftExpValue && (boolean) rightExpValue;
@@ -133,11 +133,11 @@ public class CompileTimeVisitor implements AstVisitor<Object> {
       case SUB: return (int) leftExpValue - (int) rightExpValue;
       case MUL: return (int) leftExpValue * (int) rightExpValue;
       case DIV:
-          if ((int) rightExpValue == 0) throw new SemanticException("Division by zero !");
+          if ((int) rightExpValue == 0) throw new SemanticException("Division by zero !", node.getLine(), node.getColumn());
           return (int) leftExpValue / (int) rightExpValue;
       case EQ: return leftExpValue == rightExpValue;
       case GT: return (int) leftExpValue > (int) rightExpValue;
-      default: throw new SemanticException("Unknown semantic exception !");
+      default: throw new SemanticException("Unknown semantic exception !", node.getLine(), node.getColumn());
     }
   }
 
@@ -146,15 +146,15 @@ public class CompileTimeVisitor implements AstVisitor<Object> {
     Object expValue = node.getExp().accept(this);
 
     if (expValue instanceof Integer && node.getOp().isNot()) {
-      throw new SemanticException("Incompatible operand, expecting Boolean, Integer given !");
+      throw new SemanticException("Incompatible operand, expecting Boolean, Integer given !", node.getLine(), node.getColumn());
     }
     if (expValue instanceof Boolean && node.getOp().isNeg()) {
-      throw new SemanticException("Incompatible operand, expecting Integer, Boolean given !");
+      throw new SemanticException("Incompatible operand, expecting Integer, Boolean given !", node.getLine(), node.getColumn());
     }
     switch (node.getOp().getOp()) {
       case NOT: return (int) expValue * -1;
       case NEG: return !((boolean) expValue);
-      default: throw new SemanticException("Unknown semantic exception !");
+      default: throw new SemanticException("Unknown semantic exception !", node.getLine(), node.getColumn());
     }
   }
 
@@ -176,19 +176,19 @@ public class CompileTimeVisitor implements AstVisitor<Object> {
   public Object visitLength(LengthNode node) {
     Symbols sym = symbolTable.lookup(node.getIdent());
     if (sym instanceof MethodSymbol) {
-      throw new SemanticException("Incompatible parameter for Length, expecting Array, Variable or Final, Method given !");
+      throw new SemanticException("Incompatible parameter for Length, expecting Array, Variable or Final, Method given !", node.getLine(), node.getColumn());
     }
-    if (sym instanceof TabSymbol tabSymbol) {
-      return tabSymbol.getSize();
+    if (sym instanceof TableSymbol tableSymbol) {
+      return tableSymbol.getSize();
     }
 
     if (sym instanceof VarSymbol varSymbol) {
       TypeNode identType = varSymbol.getTypeNode();
       if (identType.isInt()) {
-        throw new SemanticException("Incompatible expression for Length, expecting Array or String, Integer given !");
+        throw new SemanticException("Incompatible expression for Length, expecting Array or String, Integer given !", node.getLine(), node.getColumn());
       }
       if (identType.isBoolean()) {
-        throw new SemanticException("Incompatible expression for Length, expecting Array or String, Boolean given !");
+        throw new SemanticException("Incompatible expression for Length, expecting Array or String, Boolean given !", node.getLine(), node.getColumn());
       }
       if (identType.isString()) {
         return node.getIdent();

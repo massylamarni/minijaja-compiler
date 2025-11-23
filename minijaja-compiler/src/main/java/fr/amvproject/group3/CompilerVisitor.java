@@ -16,7 +16,6 @@ import fr.amvproject.group3.jjc.ast.nodes.instrs.StoreNode;
 import fr.amvproject.group3.jjc.ast.nodes.intermediate.InstrNode;
 import fr.amvproject.group3.jjc.ast.nodes.literals.InitLiteral;
 import fr.amvproject.group3.jjc.ast.nodes.literals.JcstopLiteral;
-import fr.amvproject.group3.jjc.ast.nodes.literals.NopLiteral;
 import fr.amvproject.group3.jjc.ast.nodes.literals.PopLiteral;
 import fr.amvproject.group3.jjc.ast.nodes.literals.ReturnLiteral;
 import fr.amvproject.group3.jjc.ast.nodes.literals.SwapLiteral;
@@ -68,7 +67,7 @@ public class CompilerVisitor implements fr.amvproject.group3.mjj.ast.AstVisitor<
   }
 
   private ObjNode objMapper(String obj) {
-    if (!obj.equals("var") && !obj.equals("cst") && !obj.equals("tab") && !obj.equals("meth")) throw new RuntimeException("ObjType incorrect");
+    if (!obj.equals("var") && !obj.equals("cst") && !obj.equals("tab") && !obj.equals("meth")) throw new IllegalArgumentException("ObjType incorrect");
     MockToken objToken = new MockToken(obj, 0, 0);
     return new ObjNode(objToken);
   }
@@ -389,7 +388,7 @@ public class CompilerVisitor implements fr.amvproject.group3.mjj.ast.AstVisitor<
 
     List<ClassNode> pe = node.getCondExp().accept(this);
     classNodes.addAll(pe);
-    classNodes.add(newClass(new NopLiteral(dummyToken)));
+    classNodes.add(newClass(new UnaryOpNode("not", 0, 0)));
     MockToken intA1Token = new MockToken(String.valueOf(instrBlockCount + pe.size() + npiss + 3), 0, 0);
     classNodes.add(newClass(new IfNode(dummyToken, new AddressNode(intA1Token))));
     List<ClassNode> piss = node.getInstrs() != null ? node.getInstrs().accept(this) : new ArrayList<>();

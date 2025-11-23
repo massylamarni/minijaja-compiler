@@ -1,5 +1,6 @@
 package fr.amvproject.group3;
 
+import fr.amvproject.group3.mjj.InterpreterVisitor;
 import fr.amvproject.group3.jjc.ast.PrintVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.program.ProgramNode;
 import fr.amvproject.group3.jjc.utils.NodeOperations;

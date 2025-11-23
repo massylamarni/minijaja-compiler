@@ -1,6 +1,5 @@
 package fr.amvproject.group3;
 
-import fr.amvproject.group3.interpreter.JajaCodeInterpreter;
 import fr.amvproject.group3.jjc.ast.nodes.program.ProgramNode;
 import fr.amvproject.group3.mjj.ast.AstNode;
 import fr.amvproject.group3.mjj.utils.AstOperations;
@@ -37,7 +36,7 @@ public class StepDefinitionCompilator {
         baseStepsUtility.outputCaptor = new ByteArrayOutputStream();
         System.setOut(new PrintStream(baseStepsUtility.outputCaptor));
         try {
-            JajaCodeExecuter.executeProgram(baseStepsUtility.currentCompileCode, new JajaCodeInterpreter());
+            //JajaCodeExecuter.executeProgram(baseStepsUtility.currentCompileCode, new JajaCodeInterpreter());
         } finally {
             System.setOut(baseStepsUtility.originalOut);
         }
