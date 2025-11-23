@@ -1,4 +1,4 @@
-package fr.amvproject.group3;
+package fr.amvproject.group3.jjc;
 
 import java.util.HashMap;
 import java.util.Map;

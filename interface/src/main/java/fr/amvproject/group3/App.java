@@ -3,6 +3,7 @@ package fr.amvproject.group3;
 import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.PrintVisitor;
 import fr.amvproject.group3.jjc.utils.AstOperations;
+import fr.amvproject.group3.mjj.MjjInterpreter;
 import fr.amvproject.group3.mjj.analyser.SemanticVisitor;
 import fr.amvproject.group3.mjj.analyser.SymbolTable;
 import fr.amvproject.group3.utils.StringSaver;
