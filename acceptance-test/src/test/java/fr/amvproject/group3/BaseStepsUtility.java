@@ -18,7 +18,8 @@ public class BaseStepsUtility {
 
     public ByteArrayOutputStream outputCaptor;
     public PrintStream originalOut;
-    public String executionResult;
+    public String executionResultJajacode;
+    public String executionResultMiniJaja;
 
     public static BaseStepsUtility getInstance() {
         return instance;

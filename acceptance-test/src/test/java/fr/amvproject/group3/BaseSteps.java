@@ -1,6 +1,7 @@
 package fr.amvproject.group3;
 
 import io.cucumber.java.ParameterType;
+import io.cucumber.java.PendingException;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 
@@ -37,11 +38,25 @@ public class BaseSteps {
             baseStepsUtility = new BaseStepsUtility();
         }
         String expected = baseStepsUtility.loadExpected(baseStepsUtility.currentFilename);
+        if (baseStepsUtility.executionResultMiniJaja != null) {
+            assertThat(
+                    "La sortie du programme ne correspond pas au fichier .out attendu",
+                    baseStepsUtility.executionResultMiniJaja,
+                    is(expected)
+            );
+        }
+        else {
+            assertThat(
+                    "La sortie du programme ne correspond pas au fichier .out attendu",
+                    baseStepsUtility.executionResultJajacode,
+                    is(expected)
+            );
+        }
 
-        assertThat(
-                "La sortie du programme ne correspond pas au fichier .out attendu",
-                baseStepsUtility.executionResult,
-                is(expected)
-        );
+    }
+
+    @Then("Le résultat des deux exécutions doit être similaire")
+    public void leRésultatDesDeuxExécutionsDoitÊtreSimilaire() {
+       assertThat(baseStepsUtility.executionResultJajacode, is(baseStepsUtility.executionResultMiniJaja));
     }
 }

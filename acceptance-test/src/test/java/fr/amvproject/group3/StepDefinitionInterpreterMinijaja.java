@@ -48,6 +48,6 @@ public class StepDefinitionInterpreterMinijaja {
         }finally {
             System.setOut(baseStepsUtility.originalOut);
         }
-        baseStepsUtility.executionResult = baseStepsUtility.outputCaptor.toString().trim();
+        baseStepsUtility.executionResultMiniJaja = baseStepsUtility.outputCaptor.toString().trim();
     }
 }
