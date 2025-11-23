@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
+import fr.amvproject.group3.mjj.analyser.symbols.ClassSymbol;
+import fr.amvproject.group3.mjj.analyser.symbols.CstSymbol;
 import fr.amvproject.group3.mjj.analyser.symbols.MethodSymbol;
 import fr.amvproject.group3.mjj.analyser.symbols.Symbols;
+import fr.amvproject.group3.mjj.analyser.symbols.TableSymbol;
+import fr.amvproject.group3.mjj.analyser.symbols.VarSymbol;
 import fr.amvproject.group3.mjj.ast.AstVisitor;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.*;
 import fr.amvproject.group3.mjj.ast.nodes.decls.*;
@@ -29,6 +33,7 @@ import fr.amvproject.group3.mjj.utils.NodeOperations;
 
 public class SemanticVisitor implements AstVisitor<TypeNode> {
   SymbolTable symbolTable = new SymbolTable();
+  ScopeManager scopeManager = new ScopeManager(symbolTable);
   CompileTimeVisitor compileTimeVisitor = new CompileTimeVisitor(symbolTable);
 
   public SymbolTable getSymbolTable() {
@@ -42,31 +47,45 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
     Symbols sym = symbolTable.lookup(identNode);
 
     if (sym != null) {
-      throw new SemanticException("Symbol " + identNode.getName() + " already declared at line " + sym.getIdentNode().getLine());
+      throw new SemanticException("Symbol " + identNode.getName() + " already declared at line" + sym.getLine(), identNode.getLine(), identNode.getColumn());
     }
   }
 
   // Class | Var | Cst | Tab
-  private void checkIfExistsToUse(IdentNode identNode) {
-    Symbols sym = symbolTable.lookup(identNode);
+  private Symbols checkIfExistsToUse(IdentNode identNode) {
+    Symbols sym = scopeManager.lookup(identNode);
 
     if (sym == null) {
-      throw new SemanticException("Symbol " + identNode.getName() + " is referenced, but never declared, at line " + identNode.getLine());
+      throw new SemanticException("Symbol " + identNode.getName() + " is referenced, but never declared", identNode.getLine(), identNode.getColumn());
     }
-  }  
+    if (sym instanceof ClassSymbol) throw new SemanticException("Can't use a class in an expression", identNode.getLine(), identNode.getColumn());
+    if (sym instanceof MethodSymbol) throw new SemanticException("Can't use a method pointer in an expression", identNode.getLine(), identNode.getColumn());
+    if (sym instanceof TableSymbol) throw new SemanticException("Can't use a table pointer in an expression", identNode.getLine(), identNode.getColumn());
+
+    return sym;
+  }
+
+  private void checkIfAssignable(IdentNode identNode) {
+    Symbols sym = checkIfExistsToUse(identNode);
+
+    if (sym instanceof ClassSymbol) throw new SemanticException("Can't affact a new value to a class !", identNode.getLine(), identNode.getColumn());
+    if (sym instanceof CstSymbol cstSymbol && !cstSymbol.isVcst()) throw new SemanticException("Can't assign a new value to a final !", identNode.getLine(), identNode.getColumn());
+    if (sym instanceof MethodSymbol) throw new SemanticException("Can't affact a new value to a method pointer !", identNode.getLine(), identNode.getColumn());
+    if (sym instanceof TableSymbol) throw new SemanticException("Can't affact a new value to a table pointer !", identNode.getLine(), identNode.getColumn());
+  }
 
   // Var
-  private void checkIfTypeCompatible(TypeNode identType, ExpNode identInitExp, int line) {
+  private void checkIfTypeCompatible(TypeNode identType, ExpNode identInitExp, IdentNode identNode) {
     TypeNode typeExpValue = identInitExp.accept(this);
     if (!identType.equals(typeExpValue)) {
-      throw new SemanticException("Value of Type " + typeExpValue + " not compatible with declaration of type " + identType.getName() + " at line " + line);
+      throw new SemanticException("Value of Type " + typeExpValue + " not compatible with declaration of type " + identType.getName(), identNode.getLine(), identNode.getColumn());
     }
   }
 
   // Tab
-  private Integer checkIfTabIndexIsInteger(ExpNode sizeExpNode, int line) {
+  private Integer checkIfTabIndexIsInteger(ExpNode sizeExpNode, IdentNode identNode) {
     TypeNode sizeExpType = sizeExpNode.accept(this);
-    if (!sizeExpType.isInt()) throw new SemanticException("Value of type " + sizeExpType.getName() + " can't be used as array index,"  + " at line " + line);
+    if (!sizeExpType.isInt()) throw new SemanticException("Value of type " + sizeExpType.getName() + " can't be used as Array access index", identNode.getLine(), identNode.getColumn());
     return (Integer) sizeExpNode.accept(compileTimeVisitor);
   }
 
@@ -85,8 +104,10 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
     checkIfExistsToDeclare(node.getIdent());
     symbolTable.addSymbol(node.getIdent());
 
+    scopeManager.newScope();
     node.getDecls().accept(this);
     node.getMain().accept(this);
+    scopeManager.exitScope();
     return new TypeNode("void");
   }
 
@@ -109,7 +130,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   @Override
   public TypeNode visitVar(VarNode node) {
     checkIfExistsToDeclare(node.getIdent());
-    checkIfTypeCompatible(new TypeNode(node.getType().getName()), node.getInitExp(), node.getIdent().getLine());
+    checkIfTypeCompatible(new TypeNode(node.getType().getName()), node.getInitExp(), node.getIdent());
 
     symbolTable.addSymbol(node.getIdent(), new TypeNode(node.getType().getName()));
     return new TypeNode("void");
@@ -119,7 +140,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   public TypeNode visitCst(CstNode node) {
     checkIfExistsToDeclare(node.getIdent());
     ExpNode initExp = node.getInitExp();
-    if (initExp != null) checkIfTypeCompatible(new TypeNode(node.getType().getName()), node.getInitExp(), node.getIdent().getLine());
+    if (initExp != null) checkIfTypeCompatible(new TypeNode(node.getType().getName()), node.getInitExp(), node.getIdent());
 
     symbolTable.addSymbol(node.getIdent(), new TypeNode(node.getType().getName()), initExp == null);
     return new TypeNode("void");
@@ -128,7 +149,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   @Override
   public TypeNode visitTable(TableNode node) {
     checkIfExistsToDeclare(node.getIdent());
-    Integer sizeExpValue = checkIfTabIndexIsInteger(node.getSizeExp(), node.getIdent().getLine());
+    Integer sizeExpValue = checkIfTabIndexIsInteger(node.getSizeExp(), node.getIdent());
     
     symbolTable.addSymbol(node.getIdent(), new TypeNode(node.getType().getName()), sizeExpValue);
     return new TypeNode("void");
@@ -137,6 +158,8 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   @Override
   public TypeNode visitMethod(MethodNode node) {
     MethodSymbol sym = (MethodSymbol) symbolTable.lookup(node.getIdent());
+
+    scopeManager.newScope();
     List<TypeNode> paramsTypeValue = new ArrayList<>();
     for (ParamNode paramNode : node.getParams().getList()) {
       paramsTypeValue.add(paramNode.accept(this));
@@ -155,18 +178,21 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
       }
 
       if (paramsTypeValue.size() == symParamsTypeValue.size() && hasSameParamsType) {
-        throw new SemanticException("Symbol " + node.getIdent().getName() + " already declared at line " + sym.getIdentNode().getLine());
+        throw new SemanticException("Symbol " + node.getIdent().getName() + " already declared at line " + sym.getLine(), node.getLine(), node.getColumn());
       }
     }
 
+    node.getParams().accept(this);
     node.getVars().accept(this);
 
     // Check if return value types match declared return type
     for (InstrNode instrNode : node.getInstrs().getList()) {
       if (!instrNode.accept(this).getName().equals(node.getReturnType().getName())) {
-        throw new SemanticException("Return expression does not match the declared method type " + node.getReturnType().getName() + " !");
+        ReturnNode returnNode = (ReturnNode) instrNode;
+        throw new SemanticException("Return expression does not match the declared method type " + node.getReturnType().getName(), returnNode.getLine(), returnNode.getColumn());
       }
     }
+    scopeManager.exitScope();
 
     symbolTable.addSymbol(node.getIdent(), new TypeNode(node.getReturnType().getName()), paramsTypeValue);
     return new TypeNode("void");
@@ -174,19 +200,24 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitMain(MainNode node) {
+    scopeManager.newScope();
     node.getVars().accept(this);
     node.getInstrs().accept(this);
+    scopeManager.exitScope();
     return new TypeNode("void");
   }
 
   @Override
-  public TypeNode visitParams(ParamsNode node) {
+  public TypeNode visitParams(ParamsNode node) { // Not used, implemented directly in visitMethod
     return null;
   }
 
   @Override
   public TypeNode visitParam(ParamNode node) {
-    return new TypeNode(node.getType().getName());
+    checkIfExistsToDeclare(node.getIdent());
+    TypeNode typeNode = new TypeNode(node.getType().getName());
+    symbolTable.addSymbol(node.getIdent(), typeNode);
+    return typeNode;
   }
 
   @Override
@@ -208,13 +239,13 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
     TypeNode rightExpTypeValue = node.getRightExp().accept(this);
 
     if (!leftExpTypeValue.equals(rightExpTypeValue)) {
-      throw new SemanticException("Type mismatch !");
+      throw new SemanticException("Type mismatch", node.getLine(), node.getColumn());
     }
     if (leftExpTypeValue.isInt() && !node.getOp().takesInteger()) {
-      throw new SemanticException("Incompatible operand, expecting Boolean, Integer given !");
+      throw new SemanticException("Incompatible operand, expecting Boolean, Integer given", node.getLine(), node.getColumn());
     }
     if (leftExpTypeValue.isBoolean() && !node.getOp().takesBoolean()) {
-      throw new SemanticException("Incompatible operand, expecting Integer, Boolean given !");
+      throw new SemanticException("Incompatible operand, expecting Integer, Boolean given", node.getLine(), node.getColumn());
     }
 
     if (node.getOp().givesInteger()) return new TypeNode("int");
@@ -226,10 +257,10 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
     TypeNode expTypeValue = node.getExp().accept(this);
 
     if (expTypeValue.isInt()&& node.getOp().isNot()) {
-      throw new SemanticException("Incompatible operand, expecting Boolean, Integer given !");
+      throw new SemanticException("Incompatible operand, expecting Boolean, Integer given", node.getLine(), node.getColumn());
     }
     if (expTypeValue.isBoolean() && node.getOp().isNeg()) {
-      throw new SemanticException("Incompatible operand, expecting Integer, Boolean given !");
+      throw new SemanticException("Incompatible operand, expecting Integer, Boolean given", node.getLine(), node.getColumn());
     }
 
     if (node.getOp().isNeg()) return new TypeNode("int");
@@ -240,9 +271,10 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   public TypeNode visitAssign(AssignNode node) {
     TypeNode leftValueNodeType = node.getLeftValueNode().accept(this);
     if (node.getLeftValueNode() instanceof IdentNode identNode) {
-      checkIfTypeCompatible(leftValueNodeType, node.getExp(), identNode.getLine());
+      checkIfAssignable(identNode);
+      checkIfTypeCompatible(leftValueNodeType, node.getExp(), identNode);
     } else if (node.getLeftValueNode() instanceof ArrayAccessNode arrayAccessNode) {
-      checkIfTypeCompatible(leftValueNodeType, node.getExp(), arrayAccessNode.getIdent().getLine());
+      checkIfTypeCompatible(leftValueNodeType, node.getExp(), arrayAccessNode.getIdent());
     }
     return new TypeNode("void");
   }
@@ -258,9 +290,10 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
     TypeNode leftValueNodeType = node.getLeftValueNode().accept(this);
     if (!leftValueNodeType.isInt()) {
       if (node.getLeftValueNode() instanceof IdentNode identNode) {
-        throw new SemanticException("Value of Type " + leftValueNodeType + " can't be incremented," + " at line " + identNode.getLine());
-      } else if (node.getLeftValueNode() instanceof ArrayAccessNode arrayAccessNode) {
-        throw new SemanticException("Value of Type " + leftValueNodeType + " can't be incremented," + " at line " + arrayAccessNode.getIdent().getLine());
+        checkIfAssignable(identNode);
+        throw new SemanticException("Value of Type " + leftValueNodeType + " can't be incremented", node.getLine(), node.getColumn());
+      } else if (node.getLeftValueNode() instanceof ArrayAccessNode) {
+        throw new SemanticException("Value of Type " + leftValueNodeType + " can't be incremented", node.getLine(), node.getColumn());
       }
     }
 
@@ -269,16 +302,19 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitLength(LengthNode node) {
-    TypeNode leftValueNodeType = node.getIdent().accept(this);
-    Symbols sym = symbolTable.lookup(node.getIdent());
-    if (sym instanceof MethodSymbol) {
-      throw new SemanticException("Incompatible parameter for Length, expecting Array, Variable or Final, Method given, at line " + sym.getIdentNode().getLine() + " !");
+    node.getIdent().accept(this);
+    Symbols sym = scopeManager.lookup(node.getIdent());
+    if (sym instanceof ClassSymbol) {
+      throw new SemanticException("Incompatible parameter for Length, expecting Array pointer, Class given", node.getLine(), node.getColumn());
     }
-
-    if (leftValueNodeType.isInt()) {
-      throw new SemanticException("Incompatible expression for Length, expecting Array or String, Integer given !");
-    } else if (leftValueNodeType.isBoolean()) {
-      throw new SemanticException("Incompatible expression for Length, expecting Array or String, Boolean given !");
+    if (sym instanceof MethodSymbol) {
+      throw new SemanticException("Incompatible parameter for Length, expecting Array pointer, Method given", node.getLine(), node.getColumn());
+    }
+    if (sym instanceof CstSymbol) {
+      throw new SemanticException("Incompatible parameter for Length, expecting Array pointer, Final given", node.getLine(), node.getColumn());
+    }
+    if (sym instanceof VarSymbol) {
+      throw new SemanticException("Incompatible parameter for Length, expecting Array pointer, Variable given", node.getLine(), node.getColumn());
     }
     return new TypeNode("int");
   }
@@ -287,10 +323,18 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   public TypeNode visitIf(IfNode node) {
     TypeNode expTypeValue = node.getCondExp().accept(this);
     if (!expTypeValue.isBoolean()) {
-      throw new SemanticException("Incompatible expression for If, expecting Boolean, " + expTypeValue + " given !");
+      throw new SemanticException("Incompatible expression for If, expecting Boolean, " + expTypeValue + " given", node.getLine(), node.getColumn());
     }
-    if (node.getThenInstrs() != null) node.getThenInstrs().accept(this);
-    if (node.getElseInstrs() != null) node.getElseInstrs().accept(this);
+    if (node.getThenInstrs() != null) {
+      scopeManager.newScope();
+      node.getThenInstrs().accept(this);
+      scopeManager.exitScope();
+    }
+    if (node.getElseInstrs() != null) {
+      scopeManager.newScope();
+      node.getElseInstrs().accept(this);
+      scopeManager.exitScope();
+    }
     return new TypeNode("void");
   }
 
@@ -298,24 +342,28 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   public TypeNode visitWhile(WhileNode node) {
     TypeNode expTypeValue = node.getCondExp().accept(this);
     if (!expTypeValue.isBoolean()) {
-      throw new SemanticException("Incompatible expression for While, expecting Boolean, " + expTypeValue + " given !");
+      throw new SemanticException("Incompatible expression for While, expecting Boolean, " + expTypeValue + " given", node.getLine(), node.getColumn());
     }
+    scopeManager.newScope();
     node.getInstrs().accept(this);
+    scopeManager.exitScope();
     return new TypeNode("void");
   }
 
   @Override
   public TypeNode visitWrite(WriteNode node) {
-    TypeNode expTypeValue = node.getExp().accept(this);
+    node.getExp().accept(this);
     if (node.getExp() instanceof IdentNode identNode) {
-      Symbols sym = symbolTable.lookup(identNode);
-      if (sym instanceof MethodSymbol) throw new SemanticException("Incompatible parameter for Length, expecting Array, Variable or Final, Method given, at line " + sym.getIdentNode().getLine() + " !");
-    }
-
-    if (expTypeValue.isInt()) {
-      throw new SemanticException("Incompatible expression for Length, expecting Array or String, Integer given !");
-    } else if (expTypeValue.isBoolean()) {
-      throw new SemanticException("Incompatible expression for Length, expecting Array or String, Boolean given !");
+      Symbols sym = scopeManager.lookup(identNode);
+      if (sym instanceof ClassSymbol) {
+        throw new SemanticException("Incompatible parameter for Length, expecting, Variable, Final or Array access, Class given", node.getLine(), node.getColumn());
+      }
+      if (sym instanceof MethodSymbol) {
+        throw new SemanticException("Incompatible parameter for Length, expecting, Variable, Final or Array access, Method given", node.getLine(), node.getColumn());
+      }
+      if (sym instanceof TableSymbol) {
+        throw new SemanticException("Incompatible parameter for Length, expecting, Variable, Final or Array access, Array pointer given", node.getLine(), node.getColumn());
+      }
     }
     return new TypeNode("void");
   }
@@ -342,14 +390,14 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitArrayAccess(ArrayAccessNode node) {
-    checkIfTabIndexIsInteger(node.getIndexExp(), node.getIdent().getLine());
+    checkIfTabIndexIsInteger(node.getIndexExp(), node.getIdent());
     
     return node.getIdent().accept(this);
   }
 
   @Override
   public TypeNode visitCallExp(CallExpNode node) {
-    MethodSymbol sym = (MethodSymbol) symbolTable.lookup(node.getIdent());
+    MethodSymbol sym = (MethodSymbol) scopeManager.lookup(node.getIdent());
 
     node.getIdent().accept(this);
 
@@ -361,7 +409,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
     List<TypeNode> symParamsTypeValue = sym.getParamsType();
     for (int i = 0; i < listExpTypeValue.size(); i++) {
       if (!listExpTypeValue.get(i).equals(symParamsTypeValue.get(i))) {
-        throw new SemanticException("Method " + node.getIdent().getName() + " uses different parameter type from the declared one, at line " + node.getIdent().getLine());
+        throw new SemanticException("Method " + node.getIdent().getName() + " uses different parameter type from the declared one, at line " + sym.getLine(), node.getLine(), node.getColumn());
       }
     }
   
@@ -370,21 +418,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitCallInstr(CallInstrNode node) {
-    MethodSymbol sym = (MethodSymbol) symbolTable.lookup(node.getIdent());
-
-    node.getIdent().accept(this);
-
-    List<TypeNode> listExpTypeValue = new ArrayList<>();
-    for (ExpNode expNode : node.getListExp().getList()) {
-      listExpTypeValue.add(expNode.accept(this));
-    }
-
-    List<TypeNode> symParamsTypeValue = sym.getParamsType();
-    for (int i = 0; i < listExpTypeValue.size(); i++) {
-      if (!listExpTypeValue.get(i).equals(symParamsTypeValue.get(i))) {
-        throw new SemanticException("Method " + node.getIdent().getName() + " uses different parameter type from the declared one, at line " + node.getIdent().getLine());
-      }
-    }
+    visitCallExp(new CallExpNode(node.getIdent(), node.getListExp()));
     return new TypeNode("void");
   }
 
@@ -411,6 +445,6 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   @Override
   public TypeNode visitIdent(IdentNode node) {
     checkIfExistsToUse(node);
-    return symbolTable.recordUsage(node).getTypeNode();
+    return symbolTable.recordUsage(node, scopeManager.getScopeDepth()).getTypeNode();
   }
 }

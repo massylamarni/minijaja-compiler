@@ -10,6 +10,7 @@ public abstract class Symbols {
   private final IdentNode identNode;
   private final TypeNode typeNode;
   private List<Integer> linesOfUsage = new ArrayList<>();
+  private List<Integer> scopesOfUsage = new ArrayList<>();
 
   protected Symbols(IdentNode identNode, TypeNode typeNode) {
     this.identNode = identNode;
@@ -31,6 +32,18 @@ public abstract class Symbols {
 
   public void addLineOfUsage(int line) {
     linesOfUsage.add(line);
+  }
+
+  public void addScopeOfUsage(int scope) {
+    scopesOfUsage.add(scope);
+  }
+
+  public int getLine() {
+    return identNode.getLine();
+  }
+
+  public int getColumn() {
+    return identNode.getColumn();
   }
 
   public abstract String print();

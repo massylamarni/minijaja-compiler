@@ -9,7 +9,7 @@ import fr.amvproject.group3.mjj.analyser.symbols.ClassSymbol;
 import fr.amvproject.group3.mjj.analyser.symbols.CstSymbol;
 import fr.amvproject.group3.mjj.analyser.symbols.MethodSymbol;
 import fr.amvproject.group3.mjj.analyser.symbols.Symbols;
-import fr.amvproject.group3.mjj.analyser.symbols.TabSymbol;
+import fr.amvproject.group3.mjj.analyser.symbols.TableSymbol;
 import fr.amvproject.group3.mjj.analyser.symbols.VarSymbol;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.utils.StringSaver;
@@ -25,25 +25,26 @@ public class SymbolTable {
     symbols.put(identNode, new ClassSymbol(identNode));
   }
 
-  public void addSymbol(IdentNode identNode, TypeNode typeMethNode) {
-    symbols.put(identNode, new VarSymbol(identNode, typeMethNode));
+  public void addSymbol(IdentNode identNode, TypeNode typeNode) {
+    symbols.put(identNode, new VarSymbol(identNode, typeNode));
   }
 
   public void addSymbol(IdentNode identNode, TypeNode typeNode, boolean isVcst) {
     symbols.put(identNode, new CstSymbol(identNode, typeNode, isVcst));
   }
 
-  public void addSymbol(IdentNode identNode, TypeNode typeMethNode, Integer size) {
-    symbols.put(identNode, new TabSymbol(identNode, typeMethNode, size));
+  public void addSymbol(IdentNode identNode, TypeNode typeNode, Integer size) {
+    symbols.put(identNode, new TableSymbol(identNode, typeNode, size));
   }
 
   public void addSymbol(IdentNode identNode, TypeNode returnType, List<TypeNode> paramsType) {
     symbols.put(identNode, new MethodSymbol(identNode, returnType, paramsType));
   }
 
-  public Symbols recordUsage(IdentNode ident) {
+  public Symbols recordUsage(IdentNode ident, int scope) {
     Symbols sym = symbols.get(ident);
     sym.addLineOfUsage(ident.getLine());
+    sym.addScopeOfUsage(scope);
     return sym;
   }
 
