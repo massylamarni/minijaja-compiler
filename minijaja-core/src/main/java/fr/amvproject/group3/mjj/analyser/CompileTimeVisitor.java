@@ -1,5 +1,6 @@
 package fr.amvproject.group3.mjj.analyser;
 
+import fr.amvproject.group3.exceptions.SemanticException;
 import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
 import fr.amvproject.group3.mjj.analyser.symbols.MethodSymbol;
 import fr.amvproject.group3.mjj.analyser.symbols.Symbols;
@@ -22,7 +23,6 @@ import fr.amvproject.group3.mjj.ast.nodes.other.TypeMethNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.UnaryOpNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
-import fr.amvproject.group3.mjj.exceptions.SemanticException;
 
 public class CompileTimeVisitor implements AstVisitor<Object> {
   private SymbolTable symbolTable;
