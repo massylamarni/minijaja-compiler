@@ -44,7 +44,6 @@ import fr.amvproject.group3.mjj.ast.nodes.other.UnaryOpNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
 import fr.amvproject.group3.mjj.utils.NodeOperations;
-// TODO infinite recursions
 
 /**
  * Interpréteur respectant les règles sémantiques du cours MiniJaja
@@ -200,7 +199,10 @@ public class InterpreterVisitor implements AstVisitor<Object> {
 
     /**
      * Règle [appelE] (page 43)
-     * TODO Règle
+     *  m ⊢ appelI(ident(i), lexp) ⇒ m1
+     *  m1 eval⊢ Val(VariableClasse(m1)) ⇒ v
+     *  ---
+     *  m ⊢ appelE(ident(i), lexp) ⇒ v
      */
     @Override
     public Object visitCallExp(CallExpNode node) {
@@ -210,7 +212,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         List<ParamNode> listParamNodes = paramsNode.getList();
         List<ExpNode> listExpNodes = (node.getListExp() != null) ? node.getListExp().getList() : new ArrayList<>();
 
-        // ExpParam - Déclarer les paramètres
+        // ExpParam - declaration des paramètres
         if (!listParamNodes.isEmpty()) {
             for (int i = 0; i < listExpNodes.size(); i++) {
                 ParamNode param = listParamNodes.get(i);
@@ -219,22 +221,22 @@ public class InterpreterVisitor implements AstVisitor<Object> {
             }
         }
 
-        // Déclarer les Variables locales
+        // declaration des variables locales
         VarsNode varsNode = stack.declaration(node.getIdent());
         List<VarDeclNode> listVarDeclNodes = varsNode.getList();
         if (varsNode != null && !listVarDeclNodes.isEmpty()) {
             varsNode.accept(this);
         }
 
-        // Exécuter le corps
+        // execute les iss
         InstrsNode instrsNode = stack.corps(node.getIdent());
         instrsNode.accept(this);
 
-        // Récupérer la valeur de retour
+        // on recupere la valeur de retour
         IdentNode returnIdentNode = stack.peekTail().getIdent();
         Object returnValue = stack.val(returnIdentNode);
 
-        // Nettoyer
+        // retrait
         if (varsNode != null && !listVarDeclNodes.isEmpty()) {
             retraitVars(varsNode);
         }
@@ -245,7 +247,12 @@ public class InterpreterVisitor implements AstVisitor<Object> {
 
     /**
      * Règle [appelI] (page 41)
-     * TODO Règle
+     * ExpParam - m ⊢ ExpParam(lexp, Parametre(i,m), m) ⊢ Déclaration(i, m)  ⇒ m1
+     * m1 ⊢ corps(i, m) ⇒ m2
+     * m2 retrait⊢ Déclaration(i, m) → m3
+     * m3 retrait⊢ Parametre(i,m) → m4
+     * ---
+     * m ⊢ appelI(ident(i), lexp) ⇒ m4
      */
     @Override
     public Object visitCallInstr(CallInstrNode node) {
@@ -284,6 +291,9 @@ public class InterpreterVisitor implements AstVisitor<Object> {
             stack.affecterVal(identNode, value);
         } else if (node.getLeftValueNode() instanceof ArrayAccessNode arrayAccessNode) {
             int index = (int) evalExp(arrayAccessNode.getIndexExp());
+            if( index < 0) {
+                throw new RuntimeException("Index out of bounds: negative index " + index); // TODO J'ajoute un todo ici, jsp si tu veux custom apres
+            }
             try {
                 stack.affecterValT(arrayAccessNode.getIdent(), index, value);
             } catch (Exception e) {
@@ -323,7 +333,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     }
 
     /**
-     * TODO Règle
+     * 	m ⊢eval longeur(ident(i)) ⇒ long(I,m)
      */
     @Override
     public Object visitLength(LengthNode node) {
@@ -394,9 +404,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         return null;
     }
 
-    /**
-     * TODO Règle
-     */
+
     @Override
     public Object visitListExp(ListExpNode node) {
         List<Object> listExpValues = new ArrayList<>();
@@ -499,6 +507,11 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     public Object visitArrayAccess(ArrayAccessNode node) {
         Object indexObj = evalExp(node.getIndexExp());
         int index = (int) indexObj;
+
+        if (index < 0) {
+            throw new RuntimeException("Index out of bounds: negative index " + index); // TODO J'ajoute un todo ici, jsp si tu veux custom apres
+        }
+
         try {
             return stack.valT(node.getIdent(), index);
         } catch (Exception e) {
@@ -548,7 +561,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     }
 
     /**
-     * TODO Règle
+     * [rentête] :	m ⊢retrait entête(t, ident(i)) → RetirerDecl(i, m)
      */
     private void retraitParams(ParamsNode params) {
         if (params == null) return;
