@@ -3,10 +3,10 @@ package fr.amvproject.group3.mjj.analyser.symbols;
 import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
 
-public class TabSymbol extends Symbols {
+public class TableSymbol extends Symbols {
   private final Integer size;
 
-  public TabSymbol(IdentNode ident, TypeNode type, Integer size) {
+  public TableSymbol(IdentNode ident, TypeNode type, Integer size) {
     super(ident, type);
     this.size = size;
   }
