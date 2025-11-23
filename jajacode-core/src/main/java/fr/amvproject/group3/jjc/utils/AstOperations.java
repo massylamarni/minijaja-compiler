@@ -10,7 +10,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 
 import fr.amvproject.group3.JajaCodeLexer;
 import fr.amvproject.group3.JajaCodeParser;
-import fr.amvproject.group3.exceptions.SyntaxException;
+import fr.amvproject.group3.exceptions.listeners.LexicalErrorsListener;
+import fr.amvproject.group3.exceptions.listeners.SyntaxicErrorsListener;
 import fr.amvproject.group3.jjc.ast.AstBuilderVisitor;
 import fr.amvproject.group3.jjc.ast.AstNode;
 
@@ -23,15 +24,22 @@ public class AstOperations {
     JajaCodeParser parser = new JajaCodeParser(tokens);
 
     // Error handling
-    JajaCodeParser.ProgramContext tree = null;
-    try {
-      tree = parser.program();
-    } catch (Exception ex) {
-      throw new SyntaxException(ex.getMessage());
-    }
+    LexicalErrorsListener lexicalErrorsListener = new LexicalErrorsListener();
+    lexer.removeErrorListeners(); // Removes the default console error listener
+    lexer.addErrorListener(lexicalErrorsListener);
 
-    if (parser.getNumberOfSyntaxErrors() > 0 || tree == null)
-      throw new SyntaxException("Parsing resulted in " + parser.getNumberOfSyntaxErrors() + " errors.");
+    SyntaxicErrorsListener syntaxicErrorsListener = new SyntaxicErrorsListener();
+    parser.removeErrorListeners();
+    parser.addErrorListener(syntaxicErrorsListener);
+
+    JajaCodeParser.ProgramContext tree = parser.program();
+
+    if (lexicalErrorsListener.hasErrors()) {
+      lexicalErrorsListener.printAll();
+    }
+    if (syntaxicErrorsListener.hasErrors()) {
+      syntaxicErrorsListener.printAll();
+    }
 
     AstBuilderVisitor astBuilderVisitor = new AstBuilderVisitor();
     return astBuilderVisitor.visit(tree);

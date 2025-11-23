@@ -67,7 +67,7 @@ public class CompilerVisitor implements fr.amvproject.group3.mjj.ast.AstVisitor<
   }
 
   private ObjNode objMapper(String obj) {
-    if (!obj.equals("var") && !obj.equals("cst") && !obj.equals("tab") && !obj.equals("meth")) throw new RuntimeException("ObjType incorrect");
+    if (!obj.equals("var") && !obj.equals("cst") && !obj.equals("tab") && !obj.equals("meth")) throw new IllegalArgumentException("ObjType incorrect");
     MockToken objToken = new MockToken(obj, 0, 0);
     return new ObjNode(objToken);
   }

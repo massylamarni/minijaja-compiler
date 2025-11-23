@@ -4,7 +4,6 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.TokenSource;
 
-import fr.amvproject.group3.exceptions.NodeException;
 import fr.amvproject.group3.mjj.ast.nodes.exprs.BinaryExpNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.ArrayAccessNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
@@ -35,7 +34,7 @@ public class NodeOperations {
     return new AssignNode(leftValueNode, addAssignNode.getAddAssignToken(), newExpNode);
   }
 
-  public static AssignNode incToAssign(IncNode incNode) throws NodeException {
+  public static AssignNode incToAssign(IncNode incNode) {
     LeftValueNode leftValueNode = incNode.getLeftValueNode();
     BinaryOpNode binaryOpNode = new BinaryOpNode("+", incNode.getLine(), incNode.getColumn());
     ExpNode leftExpNode = null;
