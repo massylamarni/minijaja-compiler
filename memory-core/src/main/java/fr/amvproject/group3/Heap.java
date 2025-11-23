@@ -9,6 +9,10 @@ public class Heap {
     private List<Object> queue = new ArrayList<>();
     private int nextAddress = 0;
 
+    private void checkIfInBlock(int address, int index) {
+      if (address < 0 || address >= nextAddress || index < 0 || index > getSize(address) - 1) throw new IndexOutOfBoundsException();
+    }
+
     // Allocate memory in the heap and return its address, aka CreerTas
     public int allocate(int size, TypeMemNode type) {
       int address = nextAddress;
@@ -30,24 +34,34 @@ public class Heap {
     // Remove the allocated memory from specific address, aka RetirerTas
     public void remove(int address, TypeMemNode type) {
       if (type == null) return; // Unknown use case
-      if (address < 0 || address >= nextAddress) throw new IndexOutOfBoundsException(); // Will never happen if semantic analysis is correct
-      int blockSize = (int) get(address - 1);
+      checkIfInBlock(address, 0); // Will never happen if semantic analysis is correct
+      int blockSize = (int) getSize(address);
       for (int i = 0; i < blockSize; i++) {
         queue.set(address+i, null);
       }
-      queue.set(address-1, 0);
+      setSize(address, 0);
     }
 
     // Get the object at a specific address
-    public Object get(int address) {
-      if (address < 0 || address >= nextAddress) throw new IndexOutOfBoundsException();
-      return queue.get(address);
+    public Object get(int address, int index) {
+      checkIfInBlock(address, index);
+      return queue.get(address + index);
     }
 
     // Set the object at a specific index starting from the ref address
-    public void set(int address, Object value) {
-      if (address < 0 || address >= nextAddress) throw new IndexOutOfBoundsException();
-      queue.set(address, value);
+    public void set(int address, int index, Object value) {
+      checkIfInBlock(address, index);
+      queue.set(address + index, value);
+    }
+
+    public int getSize(int address) {
+      if (address < 0 || address >= nextAddress);
+      return (int) queue.get(address - 1);
+    }
+
+    public void setSize(int address, int size) {
+      if (address < 0 || address >= nextAddress);
+      queue.set(address - 1, size);
     }
 
     // --- Getters for inspection ---

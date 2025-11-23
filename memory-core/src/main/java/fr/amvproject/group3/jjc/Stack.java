@@ -105,7 +105,8 @@ public class Stack extends StackManager {
 
   // Return value of identifier
   public Object val(IdentNode ident) {
-    for (Quad quad : queue) {
+    for (int i = queue.size() - 1; i >= 0; i--) {
+      Quad quad = queue.get(i);
       if (quad.getIdent().equals(ident))
         return quad.getValue();
     }
@@ -114,18 +115,20 @@ public class Stack extends StackManager {
 
   // Return value of identifier (array)
   public Object valT(IdentNode ident, int index) throws IndexOutOfBoundsException {
-    for (Quad quad : queue) {
+    for (int i = queue.size() - 1; i >= 0; i--) {
+      Quad quad = queue.get(i);
       if (quad.getIdent().equals(ident))
-        return heap.get((int) quad.getValue() + index);
+        return heap.get((int) quad.getValue(), index);
     }
     return null;
   }
 
   // Return length of array, long is reserved word
   public Integer longT(IdentNode ident) throws IndexOutOfBoundsException {
-    for (Quad quad : queue) {
+    for (int i = queue.size() - 1; i >= 0; i--) {
+      Quad quad = queue.get(i);
       if (quad.getIdent().equals(ident))
-        return (int) heap.get((int) quad.getValue() - 1);
+        return (int) heap.getSize((int) quad.getValue());
     }
     return null;
   }
@@ -154,9 +157,10 @@ public class Stack extends StackManager {
 
   // Assigns a new value to an array at a specific index
   public void affecterValT(IdentNode ident, int index, Object value) throws IndexOutOfBoundsException {
-    for (Quad quad : queue) {
+    for (int i = queue.size() - 1; i >= 0; i--) {
+      Quad quad = queue.get(i);
       if (quad.getIdent().equals(ident))
-        heap.set((int) quad.getValue() + index, value);
+        heap.set((int) quad.getValue(), index, value);
     }
   }
 
@@ -172,7 +176,8 @@ public class Stack extends StackManager {
 
   // Return object type of identifier
   public ObjNode objet(IdentNode ident) {
-    for (Quad quad : queue) {
+    for (int i = queue.size() - 1; i >= 0; i--) {
+      Quad quad = queue.get(i);
       if (quad.getIdent().equals(ident))
         return quad.getObj();
     }
@@ -181,7 +186,8 @@ public class Stack extends StackManager {
 
   // Return type of identifier
   public Object sorte(IdentNode ident) {
-    for (Quad quad : queue) {
+    for (int i = queue.size() - 1; i >= 0; i--) {
+      Quad quad = queue.get(i);
       if (quad.getIdent().equals(ident))
         return quad.getType();
     }

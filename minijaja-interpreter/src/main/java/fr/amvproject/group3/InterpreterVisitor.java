@@ -52,7 +52,7 @@ import fr.amvproject.group3.mjj.utils.NodeOperations;
 @SuppressWarnings("java:S6539") // Visitor pattern: large by design
 public class InterpreterVisitor implements AstVisitor<Object> {
     private static final int LOOP_LIMIT = 1000000;
-    private static final int RECURSION_LIMIT = 10000;
+    private static final int RECURSION_LIMIT = 100;
     private int recursionCount = 0;
     private final Stack stack = new Stack();
     private ExecutionContext ctx = new ExecutionContext(stack); // final

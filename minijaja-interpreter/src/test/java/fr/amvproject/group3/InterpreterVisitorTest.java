@@ -1192,7 +1192,7 @@ public class InterpreterVisitorTest {
 
     // ######################## ERROR HANDLING ########################
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
     public void givenDivisionByZero__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1214,7 +1214,7 @@ public class InterpreterVisitorTest {
         // Then - exception should be thrown
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
     public void givenDivisionByZeroInExpression__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1234,7 +1234,7 @@ public class InterpreterVisitorTest {
         // Then - exception should be thrown
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
     public void givenArrayIndexOutOfBounds__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1255,7 +1255,7 @@ public class InterpreterVisitorTest {
         // Then - exception should be thrown
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
     public void givenNegativeArrayIndex__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1276,7 +1276,7 @@ public class InterpreterVisitorTest {
         // Then - exception should be thrown
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
     public void givenArrayIndexOutOfBoundsInLoop__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1300,7 +1300,7 @@ public class InterpreterVisitorTest {
         // Then - exception should be thrown
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
     public void givenInfiniteLoop__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1323,7 +1323,7 @@ public class InterpreterVisitorTest {
         // Then - exception should be thrown after LOOP_LIMIT iterations
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
     public void givenInfiniteLoopWithIncrement__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1346,7 +1346,7 @@ public class InterpreterVisitorTest {
         // Then - exception should be thrown after LOOP_LIMIT iterations
     }
 
-    @Test(expected = StackOverflowError.class) // TODO RUNTIMEEXCEPTION
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
     public void givenInfiniteRecursion__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1369,7 +1369,7 @@ public class InterpreterVisitorTest {
         // Then - exception should be thrown after RECURSION_LIMIT calls
     }
 
-    @Test(expected = StackOverflowError.class) // TODO RUNTIMEEXCEPTION
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
     public void givenInfiniteRecursionWithoutCondition__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1392,7 +1392,7 @@ public class InterpreterVisitorTest {
         // Then - exception should be thrown after RECURSION_LIMIT calls
     }
 
-    @Test(expected = StackOverflowError.class) // TODO RUNTIMEEXCEPTION
+    @Test
     public void givenValidRecursion__whenInterpret__thenCorrectResult() throws Exception {
         // Given
         String code = """
@@ -1427,30 +1427,4 @@ public class InterpreterVisitorTest {
         String output = outContent.toString().trim();
         assertThat(output, is("120"));
     }
-
-    /* // pris en charge par lanalyseur sémantique
-    @Test(expected = RuntimeException.class)
-    public void givenLengthOnNonExistentArray__whenInterpret__thenThrowRuntimeException() throws Exception {
-        // Given
-        String code = """
-            class Test {
-                main {
-                    int size = length(nonExistent);
-                    write(size);
-                }
-            }
-            """;
-        ProgramNode program = buildAstFromCode(code);
-
-        // When
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
-
-        // Then - exception should be thrown
-    }
-    */
-
-
-
-
 }
