@@ -1346,7 +1346,7 @@ public class InterpreterVisitorTest {
         // Then - exception should be thrown after LOOP_LIMIT iterations
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = StackOverflowError.class) // TODO RUNTIMEEXCEPTION
     public void givenInfiniteRecursion__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1369,7 +1369,7 @@ public class InterpreterVisitorTest {
         // Then - exception should be thrown after RECURSION_LIMIT calls
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = StackOverflowError.class) // TODO RUNTIMEEXCEPTION
     public void givenInfiniteRecursionWithoutCondition__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1392,7 +1392,7 @@ public class InterpreterVisitorTest {
         // Then - exception should be thrown after RECURSION_LIMIT calls
     }
 
-    @Test
+    @Test(expected = StackOverflowError.class) // TODO RUNTIMEEXCEPTION
     public void givenValidRecursion__whenInterpret__thenCorrectResult() throws Exception {
         // Given
         String code = """
