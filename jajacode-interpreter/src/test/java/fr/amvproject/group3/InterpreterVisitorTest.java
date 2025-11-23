@@ -13,6 +13,7 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import fr.amvproject.group3.jjc.InterpreterVisitor;
 import fr.amvproject.group3.jjc.ast.AstBuilderVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.program.ProgramNode;
 
