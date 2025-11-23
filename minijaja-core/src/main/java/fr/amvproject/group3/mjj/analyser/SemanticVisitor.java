@@ -3,6 +3,7 @@ package fr.amvproject.group3.mjj.analyser;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.amvproject.group3.exceptions.SemanticException;
 import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
 import fr.amvproject.group3.mjj.analyser.symbols.ClassSymbol;
 import fr.amvproject.group3.mjj.analyser.symbols.CstSymbol;
@@ -28,7 +29,6 @@ import fr.amvproject.group3.mjj.ast.nodes.other.TypeMethNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.UnaryOpNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
-import fr.amvproject.group3.mjj.exceptions.SemanticException;
 import fr.amvproject.group3.mjj.utils.NodeOperations;
 
 public class SemanticVisitor implements AstVisitor<TypeNode> {

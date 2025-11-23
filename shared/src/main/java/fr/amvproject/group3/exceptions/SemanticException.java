@@ -1,4 +1,4 @@
-package fr.amvproject.group3.mjj.exceptions;
+package fr.amvproject.group3.exceptions;
 
 public class SemanticException extends RuntimeException {
   private final int line;
