@@ -1,6 +1,6 @@
 package fr.amvproject.group3.exceptions;
 
-public class SemanticException extends RuntimeException {
+public class SemanticException extends java.lang.RuntimeException {
   private final int line;
   private final int column;
 

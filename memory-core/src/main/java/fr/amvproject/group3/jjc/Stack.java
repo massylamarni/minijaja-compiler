@@ -52,6 +52,11 @@ public class Stack extends StackManager {
     return queue.get(queue.size() - 1);
   }
 
+  public Quad peekTail() {
+    if (queue.isEmpty()) return null;
+    return queue.get(0);
+  }
+
   // --- Variable / Constant / Array / Method Declarations ---
 
   public void declVar(IdentNode ident, Object value, TypeNode type) {
@@ -86,7 +91,7 @@ public class Stack extends StackManager {
   }
 
   // Remove Declaration from Stack
-  public void retirerDecl(IdentNode ident) {
+  public void retirerDecl(IdentNode ident) throws IndexOutOfBoundsException {
     for (int i = queue.size() - 1; i >= 0; i--) {
       Quad quad = queue.get(i);
       if (quad.getIdent().equals(ident)) {
@@ -100,7 +105,8 @@ public class Stack extends StackManager {
 
   // Return value of identifier
   public Object val(IdentNode ident) {
-    for (Quad quad : queue) {
+    for (int i = queue.size() - 1; i >= 0; i--) {
+      Quad quad = queue.get(i);
       if (quad.getIdent().equals(ident))
         return quad.getValue();
     }
@@ -108,19 +114,21 @@ public class Stack extends StackManager {
   }
 
   // Return value of identifier (array)
-  public Object valT(IdentNode ident, int index) {
-    for (Quad quad : queue) {
+  public Object valT(IdentNode ident, int index) throws IndexOutOfBoundsException {
+    for (int i = queue.size() - 1; i >= 0; i--) {
+      Quad quad = queue.get(i);
       if (quad.getIdent().equals(ident))
-        return heap.get((int) quad.getValue() + index);
+        return heap.get((int) quad.getValue(), index);
     }
     return null;
   }
 
   // Return length of array, long is reserved word
-  public Integer longT(IdentNode ident) {
-    for (Quad quad : queue) {
+  public Integer longT(IdentNode ident) throws IndexOutOfBoundsException {
+    for (int i = queue.size() - 1; i >= 0; i--) {
+      Quad quad = queue.get(i);
       if (quad.getIdent().equals(ident))
-        return (int) heap.get((int) quad.getValue() - 1);
+        return (int) heap.getSize((int) quad.getValue());
     }
     return null;
   }
@@ -148,10 +156,11 @@ public class Stack extends StackManager {
   }
 
   // Assigns a new value to an array at a specific index
-  public void affecterValT(IdentNode ident, int index, Object value) {
-    for (Quad quad : queue) {
+  public void affecterValT(IdentNode ident, int index, Object value) throws IndexOutOfBoundsException {
+    for (int i = queue.size() - 1; i >= 0; i--) {
+      Quad quad = queue.get(i);
       if (quad.getIdent().equals(ident))
-        heap.set((int) quad.getValue() + index, value);
+        heap.set((int) quad.getValue(), index, value);
     }
   }
 
@@ -167,7 +176,8 @@ public class Stack extends StackManager {
 
   // Return object type of identifier
   public ObjNode objet(IdentNode ident) {
-    for (Quad quad : queue) {
+    for (int i = queue.size() - 1; i >= 0; i--) {
+      Quad quad = queue.get(i);
       if (quad.getIdent().equals(ident))
         return quad.getObj();
     }
@@ -176,7 +186,8 @@ public class Stack extends StackManager {
 
   // Return type of identifier
   public Object sorte(IdentNode ident) {
-    for (Quad quad : queue) {
+    for (int i = queue.size() - 1; i >= 0; i--) {
+      Quad quad = queue.get(i);
       if (quad.getIdent().equals(ident))
         return quad.getType();
     }

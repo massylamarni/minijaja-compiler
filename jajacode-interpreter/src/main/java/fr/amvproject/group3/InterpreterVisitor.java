@@ -36,14 +36,15 @@ import fr.amvproject.group3.jjc.ast.nodes.other.UnaryOpNode;
 import fr.amvproject.group3.jjc.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.jjc.ast.nodes.program.ProgramNode;
 
-// TODO gestion boucles et recursions infinie, recuperation de l'exception index out of bounds
-
 public class InterpreterVisitor implements AstVisitor<Object> {
   private static final String PUSH_FRAME = "__PUSH__";
   private static final String INVK_FRAME = "__INVK__";
   private static final String LENG_FRAME = "__LENG__";
   private static final String LOAD_FRAME = "__LOAD__";
   private static final String EXPR_FRAME = "__EXPR__";
+  private static final int LOOP_LIMIT = 1000000;
+  private static final int RECURSION_LIMIT = 10000;
+  private int iterationCount = 0;
   private Stack stack = new Stack();
   private int currentAddress = 1;
 
@@ -97,7 +98,12 @@ public class InterpreterVisitor implements AstVisitor<Object> {
   // [pop] : <<i,v,o,t>.m,a>- pop –» <m, a+1>
   @Override
   public Object visitPop(PopLiteral literal) {
-    stack.pop();
+    Quad quad = stack.peek();
+    try {
+      stack.retirerDecl(quad.getIdent());
+    } catch (Exception e) {
+      throw new fr.amvproject.group3.exceptions.RuntimeException("Index out of bounds", literal.getLine(), literal.getColumn());
+    }
     currentAddress++;
     return null;
   }
@@ -163,6 +169,9 @@ public class InterpreterVisitor implements AstVisitor<Object> {
   // [invoke]: <m,a> ⊢ invoke(i) –» <<w, a+1,cst,*>.m, Val(i, m)>
   @Override
   public Object visitInvoke(InvokeNode node) {
+    if (iterationCount++ > RECURSION_LIMIT) {
+      throw new fr.amvproject.group3.exceptions.RuntimeException("Infinite recursion detected !", node.getLine(), node.getColumn());
+    }
     stack.push(INVK_FRAME, currentAddress+1);
     currentAddress = (int) stack.val(node.getIdent());
     return null;
@@ -171,7 +180,11 @@ public class InterpreterVisitor implements AstVisitor<Object> {
   // [length] : <m,a> ⊢ length(i) –» <<w,long(i,m),cst,*>, a+1>
   @Override
   public Object visitLength(LengthNode node) {
-    stack.push(LENG_FRAME, stack.longT(node.getIdent()));
+    try {
+      stack.push(LENG_FRAME, stack.longT(node.getIdent()));
+    } catch (Exception e) {
+      throw new fr.amvproject.group3.exceptions.RuntimeException("Index out of bounds", node.getLine(), node.getColumn());
+    }
     currentAddress++;
     return null;
   }
@@ -182,7 +195,11 @@ public class InterpreterVisitor implements AstVisitor<Object> {
   public Object visitLoad(LoadNode node) {
     if (node.isA()) {
       Quad quad = stack.pop();
-      stack.push(LOAD_FRAME, stack.valT(node.getIdent(), (int) quad.getValue()));
+      try {
+        stack.push(LOAD_FRAME, stack.valT(node.getIdent(), (int) quad.getValue()));
+      } catch (Exception e) {
+        throw new fr.amvproject.group3.exceptions.RuntimeException("Index out of bounds", node.getLine(), node.getColumn());
+      }
     } else {
       stack.push(LOAD_FRAME, stack.val(node.getIdent()));
     }
@@ -197,7 +214,11 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     Quad quad = stack.pop();
     if (node.isA()) {
       Quad quad2 = stack.pop();
-      stack.affecterValT(node.getIdent(), (int) quad2.getValue(), quad.getValue()); 
+      try {
+        stack.affecterValT(node.getIdent(), (int) quad2.getValue(), quad.getValue());
+      } catch (Exception e) {
+        throw new fr.amvproject.group3.exceptions.RuntimeException("Index out of bounds", node.getLine(), node.getColumn());
+      }
     } else {
       stack.affecterVal(node.getIdent(), quad.getValue());
     }
@@ -208,6 +229,9 @@ public class InterpreterVisitor implements AstVisitor<Object> {
   // [goto]: <m,a> ⊢ goto(a1) –» <m, a1>
   @Override
   public Object visitGoto(GotoNode node) {
+    if (iterationCount++ > LOOP_LIMIT) {
+      throw new fr.amvproject.group3.exceptions.RuntimeException("Infinite loop detected !", node.getLine(), node.getColumn());
+    }
     currentAddress = node.getAddress().getValue();
     return null;
   }
@@ -232,7 +256,11 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     Quad quad = stack.pop();
     if (node.isA()) {
       Quad quad2 = stack.pop();
-      stack.affecterValT(node.getIdent(), (int) quad2.getValue(), (int) stack.valT(node.getIdent(), (int) quad2.getValue()) + (int) quad.getValue());
+      try {
+        stack.affecterValT(node.getIdent(), (int) quad2.getValue(), (int) stack.valT(node.getIdent(), (int) quad2.getValue()) + (int) quad.getValue());
+      } catch (Exception e) {
+        throw new fr.amvproject.group3.exceptions.RuntimeException("Index out of bounds", node.getLine(), node.getColumn());
+      }
     } else {
       stack.affecterVal(node.getIdent(), (int) stack.val(node.getIdent()) + (int) quad.getValue());
     }
@@ -251,7 +279,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         break;
       case NEG: result = (int) quad.getValue() * -1;
         break;
-      default: throw new RuntimeException("Unknown unary operator: " + node.getOp());
+      default: throw new IllegalArgumentException("Unknown unary operator: " + node.getOp());
     }
     stack.push(EXPR_FRAME, result);
     currentAddress++;
@@ -277,14 +305,16 @@ public class InterpreterVisitor implements AstVisitor<Object> {
       case MUL: result = (int) quad2.getValue() * (int) quad.getValue();
         break;
       case DIV:
-        if ((int) quad.getValue() == 0) throw new RuntimeException("Runtime error: division by zero"); // TODO Replace by custom runtime exception
+        if ((int) quad.getValue() == 0) {
+          throw new fr.amvproject.group3.exceptions.RuntimeException("Runtime error: division by zero", node.getLine(), node.getColumn());
+        }
         result = (int) quad2.getValue() / (int) quad.getValue();
         break;
       case CMP:  result =  quad2.getValue() == quad.getValue();
         break;
       case SUP:  result = (int) quad2.getValue() > (int) quad.getValue();
         break;
-      default: throw new RuntimeException("Unknown binary operator: " + node.getOp());
+      default: throw new IllegalArgumentException("Unknown binary operator: " + node.getOp());
     }
     stack.push(EXPR_FRAME, result);
     currentAddress++;
