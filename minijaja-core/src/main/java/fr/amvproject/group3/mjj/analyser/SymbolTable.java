@@ -12,6 +12,7 @@ import fr.amvproject.group3.mjj.analyser.symbols.Symbols;
 import fr.amvproject.group3.mjj.analyser.symbols.TableSymbol;
 import fr.amvproject.group3.mjj.analyser.symbols.VarSymbol;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
+import fr.amvproject.group3.mjj.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.utils.StringSaver;
 
 public class SymbolTable {
@@ -33,8 +34,8 @@ public class SymbolTable {
     symbols.put(identNode, new CstSymbol(identNode, typeNode, isVcst));
   }
 
-  public void addSymbol(IdentNode identNode, TypeNode typeNode, Integer size) {
-    symbols.put(identNode, new TableSymbol(identNode, typeNode, size));
+  public void addSymbol(IdentNode identNode, TypeNode typeNode, ExpNode sizExpNode) {
+    symbols.put(identNode, new TableSymbol(identNode, typeNode, sizExpNode));
   }
 
   public void addSymbol(IdentNode identNode, TypeNode returnType, List<TypeNode> paramsType) {

@@ -34,7 +34,7 @@ import fr.amvproject.group3.mjj.utils.NodeOperations;
 public class SemanticVisitor implements AstVisitor<TypeNode> {
   SymbolTable symbolTable = new SymbolTable();
   ScopeManager scopeManager = new ScopeManager(symbolTable);
-  CompileTimeVisitor compileTimeVisitor = new CompileTimeVisitor(symbolTable);
+  CompileTimeVisitor compileTimeVisitor = new CompileTimeVisitor(scopeManager);
 
   public SymbolTable getSymbolTable() {
     return symbolTable;
@@ -45,7 +45,6 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   // Class | Var | Cst | Tab
   private void checkIfExistsToDeclare(IdentNode identNode) {
     Symbols sym = symbolTable.lookup(identNode);
-
     if (sym != null) {
       throw new SemanticException("Symbol " + identNode.getName() + " already declared at line" + sym.getLine(), identNode.getLine(), identNode.getColumn());
     }
@@ -59,34 +58,54 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
       throw new SemanticException("Symbol " + identNode.getName() + " is referenced, but never declared", identNode.getLine(), identNode.getColumn());
     }
     if (sym instanceof ClassSymbol) throw new SemanticException("Can't use a class in an expression", identNode.getLine(), identNode.getColumn());
-    if (sym instanceof MethodSymbol) throw new SemanticException("Can't use a method pointer in an expression", identNode.getLine(), identNode.getColumn());
-    if (sym instanceof TableSymbol) throw new SemanticException("Can't use a table pointer in an expression", identNode.getLine(), identNode.getColumn());
+    // if (sym instanceof MethodSymbol) throw new SemanticException("Can't use a method pointer in an expression", identNode.getLine(), identNode.getColumn());
+    // if (sym instanceof TableSymbol) throw new SemanticException("Can't use a table pointer in an expression", identNode.getLine(), identNode.getColumn());
 
     return sym;
   }
 
-  private void checkIfAssignable(IdentNode identNode) {
-    Symbols sym = checkIfExistsToUse(identNode);
-
-    if (sym instanceof ClassSymbol) throw new SemanticException("Can't affact a new value to a class !", identNode.getLine(), identNode.getColumn());
-    if (sym instanceof CstSymbol cstSymbol && !cstSymbol.isVcst()) throw new SemanticException("Can't assign a new value to a final !", identNode.getLine(), identNode.getColumn());
-    if (sym instanceof MethodSymbol) throw new SemanticException("Can't affact a new value to a method pointer !", identNode.getLine(), identNode.getColumn());
-    if (sym instanceof TableSymbol) throw new SemanticException("Can't affact a new value to a table pointer !", identNode.getLine(), identNode.getColumn());
-  }
-
-  // Var
   private void checkIfTypeCompatible(TypeNode identType, ExpNode identInitExp, IdentNode identNode) {
     TypeNode typeExpValue = identInitExp.accept(this);
-    if (!identType.equals(typeExpValue)) {
+    if (!identType.sameAs(typeExpValue)) {
       throw new SemanticException("Value of Type " + typeExpValue + " not compatible with declaration of type " + identType.getName(), identNode.getLine(), identNode.getColumn());
     }
   }
 
+  private void checkIfObjCompatible(IdentNode identNode, ExpNode rightExpNode) {
+    Symbols leftSym = scopeManager.lookup(identNode);
+    ExpNode evaluatedRightExpNode;
+    try {
+      evaluatedRightExpNode = (ExpNode) rightExpNode.accept(compileTimeVisitor);
+
+      if (leftSym instanceof ClassSymbol) throw new SemanticException("Can't affact a new value to a class !", identNode.getLine(), identNode.getColumn());
+      if (leftSym instanceof CstSymbol cstSymbol && !cstSymbol.isVcst()) throw new SemanticException("Can't assign a new value to a final !", identNode.getLine(), identNode.getColumn());
+      if (leftSym instanceof MethodSymbol) throw new SemanticException("Can't affact a new value to a method pointer !", identNode.getLine(), identNode.getColumn());
+      if (evaluatedRightExpNode instanceof IdentNode rightIdentNode) {
+        Symbols rightSym = checkIfExistsToUse(rightIdentNode);
+
+        if (rightSym instanceof ClassSymbol) throw new SemanticException("Can't use a class in an expression", identNode.getLine(), identNode.getColumn());
+        if (rightSym instanceof MethodSymbol) throw new SemanticException("Can't use a method pointer in an expression", identNode.getLine(), identNode.getColumn());
+        if (leftSym instanceof TableSymbol != rightSym instanceof TableSymbol) throw new SemanticException("Table pointer can only be affected with another table pointer", identNode.getLine(), identNode.getColumn());
+        if (!leftSym.getTypeNode().sameAs(rightSym.getTypeNode())) throw new SemanticException("Type mismatch", identNode.getLine(), identNode.getColumn()); // Is this used ?
+      } else if (evaluatedRightExpNode instanceof ArrayAccessNode) {
+        if (leftSym instanceof TableSymbol) throw new SemanticException("Table pointer can only be affected with another table pointer", identNode.getLine(), identNode.getColumn());
+      }
+    } catch (Exception e) {
+      throw e;
+    }
+  }
+
   // Tab
-  private Integer checkIfTabIndexIsInteger(ExpNode sizeExpNode, IdentNode identNode) {
-    TypeNode sizeExpType = sizeExpNode.accept(this);
+  private ExpNode checkIfTabIndexIsInteger(ExpNode indexExpNode, IdentNode identNode) {
+    TypeNode sizeExpType = indexExpNode.accept(this);
     if (!sizeExpType.isInt()) throw new SemanticException("Value of type " + sizeExpType.getName() + " can't be used as Array access index", identNode.getLine(), identNode.getColumn());
-    return (Integer) sizeExpNode.accept(compileTimeVisitor);
+    ExpNode evaluatedIndexNode = null;
+    try {
+      evaluatedIndexNode = (ExpNode) indexExpNode.accept(compileTimeVisitor);
+    } catch (SemanticException e) {
+      throw e;
+    }
+    return evaluatedIndexNode;
   }
 
   /* Visitors */
@@ -130,6 +149,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   @Override
   public TypeNode visitVar(VarNode node) {
     checkIfExistsToDeclare(node.getIdent());
+    checkIfObjCompatible(node.getIdent(), node.getInitExp());
     checkIfTypeCompatible(new TypeNode(node.getType().getName()), node.getInitExp(), node.getIdent());
 
     symbolTable.addSymbol(node.getIdent(), new TypeNode(node.getType().getName()));
@@ -139,17 +159,17 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   @Override
   public TypeNode visitCst(CstNode node) {
     checkIfExistsToDeclare(node.getIdent());
-    ExpNode initExp = node.getInitExp();
-    if (initExp != null) checkIfTypeCompatible(new TypeNode(node.getType().getName()), node.getInitExp(), node.getIdent());
+    checkIfObjCompatible(node.getIdent(), node.getInitExp());
+    checkIfTypeCompatible(new TypeNode(node.getType().getName()), node.getInitExp(), node.getIdent());
 
-    symbolTable.addSymbol(node.getIdent(), new TypeNode(node.getType().getName()), initExp == null);
+    symbolTable.addSymbol(node.getIdent(), new TypeNode(node.getType().getName()), node.isVcst());
     return new TypeNode("void");
   }
 
   @Override
   public TypeNode visitTable(TableNode node) {
     checkIfExistsToDeclare(node.getIdent());
-    Integer sizeExpValue = checkIfTabIndexIsInteger(node.getSizeExp(), node.getIdent());
+    ExpNode sizeExpValue = checkIfTabIndexIsInteger(node.getSizeExp(), node.getIdent());
     
     symbolTable.addSymbol(node.getIdent(), new TypeNode(node.getType().getName()), sizeExpValue);
     return new TypeNode("void");
@@ -171,7 +191,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
       List<TypeNode> symParamsTypeValue = sym.getParamsType();
 
       for (int i = 0; i < paramsTypeValue.size(); i++) {
-        if (!paramsTypeValue.get(i).equals(symParamsTypeValue.get(i))) {
+        if (!paramsTypeValue.get(i).sameAs(symParamsTypeValue.get(i))) {
           hasSameParamsType = false;
           break;
         }
@@ -238,7 +258,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
     TypeNode leftExpTypeValue = node.getLeftExp().accept(this);
     TypeNode rightExpTypeValue = node.getRightExp().accept(this);
 
-    if (!leftExpTypeValue.equals(rightExpTypeValue)) {
+    if (!leftExpTypeValue.sameAs(rightExpTypeValue)) {
       throw new SemanticException("Type mismatch", node.getLine(), node.getColumn());
     }
     if (leftExpTypeValue.isInt() && !node.getOp().takesInteger()) {
@@ -271,7 +291,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   public TypeNode visitAssign(AssignNode node) {
     TypeNode leftValueNodeType = node.getLeftValueNode().accept(this);
     if (node.getLeftValueNode() instanceof IdentNode identNode) {
-      checkIfAssignable(identNode);
+      checkIfObjCompatible(identNode, node.getExp());
       checkIfTypeCompatible(leftValueNodeType, node.getExp(), identNode);
     } else if (node.getLeftValueNode() instanceof ArrayAccessNode arrayAccessNode) {
       checkIfTypeCompatible(leftValueNodeType, node.getExp(), arrayAccessNode.getIdent());
@@ -287,16 +307,8 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   }
 
   public TypeNode visitInc(IncNode node) {
-    TypeNode leftValueNodeType = node.getLeftValueNode().accept(this);
-    if (!leftValueNodeType.isInt()) {
-      if (node.getLeftValueNode() instanceof IdentNode identNode) {
-        checkIfAssignable(identNode);
-        throw new SemanticException("Value of Type " + leftValueNodeType + " can't be incremented", node.getLine(), node.getColumn());
-      } else if (node.getLeftValueNode() instanceof ArrayAccessNode) {
-        throw new SemanticException("Value of Type " + leftValueNodeType + " can't be incremented", node.getLine(), node.getColumn());
-      }
-    }
-
+    AssignNode assignNode = NodeOperations.incToAssign(node);
+    visitAssign(assignNode);
     return new TypeNode("void");
   }
 
@@ -408,7 +420,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
     List<TypeNode> symParamsTypeValue = sym.getParamsType();
     for (int i = 0; i < listExpTypeValue.size(); i++) {
-      if (!listExpTypeValue.get(i).equals(symParamsTypeValue.get(i))) {
+      if (!listExpTypeValue.get(i).sameAs(symParamsTypeValue.get(i))) {
         throw new SemanticException("Method " + node.getIdent().getName() + " uses different parameter type from the declared one, at line " + sym.getLine(), node.getLine(), node.getColumn());
       }
     }

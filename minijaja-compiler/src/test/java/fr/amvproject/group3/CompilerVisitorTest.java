@@ -156,11 +156,14 @@ public class CompilerVisitorTest {
 
 
         // Then
-        assertThat(res, hasSize(1));
+        assertThat(res, hasSize(2));
         //"2 new(x,int,var,0)"
         assertThat(res.get(0).getAddress().getValue(), is(1));
-        assertThat(res.get(0).getInstr() instanceof NewNode, is(true));
-        NewNode newNode = ((NewNode) res.get(0).getInstr());
+        assertThat(res.get(0).getInstr() instanceof PushNode, is(true));
+        PushNode pushNode = ((PushNode) res.get(0).getInstr());
+        assertThat(((IntLiteralNode) pushNode.getValue()).getValue(), is(0));
+        assertThat(res.get(1).getInstr() instanceof NewNode, is(true));
+        NewNode newNode = ((NewNode) res.get(1).getInstr());
         assertThat(newNode.getIdent().getName(),is("x"));
         assertThat(newNode.getType().getName(),is("entier"));
         assertThat(newNode.getObj().getName(),is("var"));
@@ -203,11 +206,15 @@ public class CompilerVisitorTest {
         List<fr.amvproject.group3.jjc.ast.nodes.program.ClassNode> res = compiler.visitCst(cstNode);
 
         // Then
-        assertThat(res, hasSize(1));
+        assertThat(res, hasSize(2));
         //"2 new(T,int,cst,0)"
         assertThat(res.get(0).getAddress().getValue(), is(1));
-        assertThat(res.get(0).getInstr() instanceof NewNode, is(true));
-        NewNode newNode = ((NewNode) res.get(0).getInstr());
+        assertThat(res.get(0).getInstr() instanceof PushNode, is(true));
+        PushNode pushNode = ((PushNode) res.get(0).getInstr());
+        assertThat(((IntLiteralNode) pushNode.getValue()).getValue(), is(0));
+        assertThat(res.get(1).getAddress().getValue(), is(2));
+        assertThat(res.get(1).getInstr() instanceof NewNode, is(true));
+        NewNode newNode = ((NewNode) res.get(1).getInstr());
         assertThat(newNode.getIdent().getName(),is("T"));
         assertThat(newNode.getType().getName(),is("entier"));
         assertThat(newNode.getObj().getName(),is("cst"));

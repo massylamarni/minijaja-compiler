@@ -2,6 +2,7 @@ package fr.amvproject.group3.jjc.ast.nodes.program;
 
 import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.AstVisitor;
+import fr.amvproject.group3.jjc.utils.NodeOperations.MockToken;
 
 import java.util.List;
 
@@ -14,6 +15,11 @@ public class ProgramNode extends AstNode {
     public ProgramNode(List<ClassNode> list, Token eofToken) {
         this.list = list;
         this.eofToken = eofToken;
+    }
+
+    public ProgramNode(List<ClassNode> list) {
+        this.list = list;
+        this.eofToken = new MockToken(null, 0, 0);
     }
 
     public Token getEofToken() {

@@ -4,8 +4,8 @@ import java.util.List;
 
 import fr.amvproject.group3.jjc.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.jjc.ast.nodes.other.TypeNode;
-import fr.amvproject.group3.jjc.utils.NodeOperations.MockToken;
 import fr.amvproject.group3.nodes.ObjNode;
+import fr.amvproject.group3.nodes.PointerNode;
 import fr.amvproject.group3.nodes.TypeMemNode;
 import fr.amvproject.group3.utils.StringSaver;
 import fr.amvproject.group3.Heap;
@@ -24,8 +24,7 @@ public class Stack extends StackManager {
   }
 
   public void push(String name, Object value) {
-    MockToken identToken = new MockToken(name, 0, 0);
-    Quad newQuad = new Quad(new IdentNode(identToken), value, new ObjNode("cst"), null);
+    Quad newQuad = new Quad(new IdentNode(name, 0, 0), value, new ObjNode("cst"), null);
     queue.add(newQuad);
   }
 
@@ -63,13 +62,13 @@ public class Stack extends StackManager {
     this.push(new Quad(ident, value, new ObjNode("var"), type));
   }
 
-  public void declCst(IdentNode ident, Object value, TypeNode type) {
+  public void declCst(IdentNode ident, Object value, TypeNode type, boolean isVcst) {
     // Vcst = can be initialized later but not changed after
-    this.push(new Quad(ident, value, new ObjNode(value == null ? "vcst" : "cst"), type));
+    this.push(new Quad(ident, value, new ObjNode(isVcst ? "vcst" : "cst"), type));
   }
 
   public void declTab(IdentNode ident, int size, TypeNode type) {
-    int ref = heap.allocate(size, typeMapper(type));
+    PointerNode ref = heap.allocate(size, typeMapper(type));
     this.push(new Quad(ident, ref, new ObjNode("tab"), type));
   }
 
@@ -96,7 +95,7 @@ public class Stack extends StackManager {
       Quad quad = queue.get(i);
       if (quad.getIdent().equals(ident)) {
         if (quad.getObj().isTab())
-          heap.remove((int) quad.getValue(), typeMapper(quad.getType()));
+          heap.removeRef((PointerNode) quad.getValue(), typeMapper(quad.getType()));
         queue.remove(i);
         return;
       }
@@ -118,7 +117,7 @@ public class Stack extends StackManager {
     for (int i = queue.size() - 1; i >= 0; i--) {
       Quad quad = queue.get(i);
       if (quad.getIdent().equals(ident))
-        return heap.get((int) quad.getValue(), index);
+        return heap.get((PointerNode) quad.getValue(), index);
     }
     return null;
   }
@@ -128,7 +127,7 @@ public class Stack extends StackManager {
     for (int i = queue.size() - 1; i >= 0; i--) {
       Quad quad = queue.get(i);
       if (quad.getIdent().equals(ident))
-        return (int) heap.getSize((int) quad.getValue());
+        return (int) heap.getSize((PointerNode) quad.getValue());
     }
     return null;
   }
@@ -142,9 +141,9 @@ public class Stack extends StackManager {
           queue.set(i, new Quad(ident, value, new ObjNode("cst"), quad.getType()));
           return;
         } else if (quad.getObj().isTab()) {
-          int ref = heap.allocate((int) value, typeMapper(quad.getType())); // AjouterRef(v, t)
-          queue.set(i, new Quad(ident, ref, new ObjNode("tab"), quad.getType()));
-          heap.remove((int) quad.getValue(), typeMapper(quad.getType())); // RetirerTas
+          heap.removeRef((PointerNode) quad.getValue(), new TypeMemNode(((TypeNode) quad.getType()).getName())); // RetirerTas
+          heap.addRef((PointerNode) value);
+          queue.set(i, new Quad(ident, value, new ObjNode("tab"), quad.getType()));
           return;
         } else if (quad.getObj().isCst()) {
           return;
@@ -160,7 +159,7 @@ public class Stack extends StackManager {
     for (int i = queue.size() - 1; i >= 0; i--) {
       Quad quad = queue.get(i);
       if (quad.getIdent().equals(ident))
-        heap.set((int) quad.getValue(), index, value);
+        heap.set((PointerNode) quad.getValue(), index, value);
     }
   }
 

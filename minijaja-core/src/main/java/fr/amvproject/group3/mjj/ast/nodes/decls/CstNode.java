@@ -8,19 +8,22 @@ import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.mjj.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.mjj.ast.nodes.intermediate.VarDeclNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.TypeNode;
+import fr.amvproject.group3.mjj.utils.NodeConsts;
 
 public class CstNode extends VarDeclNode {
   private final Token finalToken;
   private final Token assignToken;
   private final TypeNode typeNode;
   private final ExpNode initExp;
+  private boolean isVcst;
 
   public CstNode(Token finalToken, TypeNode typeNode, IdentNode identNode) {
     super(identNode);
     this.finalToken = finalToken;
     this.typeNode = typeNode;
-    this.assignToken = null;
-    this.initExp = null;
+    this.assignToken = NodeConsts.getDefaultAssignToken();
+    this.initExp = NodeConsts.getDefaultInitValue(typeNode);
+    this.isVcst = true;
   }
 
   public CstNode(Token finalToken, TypeNode typeNode, IdentNode identNode, Token assignToken, ExpNode initExp) {
@@ -29,6 +32,7 @@ public class CstNode extends VarDeclNode {
     this.typeNode = typeNode;
     this.assignToken = assignToken;
     this.initExp = initExp;
+    this.isVcst = false;
   }
 
   public Token getFinalToken() {
@@ -47,17 +51,21 @@ public class CstNode extends VarDeclNode {
     return initExp;
   }
 
+  public boolean isVcst() {
+    return isVcst;
+  }
+
+  public void setCst() {
+    isVcst = false;
+  }
+
   @Override
   public boolean sameAs(AstNode other) {
       if (other instanceof CstNode cstNode) {
-        if (this.initExp == null || cstNode.initExp == null) {
-          return (this.initExp == cstNode.initExp) &&
-            (this.getIdent().sameAs(cstNode.getIdent())) &&
-            (this.typeNode.sameAs(cstNode.typeNode));
-        }
         return this.getIdent().sameAs(cstNode.getIdent()) &&
           this.typeNode.sameAs(cstNode.typeNode) &&
-          this.initExp.sameAs(cstNode.initExp);
+          this.initExp.sameAs(cstNode.initExp) &&
+          this.isVcst() == cstNode.isVcst();
       }
       return false;
   }

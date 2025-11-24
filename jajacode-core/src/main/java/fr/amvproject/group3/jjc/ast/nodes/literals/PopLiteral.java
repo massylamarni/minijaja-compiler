@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.Token;
 import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.AstVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.intermediate.InstrNode;
+import fr.amvproject.group3.jjc.utils.NodeOperations.MockToken;
 
 public class PopLiteral extends InstrNode {
   private final Token popToken;
@@ -13,6 +14,11 @@ public class PopLiteral extends InstrNode {
     super(popToken.getLine(), popToken.getCharPositionInLine());
     this.popToken = popToken;
   }
+
+  public PopLiteral() {
+        super(0, 0);
+        popToken = new MockToken("pop", 0, 0);
+    }
 
   public Token getPopToken() {
     return popToken;

@@ -38,9 +38,7 @@ public class NodeOperations {
     LeftValueNode leftValueNode = incNode.getLeftValueNode();
     BinaryOpNode binaryOpNode = new BinaryOpNode("+", incNode.getLine(), incNode.getColumn());
     ExpNode leftExpNode = null;
-    MockToken intToken = new MockToken("1", incNode.getLine(), incNode.getColumn());
-    MockToken addToken = new MockToken("+", incNode.getLine(), incNode.getColumn());
-    ExpNode rightExpNode = new IntLiteralNode(intToken);
+    ExpNode rightExpNode = new IntLiteralNode("1", incNode.getLine(), incNode.getColumn());
 
     if (leftValueNode instanceof IdentNode identNode) {
       leftExpNode = identNode;
@@ -49,6 +47,7 @@ public class NodeOperations {
     }
 
     ExpNode newExpNode = new BinaryExpNode(binaryOpNode, leftExpNode, rightExpNode);
+    MockToken addToken = new MockToken("+", incNode.getLine(), incNode.getColumn());
     return new AssignNode(leftValueNode, addToken, newExpNode);
   }
 
