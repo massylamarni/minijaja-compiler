@@ -52,4 +52,8 @@ public class TypeMemNode {
   public boolean isVoid() {
     return typeMem == TypeMemName.VOID;
   }
+
+  public boolean sameAs(TypeMemNode other) {
+    return this.typeMem == other.typeMem;
+  }
 }
