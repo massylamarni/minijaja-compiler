@@ -1,6 +1,6 @@
 class C0 {
   void voidv0;
-  boolean boolv0;
+  boolean boolv0 = false;
   boolean boolv1 = ((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0));
   boolean boolv2 = ((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0));
   boolean boolv3 = (((1 == 2) > false) && ((boolv0 == boolv0) > boolv0));
@@ -40,7 +40,7 @@ class C0 {
   boolean boolt10[(intv0 > length(intv0))];
   boolean boolt11[(((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)];
   boolean boolt12[(intv0 > length(boolv0))];
-  final boolean boolf0;
+  final boolean boolf0 = false;
   final boolean boolf1 = ((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0));
   final boolean boolf2 = ((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0));
   final boolean boolf3 = (((1 == 2) > false) && ((boolv0 == boolv0) > boolv0));
@@ -55,7 +55,7 @@ class C0 {
   final boolean boolf12 = (((1 == 2) > ((false == boolv0) > boolv0)) > boolv0);
   final boolean boolf13 = (intv0 > length(boolv0));
   void voidv1;
-  int intv0;
+  int intv0 = 0;
   int intv1 = ((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0));
   int intv2 = ((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0));
   int intv3 = (((1 == 2) > false) && ((boolv0 == boolv0) > boolv0));
@@ -95,7 +95,7 @@ class C0 {
   int intt10[(intv0 > length(intv0))];
   int intt11[(((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)];
   int intt12[(intv0 > length(boolv0))];
-  final int intf0;
+  final int intf0 = 0;
   final int intf1 = ((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0));
   final int intf2 = ((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0));
   final int intf3 = (((1 == 2) > false) && ((boolv0 == boolv0) > boolv0));
@@ -111,7 +111,7 @@ class C0 {
   final int intf13 = (intv0 > length(boolv0));
   boolean boolm0(int e0) {
     void voidv2;
-    boolean boolv14;
+    boolean boolv14 = false;
     boolean boolv15 = ((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0));
     boolean boolv16 = ((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0));
     boolean boolv17 = (((1 == 2) > false) && ((boolv0 == boolv0) > boolv0));
@@ -151,7 +151,7 @@ class C0 {
     boolean boolt23[(intv0 > length(intv0))];
     boolean boolt24[(((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)];
     boolean boolt25[(intv0 > length(boolv0))];
-    final boolean boolf14;
+    final boolean boolf14 = false;
     final boolean boolf15 = ((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0));
     final boolean boolf16 = ((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0));
     final boolean boolf17 = (((1 == 2) > false) && ((boolv0 == boolv0) > boolv0));
@@ -166,7 +166,7 @@ class C0 {
     final boolean boolf26 = (((1 == 2) > ((false == boolv0) > boolv0)) > boolv0);
     final boolean boolf27 = (intv0 > length(boolv0));
     void voidv3;
-    int intv14;
+    int intv14 = 0;
     int intv15 = ((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0));
     int intv16 = ((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0));
     int intv17 = (((1 == 2) > false) && ((boolv0 == boolv0) > boolv0));
@@ -206,7 +206,7 @@ class C0 {
     int intt23[(intv0 > length(intv0))];
     int intt24[(((1 == 2) > ((false == boolv0) > boolv0)) > boolv0)];
     int intt25[(intv0 > length(boolv0))];
-    final int intf14;
+    final int intf14 = 0;
     final int intf15 = ((1 + ((2 * 3) / 4)) + ((intv0 * intv0) / intv0));
     final int intf16 = ((true || (false && ((! false) == true))) || ((boolv0 && boolv0) && boolv0));
     final int intf17 = (((1 == 2) > false) && ((boolv0 == boolv0) > boolv0));

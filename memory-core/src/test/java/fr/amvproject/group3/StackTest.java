@@ -12,6 +12,7 @@ import fr.amvproject.group3.mjj.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.TypeNode;
 import fr.amvproject.group3.mjj.utils.NodeOperations.MockToken;
 import fr.amvproject.group3.nodes.ObjNode;
+import fr.amvproject.group3.nodes.PointerNode;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -138,7 +139,7 @@ public class StackTest {
         assertThat(stack.peek().getIdent().getName(),is("arr"));
         assertTrue(stack.peek().getObj().isTab());
         assertTrue(((TypeMethNode) stack.peek().getType()).isInt());
-        assertThat(stack.peek().getValue(),is(1));
+        assertThat(((PointerNode) stack.peek().getValue()).getAddress(),is(1));
 
     }
 

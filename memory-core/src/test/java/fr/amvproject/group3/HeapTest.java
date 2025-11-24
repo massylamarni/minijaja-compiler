@@ -1,5 +1,6 @@
 package fr.amvproject.group3;
 
+import fr.amvproject.group3.nodes.PointerNode;
 import fr.amvproject.group3.nodes.TypeMemNode;
 
 import org.junit.Before;
@@ -20,7 +21,7 @@ public class HeapTest {
     @Test
     public void givenHeap__whenAllocateIntArray__thenSizeAndValuesAreCorrect() {
         // When
-        int address = heap.allocate(5, new TypeMemNode("int"));
+        PointerNode address = heap.allocate(5, new TypeMemNode("int"));
 
         // Then
         assertThat(heap.getQueue().size(), is(6));
@@ -32,7 +33,7 @@ public class HeapTest {
     @Test
     public void givenHeap__whenAllocateBooleanArray__thenSizeAndValuesAreCorrect() {
         // When
-        int address = heap.allocate(3, new TypeMemNode("boolean"));
+        PointerNode address = heap.allocate(3, new TypeMemNode("boolean"));
 
         // Then
         assertThat(heap.getQueue().size(), is(4));
@@ -44,7 +45,7 @@ public class HeapTest {
     @Test
     public void givenHeap__whenAllocateVoidArray__thenSizeAndValuesAreCorrect() {
         // When
-        int address = heap.allocate(2, new TypeMemNode("void"));
+        PointerNode address = heap.allocate(2, new TypeMemNode("void"));
 
         // Then
         assertThat(heap.getQueue().size(), is(3));
@@ -56,7 +57,7 @@ public class HeapTest {
     @Test
     public void givenHeap__whenGet__thenValueIsCorrect() {
         // Given
-        int address = heap.allocate(2, new TypeMemNode("int"));
+        PointerNode address = heap.allocate(2, new TypeMemNode("int"));
         heap.set(address, 0, 42);
 
         // When
@@ -70,7 +71,7 @@ public class HeapTest {
     @Test
     public void givenHeap__whenSet__thenValueIsUpdated() {
         // Given
-        int address = heap.allocate(2, new TypeMemNode("int"));
+        PointerNode address = heap.allocate(2, new TypeMemNode("int"));
         // When
         heap.set(address, 0, 100);
 
@@ -81,7 +82,7 @@ public class HeapTest {
     @Test(expected = IndexOutOfBoundsException.class)
     public void givenHeap__whenRemove__thenMemoryIsFreed() {
         // Given
-        int address = heap.allocate(3, new TypeMemNode("int"));
+        PointerNode address = heap.allocate(3, new TypeMemNode("int"));
 
         // When
         heap.remove(address, new TypeMemNode("int"));
@@ -95,8 +96,8 @@ public class HeapTest {
     @Test
     public void givenHeap__whenAllocate__thenNextAddressIsUpdated() {
         // When
-        int address1 = heap.allocate(2, new TypeMemNode("int"));
-        int address2 = heap.allocate(3, new TypeMemNode("boolean"));
+        PointerNode address1 = heap.allocate(2, new TypeMemNode("int"));
+        PointerNode address2 = heap.allocate(3, new TypeMemNode("boolean"));
 
         // Then
         assertThat(heap.getNextAddress(), is(7)); // 1 (taille) + 2 (int) + 1 (taille) + 3 (boolean)
@@ -105,21 +106,21 @@ public class HeapTest {
     @Test(expected = IndexOutOfBoundsException.class)
     public void givenHeap__whenGetInvalidAddress__thenThrowsException() {
         // When
-        heap.get(-1, 0);
+        heap.get(new PointerNode(-1), 0);
     }
 
     // Test 9 : Exception pour `set` avec une adresse invalide
     @Test(expected = IndexOutOfBoundsException.class)
     public void givenHeap__whenSetInvalidAddress__thenThrowsException() {
         // When
-        heap.set(-1, 0, 42);
+        heap.set(new PointerNode(-1), 0, 42);
     }
 
     // Test 10 : Exception pour `remove` avec une adresse invalide
     @Test(expected = IndexOutOfBoundsException.class)
     public void givenHeap__whenRemoveInvalidAddress__thenThrowsException() {
         // When
-        heap.remove(-1, new TypeMemNode("int"));
+        heap.remove(new PointerNode(-1), new TypeMemNode("int"));
     }
 
     @Test

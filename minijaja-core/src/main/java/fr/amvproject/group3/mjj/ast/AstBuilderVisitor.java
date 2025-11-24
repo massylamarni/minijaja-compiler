@@ -62,10 +62,18 @@ public class AstBuilderVisitor extends MiniJajaParserBaseVisitor<AstNode> {
           (ExpNode) visit(ctx.exp()));
     } else if (ctx.FINAL() != null) {
       // Const
+      if (exp == null) {
+        return new CstNode(ctx.FINAL().getSymbol(), new TypeNode(ctx.type().getStart()),
+            new IdentNode(getTokenOrNull(ctx.ident().IDENTIFICATEUR())));
+      }
       return new CstNode(ctx.FINAL().getSymbol(), new TypeNode(ctx.type().getStart()),
           new IdentNode(getTokenOrNull(ctx.ident().IDENTIFICATEUR())), getTokenOrNull(ctx.vexp().ASSIGN()), exp);
     }
     // Var
+    if (exp == null) {
+      return new VarNode(new TypeMethNode(ctx.typemeth().getStart()),
+          new IdentNode(getTokenOrNull(ctx.ident().IDENTIFICATEUR())));
+    }
     return new VarNode(new TypeMethNode(ctx.typemeth().getStart()),
         new IdentNode(getTokenOrNull(ctx.ident().IDENTIFICATEUR())), getTokenOrNull(ctx.vexp().ASSIGN()), exp);
 
