@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.amvproject.group3.nodes.TypeMemNode;
+import fr.amvproject.group3.nodes.PointerNode;
 
 public class Heap {
   private static final int DEFAULT_INT_VALUE = 0;
@@ -13,13 +14,13 @@ public class Heap {
   private List<Object> queue = new ArrayList<>();
   private int nextAddress = 0;
 
-  private void checkIfInBlock(int address, int index) {
-    if (address < 0 || address >= nextAddress || index < 0 || index > getSize(address) - 1)
+  private void checkIfInBlock(PointerNode pointerNode, int index) {
+    if (pointerNode.getAddress() < 0 || pointerNode.getAddress() >= nextAddress || index < 0 || index > getSize(pointerNode) - 1)
       throw new IndexOutOfBoundsException();
   }
 
   // Allocate memory in the heap and return its address, aka CreerTas
-  public int allocate(int size, TypeMemNode type) {
+  public PointerNode allocate(int size, TypeMemNode type) {
     int address = nextAddress;
     queue.add(size); // Store size at current address
     if (type.isInt()) {
@@ -33,43 +34,41 @@ public class Heap {
         queue.add(DEFAULT_VOID_VALUE);
     }
     nextAddress += size + 1; // Update nextAddress: size + 1 for the size header
-    return address + 1; // Return address of first element (after size header)
+    return new PointerNode(address + 1); // Return address of first element (after size header)
   }
 
   // Remove the allocated memory from specific address, aka RetirerTas
-  public void remove(int address, TypeMemNode type) {
+  public void remove(PointerNode pointerNode, TypeMemNode type) {
     if (type == null)
       return; // Unknown use case
-    checkIfInBlock(address, 0); // Will never happen if semantic analysis is correct
-    int blockSize = (int) getSize(address);
+    checkIfInBlock(pointerNode, 0); // Will never happen if semantic analysis is correct
+    int blockSize = (int) getSize(pointerNode);
     for (int i = 0; i < blockSize; i++) {
-      queue.set(address + i, DEFAULT_VOID_VALUE);
+      queue.set(pointerNode.getAddress() + i, DEFAULT_VOID_VALUE);
     }
-    setSize(address, 0);
+    setSize(pointerNode, 0);
   }
 
   // Get the object at a specific address
-  public Object get(int address, int index) {
-    checkIfInBlock(address, index);
-    return queue.get(address + index);
+  public Object get(PointerNode pointerNode, int index) {
+    checkIfInBlock(pointerNode, index);
+    return queue.get(pointerNode.getAddress() + index);
   }
 
   // Set the object at a specific index starting from the ref address
-  public void set(int address, int index, Object value) {
-    checkIfInBlock(address, index);
-    queue.set(address + index, value);
+  public void set(PointerNode pointerNode, int index, Object value) {
+    checkIfInBlock(pointerNode, index);
+    queue.set(pointerNode.getAddress() + index, value);
   }
 
-  public int getSize(int address) {
-    if (address < 0 || address >= nextAddress)
-      ;
-    return (int) queue.get(address - 1);
+  public int getSize(PointerNode pointerNode) {
+    if (pointerNode.getAddress() < 0 || pointerNode.getAddress() >= nextAddress);
+    return (int) queue.get(pointerNode.getAddress() - 1);
   }
 
-  public void setSize(int address, int size) {
-    if (address < 0 || address >= nextAddress)
-      ;
-    queue.set(address - 1, size);
+  public void setSize(PointerNode pointerNode, int size) {
+    if (pointerNode.getAddress() < 0 || pointerNode.getAddress() >= nextAddress);
+    queue.set(pointerNode.getAddress() - 1, size);
   }
 
   // --- Getters for inspection ---
