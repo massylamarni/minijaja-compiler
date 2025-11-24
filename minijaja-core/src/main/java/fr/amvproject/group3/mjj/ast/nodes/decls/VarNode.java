@@ -44,6 +44,11 @@ public class VarNode extends VarDeclNode {
     @Override
     public boolean sameAs(AstNode other) {
       if (other instanceof VarNode varNode) {
+        if (this.initExp == null || varNode.initExp == null) { // Can be null because of void
+          return (this.initExp == varNode.initExp) &&
+            (this.getIdent().sameAs(varNode.getIdent())) &&
+            (this.typeMethNode.sameAs(varNode.typeMethNode));
+        }
         return this.getIdent().sameAs(varNode.getIdent()) &&
           this.typeMethNode.sameAs(varNode.typeMethNode) &&
           this.initExp.sameAs(varNode.initExp);

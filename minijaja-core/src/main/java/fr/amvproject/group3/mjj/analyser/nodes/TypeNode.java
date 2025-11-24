@@ -52,4 +52,8 @@ public class TypeNode {
   public boolean isString() {
     return type == TypeName.STRING;
   }
+
+  public boolean sameAs(TypeNode other) {
+    return this.type == other.type;
+  }
 }

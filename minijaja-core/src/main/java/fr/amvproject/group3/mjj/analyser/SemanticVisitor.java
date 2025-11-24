@@ -34,7 +34,7 @@ import fr.amvproject.group3.mjj.utils.NodeOperations;
 public class SemanticVisitor implements AstVisitor<TypeNode> {
   SymbolTable symbolTable = new SymbolTable();
   ScopeManager scopeManager = new ScopeManager(symbolTable);
-  CompileTimeVisitor compileTimeVisitor = new CompileTimeVisitor(symbolTable);
+  CompileTimeVisitor compileTimeVisitor = new CompileTimeVisitor(scopeManager);
 
   public SymbolTable getSymbolTable() {
     return symbolTable;
@@ -66,7 +66,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   private void checkIfTypeCompatible(TypeNode identType, ExpNode identInitExp, IdentNode identNode) {
     TypeNode typeExpValue = identInitExp.accept(this);
-    if (!identType.getName().equals(typeExpValue.getName())) {
+    if (!identType.sameAs(typeExpValue)) {
       throw new SemanticException("Value of Type " + typeExpValue + " not compatible with declaration of type " + identType.getName(), identNode.getLine(), identNode.getColumn());
     }
   }
@@ -86,7 +86,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
         if (rightSym instanceof ClassSymbol) throw new SemanticException("Can't use a class in an expression", identNode.getLine(), identNode.getColumn());
         if (rightSym instanceof MethodSymbol) throw new SemanticException("Can't use a method pointer in an expression", identNode.getLine(), identNode.getColumn());
         if (leftSym instanceof TableSymbol != rightSym instanceof TableSymbol) throw new SemanticException("Table pointer can only be affected with another table pointer", identNode.getLine(), identNode.getColumn());
-        if (!leftSym.getTypeNode().equals(rightSym.getTypeNode())) throw new SemanticException("Type mismatch", identNode.getLine(), identNode.getColumn()); // Is this used ?
+        if (!leftSym.getTypeNode().sameAs(rightSym.getTypeNode())) throw new SemanticException("Type mismatch", identNode.getLine(), identNode.getColumn()); // Is this used ?
       } else if (evaluatedRightExpNode instanceof ArrayAccessNode) {
         if (leftSym instanceof TableSymbol) throw new SemanticException("Table pointer can only be affected with another table pointer", identNode.getLine(), identNode.getColumn());
       }
@@ -170,7 +170,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   public TypeNode visitTable(TableNode node) {
     checkIfExistsToDeclare(node.getIdent());
     ExpNode sizeExpValue = checkIfTabIndexIsInteger(node.getSizeExp(), node.getIdent());
-
+    
     symbolTable.addSymbol(node.getIdent(), new TypeNode(node.getType().getName()), sizeExpValue);
     return new TypeNode("void");
   }
@@ -191,7 +191,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
       List<TypeNode> symParamsTypeValue = sym.getParamsType();
 
       for (int i = 0; i < paramsTypeValue.size(); i++) {
-        if (!paramsTypeValue.get(i).getName().equals(symParamsTypeValue.get(i).getName())) {
+        if (!paramsTypeValue.get(i).sameAs(symParamsTypeValue.get(i))) {
           hasSameParamsType = false;
           break;
         }
@@ -258,7 +258,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
     TypeNode leftExpTypeValue = node.getLeftExp().accept(this);
     TypeNode rightExpTypeValue = node.getRightExp().accept(this);
 
-    if (!leftExpTypeValue.getName().equals(rightExpTypeValue.getName())) {
+    if (!leftExpTypeValue.sameAs(rightExpTypeValue)) {
       throw new SemanticException("Type mismatch", node.getLine(), node.getColumn());
     }
     if (leftExpTypeValue.isInt() && !node.getOp().takesInteger()) {
@@ -403,7 +403,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   @Override
   public TypeNode visitArrayAccess(ArrayAccessNode node) {
     checkIfTabIndexIsInteger(node.getIndexExp(), node.getIdent());
-
+    
     return node.getIdent().accept(this);
   }
 
@@ -420,11 +420,11 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
     List<TypeNode> symParamsTypeValue = sym.getParamsType();
     for (int i = 0; i < listExpTypeValue.size(); i++) {
-      if (!listExpTypeValue.get(i).equals(symParamsTypeValue.get(i))) {
+      if (!listExpTypeValue.get(i).sameAs(symParamsTypeValue.get(i))) {
         throw new SemanticException("Method " + node.getIdent().getName() + " uses different parameter type from the declared one, at line " + sym.getLine(), node.getLine(), node.getColumn());
       }
     }
-
+  
     return sym.getTypeNode();
   }
 
