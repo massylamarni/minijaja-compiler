@@ -152,8 +152,8 @@ public class CompileTimeVisitor implements AstVisitor<Object> {
       throw new SemanticException("Incompatible operand, expecting Integer, Boolean given !", node.getLine(), node.getColumn());
     }
     switch (node.getOp().getOp()) {
-      case NOT: return (int) expValue * -1;
-      case NEG: return !((boolean) expValue);
+        case NEG: return (int) expValue * -1;
+        case NOT: return !((boolean) expValue);
       default: throw new SemanticException("Unknown semantic exception !", node.getLine(), node.getColumn());
     }
   }

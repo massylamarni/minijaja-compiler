@@ -1,4 +1,4 @@
-package fr.amvproject.group3.ast;
+package fr.amvproject.group3.mjj.ast;
 
 import org.antlr.v4.runtime.*;
 

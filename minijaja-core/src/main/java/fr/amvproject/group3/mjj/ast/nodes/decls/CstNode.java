@@ -1,5 +1,6 @@
 package fr.amvproject.group3.mjj.ast.nodes.decls;
 
+import fr.amvproject.group3.mjj.ast.nodes.other.TypeNode;
 import org.antlr.v4.runtime.Token;
 
 import fr.amvproject.group3.mjj.ast.AstNode;
@@ -7,7 +8,6 @@ import fr.amvproject.group3.mjj.ast.AstVisitor;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.mjj.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.mjj.ast.nodes.intermediate.VarDeclNode;
-import fr.amvproject.group3.mjj.ast.nodes.other.TypeNode;
 
 public class CstNode extends VarDeclNode {
   private final Token finalToken;
