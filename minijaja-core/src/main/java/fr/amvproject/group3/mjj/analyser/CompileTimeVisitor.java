@@ -137,7 +137,7 @@ public class CompileTimeVisitor implements AstVisitor<Object> {
           return (int) leftExpValue / (int) rightExpValue;
       case EQ: return leftExpValue == rightExpValue;
       case GT: return (int) leftExpValue > (int) rightExpValue;
-      default: throw new SemanticException("Unknown semantic exception !", node.getLine(), node.getColumn());
+      default: throw new IllegalArgumentException("Illegal operand !");
     }
   }
 
@@ -154,7 +154,7 @@ public class CompileTimeVisitor implements AstVisitor<Object> {
     switch (node.getOp().getOp()) {
       case NOT: return (int) expValue * -1;
       case NEG: return !((boolean) expValue);
-      default: throw new SemanticException("Unknown semantic exception !", node.getLine(), node.getColumn());
+      default: throw new IllegalArgumentException("Illegal operand !");
     }
   }
 
