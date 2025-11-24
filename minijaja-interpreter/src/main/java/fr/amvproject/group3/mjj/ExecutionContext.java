@@ -1,4 +1,4 @@
-package fr.amvproject.group3;
+package fr.amvproject.group3.mjj;
 
 import java.util.HashSet;
 import java.util.Set;

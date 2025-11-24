@@ -2,21 +2,22 @@ package fr.amvproject.group3.mjj.analyser.symbols;
 
 import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
+import fr.amvproject.group3.mjj.ast.nodes.intermediate.ExpNode;
 
 public class TableSymbol extends Symbols {
-  private final Integer size;
+  private final ExpNode sizeExpNode;
 
-  public TableSymbol(IdentNode ident, TypeNode type, Integer size) {
+  public TableSymbol(IdentNode ident, TypeNode type, ExpNode sizeExpNode) {
     super(ident, type);
-    this.size = size;
+    this.sizeExpNode = sizeExpNode;
   }
 
-  public Integer getSize() {
-    return size;
+  public ExpNode getSize() {
+    return sizeExpNode;
   }
 
   public boolean isDynamic() {
-    return size != null;
+    return sizeExpNode != null;
   }
 
   @Override
@@ -28,7 +29,7 @@ public class TableSymbol extends Symbols {
         getIdentNode().getName(),
         getTypeNode().getName(),
         "tab",
-        size,
+        sizeExpNode.toString(),
         "<?>",
         getIdentNode().getLine(),
         usageLines));

@@ -6,6 +6,7 @@ import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.AstVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.jjc.ast.nodes.intermediate.InstrNode;
+import fr.amvproject.group3.jjc.utils.NodeOperations.MockToken;
 
 public class IncNode extends InstrNode {
     private final Token incToken;
@@ -15,6 +16,13 @@ public class IncNode extends InstrNode {
     public IncNode(Token incToken, IdentNode identNode, boolean isA) {
         super(incToken.getLine(), incToken.getCharPositionInLine());
         this.incToken = incToken;
+        this.identNode = identNode;
+        this.isA = isA;
+    }
+
+    public IncNode(IdentNode identNode, boolean isA) {
+        super(0, 0);
+        this.incToken = new MockToken("inc", 0, 0);
         this.identNode = identNode;
         this.isA = isA;
     }

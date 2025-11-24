@@ -5,6 +5,9 @@ import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
 import fr.amvproject.group3.mjj.analyser.symbols.*;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
 import static fr.amvproject.group3.mjj.utils.NodeOperations.MockToken;
+
+import fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode;
+import fr.amvproject.group3.mjj.ast.nodes.intermediate.ExpNode;
 import org.junit.Test;
 
 import java.util.List;
@@ -73,13 +76,14 @@ public class SymbolTableTest {
         TypeNode type = new TypeNode("int");
 
         // When
-        table.addSymbol(ident, type, 10);
+        table.addSymbol(ident, type, new IntLiteralNode("10",1,1));
         Symbols result = table.lookup(ident);
 
         // Then
         assertThat(result, is(notNullValue()));
         assertThat(result, instanceOf(TableSymbol.class));
-        assertThat(((TableSymbol) result).getSize(), is(10));
+        ExpNode node = ((TableSymbol) result).getSize();
+        assertThat(((IntLiteralNode) node).getValue(), is(10));
     }
 
     @Test

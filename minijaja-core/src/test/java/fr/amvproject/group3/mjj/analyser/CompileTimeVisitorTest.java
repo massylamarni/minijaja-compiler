@@ -127,17 +127,17 @@ public class CompileTimeVisitorTest {
         // Given
         SymbolTable table = new SymbolTable();
         IdentNode ident = new IdentNode(new MockToken("arr", 1, 1));
-        table.addSymbol(ident, new TypeNode("int"), 10);
+        table.addSymbol(ident, new TypeNode("int"), new IntLiteralNode("10",1,1));
 
         CompileTimeVisitor visitor = new CompileTimeVisitor(table);
 
         LengthNode node = new LengthNode(new MockToken("lenght",1,0),ident);
 
         // When
-        Object result = visitor.visitLength(node);
+        IntLiteralNode result = (IntLiteralNode) visitor.visitLength(node);
 
         // Then
-        assertThat(result, is(10));
+        assertThat(result.getValue(), is(10));
     }
 
     @Test(expected = SemanticException.class)

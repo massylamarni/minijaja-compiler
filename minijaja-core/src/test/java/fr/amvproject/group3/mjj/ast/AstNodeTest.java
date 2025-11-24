@@ -9,6 +9,7 @@ import fr.amvproject.group3.mjj.ast.nodes.intermediate.*;
 import fr.amvproject.group3.mjj.ast.nodes.other.*;
 import fr.amvproject.group3.mjj.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
+import fr.amvproject.group3.mjj.utils.NodeConsts;
 import fr.amvproject.group3.mjj.utils.NodeOperations.MockToken;
 
 import org.junit.Test;
@@ -95,7 +96,7 @@ public class AstNodeTest {
         assertThat(varNode, is(notNullValue()));
         assertThat(varNode.getIdent().getName(), is("x"));
         assertThat(varNode.getType().getName(), is("int"));
-        assertThat(varNode.getInitExp(), is(nullValue()));
+        assertThat(varNode.getInitExp(), is(NodeConsts.DEFAULT_INT_NODE));
     }
 
     // ====================== CstNode ======================

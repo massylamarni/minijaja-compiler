@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.Token;
 import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.AstVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.intermediate.InstrNode;
+import fr.amvproject.group3.jjc.utils.NodeOperations.MockToken;
 
 public class NopLiteral extends InstrNode {
   private final Token nopToken;
@@ -13,6 +14,11 @@ public class NopLiteral extends InstrNode {
     super(nopToken.getLine(), nopToken.getCharPositionInLine());
     this.nopToken = nopToken;
   }
+
+  public NopLiteral() {
+        super(0, 0);
+        nopToken = new MockToken("nop", 0, 0);
+    }
 
   public Token getNopToken() {
     return nopToken;

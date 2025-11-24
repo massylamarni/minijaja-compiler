@@ -6,6 +6,7 @@ import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.AstVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.jjc.ast.nodes.intermediate.InstrNode;
+import fr.amvproject.group3.jjc.utils.NodeOperations.MockToken;
 
 public class LoadNode extends InstrNode {
     private final Token loadToken;
@@ -15,6 +16,13 @@ public class LoadNode extends InstrNode {
     public LoadNode(Token loadToken, IdentNode identNode, boolean isA) {
         super(loadToken.getLine(), loadToken.getCharPositionInLine());
         this.loadToken = loadToken;
+        this.identNode = identNode;
+        this.isA = isA;
+    }
+
+    public LoadNode(IdentNode identNode, boolean isA) {
+        super(0, 0);
+        this.loadToken = new MockToken("load", 0, 0);;
         this.identNode = identNode;
         this.isA = isA;
     }

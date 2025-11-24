@@ -577,7 +577,7 @@ public class SemanticVisitorTest {
 
         // Given
         IdentNode arr = new IdentNode(new MockToken("t",1,1));
-        visitor.getSymbolTable().addSymbol(arr, new TypeNode("int"),10);
+        visitor.getSymbolTable().addSymbol(arr, new TypeNode("int"),new IntLiteralNode(new MockToken("10",1,1)));
 
         ArrayAccessNode access = new ArrayAccessNode(arr, new IntLiteralNode(new MockToken("0",1,1)));
 
@@ -676,7 +676,7 @@ public class SemanticVisitorTest {
 
         // Given
         IdentNode ident = new IdentNode(new MockToken("t",1,1));
-        visitor.getSymbolTable().addSymbol(ident, new TypeNode("int"),10);
+        visitor.getSymbolTable().addSymbol(ident, new TypeNode("int"),new  IntLiteralNode(new MockToken("10",1,1)));
 
         WriteNode write = new WriteNode(new MockToken("write",1,1),ident,false);
 
@@ -718,7 +718,7 @@ public class SemanticVisitorTest {
 
         // Given
         IdentNode arr = new IdentNode(new MockToken("t",1,1));
-        visitor.getSymbolTable().addSymbol(arr,new TypeNode("int"),10);
+        visitor.getSymbolTable().addSymbol(arr,new TypeNode("int"),new IntLiteralNode("10",1,1));
 
         ArrayAccessNode node = new ArrayAccessNode(
                 arr,
@@ -737,7 +737,7 @@ public class SemanticVisitorTest {
 
         // Given
         IdentNode arr = new IdentNode(new MockToken("t",1,1));
-        visitor.getSymbolTable().addSymbol(arr, new TypeNode("int"),10);
+        visitor.getSymbolTable().addSymbol(arr, new TypeNode("int"),new IntLiteralNode("10",1,1));
 
         ArrayAccessNode node = new ArrayAccessNode(
                 arr,

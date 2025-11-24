@@ -1,4 +1,4 @@
-package fr.amvproject.group3;
+package fr.amvproject.group3.mjj;
 
 import fr.amvproject.group3.mjj.Stack;
 import fr.amvproject.group3.mjj.ast.AstNode;

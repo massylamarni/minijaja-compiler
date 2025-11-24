@@ -1,10 +1,8 @@
-package fr.amvproject.group3;
+package fr.amvproject.group3.jjc;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import fr.amvproject.group3.jjc.Quad;
-import fr.amvproject.group3.jjc.Stack;
 import fr.amvproject.group3.jjc.ast.AstVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.finals.AddressNode;
 import fr.amvproject.group3.jjc.ast.nodes.finals.BoolLiteralNode;
@@ -147,7 +145,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     } else if (node.getObj().isCst()) {
       Quad quad = stack.pop();
       if (quad.getObj().isVcst()) {
-        stack.declCst(node.getIdent(), quad.getValue(), node.getType());
+        stack.declCst(node.getIdent(), quad.getValue(), node.getType(), true);
       }
     } else if (node.getObj().isMeth()) {
       Quad quad = stack.pop();

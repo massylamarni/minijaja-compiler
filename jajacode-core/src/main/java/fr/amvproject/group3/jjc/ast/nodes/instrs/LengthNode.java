@@ -6,6 +6,7 @@ import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.AstVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.jjc.ast.nodes.intermediate.InstrNode;
+import fr.amvproject.group3.jjc.utils.NodeOperations.MockToken;
 
 public class LengthNode extends InstrNode {
     private final Token lengthToken;
@@ -14,6 +15,12 @@ public class LengthNode extends InstrNode {
     public LengthNode(Token lengthToken, IdentNode identNode) {
         super(lengthToken.getLine(), lengthToken.getCharPositionInLine());
         this.lengthToken = lengthToken;
+        this.identNode = identNode;
+    }
+
+    public LengthNode(IdentNode identNode) {
+        super(0, 0);
+        this.lengthToken = new MockToken("length", 0, 0);
         this.identNode = identNode;
     }
 

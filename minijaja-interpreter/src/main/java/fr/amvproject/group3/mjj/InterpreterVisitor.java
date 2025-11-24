@@ -1,9 +1,8 @@
-package fr.amvproject.group3;
+package fr.amvproject.group3.mjj;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.amvproject.group3.mjj.Stack;
 import fr.amvproject.group3.mjj.ast.AstVisitor;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.DeclsNode;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.InstrsNode;
@@ -156,7 +155,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitCst(CstNode node) {
-        stack.declCst(node.getIdent(), evalExp(node.getInitExp()), node.getType());
+        stack.declCst(node.getIdent(), evalExp(node.getInitExp()), node.getType(), node.isVcst());
         return null;
     }
 
