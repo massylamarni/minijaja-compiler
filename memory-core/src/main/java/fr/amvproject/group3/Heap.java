@@ -5,6 +5,7 @@ import java.util.List;
 
 import fr.amvproject.group3.nodes.TypeMemNode;
 import fr.amvproject.group3.nodes.PointerNode;
+import fr.amvproject.group3.nodes.ArrayInfoNode;
 
 public class Heap {
   private static final int DEFAULT_INT_VALUE = 0;
@@ -22,7 +23,7 @@ public class Heap {
   // Allocate memory in the heap and return its address, aka CreerTas
   public PointerNode allocate(int size, TypeMemNode type) {
     int address = nextAddress;
-    queue.add(size); // Store size at current address
+    queue.add(new ArrayInfoNode(size, 1));
     if (type.isInt()) {
       for (int i = 0; i < size; i++)
         queue.add(DEFAULT_INT_VALUE);
@@ -38,7 +39,7 @@ public class Heap {
   }
 
   // Remove the allocated memory from specific address, aka RetirerTas
-  public void remove(PointerNode pointerNode, TypeMemNode type) {
+  private void remove(PointerNode pointerNode, TypeMemNode type) {
     if (type == null)
       return; // Unknown use case
     checkIfInBlock(pointerNode, 0); // Will never happen if semantic analysis is correct
@@ -46,7 +47,19 @@ public class Heap {
     for (int i = 0; i < blockSize; i++) {
       queue.set(pointerNode.getAddress() + i, DEFAULT_VOID_VALUE);
     }
-    setSize(pointerNode, 0);
+    getArrayInfoNode(pointerNode).destroy();
+  }
+
+  public void addRef(PointerNode pointerNode) {
+    getArrayInfoNode(pointerNode).incRefCount();
+  }
+
+  public void removeRef(PointerNode pointerNode, TypeMemNode type) {
+    ArrayInfoNode arrayInfoNode = getArrayInfoNode(pointerNode);
+    arrayInfoNode.decRefCount();
+    if (arrayInfoNode.getRefCount() <= 0) {
+      remove(pointerNode, type);
+    }
   }
 
   // Get the object at a specific address
@@ -61,14 +74,13 @@ public class Heap {
     queue.set(pointerNode.getAddress() + index, value);
   }
 
-  public int getSize(PointerNode pointerNode) {
+  public ArrayInfoNode getArrayInfoNode(PointerNode pointerNode) {
     if (pointerNode.getAddress() < 0 || pointerNode.getAddress() >= nextAddress);
-    return (int) queue.get(pointerNode.getAddress() - 1);
+    return ((ArrayInfoNode) queue.get(pointerNode.getAddress() - 1));
   }
 
-  public void setSize(PointerNode pointerNode, int size) {
-    if (pointerNode.getAddress() < 0 || pointerNode.getAddress() >= nextAddress);
-    queue.set(pointerNode.getAddress() - 1, size);
+  public int getSize(PointerNode pointerNode) {
+    return getArrayInfoNode(pointerNode).getSize();
   }
 
   // --- Getters for inspection ---

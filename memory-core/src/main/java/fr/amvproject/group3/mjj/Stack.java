@@ -99,7 +99,7 @@ public class Stack extends StackManager {
       Quad quad = queue.get(i);
       if (quad.getIdent().sameAs(ident)) {
         if (quad.getObj().isTab())
-          heap.remove((PointerNode) quad.getValue(), new TypeMemNode(((TypeMethNode) quad.getType()).getName()));
+          heap.removeRef((PointerNode) quad.getValue(), new TypeMemNode(((TypeMethNode) quad.getType()).getName()));
         queue.remove(i);
         return;
       }
@@ -145,11 +145,9 @@ public class Stack extends StackManager {
           queue.set(i, new Quad(ident, value, new ObjNode("cst"), quad.getType()));
           return;
         } else if (quad.getObj().isTab()) {
-          // TODO
-          PointerNode ref = heap.allocate((int) value, new TypeMemNode(((TypeMethNode) quad.getType()).getName())); // AjouterRef(v,
-                                                                                                            // t)
-          queue.set(i, new Quad(ident, ref, new ObjNode("tab"), quad.getType()));
-          heap.remove((PointerNode) quad.getValue(), new TypeMemNode(((TypeMethNode) quad.getType()).getName())); // RetirerTas
+          heap.removeRef((PointerNode) quad.getValue(), new TypeMemNode(((TypeMethNode) quad.getType()).getName())); // RetirerTas
+          heap.addRef((PointerNode) value);
+          queue.set(i, new Quad(ident, value, new ObjNode("tab"), quad.getType()));
           return;
         } else if (quad.getObj().isCst()) {
           return;

@@ -85,7 +85,7 @@ public class HeapTest {
         PointerNode address = heap.allocate(3, new TypeMemNode("int"));
 
         // When
-        heap.remove(address, new TypeMemNode("int"));
+        heap.removeRef(address, new TypeMemNode("int"));
 
         // Then
         assertThat(heap.getSize(address), is(0));
@@ -120,7 +120,7 @@ public class HeapTest {
     @Test(expected = IndexOutOfBoundsException.class)
     public void givenHeap__whenRemoveInvalidAddress__thenThrowsException() {
         // When
-        heap.remove(new PointerNode(-1), new TypeMemNode("int"));
+        heap.removeRef(new PointerNode(-1), new TypeMemNode("int"));
     }
 
     @Test
