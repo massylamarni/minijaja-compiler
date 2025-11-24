@@ -65,9 +65,9 @@ public class Stack extends StackManager {
     this.push(new Quad(ident, value, new ObjNode("var"), type));
   }
 
-  public void declCst(IdentNode ident, Object value, TypeNode type) {
+  public void declCst(IdentNode ident, Object value, TypeNode type, boolean isVcst) {
     // Vcst = can be initialized later but not changed after
-    this.push(new Quad(ident, value, new ObjNode(value == null ? "vcst" : "cst"), type));
+    this.push(new Quad(ident, value, new ObjNode(isVcst ? "vcst" : "cst"), type));
   }
 
   public void declTab(IdentNode ident, int size, TypeMethNode type) {
