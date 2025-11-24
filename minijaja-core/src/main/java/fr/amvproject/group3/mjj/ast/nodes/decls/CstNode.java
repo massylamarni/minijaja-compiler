@@ -62,14 +62,10 @@ public class CstNode extends VarDeclNode {
   @Override
   public boolean sameAs(AstNode other) {
       if (other instanceof CstNode cstNode) {
-        if (this.initExp == null || cstNode.initExp == null) {
-          return (this.initExp == cstNode.initExp) &&
-            (this.getIdent().sameAs(cstNode.getIdent())) &&
-            (this.typeNode.sameAs(cstNode.typeNode));
-        }
         return this.getIdent().sameAs(cstNode.getIdent()) &&
           this.typeNode.sameAs(cstNode.typeNode) &&
-          this.initExp.sameAs(cstNode.initExp);
+          this.initExp.sameAs(cstNode.initExp) &&
+          this.isVcst() == cstNode.isVcst();
       }
       return false;
   }
