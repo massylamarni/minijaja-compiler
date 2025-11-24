@@ -29,7 +29,7 @@ public class CompileTimeVisitorTest {
     public void givenTwoIntegersWhenBinaryAddThenReturnsSum() {
         // Given
         SymbolTable table = new SymbolTable();
-        CompileTimeVisitor visitor = new CompileTimeVisitor(table);
+        CompileTimeVisitor visitor = new CompileTimeVisitor(new ScopeManager(table));
 
         BinaryOpNode op = new BinaryOpNode(BinaryOpNode.BinaryOpName.ADD.getName(), 1, 0);
         BinaryExpNode node = new BinaryExpNode(op,
@@ -38,17 +38,17 @@ public class CompileTimeVisitorTest {
         );
 
         // When
-        Object result = visitor.visitBinaryExp(node);
+        IntLiteralNode result = (IntLiteralNode) visitor.visitBinaryExp(node);
 
         // Then
-        assertThat(result, is(8));
+        assertThat(result.getValue(), is(8));
     }
 
     @Test(expected = SemanticException.class)
     public void givenMismatchedTypesWhenBinaryExpThenThrowsException() {
         // Given
         SymbolTable table = new SymbolTable();
-        CompileTimeVisitor visitor = new CompileTimeVisitor(table);
+        CompileTimeVisitor visitor = new CompileTimeVisitor(new ScopeManager(table));
 
         BinaryOpNode op = new BinaryOpNode(BinaryOpNode.BinaryOpName.ADD.getName(), 1, 0);
         BinaryExpNode node = new BinaryExpNode(op,
@@ -64,7 +64,7 @@ public class CompileTimeVisitorTest {
     public void givenZeroDivisionWhenBinaryDivThenThrowsException() {
         // Given
         SymbolTable table = new SymbolTable();
-        CompileTimeVisitor visitor = new CompileTimeVisitor(table);
+        CompileTimeVisitor visitor = new CompileTimeVisitor(new ScopeManager(table));
 
         BinaryOpNode op = new BinaryOpNode(BinaryOpNode.BinaryOpName.DIV.getName(), 1, 0);
         BinaryExpNode node = new BinaryExpNode(op,
@@ -84,7 +84,7 @@ public class CompileTimeVisitorTest {
     public void givenBooleanTrueWhenUnaryNotThenGotFalse() {
         // Given
         SymbolTable table = new SymbolTable();
-        CompileTimeVisitor visitor = new CompileTimeVisitor(table);
+        CompileTimeVisitor visitor = new CompileTimeVisitor(new ScopeManager(table));
 
         UnaryOpNode op = new UnaryOpNode(UnaryOpNode.UnaryOpName.NOT.getName(),1,0);
         UnaryExpNode node = new UnaryExpNode(op,
@@ -92,10 +92,10 @@ public class CompileTimeVisitorTest {
         );
 
         // When
-        Object result = visitor.visitUnaryExp(node);
+        BoolLiteralNode result = (BoolLiteralNode) visitor.visitUnaryExp(node);
 
         // Then
-        assertThat(result, is(false));
+        assertThat(result.getValue(), is(false));
 
     }
 
@@ -103,7 +103,7 @@ public class CompileTimeVisitorTest {
     public void givenIntWhenUnaryNegThenGotNegativeInteger() {
         // Given
         SymbolTable table = new SymbolTable();
-        CompileTimeVisitor visitor = new CompileTimeVisitor(table);
+        CompileTimeVisitor visitor = new CompileTimeVisitor(new ScopeManager(table));
 
         UnaryOpNode op = new UnaryOpNode(UnaryOpNode.UnaryOpName.NEG.getName(),1,0);
         UnaryExpNode node = new UnaryExpNode(op,
@@ -111,10 +111,10 @@ public class CompileTimeVisitorTest {
         );
 
         // When
-        Object result = visitor.visitUnaryExp(node);
+        IntLiteralNode result = (IntLiteralNode) visitor.visitUnaryExp(node);
 
         // Then
-        assertThat(result, is(-10));
+        assertThat(result.getValue(), is(-10));
 
     }
 
@@ -129,7 +129,7 @@ public class CompileTimeVisitorTest {
         IdentNode ident = new IdentNode(new MockToken("arr", 1, 1));
         table.addSymbol(ident, new TypeNode("int"), new IntLiteralNode("10",1,1));
 
-        CompileTimeVisitor visitor = new CompileTimeVisitor(table);
+        CompileTimeVisitor visitor = new CompileTimeVisitor(new ScopeManager(table));
 
         LengthNode node = new LengthNode(new MockToken("lenght",1,0),ident);
 
@@ -147,7 +147,7 @@ public class CompileTimeVisitorTest {
         IdentNode ident = new IdentNode(new MockToken("m", 1, 1));
         table.addSymbol(ident, new TypeNode("int"), List.of());
 
-        CompileTimeVisitor visitor = new CompileTimeVisitor(table);
+        CompileTimeVisitor visitor = new CompileTimeVisitor(new ScopeManager(table));
 
         LengthNode node = new LengthNode(new MockToken("lenght",1,0),ident);
 
@@ -162,7 +162,7 @@ public class CompileTimeVisitorTest {
         IdentNode ident = new IdentNode(new MockToken("i", 1, 1));
         table.addSymbol(ident, new TypeNode("int"));
 
-        CompileTimeVisitor visitor = new CompileTimeVisitor(table);
+        CompileTimeVisitor visitor = new CompileTimeVisitor(new ScopeManager(table));
 
         LengthNode node = new LengthNode(new MockToken("lenght",1,0),ident);
 
@@ -178,46 +178,46 @@ public class CompileTimeVisitorTest {
     @Test
     public void givenIntLiteralWhenVisitThenReturnsValue() {
         // Given
-        CompileTimeVisitor visitor = new CompileTimeVisitor(new SymbolTable());
+        CompileTimeVisitor visitor = new CompileTimeVisitor(new ScopeManager(new SymbolTable()));
         IntLiteralNode node = new IntLiteralNode(new MockToken("42", 1, 1));
 
         // When
-        Object result = visitor.visitIntLiteral(node);
+        IntLiteralNode result = (IntLiteralNode) visitor.visitIntLiteral(node);
 
         // Then
-        assertThat(result, is(42));
+        assertThat(result.getValue(), is(42));
     }
 
     @Test
     public void givenBoolLiteralWhenVisitThenReturnsValue() {
         // Given
-        CompileTimeVisitor visitor = new CompileTimeVisitor(new SymbolTable());
+        CompileTimeVisitor visitor = new CompileTimeVisitor(new ScopeManager(new SymbolTable()));
         BoolLiteralNode node = new BoolLiteralNode(new MockToken("true", 1, 1));
 
         // When
-        Object result = visitor.visitBoolLiteral(node);
+        BoolLiteralNode result = (BoolLiteralNode) visitor.visitBoolLiteral(node);
 
         // Then
-        assertThat(result, is(true));
+        assertThat(result.getValue(), is(true));
     }
 
     @Test
     public void givenStringLiteralWhenVisitThenReturnsValue() {
         // Given
-        CompileTimeVisitor visitor = new CompileTimeVisitor(new SymbolTable());
+        CompileTimeVisitor visitor = new CompileTimeVisitor(new ScopeManager(new SymbolTable()));
         StringLiteralNode node = new StringLiteralNode(new MockToken("hello", 1, 1));
 
         // When
-        Object result = visitor.visitStringLiteral(node);
+        StringLiteralNode result = (StringLiteralNode) visitor.visitStringLiteral(node);
 
         // Then
-        assertThat(result, is("hello"));
+        assertThat(result.getValue(), is("hello"));
     }
 
     @Test
     public void givenIdentNodeWhenVisitThenReturnsNode() {
         // Given
-        CompileTimeVisitor visitor = new CompileTimeVisitor(new SymbolTable());
+        CompileTimeVisitor visitor = new CompileTimeVisitor(new ScopeManager(new SymbolTable()));
         IdentNode ident = new IdentNode(new MockToken("x", 1, 1));
 
         // When

@@ -57,7 +57,7 @@ public class CompileTimeVisitor implements AstVisitor<ExpNode> {
 
       if (sym instanceof ClassSymbol) throw new SemanticException("Can't use a class in an expression", expNode.getLine(), expNode.getColumn());
       if (sym instanceof MethodSymbol) throw new SemanticException("Can't use a method pointer in an expression", expNode.getLine(), expNode.getColumn());
-      if (sym instanceof TableSymbol) throw new SemanticException("Can't use a table pointer in an expression", expNode.getLine(), expNode.getColumn());      
+      if (sym instanceof TableSymbol) throw new SemanticException("Can't use a table pointer in an expression", expNode.getLine(), expNode.getColumn());
     }
   }
 
@@ -199,9 +199,9 @@ public class CompileTimeVisitor implements AstVisitor<ExpNode> {
     Object result;
     Object expValue = getValueFromExpNode(expNode);
     switch (node.getOp().getOp()) {
-      case NOT: result = (int) expValue * -1;
+        case NEG: result = (int) expValue * -1;
         break;
-      case NEG: result = !((boolean) expValue);
+        case NOT: result = !((boolean) expValue);
         break;
       default: throw new IllegalArgumentException("Illegal operand !");
     }

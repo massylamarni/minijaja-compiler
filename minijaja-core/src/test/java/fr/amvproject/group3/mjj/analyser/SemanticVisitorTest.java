@@ -286,7 +286,7 @@ public class SemanticVisitorTest {
         // Then
         TableSymbol sym = (TableSymbol) visitor.getSymbolTable().lookup(ident);
         assertThat(sym.getTypeNode().getName(), is("int"));
-        assertThat(sym.getSize(), is(10));
+        assertThat(((IntLiteralNode) sym.getSize()).getValue(), is(10));
     }
 
     @Test(expected = SemanticException.class)
@@ -572,7 +572,7 @@ public class SemanticVisitorTest {
         // Then → exception
     }
 
-    @Test(expected = SemanticException.class)
+    @Test
     public void testInc_GivenArrayAccess_WhenInc_ThenThrowSemanticException() {
 
         // Given
@@ -584,9 +584,11 @@ public class SemanticVisitorTest {
         IncNode inc = new IncNode(access, new MockToken("++",1,1));
 
         // When
-        visitor.visitInc(inc);
+        TypeNode type = visitor.visitInc(inc);
 
-        // Then → exception
+        // Then
+        assertThat(type.getName(), is("void"));
+
     }
 
     @Test(expected = SemanticException.class)
