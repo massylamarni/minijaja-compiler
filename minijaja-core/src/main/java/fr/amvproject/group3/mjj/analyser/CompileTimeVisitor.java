@@ -161,6 +161,7 @@ public class CompileTimeVisitor implements AstVisitor<ExpNode> {
     Object result = null;
     Object leftExpValue = getValueFromExpNode(leftExpNode);
     Object rightExpValue = getValueFromExpNode(rightExpNode);
+    if (leftExpValue == null || rightExpValue == null) return node;
     switch (node.getOp().getOp()) {
       case AND: result = (boolean) leftExpValue && (boolean) rightExpValue;
         break;
