@@ -117,7 +117,7 @@ public class StackTest {
         stack.push(new Quad(new IdentNode(new MockToken("Test",1,0)), null, new ObjNode("var"),  new TypeMethNode(new MockToken("void",1,0))));
         IdentNode ident = new IdentNode(new MockToken("T", 5,0));
         // When
-        stack.declCst(ident, 4, new TypeNode(new MockToken("int",1,0)), true);
+        stack.declCst(ident, 4, new TypeNode(new MockToken("int",1,0)), false);
         // Then
         assertThat( stack.getQueue().size(),is(2));
         assertThat(stack.peek().getIdent().getName(),is("T"));
