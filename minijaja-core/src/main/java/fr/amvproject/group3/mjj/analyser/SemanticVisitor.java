@@ -34,7 +34,7 @@ import fr.amvproject.group3.mjj.utils.NodeOperations;
 public class SemanticVisitor implements AstVisitor<TypeNode> {
   SymbolTable symbolTable = new SymbolTable();
   ScopeManager scopeManager = new ScopeManager(symbolTable);
-  CompileTimeVisitor compileTimeVisitor = new CompileTimeVisitor(symbolTable);
+  CompileTimeVisitor compileTimeVisitor = new CompileTimeVisitor(scopeManager);
 
   public SymbolTable getSymbolTable() {
     return symbolTable;

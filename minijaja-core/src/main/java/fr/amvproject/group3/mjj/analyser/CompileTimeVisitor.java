@@ -2,6 +2,7 @@ package fr.amvproject.group3.mjj.analyser;
 
 import fr.amvproject.group3.exceptions.SemanticException;
 import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
+import fr.amvproject.group3.mjj.analyser.symbols.ClassSymbol;
 import fr.amvproject.group3.mjj.analyser.symbols.MethodSymbol;
 import fr.amvproject.group3.mjj.analyser.symbols.Symbols;
 import fr.amvproject.group3.mjj.analyser.symbols.TableSymbol;
@@ -16,6 +17,7 @@ import fr.amvproject.group3.mjj.ast.nodes.exprs.UnaryExpNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.*;
 import fr.amvproject.group3.mjj.ast.nodes.instrs.*;
 import fr.amvproject.group3.mjj.ast.nodes.intermediate.DeclNode;
+import fr.amvproject.group3.mjj.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.mjj.ast.nodes.intermediate.InstrNode;
 import fr.amvproject.group3.mjj.ast.nodes.intermediate.VarDeclNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.BinaryOpNode;
@@ -24,15 +26,43 @@ import fr.amvproject.group3.mjj.ast.nodes.other.UnaryOpNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
 
-public class CompileTimeVisitor implements AstVisitor<Object> {
-  private SymbolTable symbolTable;
+public class CompileTimeVisitor implements AstVisitor<ExpNode> {
+  private ScopeManager scopeManager;
 
-  public CompileTimeVisitor(SymbolTable symbolTable) {
-    this.symbolTable = symbolTable;
+  public CompileTimeVisitor(ScopeManager scopeManager) {
+    this.scopeManager = scopeManager;
+  }
+
+  private ExpNode getExpNodeFromValue(Object value, ExpNode expNode) {
+    ExpNode evaluatedExpNode;
+    if (value instanceof Integer) evaluatedExpNode = new IntLiteralNode(String.valueOf(value), expNode.getLine(), expNode.getColumn());
+    else evaluatedExpNode = new BoolLiteralNode(String.valueOf(value), expNode.getLine(), expNode.getColumn());
+    return evaluatedExpNode;
+  }
+
+  private Object getValueFromExpNode(ExpNode expNode) {
+    Object value = null;
+    if (expNode instanceof IntLiteralNode intLiteralNode) value = intLiteralNode.getValue();
+    else if (expNode instanceof BoolLiteralNode boolLiteralNode) value = boolLiteralNode.getValue();
+    return value;
+  }
+
+  private void checkIfSymbolIsUsableInExp(ExpNode expNode) {
+    if (expNode instanceof IdentNode identNode) {
+      Symbols sym = scopeManager.lookup(identNode);
+
+      if (sym == null) {
+        throw new SemanticException("Symbol " + identNode.getName() + " is referenced, but never declared", expNode.getLine(), expNode.getColumn());
+      }
+
+      if (sym instanceof ClassSymbol) throw new SemanticException("Can't use a class in an expression", expNode.getLine(), expNode.getColumn());
+      if (sym instanceof MethodSymbol) throw new SemanticException("Can't use a method pointer in an expression", expNode.getLine(), expNode.getColumn());
+      if (sym instanceof TableSymbol) throw new SemanticException("Can't use a table pointer in an expression", expNode.getLine(), expNode.getColumn());      
+    }
   }
 
   @Override
-  public Object visitProgram(ProgramNode node) {
+  public ExpNode visitProgram(ProgramNode node) {
     for (ClassNode classeNode : node.getClasses()) {
       classeNode.accept(this);
     }
@@ -40,14 +70,14 @@ public class CompileTimeVisitor implements AstVisitor<Object> {
   }
 
   @Override
-  public Object visitClass(ClassNode node) {
+  public ExpNode visitClass(ClassNode node) {
     node.getDecls().accept(this);
     node.getMain().accept(this);
     return null;
   }
 
   @Override
-  public Object visitDecls(DeclsNode node) {
+  public ExpNode visitDecls(DeclsNode node) {
     for (DeclNode declNode : node.getList()) {
       declNode.accept(this);
     }
@@ -55,7 +85,7 @@ public class CompileTimeVisitor implements AstVisitor<Object> {
   }
 
   @Override
-  public Object visitVars(VarsNode node) {
+  public ExpNode visitVars(VarsNode node) {
     for (VarDeclNode varDeclNode : node.getList()) {
       varDeclNode.accept(this);
     }
@@ -63,44 +93,44 @@ public class CompileTimeVisitor implements AstVisitor<Object> {
   }
 
   @Override
-  public Object visitVar(VarNode node) {
+  public ExpNode visitVar(VarNode node) {
     return null;
   }
 
   @Override
-  public Object visitCst(CstNode node) {
+  public ExpNode visitCst(CstNode node) {
     return null;
   }
 
   @Override
-  public Object visitTable(TableNode node) {
+  public ExpNode visitTable(TableNode node) {
     return null;
   }
 
   @Override
-  public Object visitMethod(MethodNode node) {
+  public ExpNode visitMethod(MethodNode node) {
     return null;
   }
 
   @Override
-  public Object visitMain(MainNode node) {
+  public ExpNode visitMain(MainNode node) {
     node.getVars().accept(this);
     node.getInstrs().accept(this);
     return null;
   }
 
   @Override
-  public Object visitParams(ParamsNode node) {
+  public ExpNode visitParams(ParamsNode node) {
     return null;
   }
 
   @Override
-  public Object visitParam(ParamNode node) {
+  public ExpNode visitParam(ParamNode node) {
     return null;
   }
 
   @Override
-  public Object visitInstrs(InstrsNode node) {
+  public ExpNode visitInstrs(InstrsNode node) {
     for (InstrNode instrNode : node.getList()) {
       instrNode.accept(this);
     }
@@ -108,73 +138,79 @@ public class CompileTimeVisitor implements AstVisitor<Object> {
   }
 
   @Override
-  public Object visitListExp(ListExpNode node) {
+  public ExpNode visitListExp(ListExpNode node) {
     return null;
   }
 
   @Override
-  public Object visitBinaryExp(BinaryExpNode node) {
-    Object leftExpValue = node.getLeftExp().accept(this);
-    Object rightExpValue = node.getRightExp().accept(this);
+  public ExpNode visitBinaryExp(BinaryExpNode node) {
+    ExpNode leftExpNode = node.getLeftExp().accept(this);
+    ExpNode rightExpNode = node.getRightExp().accept(this);
+    checkIfSymbolIsUsableInExp(leftExpNode);
+    checkIfSymbolIsUsableInExp(rightExpNode);
 
-    if (leftExpValue instanceof Boolean != rightExpValue instanceof Boolean) {
+    if (leftExpNode instanceof BoolLiteralNode != rightExpNode instanceof BoolLiteralNode) {
       throw new SemanticException("Type mismatch !", node.getLine(), node.getColumn());
     }
-    if (leftExpValue instanceof Integer && !node.getOp().takesInteger()) {
+    if (leftExpNode instanceof IntLiteralNode && !node.getOp().takesInteger()) {
       throw new SemanticException("Incompatible operand, expecting Boolean, Integer given !", node.getLine(), node.getColumn());
     }
-    if (leftExpValue instanceof Boolean && !node.getOp().takesBoolean()) {
+    if (leftExpNode instanceof BoolLiteralNode && !node.getOp().takesBoolean()) {
       throw new SemanticException("Incompatible operand, expecting Integer, Boolean given !", node.getLine(), node.getColumn());
     }
+    Object result = null;
+    Object leftExpValue = getValueFromExpNode(leftExpNode);
+    Object rightExpValue = getValueFromExpNode(rightExpNode);
     switch (node.getOp().getOp()) {
-      case AND: return (boolean) leftExpValue && (boolean) rightExpValue;
-      case OR:  return (boolean) leftExpValue || (boolean) rightExpValue;
-      case ADD: return (int) leftExpValue + (int) rightExpValue;
-      case SUB: return (int) leftExpValue - (int) rightExpValue;
-      case MUL: return (int) leftExpValue * (int) rightExpValue;
+      case AND: result = (boolean) leftExpValue && (boolean) rightExpValue;
+        break;
+      case OR: result = (boolean) leftExpValue || (boolean) rightExpValue;
+        break;
+      case ADD: result = (int) leftExpValue + (int) rightExpValue;
+        break;
+      case SUB: result = (int) leftExpValue - (int) rightExpValue;
+        break;
+      case MUL: result = (int) leftExpValue * (int) rightExpValue;
+        break;
       case DIV:
           if ((int) rightExpValue == 0) throw new SemanticException("Division by zero !", node.getLine(), node.getColumn());
-          return (int) leftExpValue / (int) rightExpValue;
-      case EQ: return leftExpValue == rightExpValue;
-      case GT: return (int) leftExpValue > (int) rightExpValue;
+          result = (int) leftExpValue / (int) rightExpValue;
+          break;
+      case EQ: result = leftExpValue == rightExpValue;
+        break;
+      case GT: result = (int) leftExpValue > (int) rightExpValue;
+        break;
       default: throw new IllegalArgumentException("Illegal operand !");
     }
+    return getExpNodeFromValue(result, node);
   }
 
   @Override
-  public Object visitUnaryExp(UnaryExpNode node) {
-    Object expValue = node.getExp().accept(this);
+  public ExpNode visitUnaryExp(UnaryExpNode node) {
+    ExpNode expNode = node.getExp().accept(this);
+    checkIfSymbolIsUsableInExp(expNode);
 
-    if (expValue instanceof Integer && node.getOp().isNot()) {
+    if (expNode instanceof IntLiteralNode && node.getOp().isNot()) {
       throw new SemanticException("Incompatible operand, expecting Boolean, Integer given !", node.getLine(), node.getColumn());
     }
-    if (expValue instanceof Boolean && node.getOp().isNeg()) {
+    if (expNode instanceof BoolLiteralNode && node.getOp().isNeg()) {
       throw new SemanticException("Incompatible operand, expecting Integer, Boolean given !", node.getLine(), node.getColumn());
     }
+    Object result;
+    Object expValue = getValueFromExpNode(expNode);
     switch (node.getOp().getOp()) {
-      case NOT: return (int) expValue * -1;
-      case NEG: return !((boolean) expValue);
+      case NOT: result = (int) expValue * -1;
+        break;
+      case NEG: result = !((boolean) expValue);
+        break;
       default: throw new IllegalArgumentException("Illegal operand !");
     }
+    return getExpNodeFromValue(result, node);
   }
 
   @Override
-  public Object visitAssign(AssignNode node) {
-    return null;
-  }
-
-  @Override
-  public Object visitAddAssign(AddAssignNode node) {
-    return null;
-  }
-
-  public Object visitInc(IncNode node) {
-    return null;
-  }
-
-  @Override
-  public Object visitLength(LengthNode node) {
-    Symbols sym = symbolTable.lookup(node.getIdent());
+  public ExpNode visitLength(LengthNode node) {
+    Symbols sym = scopeManager.lookup(node.getIdent());
     if (sym instanceof MethodSymbol) {
       throw new SemanticException("Incompatible parameter for Length, expecting Array, Variable or Final, Method given !", node.getLine(), node.getColumn());
     }
@@ -194,81 +230,97 @@ public class CompileTimeVisitor implements AstVisitor<Object> {
         return node.getIdent();
       }
     }
-    return 0;
-  }
-
-  @Override
-  public Object visitIf(IfNode node) {
     return null;
   }
 
   @Override
-  public Object visitWhile(WhileNode node) {
-    return null;
-  }
-
-  @Override
-  public Object visitWrite(WriteNode node) {
-    return null;
-  }
-
-  @Override
-  public Object visitReturn(ReturnNode node) {
-    return null;
-  }
-
-  @Override
-  public Object visitBoolLiteral(BoolLiteralNode node) {
-    return node.getValue();
-  }
-
-  @Override
-  public Object visitIntLiteral(IntLiteralNode node) {
-    return node.getValue();
-  }
-
-  @Override
-  public Object visitStringLiteral(StringLiteralNode node) {
-    return node.getValue();
-  }
-
-  @Override
-  public Object visitArrayAccess(ArrayAccessNode node) {
-    return node.getIdent().accept(this);
-  }
-
-  @Override
-  public Object visitCallExp(CallExpNode node) {
-    return null;
-  }
-
-  @Override
-  public Object visitCallInstr(CallInstrNode node) {
-    return null;
-  }
-
-  @Override
-  public Object visitType(fr.amvproject.group3.mjj.ast.nodes.other.TypeNode node) {
-    return null;
-  }
-
-  @Override
-  public Object visitTypeMeth(TypeMethNode node) {
-    return null;
-  }
-
-  @Override
-  public Object visitBinaryOp(BinaryOpNode node) {
-    return null;
-  }
-
-  @Override
-  public Object visitUnaryOp(UnaryOpNode node) {
-    return null;
-  }
-
-  @Override
-  public Object visitIdent(IdentNode node) {
+  public ExpNode visitBoolLiteral(BoolLiteralNode node) {
     return node;
+  }
+
+  @Override
+  public ExpNode visitIntLiteral(IntLiteralNode node) {
+    return node;
+  }
+
+  @Override
+  public ExpNode visitStringLiteral(StringLiteralNode node) {
+    return node;
+  }
+
+  @Override
+  public ExpNode visitArrayAccess(ArrayAccessNode node) {
+    return node;
+  }
+
+  @Override
+  public ExpNode visitIdent(IdentNode node) {
+    return node;
+  }
+
+  /* Unused */
+
+  @Override
+  public ExpNode visitAssign(AssignNode node) {
+    return null;
+  }
+
+  @Override
+  public ExpNode visitAddAssign(AddAssignNode node) {
+    return null;
+  }
+
+  public ExpNode visitInc(IncNode node) {
+    return null;
+  }
+
+  @Override
+  public ExpNode visitIf(IfNode node) {
+    return null;
+  }
+
+  @Override
+  public ExpNode visitWhile(WhileNode node) {
+    return null;
+  }
+
+  @Override
+  public ExpNode visitWrite(WriteNode node) {
+    return null;
+  }
+
+  @Override
+  public ExpNode visitReturn(ReturnNode node) {
+    return null;
+  }
+
+  @Override
+  public ExpNode visitCallExp(CallExpNode node) {
+    return null;
+  }
+
+  @Override
+  public ExpNode visitCallInstr(CallInstrNode node) {
+    return null;
+  }
+
+  @Override
+  public ExpNode visitType(fr.amvproject.group3.mjj.ast.nodes.other.TypeNode node) {
+    return null;
+  }
+
+  @Override
+  public ExpNode visitTypeMeth(TypeMethNode node) {
+    return null;
+  }
+
+  @Override
+  public ExpNode visitBinaryOp(BinaryOpNode node) {
+    return null;
+  }
+
+  @Override
+  public ExpNode visitUnaryOp(UnaryOpNode node) {
+    return null;
   }
 }
