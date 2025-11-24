@@ -6,6 +6,7 @@ import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.AstVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.jjc.ast.nodes.intermediate.InstrNode;
+import fr.amvproject.group3.jjc.utils.NodeOperations.MockToken;
 
 public class StoreNode extends InstrNode {
     private final Token storeToken;
@@ -15,6 +16,13 @@ public class StoreNode extends InstrNode {
     public StoreNode(Token storeToken, IdentNode identNode, boolean isA) {
         super(storeToken.getLine(), storeToken.getCharPositionInLine());
         this.storeToken = storeToken;
+        this.identNode = identNode;
+        this.isA = isA;
+    }
+
+    public StoreNode(IdentNode identNode, boolean isA) {
+        super(0, 0);
+        this.storeToken = new MockToken("store", 0, 0);
         this.identNode = identNode;
         this.isA = isA;
     }

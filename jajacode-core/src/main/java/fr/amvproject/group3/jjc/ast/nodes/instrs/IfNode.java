@@ -6,6 +6,7 @@ import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.AstVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.finals.AddressNode;
 import fr.amvproject.group3.jjc.ast.nodes.intermediate.InstrNode;
+import fr.amvproject.group3.jjc.utils.NodeOperations.MockToken;
 
 public class IfNode extends InstrNode {
     private final Token ifToken;
@@ -14,6 +15,12 @@ public class IfNode extends InstrNode {
     public IfNode(Token ifToken, AddressNode addressNode) {
         super(ifToken.getLine(), ifToken.getCharPositionInLine());
         this.ifToken = ifToken;
+        this.addressNode = addressNode;
+    }
+
+    public IfNode(AddressNode addressNode) {
+        super(0, 0);
+        this.ifToken = new MockToken("if", 0, 0);
         this.addressNode = addressNode;
     }
 

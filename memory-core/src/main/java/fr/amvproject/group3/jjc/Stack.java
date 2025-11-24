@@ -4,7 +4,6 @@ import java.util.List;
 
 import fr.amvproject.group3.jjc.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.jjc.ast.nodes.other.TypeNode;
-import fr.amvproject.group3.jjc.utils.NodeOperations.MockToken;
 import fr.amvproject.group3.nodes.ObjNode;
 import fr.amvproject.group3.nodes.TypeMemNode;
 import fr.amvproject.group3.utils.StringSaver;
@@ -24,8 +23,7 @@ public class Stack extends StackManager {
   }
 
   public void push(String name, Object value) {
-    MockToken identToken = new MockToken(name, 0, 0);
-    Quad newQuad = new Quad(new IdentNode(identToken), value, new ObjNode("cst"), null);
+    Quad newQuad = new Quad(new IdentNode(name, 0, 0), value, new ObjNode("cst"), null);
     queue.add(newQuad);
   }
 
@@ -63,9 +61,9 @@ public class Stack extends StackManager {
     this.push(new Quad(ident, value, new ObjNode("var"), type));
   }
 
-  public void declCst(IdentNode ident, Object value, TypeNode type) {
+  public void declCst(IdentNode ident, Object value, TypeNode type, boolean isVcst) {
     // Vcst = can be initialized later but not changed after
-    this.push(new Quad(ident, value, new ObjNode(value == null ? "vcst" : "cst"), type));
+    this.push(new Quad(ident, value, new ObjNode(isVcst ? "vcst" : "cst"), type));
   }
 
   public void declTab(IdentNode ident, int size, TypeNode type) {
