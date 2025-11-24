@@ -4,7 +4,6 @@ import java.util.List;
 
 import fr.amvproject.group3.jjc.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.jjc.ast.nodes.other.TypeNode;
-import fr.amvproject.group3.jjc.utils.NodeOperations.MockToken;
 import fr.amvproject.group3.nodes.ObjNode;
 import fr.amvproject.group3.nodes.TypeMemNode;
 import fr.amvproject.group3.utils.StringSaver;
@@ -24,8 +23,7 @@ public class Stack extends StackManager {
   }
 
   public void push(String name, Object value) {
-    MockToken identToken = new MockToken(name, 0, 0);
-    Quad newQuad = new Quad(new IdentNode(identToken), value, new ObjNode("cst"), null);
+    Quad newQuad = new Quad(new IdentNode(name, 0, 0), value, new ObjNode("cst"), null);
     queue.add(newQuad);
   }
 

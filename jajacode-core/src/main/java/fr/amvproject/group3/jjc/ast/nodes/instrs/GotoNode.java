@@ -6,6 +6,7 @@ import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.AstVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.finals.AddressNode;
 import fr.amvproject.group3.jjc.ast.nodes.intermediate.InstrNode;
+import fr.amvproject.group3.jjc.utils.NodeOperations.MockToken;
 
 public class GotoNode extends InstrNode {
     private final Token gotoToken;
@@ -14,6 +15,12 @@ public class GotoNode extends InstrNode {
     public GotoNode(Token gotoToken, AddressNode addressNode) {
         super(gotoToken.getLine(), gotoToken.getCharPositionInLine());
         this.gotoToken = gotoToken;
+        this.addressNode = addressNode;
+    }
+
+    public GotoNode(AddressNode addressNode) {
+        super(0, 0);
+        this.gotoToken = new MockToken("goto", 0, 0);
         this.addressNode = addressNode;
     }
 

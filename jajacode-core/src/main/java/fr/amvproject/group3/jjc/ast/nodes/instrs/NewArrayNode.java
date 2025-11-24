@@ -7,6 +7,7 @@ import fr.amvproject.group3.jjc.ast.AstVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.jjc.ast.nodes.intermediate.InstrNode;
 import fr.amvproject.group3.jjc.ast.nodes.other.TypeNode;
+import fr.amvproject.group3.jjc.utils.NodeOperations.MockToken;
 
 public class NewArrayNode extends InstrNode {
     private final Token newArrayToken;
@@ -16,6 +17,13 @@ public class NewArrayNode extends InstrNode {
     public NewArrayNode(Token newArrayToken, IdentNode identNode, TypeNode typeNode) {
         super(newArrayToken.getLine(), newArrayToken.getCharPositionInLine());
         this.newArrayToken = newArrayToken;
+        this.identNode = identNode;
+        this.typeNode = typeNode;
+    }
+
+    public NewArrayNode(IdentNode identNode, TypeNode typeNode) {
+        super(0, 0);
+        this.newArrayToken = new MockToken("newarray", 0, 0);
         this.identNode = identNode;
         this.typeNode = typeNode;
     }

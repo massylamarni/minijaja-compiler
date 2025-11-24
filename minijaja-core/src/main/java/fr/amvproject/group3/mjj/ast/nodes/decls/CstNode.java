@@ -8,6 +8,7 @@ import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.mjj.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.mjj.ast.nodes.intermediate.VarDeclNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.TypeNode;
+import fr.amvproject.group3.mjj.utils.NodeConsts;
 
 public class CstNode extends VarDeclNode {
   private final Token finalToken;
@@ -19,8 +20,8 @@ public class CstNode extends VarDeclNode {
     super(identNode);
     this.finalToken = finalToken;
     this.typeNode = typeNode;
-    this.assignToken = null;
-    this.initExp = null;
+    this.assignToken = NodeConsts.getDefaultAssignToken();
+    this.initExp = NodeConsts.getDefaultInitValue(typeNode);
   }
 
   public CstNode(Token finalToken, TypeNode typeNode, IdentNode identNode, Token assignToken, ExpNode initExp) {

@@ -6,6 +6,7 @@ import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.AstVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.intermediate.InstrNode;
 import fr.amvproject.group3.jjc.ast.nodes.intermediate.ValueNode;
+import fr.amvproject.group3.jjc.utils.NodeOperations.MockToken;
 
 public class PushNode extends InstrNode {
     private final Token pushToken;
@@ -14,6 +15,12 @@ public class PushNode extends InstrNode {
     public PushNode(Token pushToken, ValueNode valueNode) {
         super(pushToken.getLine(), pushToken.getCharPositionInLine());
         this.pushToken = pushToken;
+        this.valueNode = valueNode;
+    }
+
+    public PushNode(ValueNode valueNode) {
+        super(0, 0);
+        this.pushToken = new MockToken("push", 0, 0);
         this.valueNode = valueNode;
     }
 

@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.Token;
 import fr.amvproject.group3.mjj.ast.AstNode;
 import fr.amvproject.group3.mjj.ast.AstVisitor;
 import fr.amvproject.group3.mjj.ast.nodes.intermediate.ExpNode;
+import fr.amvproject.group3.mjj.utils.NodeOperations.MockToken;
 
 public class BoolLiteralNode extends ExpNode {
     private final Token boolToken;
@@ -12,6 +13,11 @@ public class BoolLiteralNode extends ExpNode {
     public BoolLiteralNode(Token boolToken) {
         super(boolToken.getLine(), boolToken.getCharPositionInLine());
         this.boolToken = boolToken;
+    }
+
+    public BoolLiteralNode(String literal, int line, int column) {
+        super(line, column);
+        boolToken = new MockToken(literal, line, column);
     }
 
     public Token getBoolToken() {

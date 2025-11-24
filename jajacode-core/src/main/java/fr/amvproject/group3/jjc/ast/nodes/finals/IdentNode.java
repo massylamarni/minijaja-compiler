@@ -4,12 +4,19 @@ import org.antlr.v4.runtime.Token;
 
 import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.AstVisitor;
+import fr.amvproject.group3.jjc.utils.NodeOperations.MockToken;
 
 public class IdentNode extends AstNode {
     private final Token identToken;
 
     public IdentNode(Token identToken) {
+        super(identToken.getLine(), identToken.getCharPositionInLine());
         this.identToken = identToken;
+    }
+
+    public IdentNode(String literal, int line, int column) {
+        super(line, column);
+        identToken = new MockToken(literal, line, column);
     }
 
     public Token getIdentToken() {
