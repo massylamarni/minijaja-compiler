@@ -170,7 +170,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   public TypeNode visitTable(TableNode node) {
     checkIfExistsToDeclare(node.getIdent());
     ExpNode sizeExpValue = checkIfTabIndexIsInteger(node.getSizeExp(), node.getIdent());
-    
+
     symbolTable.addSymbol(node.getIdent(), new TypeNode(node.getType().getName()), sizeExpValue);
     return new TypeNode("void");
   }
@@ -387,7 +387,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitBoolLiteral(BoolLiteralNode node) {
-    return new TypeNode("bool");
+    return new TypeNode("boolean");
   }
 
   @Override
@@ -403,7 +403,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   @Override
   public TypeNode visitArrayAccess(ArrayAccessNode node) {
     checkIfTabIndexIsInteger(node.getIndexExp(), node.getIdent());
-    
+
     return node.getIdent().accept(this);
   }
 
@@ -424,7 +424,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
         throw new SemanticException("Method " + node.getIdent().getName() + " uses different parameter type from the declared one, at line " + sym.getLine(), node.getLine(), node.getColumn());
       }
     }
-  
+
     return sym.getTypeNode();
   }
 

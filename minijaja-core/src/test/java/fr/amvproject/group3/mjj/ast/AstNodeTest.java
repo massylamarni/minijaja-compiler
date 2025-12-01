@@ -1,4 +1,4 @@
-package fr.amvproject.group3.ast;
+package fr.amvproject.group3.mjj.ast;
 
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.*;
 import fr.amvproject.group3.mjj.ast.nodes.decls.*;
