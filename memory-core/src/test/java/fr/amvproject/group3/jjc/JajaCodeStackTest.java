@@ -107,7 +107,7 @@ public class JajaCodeStackTest {
         IdentNode ident = new IdentNode(new MockToken("T",5,0));
 
         // When
-        stack.declCst(ident, 4, new TypeNode(new MockToken("entier",1,0)));
+        stack.declCst(ident, 4, new TypeNode(new MockToken("entier",1,0)),false);
 
         // Then
         assertThat(stack.getQueue().size(), is(2));

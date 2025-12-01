@@ -36,16 +36,16 @@ public class CompilerVisitorIntegrationTest {
         String goal = """
                 1 init
                 2 push(0)
-                2 new(x, entier, var, 0)
-                3 push(10)
-                4 new(y, entier, var, 0)
-                5 push(0)
-                6 swap
-                7 pop
-                8 swap
-                9 pop
+                3 new(x, entier, var, 0)
+                4 push(10)
+                5 new(y, entier, var, 0)
+                6 push(0)
+                7 swap
+                8 pop
+                9 swap
                 10 pop
-                11 jcstop
+                11 pop
+                12 jcstop
                 """;
 
         //When
@@ -107,7 +107,7 @@ public class CompilerVisitorIntegrationTest {
                 2 push(0)
                 3 new(a, entier, var, 0)
                 4 push(false)
-                5 new(b, boolean, var, 0)
+                5 new(flag, boolean, var, 0)
                 6 push(1)
                 7 store(a)
                 8 load(a)
@@ -156,8 +156,8 @@ public class CompilerVisitorIntegrationTest {
                 6 load(x)
                 7 push(0)
                 8 sup
-                9 nop
-                10 if(...)
+                9 not
+                10 if(16)
                 11 load(x)
                 12 push(1)
                 13 sub
@@ -189,11 +189,11 @@ public class CompilerVisitorIntegrationTest {
         String goal = """
                 1 init
                 2 push(0)
-                3 new(x,entier, var, 0)
+                3 new(x, entier, var, 0)
                 4 push(7)
-                5 new(f,entier, meth, 0)
-                6 goto (...)
-                7 new(p,entier, var, 0)
+                5 new(f, entier, meth, 0)
+                6 goto(11)
+                7 new(p, entier, var, 1)
                 8 load(p)
                 9 swap
                 10 return
