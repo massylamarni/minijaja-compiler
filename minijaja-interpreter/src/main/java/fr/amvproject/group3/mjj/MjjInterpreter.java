@@ -21,12 +21,39 @@ public class MjjInterpreter {
     ctx = interpreterVisitor.getCtx();
   }
 
-  public void interpretAll() {
+  public void run() {
     ast.accept(interpreterVisitor);
     stack.print();
   }
 
+  public void runWithDebug() {
+    try {
+      ast.accept(interpreterVisitor);
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+    stack.print();
+  }
+
+  public void resume() {
+    try {
+      ctx.getCurrentNode().accept(interpreterVisitor);
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+    stack.print();
+  }
+
+  public void addBreakPoint(int line) {
+    ctx.addBreakPoint(line);
+  }
+
+  public void removeBreakpoint(int line) {
+    ctx.removeBreakpoint(line);
+  }
+
   public void stepForward() {
+    // TODO block right after
     if (ctx.isPaused()) ctx.setIsPaused(false);
     ctx.getCurrentNode().accept(interpreterVisitor);
   }

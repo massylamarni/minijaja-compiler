@@ -27,18 +27,20 @@ public class App {
     // Print AST to file
     fr.amvproject.group3.mjj.ast.PrintVisitor mjjPrinter = new fr.amvproject.group3.mjj.ast.PrintVisitor();
     String mjjPrintedProgram = mjjAst.accept(mjjPrinter);
-    StringSaver.save(mjjPrintedProgram, "printedProgram.mjj", "main");
+    StringSaver.save(mjjPrintedProgram, "fact.mjj", "main");
 
     /* Symbol table */
 
-    SemanticVisitor memoryVisitor = new SemanticVisitor();
-    mjjAst.accept(memoryVisitor);
-    SymbolTable symbolTable = memoryVisitor.getSymbolTable();
-    symbolTable.print();
+    // SemanticVisitor memoryVisitor = new SemanticVisitor();
+    // mjjAst.accept(memoryVisitor);
+    // SymbolTable symbolTable = memoryVisitor.getSymbolTable();
+    // symbolTable.print();
 
     /* Interpretation */
 
     MjjInterpreter mjjInterpreter = new MjjInterpreter(mjjPrintedProgram);
-    mjjInterpreter.interpretAll();
+    mjjInterpreter.addBreakPoint(6);
+    mjjInterpreter.interpretUntil(1);
+    mjjInterpreter.stepForward();
   }
 }

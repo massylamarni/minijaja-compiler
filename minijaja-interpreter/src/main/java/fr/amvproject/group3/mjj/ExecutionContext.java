@@ -5,6 +5,7 @@ import java.util.Set;
 
 import fr.amvproject.group3.mjj.Stack;
 import fr.amvproject.group3.mjj.ast.AstNode;
+import fr.amvproject.group3.mjj.exceptions.BreakpointHit;
 
 public class ExecutionContext {
     private AstNode currentNode;
@@ -12,8 +13,6 @@ public class ExecutionContext {
     private Stack stack;
     private boolean isPaused = false;
     private Set<Integer> breakpoints = new HashSet<>();
-    private int currentInstrNum = 0;
-    private int currentLineNum = 0;
 
     public ExecutionContext(Stack stack) {
         this.stack = stack;
@@ -39,14 +38,6 @@ public class ExecutionContext {
       return isPaused;
     }
 
-    public int getCurrentInstrNum() {
-      return currentInstrNum;
-    }
-
-    public int getCurrentLineNum() {
-      return currentLineNum;
-    }
-
     public void setCurrentNode(AstNode node) {
         currentNode = node;
     }
@@ -63,38 +54,27 @@ public class ExecutionContext {
         breakpoints.add(line);
     }
 
+    public void removeBreakpoint(int line) {
+      breakpoints.remove(line);
+    }
+
     public boolean hasBreakpoint() {
-        return breakpoints.contains(currentLineNum);
-    }
-
-    public void incInstrNum() {
-        currentInstrNum++;
-    }
-
-    public void decInstrNum() {
-        currentInstrNum--;
-    }
-
-    public void incLineNum() {
-        currentLineNum++;
-    }
-
-    public void decLineNum() {
-        currentLineNum--;
+        return breakpoints.contains(currentNode.getLine());
     }
 
     /* Advanced */
 
-    public void visitNode(AstNode node) {
+    public void recordNode(AstNode node) {
         setPreviousNode(currentNode);
         currentNode = node;
-        incInstrNum();
-        if (hasBreakpoint()) setIsPaused(true);
+        if (hasBreakpoint()) {
+          setIsPaused(true);
+          throw new BreakpointHit(currentNode);
+        }
     }
 
     public void back() {
         currentNode = previousNode;
-        currentInstrNum--;
         stack.goBackward();
     }
 
