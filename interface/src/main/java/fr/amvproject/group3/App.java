@@ -45,9 +45,14 @@ public class App {
     String mjjProgram =  Files.readString(Paths.get(programPath));
     MjjInterpreter mjjInterpreter = new MjjInterpreter(mjjProgram);
     mjjInterpreter.addBreakPoint(7);
-    mjjInterpreter.addBreakPoint(10);
-    mjjInterpreter.addBreakPoint(26);
     mjjInterpreter.runWithDebug();
     mjjInterpreter.stepForward();
+    mjjInterpreter.stepForward();
+    mjjInterpreter.stepForward();
+    mjjInterpreter.stepForward();
+    mjjInterpreter.stepBackward();
+    mjjInterpreter.stepBackward();
+    mjjInterpreter.stepBackward();
+    mjjInterpreter.stepBackward();
   }
 }

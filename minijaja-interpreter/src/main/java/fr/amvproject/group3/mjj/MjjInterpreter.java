@@ -17,8 +17,8 @@ public class MjjInterpreter {
   private SemanticVisitor semanticVisitor = new SemanticVisitor();
   private Stack stack = interpreterVisitor.getStack();
   private ExecutionContext ctx = interpreterVisitor.getCtx();
-  private RuntimeErrorsCollector runtimeErrorsCollector;
-  private SemanticErrorsCollector semanticErrorsCollector;
+  private RuntimeErrorsCollector runtimeErrorsCollector = new RuntimeErrorsCollector();
+  private SemanticErrorsCollector semanticErrorsCollector = new SemanticErrorsCollector();
 
   public Stack getStack() {
     return stack;
@@ -81,6 +81,18 @@ public class MjjInterpreter {
 
   public void stepForward() {
     try {
+      ctx.ignoreNextBreakpoint();
+      astWrapper.ast.accept(interpreterVisitor);
+    } catch (PausePointHit e) {
+      System.out.println(e);
+    } catch (fr.amvproject.group3.exceptions.RuntimeException e) {
+      System.out.println(e);
+    }
+  }
+
+  public void stepBackward() {
+    try {
+      ctx.decBreakPointHitLine();
       astWrapper.ast.accept(interpreterVisitor);
     } catch (PausePointHit e) {
       System.out.println(e);
@@ -95,9 +107,5 @@ public class MjjInterpreter {
 
   public void removeBreakpoint(int line) {
     ctx.removeBreakpoint(line);
-  }
-
-  public void stepBackward() {
-    ctx.back();
   }
 }
