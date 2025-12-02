@@ -44,7 +44,24 @@ public class InterpreterVisitor implements AstVisitor<Object> {
   private static final int RECURSION_LIMIT = 10000;
   private int iterationCount = 0;
   private Stack stack = new Stack();
+  private ExecutionContext ctx = new ExecutionContext(stack); // final
   private int currentAddress = 1;
+
+  public Stack getStack() {
+    return stack;
+  }
+
+  public ExecutionContext getCtx() {
+    return ctx;
+  }
+
+  public void resetCurrentAddress() {
+    currentAddress = 1;
+  }
+
+  public void decCurrentAddress() {
+    currentAddress--;
+  }
 
   @Override
   public Object visitProgram(ProgramNode node) {
@@ -54,6 +71,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     }
     while (!(instrsMap.get(currentAddress) instanceof JcstopLiteral) && currentAddress >= 1 && currentAddress <= instrsMap.size()) {
       InstrNode instrNode = instrsMap.get(currentAddress);
+      ctx.recordNode(instrNode);
       instrNode.accept(this);
     }
     return null;

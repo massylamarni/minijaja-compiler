@@ -11,7 +11,7 @@ import fr.amvproject.group3.mjj.exceptions.BreakPointHit;
 import fr.amvproject.group3.mjj.exceptions.PausePointHit;
 import fr.amvproject.group3.mjj.utils.AstOperations;
 
-public class MjjInterpreter {
+public class Interpreter {
   private AstWrapper astWrapper;
   private InterpreterVisitor interpreterVisitor = new InterpreterVisitor();
   private SemanticVisitor semanticVisitor = new SemanticVisitor();
@@ -24,7 +24,7 @@ public class MjjInterpreter {
     return stack;
   }
 
-  public MjjInterpreter(String mjjProgram) {
+  public Interpreter(String mjjProgram) {
     astWrapper = AstOperations.getAstFromString(mjjProgram);
   }
 
@@ -52,6 +52,12 @@ public class MjjInterpreter {
     }
   }
 
+  public void restart() {
+    ctx.softReset();
+    runtimeErrorsCollector = new RuntimeErrorsCollector(); // TODO .reset()
+    semanticErrorsCollector = new SemanticErrorsCollector();
+  }
+
   public void run() {
     runSemanticAnalysis();
     try {
@@ -76,6 +82,7 @@ public class MjjInterpreter {
 
   public void resume() {
     ctx.setIsPaused(false);
+    ctx.ignoreNextBreakpoint();
     runWithDebug();
   }
 
