@@ -20,13 +20,13 @@ public class AstOperations {
 
   public static class AstWrapper {
     public final AstNode ast;
-    public final LexicalErrorsListener lexical;
-    public final SyntaxicErrorsListener syntaxic;
+    public final LexicalErrorsListener lexicalErrorsListener;
+    public final SyntaxicErrorsListener syntaxicErrorsListener;
 
-    public AstWrapper(AstNode ast, LexicalErrorsListener lexical, SyntaxicErrorsListener syntaxic) {
+    public AstWrapper(AstNode ast, LexicalErrorsListener lexicalErrorsListener, SyntaxicErrorsListener syntaxicErrorsListener) {
         this.ast = ast;
-        this.lexical = lexical;
-        this.syntaxic = syntaxic;
+        this.lexicalErrorsListener = lexicalErrorsListener;
+        this.syntaxicErrorsListener = syntaxicErrorsListener;
     }
   }
   
