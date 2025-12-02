@@ -14,6 +14,7 @@ public class ExecutionContext {
     private boolean isPaused = false;
     private Set<Integer> breakpoints = new HashSet<>();
     private int breakPointHitLine = 0;
+    private int previouslyHitBreakpointLine = -1;
     private boolean ignoreNextBreakpoint = false;
     private boolean ignoreBreakpoints = true;
 
@@ -95,9 +96,10 @@ public class ExecutionContext {
           breakPointHitLine = node.getLine();
           throw new PausePointHit(currentNode);
         }
-        if (hasBreakpoint() && !ignoreBreakpoints) {
+        if (hasBreakpoint() && !ignoreBreakpoints && node.getLine() != previouslyHitBreakpointLine) {
           setIsPaused(true);
           breakPointHitLine = node.getLine();
+          previouslyHitBreakpointLine = node.getLine();
           throw new BreakPointHit(currentNode);
         }
       }

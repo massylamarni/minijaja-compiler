@@ -55,6 +55,14 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     return ctx;
   }
 
+  public void resetCurrentAddress() {
+    currentAddress = 1;
+  }
+
+  public void decCurrentAddress() {
+    currentAddress--;
+  }
+
   @Override
   public Object visitProgram(ProgramNode node) {
     Map<Integer, InstrNode> instrsMap = new HashMap<>();

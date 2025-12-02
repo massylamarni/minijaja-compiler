@@ -11,7 +11,7 @@ import fr.amvproject.group3.jjc.exceptions.BreakPointHit;
 import fr.amvproject.group3.jjc.exceptions.PausePointHit;
 import fr.amvproject.group3.jjc.utils.AstOperations;
 
-public class JjcInterpreter {
+public class Interpreter {
   private AstWrapper astWrapper;
   private InterpreterVisitor interpreterVisitor = new InterpreterVisitor();
   // private SemanticVisitor semanticVisitor = new SemanticVisitor();
@@ -24,7 +24,7 @@ public class JjcInterpreter {
     return stack;
   }
 
-  public JjcInterpreter(String mjjProgram) {
+  public Interpreter(String mjjProgram) {
     astWrapper = AstOperations.getAstFromString(mjjProgram);
   }
 
@@ -76,11 +76,25 @@ public class JjcInterpreter {
 
   public void resume() {
     ctx.setIsPaused(false);
+    ctx.ignoreNextBreakpoint();
     runWithDebug();
   }
 
   public void stepForward() {
     try {
+      ctx.ignoreNextBreakpoint();
+      astWrapper.ast.accept(interpreterVisitor);
+    } catch (PausePointHit e) {
+      System.out.println(e);
+    } catch (fr.amvproject.group3.exceptions.RuntimeException e) {
+      System.out.println(e);
+    }
+  }
+
+  public void stepBackward() {
+    try {
+      ctx.decBreakPointHitLine();
+      interpreterVisitor.resetCurrentAddress();
       astWrapper.ast.accept(interpreterVisitor);
     } catch (PausePointHit e) {
       System.out.println(e);
@@ -95,9 +109,5 @@ public class JjcInterpreter {
 
   public void removeBreakpoint(int line) {
     ctx.removeBreakpoint(line);
-  }
-
-  public void stepBackward() {
-    ctx.back();
   }
 }

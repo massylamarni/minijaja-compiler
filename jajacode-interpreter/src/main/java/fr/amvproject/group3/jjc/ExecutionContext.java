@@ -14,6 +14,8 @@ public class ExecutionContext {
     private boolean isPaused = false;
     private Set<Integer> breakpoints = new HashSet<>();
     private int breakPointHitLine = 0;
+    private int previouslyHitBreakpointLine = -1;
+    private boolean ignoreNextBreakpoint = false;
     private boolean ignoreBreakpoints = true;
 
     public ExecutionContext(Stack stack) {
@@ -64,6 +66,16 @@ public class ExecutionContext {
         return breakpoints.contains(currentNode.getLine());
     }
 
+    public void ignoreNextBreakpoint() {
+      ignoreNextBreakpoint = true;
+    }
+
+    public void decBreakPointHitLine() {
+      if (previousNode != null && breakPointHitLine != 0) {
+        breakPointHitLine = previousNode.getLine();
+      }
+    }
+
     public void resetPosition() {
       currentNode = null;
       previousNode = null;
@@ -72,18 +84,19 @@ public class ExecutionContext {
     /* Advanced */
 
     public void recordNode(AstNode node) {
+      setPreviousNode(currentNode);
+      currentNode = node;
       if (node.getLine() >= breakPointHitLine) {
-        setPreviousNode(currentNode);
-        currentNode = node;
-        if (node.getLine() == breakPointHitLine) {
-          breakPointHitLine = 0;
+        if (ignoreNextBreakpoint) {
+          ignoreNextBreakpoint = false;
           return;
         }
         breakPointHitLine = 0;
         if (isPaused()) {
+          breakPointHitLine = node.getLine();
           throw new PausePointHit(currentNode);
         }
-        if (hasBreakpoint() && !ignoreBreakpoints) {
+        if (hasBreakpoint() && !ignoreBreakpoints && node.getLine() != previouslyHitBreakpointLine) {
           setIsPaused(true);
           breakPointHitLine = node.getLine();
           throw new BreakPointHit(currentNode);

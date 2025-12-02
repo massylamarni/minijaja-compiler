@@ -3,13 +3,12 @@ package fr.amvproject.group3;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import fr.amvproject.group3.jjc.JjcInterpreter;
 import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.PrintVisitor;
 import fr.amvproject.group3.jjc.utils.AstOperations;
-import fr.amvproject.group3.mjj.MjjInterpreter;
 import fr.amvproject.group3.mjj.analyser.SemanticVisitor;
 import fr.amvproject.group3.mjj.analyser.SymbolTable;
+import fr.amvproject.group3.mjj.Interpreter;
 import fr.amvproject.group3.utils.StringSaver;
 
 public class App {
@@ -44,11 +43,14 @@ public class App {
 
     String programPath = "minijaja-core/src/test/resources/fact.mjj";
     String mjjProgram =  Files.readString(Paths.get(programPath));
-    MjjInterpreter mjjInterpreter = new MjjInterpreter(mjjProgram);
+    Interpreter mjjInterpreter = new Interpreter(mjjProgram);
     mjjInterpreter.addBreakPoint(7);
     mjjInterpreter.addBreakPoint(10);
     mjjInterpreter.addBreakPoint(20);
     mjjInterpreter.runWithDebug();
+    mjjInterpreter.resume();
+    mjjInterpreter.resume();
+    mjjInterpreter.resume();
     mjjInterpreter.stepForward();
     mjjInterpreter.stepForward();
     mjjInterpreter.stepForward();
@@ -89,7 +91,7 @@ public class App {
             22 pop
             23 jcstop
         """;
-    JjcInterpreter jjcInterpreter = new JjcInterpreter(jjcProgram);
+    fr.amvproject.group3.jjc.Interpreter jjcInterpreter = new fr.amvproject.group3.jjc.Interpreter(jjcProgram);
     jjcInterpreter.addBreakPoint(7);
     jjcInterpreter.addBreakPoint(10);
     jjcInterpreter.addBreakPoint(20);
@@ -98,5 +100,14 @@ public class App {
     jjcInterpreter.stepForward();
     jjcInterpreter.stepForward();
     jjcInterpreter.stepForward();
+    jjcInterpreter.stepBackward();
+    jjcInterpreter.stepBackward();
+    jjcInterpreter.stepBackward();
+    jjcInterpreter.stepForward();
+    jjcInterpreter.stepBackward();
+    jjcInterpreter.stepForward();
+    jjcInterpreter.stepBackward();
+    jjcInterpreter.stepForward();
+    jjcInterpreter.stepBackward();
   }
 }
