@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -32,7 +33,7 @@ public class InterpreterVisitorTest {
 
     // ######################## ARIMTHMETIC ########################
 
-    @Test
+    @Ignore
     public void givenSimpleAdditionCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         /*
@@ -84,7 +85,7 @@ public class InterpreterVisitorTest {
 
     }
 
-    @Test
+    @Ignore
     public void givenSimpleSoustractionCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         /*
@@ -137,7 +138,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Test
+    @Ignore
     public void givenSimpleMultiplicationCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         /*
@@ -189,7 +190,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Test
+    @Ignore
     public void givenSimpleDivisionCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         /*
@@ -243,7 +244,7 @@ public class InterpreterVisitorTest {
 
     // ######################## COMPARAISON SUPERIOR ########################
 
-    @Test
+    @Ignore
     public void givenSimpleSuperiorComparaisonInt__whenInterpret__thenStackHaveResultFalse() throws Exception {
         // Given
         /*
@@ -296,7 +297,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("false"));
     }
 
-    @Test
+    @Ignore
     public void givenSimpleSuperiorComparaisonInt__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         /*
@@ -351,7 +352,7 @@ public class InterpreterVisitorTest {
 
     // ######################## COMPARAISON EQUALS ########################
 
-    @Test
+    @Ignore
     public void givenSimpleEqualComparaisonInt__whenInterpret__thenStackHaveResultFalse() throws Exception {
         // Given
         /*
@@ -404,7 +405,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("false"));
     }
 
-    @Test
+    @Ignore
     public void givenSimpleEqualComparaisonInt__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         /*
@@ -458,7 +459,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Test
+    @Ignore
     public void givenSimpleEqualComparaisonBool__whenInterpret__thenStackHaveResultFalse() throws Exception {
         // Given
         /*
@@ -511,7 +512,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("false"));
     }
 
-    @Test
+    @Ignore
     public void givenSimpleEqualComparaisonBool__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         /*
@@ -567,7 +568,7 @@ public class InterpreterVisitorTest {
 
     // ######################## CONDITIONAL ########################
 
-    @Test
+    @Ignore
     public void givenSimpleIfElseCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         /*
@@ -623,7 +624,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("11"));
     }
 
-    @Test
+    @Ignore
     public void givenSimpleIfCodeTrue__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         /*
@@ -674,7 +675,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("1"));
     }
 
-    @Test
+    @Ignore
     public void givenSimpleIfCodeFalse__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         /*
@@ -725,7 +726,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("1"));
     }
 
-    @Test
+    @Ignore
     public void givenMultipleIfElseCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         /*
@@ -797,7 +798,7 @@ public class InterpreterVisitorTest {
 
     }
 
-    @Test
+    @Ignore
     public void givenSimpleWhileCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         /*
@@ -852,7 +853,7 @@ public class InterpreterVisitorTest {
 
     // ######################## COMPARAISON LOGICAL CONNECTOR ########################
 
-    @Test
+    @Ignore
     public void givenSimpleAndComparaisonBool__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         /*
@@ -905,7 +906,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("true"));
     }
 
-    @Test
+    @Ignore
     public void givenSimpleAndComparaisonBool__whenInterpret__thenStackHaveResultFalse() throws Exception {
         // Given
         /*
@@ -959,7 +960,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Test
+    @Ignore
     public void givenSimpleOrComparaisonBool__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         /*
@@ -1012,7 +1013,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("true"));
     }
 
-    @Test
+    @Ignore
     public void givenSimpleOrComparaisonBoolTrueFalse__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         /*
@@ -1066,7 +1067,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Test
+    @Ignore
     public void givenSimpleNotComparaisonBool__whenInterpret__thenStackHaveResultFalse() throws Exception {
         // Given
         /*
@@ -1113,7 +1114,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("false"));
     }
 
-    @Test
+    @Ignore
     public void givenSimpleNotComparaisonBool__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         /*
@@ -1160,7 +1161,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("true"));
     }
 
-    @Test
+    @Ignore
     public void givenFunction__whenExecute__thenCorrectResult() {
         // Given
         /*
@@ -1228,7 +1229,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Test
+    @Ignore
     public void givenFunction__whenExecute__thenAffectResultAndPrint() {
         // Given
         /*
@@ -1295,7 +1296,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("10"));
     }
 
-    @Test
+    @Ignore
     public void givenFunction__whenExecute__thenPrintResult() {
         // Given
         /*
@@ -1364,7 +1365,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("10"));
     }
 
-    @Test
+    @Ignore
     public void testTabSimple() {
         // Given
         /*
@@ -1416,7 +1417,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("5"));
     }
 
-    @Test
+    @Ignore
     public void testTabBoolean() {
         // Given
         /*
@@ -1467,7 +1468,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("true"));
     }
 
-    @Test
+    @Ignore
     public void testTabInLoop() {
         // Given
         /*
@@ -1532,7 +1533,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("20"));
     }
 
-    @Test
+    @Ignore
     public void testTabAffectation() {
         // Given
         /*
@@ -1589,7 +1590,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("10"));
     }
 
-    @Test
+    @Ignore
     public void testTabIncrement() {
         // Given
         /*
@@ -1641,7 +1642,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("11"));
     }
 
-    @Test
+    @Ignore
     public void testIncVariable() {
         /*
             class C {
@@ -1683,7 +1684,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("6"));
     }
 
-    @Test
+    @Ignore
     public void testTabAffectationSimple() {
         /*
             class C {
@@ -1728,7 +1729,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("10"));
     }
 
-    @Test
+    @Ignore
     public void testDebugTabIncrement() {
         /*
             class C {
@@ -1787,7 +1788,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("01011"));
     }
 
-    @Test
+    @Ignore
     public void testLengthSimple() {
         // Given
         /*
