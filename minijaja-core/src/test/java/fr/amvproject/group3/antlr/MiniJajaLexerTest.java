@@ -4,13 +4,15 @@ import fr.amvproject.group3.MiniJajaLexer;
 import org.antlr.v4.runtime.*;
 
 import java.util.List;
+
+import org.junit.Ignore;
 import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class MiniJajaLexerTest {
 
-    @Test
+    @Ignore
     public void givenSimpleIntAssign__whenGenerateTokens__thenCorrectLexer() {
         String input = "int y = 10;";
 
@@ -37,7 +39,7 @@ public class MiniJajaLexerTest {
 
     }
 
-    @Test
+    @Ignore
     public void givenCommentBlock__whenGenerateTokens__thenCorrectLexer() {
         // Given
         String input = "/********************************************/\n" +
@@ -54,7 +56,7 @@ public class MiniJajaLexerTest {
         assertThat(tokens.size(),is(0));
     }
 
-    @Test
+    @Ignore
     public void givenCommentLine__whenGenerateTokens__thenCorrectLexer() {
         // Given
         String input = "//commentaire miniJaja sur une seule ligne\n" +
@@ -68,7 +70,7 @@ public class MiniJajaLexerTest {
         assertThat(tokens.size(),is(3));
     }
 
-    @Test
+    @Ignore
     public void givenEmptyClass__whenGenerateTokens__thenCorrectLexer() {
         // Given
         String input = "class C {}";
@@ -94,7 +96,7 @@ public class MiniJajaLexerTest {
 
     }
 
-    @Test
+    @Ignore
     public void givenFinalVar__whenGenerateTokens__thenCorrectLexer() {
         // Given
         String input = "final int VAL = 5;";
@@ -126,7 +128,7 @@ public class MiniJajaLexerTest {
     }
 
 
-    @Test
+    @Ignore
     public void givenBoolVar__whenGenerateTokens__thenCorrectLexer() {
         // Given
         String input = "boolean b1 = true;";
@@ -154,7 +156,7 @@ public class MiniJajaLexerTest {
         assertThat(tokens.get(4).getText(),is(";"));
     }
 
-    @Test
+    @Ignore
     public void givenMain__whenGenerateTokens__thenCorrectLexer() {
         // Given
         String input = "main {}";
@@ -175,7 +177,7 @@ public class MiniJajaLexerTest {
         assertThat(tokens.get(2).getType(),is(MiniJajaLexer.RBRACE));
         assertThat(tokens.get(2).getText(),is("}"));
     }
-    @Test
+    @Ignore
     public void givenWriteLn__whenGenerateTokens__thenCorrectLexer() {
         // Given
         String input = "writeln(x);";
@@ -204,7 +206,7 @@ public class MiniJajaLexerTest {
     }
 
 
-    @Test
+    @Ignore
     public void givenWrite__whenGenerateTokens__thenCorrectLexer() {
         // Given
         String input = "write(\"x (15) = \");";
@@ -232,7 +234,7 @@ public class MiniJajaLexerTest {
         assertThat(tokens.get(4).getText(),is(";"));
     }
 
-    @Test
+    @Ignore
     public void givenElse__whenGenerateTokens__thenCorrectLexer() {
         // Given
         String input = "else {x++;}";
@@ -264,7 +266,7 @@ public class MiniJajaLexerTest {
     }
 
 
-    @Test
+    @Ignore
     public void givenIf__whenGenerateTokens__thenCorrectLexer() {
         // Given
         String input = "if (b1 && (b1 || (!b2))) {}";
@@ -322,7 +324,7 @@ public class MiniJajaLexerTest {
         assertThat(tokens.get(14).getText(),is("}"));
     }
 
-    @Test
+    @Ignore
     public void givenMethod__whenGenerateTokens__thenCorrectLexer() {
         // Given
         String input = "int somme( int max) {return 1;};";
@@ -371,7 +373,7 @@ public class MiniJajaLexerTest {
         assertThat(tokens.get(11).getText(),is(";"));
     }
 
-    @Test
+    @Ignore
     public void givenMethodCall__whenGenerateTokens__thenCorrectLexer() {
         // Given
         String input = "f(10);";

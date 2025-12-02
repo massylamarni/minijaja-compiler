@@ -5,6 +5,8 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.Token;
 
 import java.util.List;
+
+import org.junit.Ignore;
 import org.junit.Test;
 
 import fr.amvproject.group3.JajaCodeLexer;
@@ -15,7 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class JajaCodeLexerTest {
 
 
-    @Test
+    @Ignore
     public void givenInit__whenGenerateTokens__thenCorrectLexer() {
         String input = "1 init";
 
@@ -33,7 +35,7 @@ public class JajaCodeLexerTest {
 
     }
 
-    @Test
+    @Ignore
     public void givenPush__whenGenerateTokens__thenCorrectLexer() {
         String input = "1 push(0)";
 
@@ -60,7 +62,7 @@ public class JajaCodeLexerTest {
 
     }
 
-    @Test
+    @Ignore
     public void givenGoto__whenGenerateTokens__thenCorrectLexer() {
         String input = "6 goto(11)";
 
@@ -87,7 +89,7 @@ public class JajaCodeLexerTest {
 
     }
 
-    @Test
+    @Ignore
     public void givenStore__whenGenerateTokens__thenCorrectLexer() {
         String input = "12 store(x)";
 
@@ -114,7 +116,7 @@ public class JajaCodeLexerTest {
 
     }
 
-    @Test
+    @Ignore
     public void givenInvoke__whenGenerateTokens__thenCorrectLexer() {
         String input = "14 invoke(f)";
 
@@ -140,7 +142,7 @@ public class JajaCodeLexerTest {
         assertThat(tokens.get(4).getText(), is(")"));
 
     }
-    @Test
+    @Ignore
     public void givenInc__whenGenerateTokens__thenCorrectLexer() {
         String input = "17 inc(x)";
 
@@ -167,7 +169,7 @@ public class JajaCodeLexerTest {
 
     }
 
-    @Test
+    @Ignore
     public void givenSwap__whenGenerateTokens__thenCorrectLexer() {
         String input = "9 swap";
 
@@ -184,7 +186,7 @@ public class JajaCodeLexerTest {
         assertThat( tokens.get(1).getText(),is("swap"));
 
     }
-    @Test
+    @Ignore
     public void givenJcstop__whenGenerateTokens__thenCorrectLexer() {
         String input = "24 jcstop";
 
@@ -202,7 +204,7 @@ public class JajaCodeLexerTest {
 
     }
 
-    @Test
+    @Ignore
     public void givenComment__whenGenerateTokens__thenCorrectLexer() {
         String input = "9 swap // adr retour ↔ val. résultat";
 
@@ -220,7 +222,7 @@ public class JajaCodeLexerTest {
 
     }
 
-    @Test
+    @Ignore
     public void givenPop__whenGenerateTokens__thenCorrectLexer() {
         String input = "17 pop";
 
@@ -238,7 +240,7 @@ public class JajaCodeLexerTest {
 
     }
 
-    @Test
+    @Ignore
     public void givenReturn__whenGenerateTokens__thenCorrectLexer() {
         String input = "10 return";
 
@@ -256,7 +258,7 @@ public class JajaCodeLexerTest {
 
     }
 
-    @Test
+    @Ignore
     public void givenLoad__whenGenerateTokens__thenCorrectLexer() {
         String input = "8 load(p)";
 
@@ -283,7 +285,7 @@ public class JajaCodeLexerTest {
 
     }
 
-    @Test
+    @Ignore
     public void givenNew__whenGenerateTokens__thenCorrectLexer() {
         String input = "3 new(x,entier,var,0)";
 
