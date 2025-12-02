@@ -23,7 +23,7 @@ public class MjjInterpreter {
   }
 
   public MjjInterpreter(String mjjProgram) {
-    ast = AstOperations.getAstFromString(mjjProgram);
+    ast = AstOperations.getAstFromString(mjjProgram).ast;
   }
 
   public SemanticErrorsCollector getSemanticErrorsCollector() {

@@ -26,7 +26,7 @@ public class FullAstTest {
 
     // Build AST from generated program
     Path jjcProgramPath = Paths.get(System.getProperty("user.dir"), "src", "test", "resources", "generatedProgram.jjc");
-    AstNode ast = AstOperations.getAstFromFile(jjcProgramPath);
+    AstNode ast = AstOperations.getAstFromFile(jjcProgramPath).ast;
 
     // Print AST to file
     PrintVisitor printVisitor = new PrintVisitor();
@@ -39,7 +39,7 @@ public class FullAstTest {
     assertEquals(originalLines, printedLines);
 
     // Rebuild AST from printed program
-    AstNode printedAst = AstOperations.getAstFromString(printedProgram);
+    AstNode printedAst = AstOperations.getAstFromString(printedProgram).ast;
 
     // Compare ASTs
     assertTrue(ast.sameAs(printedAst));

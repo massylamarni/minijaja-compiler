@@ -17,7 +17,20 @@ import fr.amvproject.group3.mjj.ast.AstNode;
 
 public class AstOperations {
   private AstOperations() {}
-  public static AstNode getAstFromString(String string) {
+
+  public static class AstWrapper {
+    public final AstNode ast;
+    public final LexicalErrorsListener lexical;
+    public final SyntaxicErrorsListener syntaxic;
+
+    public AstWrapper(AstNode ast, LexicalErrorsListener lexical, SyntaxicErrorsListener syntaxic) {
+        this.ast = ast;
+        this.lexical = lexical;
+        this.syntaxic = syntaxic;
+    }
+  }
+
+  public static AstWrapper getAstFromString(String string) {
     MiniJajaLexer lexer = new MiniJajaLexer(CharStreams.fromString(string));
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     MiniJajaParser parser = new MiniJajaParser(tokens);
@@ -41,10 +54,10 @@ public class AstOperations {
     }
 
     AstBuilderVisitor astBuilderVisitor = new AstBuilderVisitor();
-    return astBuilderVisitor.visit(tree);
+    return new AstWrapper(astBuilderVisitor.visit(tree), lexicalErrorsListener, syntaxicErrorsListener);
   }
 
-  public static AstNode getAstFromFile(String path) throws IOException {
+  public static AstWrapper getAstFromFile(String path) throws IOException {
     try {
       return getAstFromString(Files.readString(Paths.get(path)));
     } catch (Exception e) {
@@ -52,7 +65,7 @@ public class AstOperations {
     }
   }
 
-  public static AstNode getAstFromFile(Path path) throws IOException {
+  public static AstWrapper getAstFromFile(Path path) throws IOException {
     try {
       return getAstFromString(Files.readString(path));
     } catch (Exception e) {

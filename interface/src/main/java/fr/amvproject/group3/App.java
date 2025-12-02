@@ -16,7 +16,7 @@ public class App {
 
     /* JajaCode */
 
-    AstNode jjcAst = AstOperations.getAstFromFile("jajacode-core/src/test/resources/td.jjc");
+    AstNode jjcAst = AstOperations.getAstFromFile("jajacode-core/src/test/resources/td.jjc").ast;
 
     // Print AST to file
     PrintVisitor jjcPrintVisitor = new PrintVisitor();
@@ -25,7 +25,7 @@ public class App {
 
     /* MiniJaja */
     fr.amvproject.group3.mjj.ast.AstNode mjjAst = fr.amvproject.group3.mjj.utils.AstOperations
-        .getAstFromFile("minijaja-core/src/test/resources/fact.mjj");
+        .getAstFromFile("minijaja-core/src/test/resources/fact.mjj").ast;
 
     // Print AST to file
     fr.amvproject.group3.mjj.ast.PrintVisitor mjjPrinter = new fr.amvproject.group3.mjj.ast.PrintVisitor();
