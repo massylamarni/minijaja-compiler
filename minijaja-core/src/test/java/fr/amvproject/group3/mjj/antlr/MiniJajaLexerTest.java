@@ -1,4 +1,4 @@
-package fr.amvproject.group3.antlr;
+package fr.amvproject.group3.mjj.antlr;
 
 import fr.amvproject.group3.MiniJajaLexer;
 import org.antlr.v4.runtime.*;

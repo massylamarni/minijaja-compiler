@@ -1,4 +1,4 @@
-package fr.amvproject.group3;
+package fr.amvproject.group3.mjj;
 
 import fr.amvproject.group3.mjj.Quad;
 import fr.amvproject.group3.mjj.Stack;
@@ -29,7 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class StackTest {
+public class MinijajaStackTest {
 
     @Test
     public void givenStack__whenSorteOfLast__thenSameSizeQueueSameOrder() {

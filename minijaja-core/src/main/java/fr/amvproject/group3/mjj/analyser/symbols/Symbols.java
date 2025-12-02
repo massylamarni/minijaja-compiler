@@ -46,5 +46,9 @@ public abstract class Symbols {
     return identNode.getColumn();
   }
 
-  public abstract String print();
+    public List<Integer> getScopesOfUsage() {
+        return scopesOfUsage;
+    }
+
+    public abstract String print();
 }
