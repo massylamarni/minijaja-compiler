@@ -71,10 +71,14 @@ public class ExecutionContext {
     /* Advanced */
 
     public void recordNode(AstNode node) {
-      if (node.getLine() > breakPointHitLine) {
-        breakPointHitLine = 0;
+      if (node.getLine() >= breakPointHitLine) {
         setPreviousNode(currentNode);
         currentNode = node;
+        if (node.getLine() == breakPointHitLine) {
+          breakPointHitLine = 0;
+          return;
+        }
+        breakPointHitLine = 0;
         if (hasBreakpoint()) {
           setIsPaused(true);
           breakPointHitLine = node.getLine();

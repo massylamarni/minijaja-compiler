@@ -1,5 +1,8 @@
 package fr.amvproject.group3;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.PrintVisitor;
 import fr.amvproject.group3.jjc.utils.AstOperations;
@@ -38,10 +41,14 @@ public class App {
 
     /* Interpretation */
 
-    MjjInterpreter mjjInterpreter = new MjjInterpreter(mjjPrintedProgram);
+    String programPath = "minijaja-core/src/test/resources/fact.mjj";
+    String mjjProgram =  Files.readString(Paths.get(programPath));
+    MjjInterpreter mjjInterpreter = new MjjInterpreter(mjjProgram);
     mjjInterpreter.addBreakPoint(7);
     mjjInterpreter.addBreakPoint(10);
+    mjjInterpreter.addBreakPoint(26);
     mjjInterpreter.runWithDebug();
+    mjjInterpreter.resume();
     mjjInterpreter.resume();
   }
 }

@@ -272,6 +272,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitCallInstr(CallInstrNode node) {
+        ctx.recordNode(node);
         visitCallExp(new CallExpNode(node.getIdent(), node.getListExp()));
         return null;
     }
@@ -351,7 +352,6 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     @Override
     public Object visitLength(LengthNode node) {
         try {
-            ctx.recordNode(node);
             return stack.longT(node.getIdent());
         } catch (Exception e) {
             throw new fr.amvproject.group3.exceptions.RuntimeException("Index out of bounds", node.getLine(), node.getColumn());
@@ -484,7 +484,6 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitIntLiteral(IntLiteralNode node) {
-        ctx.recordNode(node);
         return node.getValue();
     }
 
@@ -496,7 +495,6 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitBoolLiteral(BoolLiteralNode node) {
-        ctx.recordNode(node);
         return node.getValue();
     }
 
@@ -506,7 +504,6 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitStringLiteral(StringLiteralNode node) {
-        ctx.recordNode(node);
         return node.getValue();
     }
 
@@ -516,7 +513,6 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitIdent(IdentNode node) {
-        ctx.recordNode(node);
         return stack.val(node);
     }
 
@@ -528,7 +524,6 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitArrayAccess(ArrayAccessNode node) {
-        ctx.recordNode(node);
         Object indexObj = evalExp(node.getIndexExp());
         int index = (int) indexObj;
         try {
