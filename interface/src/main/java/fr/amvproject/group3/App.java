@@ -3,6 +3,7 @@ package fr.amvproject.group3;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import fr.amvproject.group3.jjc.JjcInterpreter;
 import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.PrintVisitor;
 import fr.amvproject.group3.jjc.utils.AstOperations;
@@ -46,8 +47,56 @@ public class App {
     MjjInterpreter mjjInterpreter = new MjjInterpreter(mjjProgram);
     mjjInterpreter.addBreakPoint(7);
     mjjInterpreter.addBreakPoint(10);
-    mjjInterpreter.addBreakPoint(26);
+    mjjInterpreter.addBreakPoint(20);
     mjjInterpreter.runWithDebug();
     mjjInterpreter.stepForward();
+    mjjInterpreter.stepForward();
+    mjjInterpreter.stepForward();
+    mjjInterpreter.stepBackward();
+    mjjInterpreter.stepBackward();
+    mjjInterpreter.stepBackward();
+    mjjInterpreter.stepForward();
+    mjjInterpreter.stepBackward();
+    mjjInterpreter.stepForward();
+    mjjInterpreter.stepBackward();
+    mjjInterpreter.stepForward();
+    mjjInterpreter.stepBackward();
+
+    System.out.println("----------------------------------------------");
+
+    String jjcProgram = """
+            1 init
+            2 push(1)
+            3 newarray(tab1, entier)
+            4 push(0)
+            5 aload(tab1)
+            6 write
+            7 push(0)
+            8 push(10)
+            9 astore(tab1)
+            10 push(0)
+            11 aload(tab1)
+            12 write
+            13 push(0)
+            14 push(1)
+            15 ainc(tab1)
+            16 push(0)
+            17 aload(tab1)
+            18 write
+            19 push(0)
+            20 swap
+            21 pop
+            22 pop
+            23 jcstop
+        """;
+    JjcInterpreter jjcInterpreter = new JjcInterpreter(jjcProgram);
+    jjcInterpreter.addBreakPoint(7);
+    jjcInterpreter.addBreakPoint(10);
+    jjcInterpreter.addBreakPoint(20);
+    jjcInterpreter.runWithDebug();
+    jjcInterpreter.resume();
+    jjcInterpreter.stepForward();
+    jjcInterpreter.stepForward();
+    jjcInterpreter.stepForward();
   }
 }

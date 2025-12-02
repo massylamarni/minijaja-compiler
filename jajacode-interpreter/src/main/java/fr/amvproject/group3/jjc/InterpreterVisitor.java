@@ -63,6 +63,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     }
     while (!(instrsMap.get(currentAddress) instanceof JcstopLiteral) && currentAddress >= 1 && currentAddress <= instrsMap.size()) {
       InstrNode instrNode = instrsMap.get(currentAddress);
+      ctx.recordNode(instrNode);
       instrNode.accept(this);
     }
     return null;
