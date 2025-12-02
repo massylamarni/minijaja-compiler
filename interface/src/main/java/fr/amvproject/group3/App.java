@@ -39,8 +39,9 @@ public class App {
     /* Interpretation */
 
     MjjInterpreter mjjInterpreter = new MjjInterpreter(mjjPrintedProgram);
-    mjjInterpreter.addBreakPoint(6);
-    mjjInterpreter.interpretUntil(1);
-    mjjInterpreter.stepForward();
+    mjjInterpreter.addBreakPoint(7);
+    mjjInterpreter.addBreakPoint(10);
+    mjjInterpreter.runWithDebug();
+    mjjInterpreter.resume();
   }
 }

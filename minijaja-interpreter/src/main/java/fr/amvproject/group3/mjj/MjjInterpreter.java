@@ -37,7 +37,8 @@ public class MjjInterpreter {
 
   public void resume() {
     try {
-      ctx.getCurrentNode().accept(interpreterVisitor);
+      ctx.setIsPaused(false);
+      ast.accept(interpreterVisitor);
     } catch (Exception e) {
       System.out.println(e);
     }
@@ -53,8 +54,6 @@ public class MjjInterpreter {
   }
 
   public void stepForward() {
-    // TODO block right after
-    if (ctx.isPaused()) ctx.setIsPaused(false);
     ctx.getCurrentNode().accept(interpreterVisitor);
   }
 

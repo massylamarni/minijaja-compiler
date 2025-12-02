@@ -13,6 +13,7 @@ public class ExecutionContext {
     private Stack stack;
     private boolean isPaused = false;
     private Set<Integer> breakpoints = new HashSet<>();
+    private int breakPointHitLine = 0;
 
     public ExecutionContext(Stack stack) {
         this.stack = stack;
@@ -62,15 +63,24 @@ public class ExecutionContext {
         return breakpoints.contains(currentNode.getLine());
     }
 
+    public void resetPosition() {
+      currentNode = null;
+      previousNode = null;
+    }
+
     /* Advanced */
 
     public void recordNode(AstNode node) {
+      if (node.getLine() > breakPointHitLine) {
+        breakPointHitLine = 0;
         setPreviousNode(currentNode);
         currentNode = node;
         if (hasBreakpoint()) {
           setIsPaused(true);
+          breakPointHitLine = node.getLine();
           throw new BreakpointHit(currentNode);
         }
+      }
     }
 
     public void back() {

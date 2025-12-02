@@ -68,7 +68,6 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     @Override
     public Object visitProgram(ProgramNode node) {
         ctx.recordNode(node);
-        stack.update(false);
         for (ClassNode classe : node.getClasses()) {
             classe.accept(this);
         }
