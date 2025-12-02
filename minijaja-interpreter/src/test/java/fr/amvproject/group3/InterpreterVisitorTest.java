@@ -33,7 +33,7 @@ public class InterpreterVisitorTest {
 
     // ######################## ARIMTHMETIC ########################
 
-    @Ignore
+    @Test
     public void givenSimpleAdditionCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         String code = """
@@ -65,7 +65,7 @@ public class InterpreterVisitorTest {
 
     }
 
-    @Ignore
+    @Test
     public void givenSimpleSoustractionCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         String code = """
@@ -98,7 +98,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Ignore
+    @Test
     public void givenSimpleMultiplicationCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         String code = """
@@ -130,7 +130,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Ignore
+    @Test
     public void givenSimpleDivisionCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         String code = """
@@ -164,7 +164,7 @@ public class InterpreterVisitorTest {
 
     // ######################## COMPARAISON SUPERIOR ########################
 
-    @Ignore
+    @Test
     public void givenSimpleSuperiorComparaisonInt__whenInterpret__thenStackHaveResultFalse() throws Exception {
         // Given
         String code = """
@@ -195,7 +195,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("false"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleSuperiorComparaisonInt__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         String code = """
@@ -226,37 +226,9 @@ public class InterpreterVisitorTest {
         assertThat(output, is("true"));
     }
 
-
-    @Ignore("This check is made at compilation, it is unnecessary here")
-    public void givenSimpleSuperiorComparaisonBool__whenInterpret__thenExceptionThrow() throws Exception {
-        // Given
-        String code = """
-            class Test {
-                boolean x = true;
-                boolean y = true;
-                main {
-                    boolean z = x > y;
-                    write(z);
-                }
-            }
-            """;
-
-        ProgramNode program = buildAstFromCode(code);
-
-        try {
-            // When
-            InterpreterVisitor interpreter = new InterpreterVisitor();
-            program.accept(interpreter);
-        } catch (RuntimeException e) {
-            // Then
-            assertThat(e.getMessage(), is("Type error: arithmetic operator requires integer operands, got Boolean and Boolean"));
-        }
-    }
-
-
     // ######################## COMPARAISON EQUALS ########################
 
-    @Ignore
+    @Test
     public void givenSimpleEqualComparaisonInt__whenInterpret__thenStackHaveResultFalse() throws Exception {
         // Given
         String code = """
@@ -287,7 +259,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("false"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleEqualComparaisonInt__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         String code = """
@@ -319,7 +291,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Ignore
+    @Test
     public void givenSimpleEqualComparaisonBool__whenInterpret__thenStackHaveResultFalse() throws Exception {
         // Given
         String code = """
@@ -350,7 +322,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("false"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleEqualComparaisonBool__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         String code = """
@@ -384,7 +356,7 @@ public class InterpreterVisitorTest {
 
     // ######################## CONDITIONAL ########################
 
-    @Ignore
+    @Test
     public void givenSimpleIfElseCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         String code = """
@@ -419,7 +391,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("11"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleIfCodeTrue__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         String code = """
@@ -451,7 +423,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("1"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleIfCodeFalse__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         String code = """
@@ -483,7 +455,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("1"));
     }
 
-    @Ignore
+    @Test
     public void givenMultipleIfElseCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         String code = """
@@ -525,7 +497,7 @@ public class InterpreterVisitorTest {
 
     }
 
-    @Ignore
+    @Test
     public void givenSimpleWhileCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         String code = """
@@ -560,7 +532,7 @@ public class InterpreterVisitorTest {
 
     // ######################## COMPARAISON LOGICAL CONNECTOR ########################
 
-    @Ignore
+    @Test
     public void givenSimpleAndComparaisonBool__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         String code = """
@@ -591,7 +563,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("true"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleAndComparaisonBool__whenInterpret__thenStackHaveResultFalse() throws Exception {
         // Given
         String code = """
@@ -623,7 +595,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Ignore
+    @Test
     public void givenSimpleOrComparaisonBool__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         String code = """
@@ -654,7 +626,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("true"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleOrComparaisonBoolTrueFalse__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         String code = """
@@ -686,7 +658,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Ignore
+    @Test
     public void givenSimpleNotComparaisonBool__whenInterpret__thenStackHaveResultFalse() throws Exception {
         // Given
         String code = """
@@ -716,7 +688,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("false"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleNotComparaisonBool__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         String code = """
@@ -746,7 +718,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("true"));
     }
 
-    @Ignore
+    @Test
     public void givenFunction__whenExecute__thenCorrectResult() {
         // Given
         String code = """
@@ -783,7 +755,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Ignore
+    @Test
     public void givenFunction__whenExecute__thenAffectResultAndPrint() {
         // Given
         String code = """
@@ -819,7 +791,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("10"));
     }
 
-    @Ignore
+    @Test
     public void givenFunction__whenExecute__thenPrintResult() {
         // Given
         String code = """
@@ -855,17 +827,17 @@ public class InterpreterVisitorTest {
         assertThat(output, is("10"));
     }
 
-    @Ignore
+    @Test
     public void testTabSimple() {
         // Given
         String code = """
                 class C {
                     int x = 5 ;
-                    int tab[3] ;
+                    int nt[3] ;
     
                 main {
-                    tab[0] = x ;
-                    write(tab[0]);
+                    nt[0] = x ;
+                    write(nt[0]);
                 }
                 }
                 
@@ -888,17 +860,17 @@ public class InterpreterVisitorTest {
         assertThat(output, is("5"));
     }
 
-    @Ignore
+    @Test
     public void testTabBoolean() {
         // Given
         String code = """
                 class C {
-                    boolean tab[2] ;
+                    boolean nt[2] ;
     
                 main {
-                    tab[0] = true ;
-                    tab[1] = false ;
-                    write(tab[0]);
+                    nt[0] = true ;
+                    nt[1] = false ;
+                    write(nt[0]);
                 }
                 }
                 
@@ -921,20 +893,20 @@ public class InterpreterVisitorTest {
         assertThat(output, is("true"));
     }
 
-    @Ignore
+    @Test
     public void testTabInLoop() {
         // Given
         String code = """
                 class C {
-                    int tab[3] ;
+                    int nt[3] ;
                     int i = 0 ;
     
                 main {
                     while (3 > i) {
-                        tab[i] = i * 10 ;
+                        nt[i] = i * 10 ;
                         i++ ;
                     };
-                    write(tab[2]);
+                    write(nt[2]);
                 }
                 }
                 
@@ -957,7 +929,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("20"));
     }
 
-    @Ignore
+    @Test
     public void testTabAffectation() {
         // Given
         String code = """
@@ -991,7 +963,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("10"));
     }
 
-    @Ignore
+    @Test
     public void testTabIncrement() {
         // Given
         String code = """
@@ -1025,7 +997,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("11"));
     }
 
-    @Ignore
+    @Test
     public void testIncVariable() {
         String code = """
         class C {
@@ -1053,7 +1025,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("6"));
     }
 
-    @Ignore
+    @Test
     public void testTabAffectationSimple() {
         String code = """
             class C {
@@ -1082,7 +1054,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("10"));
     }
 
-    @Ignore
+    @Test
     public void testDebugTabIncrement() {
         String code = """
             class C {
@@ -1116,15 +1088,15 @@ public class InterpreterVisitorTest {
         assertThat(output, is("01011"));
     }
 
-    @Ignore
+    @Test
     public void testLengthSimple() {
         // Given
         String code = """
         class C {
-            int tab[5];
+            int nt[5];
             
         main {
-            int size = length(tab);
+            int size = length(nt);
             write(size);
         }
         }
@@ -1149,7 +1121,7 @@ public class InterpreterVisitorTest {
         assertThat(interpreter.getStack().getQueue().size(), is(0));
     }
 
-    @Ignore
+    @Test
     public void testMethodeHard() {
         // Given
         String code = """
@@ -1193,7 +1165,7 @@ public class InterpreterVisitorTest {
 
     // ######################## ERROR HANDLING ########################
 
-    @Ignore //(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
     public void givenDivisionByZero__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1215,7 +1187,7 @@ public class InterpreterVisitorTest {
         // Then - exception should be thrown
     }
 
-    @Ignore //(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
     public void givenDivisionByZeroInExpression__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1235,15 +1207,15 @@ public class InterpreterVisitorTest {
         // Then - exception should be thrown
     }
 
-    @Ignore //(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
     public void givenArrayIndexOutOfBounds__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
             class Test {
-                int tab[3];
+                int nt[3];
                 main {
-                    tab[5] = 10;
-                    write(tab[5]);
+                    nt[5] = 10;
+                    write(nt[5]);
                 }
             }
             """;
@@ -1256,14 +1228,14 @@ public class InterpreterVisitorTest {
         // Then - exception should be thrown
     }
 
-    @Ignore //(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
     public void givenNegativeArrayIndex__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
             class Test {
-                int tab[3];
+                int nt[3];
                 main {
-                    int value = tab[-1];
+                    int value = nt[-1];
                     write(value);
                 }
             }
@@ -1277,16 +1249,16 @@ public class InterpreterVisitorTest {
         // Then - exception should be thrown
     }
 
-    @Ignore //(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
     public void givenArrayIndexOutOfBoundsInLoop__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
             class Test {
-                int tab[3];
+                int nt[3];
                 int i = 0;
                 main {
                     while (5 > i) {
-                        tab[i] = i * 10;
+                        nt[i] = i * 10;
                         i++;
                     };
                 }
@@ -1301,7 +1273,7 @@ public class InterpreterVisitorTest {
         // Then - exception should be thrown
     }
 
-    @Ignore //(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
     public void givenInfiniteLoop__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1324,7 +1296,7 @@ public class InterpreterVisitorTest {
         // Then - exception should be thrown after LOOP_LIMIT iterations
     }
 
-    @Ignore //(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
     public void givenInfiniteLoopWithIncrement__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1347,7 +1319,7 @@ public class InterpreterVisitorTest {
         // Then - exception should be thrown after LOOP_LIMIT iterations
     }
 
-    @Ignore //(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
     public void givenInfiniteRecursion__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1370,7 +1342,7 @@ public class InterpreterVisitorTest {
         // Then - exception should be thrown after RECURSION_LIMIT calls
     }
 
-    @Ignore //(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
     public void givenInfiniteRecursionWithoutCondition__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1393,7 +1365,7 @@ public class InterpreterVisitorTest {
         // Then - exception should be thrown after RECURSION_LIMIT calls
     }
 
-    @Ignore
+    @Test
     public void givenValidRecursion__whenInterpret__thenCorrectResult() throws Exception {
         // Given
         String code = """

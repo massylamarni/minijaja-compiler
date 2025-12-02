@@ -33,7 +33,7 @@ public class InterpreterVisitorTest {
 
     // ######################## ARIMTHMETIC ########################
 
-    @Ignore
+    @Test
     public void givenSimpleAdditionCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         /*
@@ -85,7 +85,7 @@ public class InterpreterVisitorTest {
 
     }
 
-    @Ignore
+    @Test
     public void givenSimpleSoustractionCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         /*
@@ -138,7 +138,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Ignore
+    @Test
     public void givenSimpleMultiplicationCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         /*
@@ -190,7 +190,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Ignore
+    @Test
     public void givenSimpleDivisionCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         /*
@@ -244,7 +244,7 @@ public class InterpreterVisitorTest {
 
     // ######################## COMPARAISON SUPERIOR ########################
 
-    @Ignore
+    @Test
     public void givenSimpleSuperiorComparaisonInt__whenInterpret__thenStackHaveResultFalse() throws Exception {
         // Given
         /*
@@ -297,7 +297,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("false"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleSuperiorComparaisonInt__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         /*
@@ -352,7 +352,7 @@ public class InterpreterVisitorTest {
 
     // ######################## COMPARAISON EQUALS ########################
 
-    @Ignore
+    @Test
     public void givenSimpleEqualComparaisonInt__whenInterpret__thenStackHaveResultFalse() throws Exception {
         // Given
         /*
@@ -405,7 +405,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("false"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleEqualComparaisonInt__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         /*
@@ -459,7 +459,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Ignore
+    @Test
     public void givenSimpleEqualComparaisonBool__whenInterpret__thenStackHaveResultFalse() throws Exception {
         // Given
         /*
@@ -512,7 +512,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("false"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleEqualComparaisonBool__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         /*
@@ -568,7 +568,7 @@ public class InterpreterVisitorTest {
 
     // ######################## CONDITIONAL ########################
 
-    @Ignore
+    @Test
     public void givenSimpleIfElseCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         /*
@@ -624,7 +624,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("11"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleIfCodeTrue__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         /*
@@ -675,7 +675,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("1"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleIfCodeFalse__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         /*
@@ -726,7 +726,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("1"));
     }
 
-    @Ignore
+    @Test
     public void givenMultipleIfElseCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         /*
@@ -798,7 +798,7 @@ public class InterpreterVisitorTest {
 
     }
 
-    @Ignore
+    @Test
     public void givenSimpleWhileCode__whenInterpret__thenStackHaveResult() throws Exception {
         // Given
         /*
@@ -853,7 +853,7 @@ public class InterpreterVisitorTest {
 
     // ######################## COMPARAISON LOGICAL CONNECTOR ########################
 
-    @Ignore
+    @Test
     public void givenSimpleAndComparaisonBool__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         /*
@@ -906,7 +906,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("true"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleAndComparaisonBool__whenInterpret__thenStackHaveResultFalse() throws Exception {
         // Given
         /*
@@ -960,7 +960,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Ignore
+    @Test
     public void givenSimpleOrComparaisonBool__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         /*
@@ -1013,7 +1013,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("true"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleOrComparaisonBoolTrueFalse__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         /*
@@ -1067,7 +1067,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Ignore
+    @Test
     public void givenSimpleNotComparaisonBool__whenInterpret__thenStackHaveResultFalse() throws Exception {
         // Given
         /*
@@ -1114,7 +1114,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("false"));
     }
 
-    @Ignore
+    @Test
     public void givenSimpleNotComparaisonBool__whenInterpret__thenStackHaveResultTrue() throws Exception {
         // Given
         /*
@@ -1161,7 +1161,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("true"));
     }
 
-    @Ignore
+    @Test
     public void givenFunction__whenExecute__thenCorrectResult() {
         // Given
         /*
@@ -1229,7 +1229,7 @@ public class InterpreterVisitorTest {
     }
 
 
-    @Ignore
+    @Test
     public void givenFunction__whenExecute__thenAffectResultAndPrint() {
         // Given
         /*
@@ -1296,7 +1296,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("10"));
     }
 
-    @Ignore
+    @Test
     public void givenFunction__whenExecute__thenPrintResult() {
         // Given
         /*
@@ -1365,17 +1365,17 @@ public class InterpreterVisitorTest {
         assertThat(output, is("10"));
     }
 
-    @Ignore
+    @Test
     public void testTabSimple() {
         // Given
         /*
             class C {
                     int x = 5 ;
-                    int tab[3] ;
+                    int nt[3] ;
     
                 main {
-                    tab[0] = x ;
-                    write(tab[0]);
+                    nt[0] = x ;
+                    write(nt[0]);
                 }
             }
         */
@@ -1384,12 +1384,12 @@ public class InterpreterVisitorTest {
             2 push(5)
             3 new(x, entier, var, 0)
             4 push(3)
-            5 newarray(tab, entier)
+            5 newarray(nt, entier)
             6 push(0)
             7 load(x)
-            8 astore(tab)
+            8 astore(nt)
             9 push(0)
-            10 aload(tab)
+            10 aload(nt)
             11 write
             12 push(0)
             13 swap
@@ -1417,32 +1417,32 @@ public class InterpreterVisitorTest {
         assertThat(output, is("5"));
     }
 
-    @Ignore
+    @Test
     public void testTabBoolean() {
         // Given
         /*
             class C {
-                    boolean tab[2] ;
+                    boolean nt[2] ;
     
                 main {
-                    tab[0] = true ;
-                    tab[1] = false ;
-                    write(tab[0]);
+                    nt[0] = true ;
+                    nt[1] = false ;
+                    write(nt[0]);
                 }
             }
         */
         String code = """
             1 init
             2 push(2)
-            3 newarray(tab, boolean)
+            3 newarray(nt, boolean)
             4 push(0)
             5 push(true)
-            6 astore(tab)
+            6 astore(nt)
             7 push(1)
             8 push(false)
-            9 astore(tab)
+            9 astore(nt)
             10 push(0)
-            11 aload(tab)
+            11 aload(nt)
             12 write
             13 push(0)
             14 swap
@@ -1468,27 +1468,27 @@ public class InterpreterVisitorTest {
         assertThat(output, is("true"));
     }
 
-    @Ignore
+    @Test
     public void testTabInLoop() {
         // Given
         /*
             class C {
-                    int tab[3] ;
+                    int nt[3] ;
                     int i = 0 ;
     
                 main {
                     while (3 > i) {
-                        tab[i] = i * 10 ;
+                        nt[i] = i * 10 ;
                         i++ ;
                     };
-                    write(tab[2]);
+                    write(nt[2]);
                 }
             }
         */
         String code = """
             1 init
             2 push(3)
-            3 newarray(tab, entier)
+            3 newarray(nt, entier)
             4 push(0)
             5 new(i, entier, var, 0)
             6 push(3)
@@ -1500,12 +1500,12 @@ public class InterpreterVisitorTest {
             12 load(i)
             13 push(10)
             14 mul
-            15 astore(tab)
+            15 astore(nt)
             16 push(1)
             17 inc(i)
             18 goto(6)
             19 push(2)
-            20 aload(tab)
+            20 aload(nt)
             21 write
             22 push(0)
             23 swap
@@ -1533,7 +1533,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("20"));
     }
 
-    @Ignore
+    @Test
     public void testTabAffectation() {
         // Given
         /*
@@ -1590,7 +1590,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("10"));
     }
 
-    @Ignore
+    @Test
     public void testTabIncrement() {
         // Given
         /*
@@ -1642,7 +1642,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("11"));
     }
 
-    @Ignore
+    @Test
     public void testIncVariable() {
         /*
             class C {
@@ -1684,7 +1684,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("6"));
     }
 
-    @Ignore
+    @Test
     public void testTabAffectationSimple() {
         /*
             class C {
@@ -1729,7 +1729,7 @@ public class InterpreterVisitorTest {
         assertThat(output, is("10"));
     }
 
-    @Ignore
+    @Test
     public void testDebugTabIncrement() {
         /*
             class C {
@@ -1788,15 +1788,15 @@ public class InterpreterVisitorTest {
         assertThat(output, is("01011"));
     }
 
-    @Ignore
+    @Test
     public void testLengthSimple() {
         // Given
         /*
             class C {
-                int tab[5];
+                int nt[5];
                 
                 main {
-                    int size = length(tab);
+                    int size = length(nt);
                     write(size);
                 }
             }
@@ -1804,8 +1804,8 @@ public class InterpreterVisitorTest {
         String code = """
             1 init
             2 push(5)
-            3 newarray(tab, entier)
-            4 length(tab)
+            3 newarray(nt, entier)
+            4 length(nt)
             5 new(size, entier, var, 0)
             6 load(size)
             7 write
