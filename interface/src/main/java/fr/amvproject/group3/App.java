@@ -1,5 +1,8 @@
 package fr.amvproject.group3;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.PrintVisitor;
 import fr.amvproject.group3.jjc.utils.AstOperations;
@@ -27,18 +30,29 @@ public class App {
     // Print AST to file
     fr.amvproject.group3.mjj.ast.PrintVisitor mjjPrinter = new fr.amvproject.group3.mjj.ast.PrintVisitor();
     String mjjPrintedProgram = mjjAst.accept(mjjPrinter);
-    StringSaver.save(mjjPrintedProgram, "printedProgram.mjj", "main");
+    StringSaver.save(mjjPrintedProgram, "fact.mjj", "main");
 
     /* Symbol table */
 
-    SemanticVisitor memoryVisitor = new SemanticVisitor();
-    mjjAst.accept(memoryVisitor);
-    SymbolTable symbolTable = memoryVisitor.getSymbolTable();
-    symbolTable.print();
+    // SemanticVisitor memoryVisitor = new SemanticVisitor();
+    // mjjAst.accept(memoryVisitor);
+    // SymbolTable symbolTable = memoryVisitor.getSymbolTable();
+    // symbolTable.print();
 
     /* Interpretation */
 
-    MjjInterpreter mjjInterpreter = new MjjInterpreter(mjjPrintedProgram);
-    mjjInterpreter.interpretAll();
+    String programPath = "minijaja-core/src/test/resources/fact.mjj";
+    String mjjProgram =  Files.readString(Paths.get(programPath));
+    MjjInterpreter mjjInterpreter = new MjjInterpreter(mjjProgram);
+    mjjInterpreter.addBreakPoint(7);
+    mjjInterpreter.runWithDebug();
+    mjjInterpreter.stepForward();
+    mjjInterpreter.stepForward();
+    mjjInterpreter.stepForward();
+    mjjInterpreter.stepForward();
+    mjjInterpreter.stepBackward();
+    mjjInterpreter.stepBackward();
+    mjjInterpreter.stepBackward();
+    mjjInterpreter.stepBackward();
   }
 }

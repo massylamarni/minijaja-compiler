@@ -5,6 +5,8 @@ import java.util.Set;
 
 import fr.amvproject.group3.mjj.Stack;
 import fr.amvproject.group3.mjj.ast.AstNode;
+import fr.amvproject.group3.mjj.exceptions.BreakPointHit;
+import fr.amvproject.group3.mjj.exceptions.PausePointHit;
 
 public class ExecutionContext {
     private AstNode currentNode;
@@ -12,8 +14,9 @@ public class ExecutionContext {
     private Stack stack;
     private boolean isPaused = false;
     private Set<Integer> breakpoints = new HashSet<>();
-    private int currentInstrNum = 0;
-    private int currentLineNum = 0;
+    private int breakPointHitLine = 0;
+    private boolean ignoreNextBreakpoint = false;
+    private boolean ignoreBreakpoints = true;
 
     public ExecutionContext(Stack stack) {
         this.stack = stack;
@@ -39,14 +42,6 @@ public class ExecutionContext {
       return isPaused;
     }
 
-    public int getCurrentInstrNum() {
-      return currentInstrNum;
-    }
-
-    public int getCurrentLineNum() {
-      return currentLineNum;
-    }
-
     public void setCurrentNode(AstNode node) {
         currentNode = node;
     }
@@ -63,39 +58,63 @@ public class ExecutionContext {
         breakpoints.add(line);
     }
 
+    public void removeBreakpoint(int line) {
+      breakpoints.remove(line);
+    }
+
     public boolean hasBreakpoint() {
-        return breakpoints.contains(currentLineNum);
+        return breakpoints.contains(currentNode.getLine());
     }
 
-    public void incInstrNum() {
-        currentInstrNum++;
+    public void ignoreNextBreakpoint() {
+      ignoreNextBreakpoint = true;
     }
 
-    public void decInstrNum() {
-        currentInstrNum--;
+    public void decBreakPointHitLine() {
+      if (previousNode != null && breakPointHitLine != 0) {
+        breakPointHitLine = previousNode.getLine();
+      }
     }
 
-    public void incLineNum() {
-        currentLineNum++;
-    }
-
-    public void decLineNum() {
-        currentLineNum--;
+    public void resetPosition() {
+      currentNode = null;
+      previousNode = null;
     }
 
     /* Advanced */
 
-    public void visitNode(AstNode node) {
-        setPreviousNode(currentNode);
-        currentNode = node;
-        incInstrNum();
-        if (hasBreakpoint()) setIsPaused(true);
+    public void recordNode(AstNode node) {
+      setPreviousNode(currentNode);
+      currentNode = node;
+      if (node.getLine() >= breakPointHitLine) {
+        if (ignoreNextBreakpoint) {
+          ignoreNextBreakpoint = false;
+          return;
+        }
+        breakPointHitLine = 0;
+        if (isPaused()) {
+          breakPointHitLine = node.getLine();
+          throw new PausePointHit(currentNode);
+        }
+        if (hasBreakpoint() && !ignoreBreakpoints) {
+          setIsPaused(true);
+          breakPointHitLine = node.getLine();
+          throw new BreakPointHit(currentNode);
+        }
+      }
     }
 
     public void back() {
         currentNode = previousNode;
-        currentInstrNum--;
         stack.goBackward();
+    }
+
+    public void enableDebug() {
+      ignoreBreakpoints = false;
+    }
+
+    public void disableDebug() {
+      ignoreBreakpoints = true;
     }
 
 }

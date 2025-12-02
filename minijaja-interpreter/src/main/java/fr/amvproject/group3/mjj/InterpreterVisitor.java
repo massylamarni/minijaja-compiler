@@ -67,8 +67,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     // ========== PROGRAM ==========
     @Override
     public Object visitProgram(ProgramNode node) {
-        ctx.visitNode(node);
-        stack.update(false);
+        ctx.recordNode(node);
         for (ClassNode classe : node.getClasses()) {
             classe.accept(this);
         }
@@ -85,12 +84,15 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitClass(ClassNode node) {
+        ctx.recordNode(node);
         stack.declVar(node.getIdent(), null, new TypeMethNode("void", node.getLine(), node.getColumn()));
+        
         node.getDecls().accept(this);
         node.getMain().accept(this);
 
         retraitDecls(node.getDecls());
         stack.retirerDecl(node.getIdent());
+        
         return null;
     }
 
@@ -130,7 +132,9 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitVar(VarNode node) {
+        ctx.recordNode(node);
         stack.declVar(node.getIdent(), evalExp(node.getInitExp()), node.getType());
+        
         return null;
     }
 
@@ -143,7 +147,9 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitTable(TableNode node) {
+        ctx.recordNode(node);
         stack.declTab(node.getIdent(), (int) evalExp(node.getSizeExp()), node.getType());
+        
         return null;
     }
 
@@ -155,7 +161,9 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitCst(CstNode node) {
+        ctx.recordNode(node);
         stack.declCst(node.getIdent(), evalExp(node.getInitExp()), node.getType(), node.isVcst());
+        
         return null;
     }
 
@@ -164,7 +172,9 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      * m ⊢ méthode(t, ident(t), ent, dvs, iss) → DeclMeth(i, méthode(t, ident(i), ent, dvs, iss), t, m)
      */
     public Object visitMethod(MethodNode node) {
+        ctx.recordNode(node);
         stack.declMeth(node);
+        
         return null;
     }
 
@@ -176,9 +186,11 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitMain(MainNode node) {
+        ctx.recordNode(node);
         node.getVars().accept(this);
         node.getInstrs().accept(this);
         retraitVars(node.getVars());
+        
         return null;
     }
 
@@ -190,9 +202,11 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitReturn(ReturnNode node) {
+        ctx.recordNode(node);
         IdentNode classVar = stack.peekTail().getIdent();
         Object returnValue = evalExp(node.getExp());
         stack.affecterVal(classVar, returnValue); // La valeur de retour est sauvegardé dans la classe
+        
         return null;
     }
 
@@ -219,6 +233,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
                 ParamNode param = listParamNodes.get(i);
                 ExpNode argExp = listExpNodes.get(i);
                 stack.declVar(param.getIdent(), evalExp(argExp), new TypeMethNode(param.getType().getTypeToken()));
+                
             }
         }
 
@@ -257,6 +272,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitCallInstr(CallInstrNode node) {
+        ctx.recordNode(node);
         visitCallExp(new CallExpNode(node.getIdent(), node.getListExp()));
         return null;
     }
@@ -287,6 +303,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitAssign(AssignNode node) {
+        ctx.recordNode(node);
         Object value = evalExp(node.getExp());
         if (node.getLeftValueNode() instanceof IdentNode identNode) {
             stack.affecterVal(identNode, value);
@@ -353,6 +370,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitIf(IfNode node) {
+        ctx.recordNode(node);
         boolean condValue = (boolean) evalExp(node.getCondExp());
         if (condValue) { // Règle [sivrai]
             node.getThenInstrs().accept(this);
@@ -374,6 +392,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitWhile(WhileNode node) {
+        ctx.recordNode(node);
         int loopCount = 0;
         boolean condValue = (boolean) evalExp(node.getCondExp());
         while (condValue) { // Règle [tantquevrai]
@@ -394,6 +413,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitWrite(WriteNode node) {
+        ctx.recordNode(node);
         Object value = evalExp(node.getExp());
         if (node.isLn()) {
             System.out.println(value);  // TODO Write in an output buffer instead
