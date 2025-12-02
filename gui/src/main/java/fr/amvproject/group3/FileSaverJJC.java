@@ -80,7 +80,7 @@ public class FileSaverJJC {
     }
 
     public String compilation(String content) {
-        AstNode ast = AstOperations.getAstFromString(content);
+        AstNode ast = AstOperations.getAstFromString(content).ast;
 
         CompilerVisitor compilerVisitor = new CompilerVisitor();
         ProgramNode programNode = new ProgramNode(ast.accept(compilerVisitor), new NodeOperations.MockToken(null, 0, 0));
@@ -91,7 +91,7 @@ public class FileSaverJJC {
     }
 
     public String interpret(String content) {
-        AstNode ast = AstOperations.getAstFromString(content);
+        AstNode ast = AstOperations.getAstFromString(content).ast;
 
         InterpreterVisitor interpreterVisitor = new InterpreterVisitor();
         ast.accept(interpreterVisitor);
