@@ -26,7 +26,7 @@ public class StepDefinitionCompilator {
 
     @When("Compilation du programme")
     public void compilationDuProgramme() {
-        AstNode ast = AstOperations.getAstFromString(baseStepsUtility.currentFileContent);
+        AstNode ast = AstOperations.getAstFromString(baseStepsUtility.currentFileContent).ast;
         CompilerVisitor compilerVisitor = new CompilerVisitor();
         baseStepsUtility.currentCompileCode = new ProgramNode(ast.accept(compilerVisitor), new MockToken("", 1, 0));
     }

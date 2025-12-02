@@ -2018,10 +2018,10 @@ public class InterpreterVisitorTest {
         /*
         String code = """
             class Test {
-                int tab[3];
+                int nt[3];
                 main {
-                    tab[5] = 10;
-                    write(tab[5]);
+                    nt[5] = 10;
+                    write(nt[5]);
                 }
             }
             """;
@@ -2030,12 +2030,12 @@ public class InterpreterVisitorTest {
         String code = """
                 1 init
                 2 push(3)
-                3 newarray(tab, entier)
+                3 newarray(nt, entier)
                 4 push(5)
                 5 push(10)
-                6 astore(tab)
+                6 astore(nt)
                 7 push(5)
-                8 aload(tab)
+                8 aload(nt)
                 9 write
                 10 push(0)
                 11 swap
@@ -2058,9 +2058,9 @@ public class InterpreterVisitorTest {
         /*
         String code = """
             class Test {
-                int tab[3];
+                int nt[3];
                 main {
-                    int value = tab[-1];
+                    int value = nt[-1];
                     write(value);
                 }
             }
@@ -2070,10 +2070,10 @@ public class InterpreterVisitorTest {
         String code = """
                 1 init
                 2 push(3)
-                3 newarray(tab, entier)
+                3 newarray(nt, entier)
                 4 push(1)
                 5 neg
-                6 aload(tab)
+                6 aload(nt)
                 7 new(value, entier, var, 0)
                 8 load(value)
                 9 write
@@ -2100,11 +2100,11 @@ public class InterpreterVisitorTest {
         /*
         String code = """
             class Test {
-                int tab[3];
+                int nt[3];
                 int i = 0;
                 main {
                     while (5 > i) {
-                        tab[i] = i * 10;
+                        nt[i] = i * 10;
                         i++;
                     };
                 }
@@ -2115,7 +2115,7 @@ public class InterpreterVisitorTest {
         String code = """
             1 init
             2 push(3)
-            3 newarray(tab, entier)
+            3 newarray(nt, entier)
             4 push(0)
             5 new(i, entier, var, 0)
             6 push(5)
@@ -2127,7 +2127,7 @@ public class InterpreterVisitorTest {
             12 load(i)
             13 push(10)
             14 mul
-            15 astore(tab)
+            15 astore(nt)
             16 push(1)
             17 inc(i)
             18 goto(6)

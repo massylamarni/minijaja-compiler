@@ -31,7 +31,7 @@ public class CompilerVisitorIntegrationTest {
     public void givenMjjFileDeclaration_whenCompile_thenOutputIsCorrect() throws Exception {
         //Given
         String source = loadResource("test1.mjj");
-        AstNode ast = AstOperations.getAstFromString(source);
+        AstNode ast = AstOperations.getAstFromString(source).ast;
         CompilerVisitor compilerVisitor = new CompilerVisitor();
         String goal = """
                 1 init
@@ -63,7 +63,7 @@ public class CompilerVisitorIntegrationTest {
     public void givenMjjFileAddition_whenCompile_thenOutputIsCorrect() throws Exception {
         //Given
         String source = loadResource("test2.mjj");
-        AstNode ast = AstOperations.getAstFromString(source);
+        AstNode ast = AstOperations.getAstFromString(source).ast;
         CompilerVisitor compilerVisitor = new CompilerVisitor();
         String goal = """
                 1 init
@@ -100,7 +100,7 @@ public class CompilerVisitorIntegrationTest {
     public void givenMjjFileIfElse_whenCompile_thenOutputIsCorrect() throws Exception {
         //Given
         String source = loadResource("test3.mjj");
-        AstNode ast = AstOperations.getAstFromString(source);
+        AstNode ast = AstOperations.getAstFromString(source).ast;
         CompilerVisitor compilerVisitor = new CompilerVisitor();
         String goal = """
                 1 init
@@ -145,7 +145,7 @@ public class CompilerVisitorIntegrationTest {
     public void givenMjjFileWhile_whenCompile_thenOutputIsCorrect() throws Exception {
         //Given
         String source = loadResource("test4.mjj");
-        AstNode ast = AstOperations.getAstFromString(source);
+        AstNode ast = AstOperations.getAstFromString(source).ast;
         CompilerVisitor compilerVisitor = new CompilerVisitor();
         String goal = """
                 1 init
@@ -184,7 +184,7 @@ public class CompilerVisitorIntegrationTest {
     public void givenMjjFileMeth_whenCompile_thenOutputIsCorrect() throws Exception {
         //Given
         String source = loadResource("test5.mjj");
-        AstNode ast = AstOperations.getAstFromString(source);
+        AstNode ast = AstOperations.getAstFromString(source).ast;
         CompilerVisitor compilerVisitor = new CompilerVisitor();
         String goal = """
                 1 init
