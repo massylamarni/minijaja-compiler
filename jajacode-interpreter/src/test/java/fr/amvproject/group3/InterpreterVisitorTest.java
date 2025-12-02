@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -1370,11 +1371,11 @@ public class InterpreterVisitorTest {
         /*
             class C {
                     int x = 5 ;
-                    int tab[3] ;
+                    int nt[3] ;
     
                 main {
-                    tab[0] = x ;
-                    write(tab[0]);
+                    nt[0] = x ;
+                    write(nt[0]);
                 }
             }
         */
@@ -1383,12 +1384,12 @@ public class InterpreterVisitorTest {
             2 push(5)
             3 new(x, entier, var, 0)
             4 push(3)
-            5 newarray(tab, entier)
+            5 newarray(nt, entier)
             6 push(0)
             7 load(x)
-            8 astore(tab)
+            8 astore(nt)
             9 push(0)
-            10 aload(tab)
+            10 aload(nt)
             11 write
             12 push(0)
             13 swap
@@ -1421,27 +1422,27 @@ public class InterpreterVisitorTest {
         // Given
         /*
             class C {
-                    boolean tab[2] ;
+                    boolean nt[2] ;
     
                 main {
-                    tab[0] = true ;
-                    tab[1] = false ;
-                    write(tab[0]);
+                    nt[0] = true ;
+                    nt[1] = false ;
+                    write(nt[0]);
                 }
             }
         */
         String code = """
             1 init
             2 push(2)
-            3 newarray(tab, boolean)
+            3 newarray(nt, boolean)
             4 push(0)
             5 push(true)
-            6 astore(tab)
+            6 astore(nt)
             7 push(1)
             8 push(false)
-            9 astore(tab)
+            9 astore(nt)
             10 push(0)
-            11 aload(tab)
+            11 aload(nt)
             12 write
             13 push(0)
             14 swap
@@ -1472,22 +1473,22 @@ public class InterpreterVisitorTest {
         // Given
         /*
             class C {
-                    int tab[3] ;
+                    int nt[3] ;
                     int i = 0 ;
     
                 main {
                     while (3 > i) {
-                        tab[i] = i * 10 ;
+                        nt[i] = i * 10 ;
                         i++ ;
                     };
-                    write(tab[2]);
+                    write(nt[2]);
                 }
             }
         */
         String code = """
             1 init
             2 push(3)
-            3 newarray(tab, entier)
+            3 newarray(nt, entier)
             4 push(0)
             5 new(i, entier, var, 0)
             6 push(3)
@@ -1499,12 +1500,12 @@ public class InterpreterVisitorTest {
             12 load(i)
             13 push(10)
             14 mul
-            15 astore(tab)
+            15 astore(nt)
             16 push(1)
             17 inc(i)
             18 goto(6)
             19 push(2)
-            20 aload(tab)
+            20 aload(nt)
             21 write
             22 push(0)
             23 swap
@@ -1792,10 +1793,10 @@ public class InterpreterVisitorTest {
         // Given
         /*
             class C {
-                int tab[5];
+                int nt[5];
                 
                 main {
-                    int size = length(tab);
+                    int size = length(nt);
                     write(size);
                 }
             }
@@ -1803,8 +1804,8 @@ public class InterpreterVisitorTest {
         String code = """
             1 init
             2 push(5)
-            3 newarray(tab, entier)
-            4 length(tab)
+            3 newarray(nt, entier)
+            4 length(nt)
             5 new(size, entier, var, 0)
             6 load(size)
             7 write

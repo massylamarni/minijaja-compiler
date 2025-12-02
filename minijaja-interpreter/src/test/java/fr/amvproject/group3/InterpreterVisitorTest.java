@@ -226,34 +226,6 @@ public class InterpreterVisitorTest {
         assertThat(output, is("true"));
     }
 
-
-    @Ignore("This check is made at compilation, it is unnecessary here")
-    public void givenSimpleSuperiorComparaisonBool__whenInterpret__thenExceptionThrow() throws Exception {
-        // Given
-        String code = """
-            class Test {
-                boolean x = true;
-                boolean y = true;
-                main {
-                    boolean z = x > y;
-                    write(z);
-                }
-            }
-            """;
-
-        ProgramNode program = buildAstFromCode(code);
-
-        try {
-            // When
-            InterpreterVisitor interpreter = new InterpreterVisitor();
-            program.accept(interpreter);
-        } catch (RuntimeException e) {
-            // Then
-            assertThat(e.getMessage(), is("Type error: arithmetic operator requires integer operands, got Boolean and Boolean"));
-        }
-    }
-
-
     // ######################## COMPARAISON EQUALS ########################
 
     @Test
@@ -861,11 +833,11 @@ public class InterpreterVisitorTest {
         String code = """
                 class C {
                     int x = 5 ;
-                    int tab[3] ;
+                    int nt[3] ;
     
                 main {
-                    tab[0] = x ;
-                    write(tab[0]);
+                    nt[0] = x ;
+                    write(nt[0]);
                 }
                 }
                 
@@ -893,12 +865,12 @@ public class InterpreterVisitorTest {
         // Given
         String code = """
                 class C {
-                    boolean tab[2] ;
+                    boolean nt[2] ;
     
                 main {
-                    tab[0] = true ;
-                    tab[1] = false ;
-                    write(tab[0]);
+                    nt[0] = true ;
+                    nt[1] = false ;
+                    write(nt[0]);
                 }
                 }
                 
@@ -926,15 +898,15 @@ public class InterpreterVisitorTest {
         // Given
         String code = """
                 class C {
-                    int tab[3] ;
+                    int nt[3] ;
                     int i = 0 ;
     
                 main {
                     while (3 > i) {
-                        tab[i] = i * 10 ;
+                        nt[i] = i * 10 ;
                         i++ ;
                     };
-                    write(tab[2]);
+                    write(nt[2]);
                 }
                 }
                 
@@ -1121,10 +1093,10 @@ public class InterpreterVisitorTest {
         // Given
         String code = """
         class C {
-            int tab[5];
+            int nt[5];
             
         main {
-            int size = length(tab);
+            int size = length(nt);
             write(size);
         }
         }
@@ -1240,10 +1212,10 @@ public class InterpreterVisitorTest {
         // Given
         String code = """
             class Test {
-                int tab[3];
+                int nt[3];
                 main {
-                    tab[5] = 10;
-                    write(tab[5]);
+                    nt[5] = 10;
+                    write(nt[5]);
                 }
             }
             """;
@@ -1261,9 +1233,9 @@ public class InterpreterVisitorTest {
         // Given
         String code = """
             class Test {
-                int tab[3];
+                int nt[3];
                 main {
-                    int value = tab[-1];
+                    int value = nt[-1];
                     write(value);
                 }
             }
@@ -1282,11 +1254,11 @@ public class InterpreterVisitorTest {
         // Given
         String code = """
             class Test {
-                int tab[3];
+                int nt[3];
                 int i = 0;
                 main {
                     while (5 > i) {
-                        tab[i] = i * 10;
+                        nt[i] = i * 10;
                         i++;
                     };
                 }

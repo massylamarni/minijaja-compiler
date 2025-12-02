@@ -27,6 +27,8 @@ WRITE    : 'write';
 WRITELN  : 'writeln';
 VAR      : 'var';
 METH     : 'meth';
+CST      : 'cst';
+TAB      : 'tab';
 NEG      : 'neg';
 NOT      : 'not';
 ADD      : 'add';
@@ -49,6 +51,6 @@ IDENTIFICATEUR : [a-zA-Z_] [a-zA-Z_0-9]* ;
 NOMBRE         : [0-9]+ ;
 
 // --------- Espaces et commentaires ---------
-WS        : [ \t\r\n]+ -> skip ;
-COMMENT_LINE   : '//' (.)*?[\r\n] -> skip;
-COMMENT_BLOCK : '/*' .*? '*/' -> skip;
+WS        : [ \t\r\n]+ -> channel(HIDDEN);
+COMMENT_LINE   : '//' (.)*?[\r\n] -> channel(HIDDEN);
+COMMENT_BLOCK : '/*' ( . | '\r' | '\n' )*? '*/' -> channel(HIDDEN);
