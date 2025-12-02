@@ -99,6 +99,11 @@ public class App {
     jjcInterpreter.resume();
     jjcInterpreter.stepForward();
     jjcInterpreter.stepForward();
+    jjcInterpreter.restart();
+    jjcInterpreter.runWithDebug();
+    jjcInterpreter.resume();
+    jjcInterpreter.stepForward();
+    jjcInterpreter.stepForward();
     jjcInterpreter.stepForward();
     jjcInterpreter.stepBackward();
     jjcInterpreter.stepBackward();

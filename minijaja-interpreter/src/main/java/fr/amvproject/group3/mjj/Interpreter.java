@@ -52,6 +52,12 @@ public class Interpreter {
     }
   }
 
+  public void restart() {
+    ctx.softReset();
+    runtimeErrorsCollector = new RuntimeErrorsCollector(); // TODO .reset()
+    semanticErrorsCollector = new SemanticErrorsCollector();
+  }
+
   public void run() {
     runSemanticAnalysis();
     try {

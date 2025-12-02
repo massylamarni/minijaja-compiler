@@ -17,8 +17,8 @@ public class Interpreter {
   // private SemanticVisitor semanticVisitor = new SemanticVisitor();
   private Stack stack = interpreterVisitor.getStack();
   private ExecutionContext ctx = interpreterVisitor.getCtx();
-  private RuntimeErrorsCollector runtimeErrorsCollector;
-  private SemanticErrorsCollector semanticErrorsCollector;
+  private RuntimeErrorsCollector runtimeErrorsCollector = new RuntimeErrorsCollector();
+  private SemanticErrorsCollector semanticErrorsCollector = new SemanticErrorsCollector();
 
   public Stack getStack() {
     return stack;
@@ -52,6 +52,14 @@ public class Interpreter {
     }
   }
 */
+
+  public void restart() {
+    ctx.softReset();
+    interpreterVisitor.resetCurrentAddress();
+    runtimeErrorsCollector = new RuntimeErrorsCollector(); // TODO .reset()
+    semanticErrorsCollector = new SemanticErrorsCollector();
+  }
+
   public void run() {
     // runSemanticAnalysis();
     try {

@@ -76,9 +76,13 @@ public class ExecutionContext {
       }
     }
 
-    public void resetPosition() {
+    public void softReset() {
       currentNode = null;
       previousNode = null;
+      // stack.reset();
+      isPaused = false;
+      breakPointHitLine = 0;
+      previouslyHitBreakpointLine = -1;
     }
 
     /* Advanced */
