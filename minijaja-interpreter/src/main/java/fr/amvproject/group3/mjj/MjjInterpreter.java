@@ -15,7 +15,7 @@ public class MjjInterpreter {
   }
 
   public MjjInterpreter(String mjjProgram) {
-    ast = AstOperations.getAstFromString(mjjProgram);
+    ast = AstOperations.getAstFromString(mjjProgram).ast;
     interpreterVisitor = new InterpreterVisitor();
     stack = interpreterVisitor.getStack();
     ctx = interpreterVisitor.getCtx();
