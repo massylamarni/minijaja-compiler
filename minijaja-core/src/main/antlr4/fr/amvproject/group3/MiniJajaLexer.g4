@@ -49,4 +49,4 @@ NOMBRE         : [0-9]+ ;
 // --------- Espaces et commentaires ---------
 WS        : [ \t\r\n]+ -> channel(HIDDEN);
 COMMENT_LINE   : '//' (.)*?[\r\n] -> channel(HIDDEN);
-COMMENT_BLOCK : '/*' .*? '*/' -> channel(HIDDEN);
+COMMENT_BLOCK : '/*' ( . | '\r' | '\n' )*? '*/' -> channel(HIDDEN);
