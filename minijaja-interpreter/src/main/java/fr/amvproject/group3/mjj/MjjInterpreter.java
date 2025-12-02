@@ -1,14 +1,22 @@
 package fr.amvproject.group3.mjj;
 
-import fr.amvproject.group3.mjj.Stack;
+import fr.amvproject.group3.exceptions.SemanticException;
+import fr.amvproject.group3.exceptions.collectors.RuntimeErrorsCollector;
+import fr.amvproject.group3.exceptions.collectors.SemanticErrorsCollector;
+import fr.amvproject.group3.mjj.analyser.SemanticVisitor;
 import fr.amvproject.group3.mjj.ast.AstNode;
+import fr.amvproject.group3.mjj.exceptions.BreakPointHit;
+import fr.amvproject.group3.mjj.exceptions.PausePointHit;
 import fr.amvproject.group3.mjj.utils.AstOperations;
 
 public class MjjInterpreter {
   private AstNode ast;
-  private InterpreterVisitor interpreterVisitor;
-  private Stack stack;
-  private ExecutionContext ctx;
+  private InterpreterVisitor interpreterVisitor = new InterpreterVisitor();
+  private SemanticVisitor semanticVisitor = new SemanticVisitor();
+  private Stack stack = interpreterVisitor.getStack();
+  private ExecutionContext ctx = interpreterVisitor.getCtx();
+  private RuntimeErrorsCollector runtimeErrorsCollector;
+  private SemanticErrorsCollector semanticErrorsCollector;
 
   public Stack getStack() {
     return stack;
@@ -16,33 +24,59 @@ public class MjjInterpreter {
 
   public MjjInterpreter(String mjjProgram) {
     ast = AstOperations.getAstFromString(mjjProgram);
-    interpreterVisitor = new InterpreterVisitor();
-    stack = interpreterVisitor.getStack();
-    ctx = interpreterVisitor.getCtx();
+  }
+
+  public SemanticErrorsCollector getSemanticErrorsCollector() {
+    return semanticErrorsCollector;
+  }
+
+  public RuntimeErrorsCollector getRuntimeErrorsCollector() {
+    return runtimeErrorsCollector;
+  }
+
+  private void runSemanticAnalysis() {
+    try {
+      ast.accept(semanticVisitor);
+    } catch (SemanticException e) {
+      semanticErrorsCollector.add(e.getMessage(), e.getLine(), e.getColumn());
+    }
   }
 
   public void run() {
-    ast.accept(interpreterVisitor);
-    stack.print();
+    runSemanticAnalysis();
+    try {
+      ctx.disableDebug();
+      ast.accept(interpreterVisitor);
+    } catch (fr.amvproject.group3.exceptions.RuntimeException e) {
+      runtimeErrorsCollector.add(e.getMessage(), e.getLine(), e.getColumn());
+    }
   }
 
   public void runWithDebug() {
+    runSemanticAnalysis();
     try {
+      ctx.enableDebug();
       ast.accept(interpreterVisitor);
-    } catch (Exception e) {
+    } catch (BreakPointHit e) {
       System.out.println(e);
+    } catch (fr.amvproject.group3.exceptions.RuntimeException e) {
+      runtimeErrorsCollector.add(e.getMessage(), e.getLine(), e.getColumn());
     }
-    stack.print();
   }
 
   public void resume() {
+    ctx.setIsPaused(false);
+    runWithDebug();
+  }
+
+  public void stepForward() {
     try {
-      ctx.setIsPaused(false);
       ast.accept(interpreterVisitor);
-    } catch (Exception e) {
+    } catch (PausePointHit e) {
+      System.out.println(e);
+    } catch (fr.amvproject.group3.exceptions.RuntimeException e) {
       System.out.println(e);
     }
-    stack.print();
   }
 
   public void addBreakPoint(int line) {
@@ -53,12 +87,7 @@ public class MjjInterpreter {
     ctx.removeBreakpoint(line);
   }
 
-  public void stepForward() {
-    ctx.getCurrentNode().accept(interpreterVisitor);
-  }
-
   public void stepBackward() {
     ctx.back();
   }
-
 }

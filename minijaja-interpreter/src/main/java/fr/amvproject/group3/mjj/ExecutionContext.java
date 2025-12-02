@@ -5,7 +5,8 @@ import java.util.Set;
 
 import fr.amvproject.group3.mjj.Stack;
 import fr.amvproject.group3.mjj.ast.AstNode;
-import fr.amvproject.group3.mjj.exceptions.BreakpointHit;
+import fr.amvproject.group3.mjj.exceptions.BreakPointHit;
+import fr.amvproject.group3.mjj.exceptions.PausePointHit;
 
 public class ExecutionContext {
     private AstNode currentNode;
@@ -14,6 +15,7 @@ public class ExecutionContext {
     private boolean isPaused = false;
     private Set<Integer> breakpoints = new HashSet<>();
     private int breakPointHitLine = 0;
+    private boolean ignoreBreakpoints = true;
 
     public ExecutionContext(Stack stack) {
         this.stack = stack;
@@ -79,10 +81,13 @@ public class ExecutionContext {
           return;
         }
         breakPointHitLine = 0;
-        if (hasBreakpoint()) {
+        if (isPaused()) {
+          throw new PausePointHit(currentNode);
+        }
+        if (hasBreakpoint() && !ignoreBreakpoints) {
           setIsPaused(true);
           breakPointHitLine = node.getLine();
-          throw new BreakpointHit(currentNode);
+          throw new BreakPointHit(currentNode);
         }
       }
     }
@@ -90,6 +95,14 @@ public class ExecutionContext {
     public void back() {
         currentNode = previousNode;
         stack.goBackward();
+    }
+
+    public void enableDebug() {
+      ignoreBreakpoints = false;
+    }
+
+    public void disableDebug() {
+      ignoreBreakpoints = true;
     }
 
 }

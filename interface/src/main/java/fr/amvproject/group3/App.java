@@ -48,7 +48,6 @@ public class App {
     mjjInterpreter.addBreakPoint(10);
     mjjInterpreter.addBreakPoint(26);
     mjjInterpreter.runWithDebug();
-    mjjInterpreter.resume();
-    mjjInterpreter.resume();
+    mjjInterpreter.stepForward();
   }
 }
