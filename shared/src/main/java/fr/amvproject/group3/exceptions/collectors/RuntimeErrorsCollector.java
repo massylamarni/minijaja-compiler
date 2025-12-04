@@ -7,27 +7,31 @@ import java.util.List;
 import fr.amvproject.group3.exceptions.RuntimeException;
 
 public class RuntimeErrorsCollector {
-    private final List<RuntimeException> errors = new ArrayList<>();
+    private final List<RuntimeException> runtimeExceptions = new ArrayList<>();
+
+    public List<RuntimeException> getRuntimeExceptions() {
+      return runtimeExceptions;
+    }
 
     public synchronized void add(String message, int line, int column) {
-        errors.add(new RuntimeException(message, line, column));
+        runtimeExceptions.add(new RuntimeException(message, line, column));
     }
 
     public synchronized boolean hasErrors() {
-        return !errors.isEmpty();
+        return !runtimeExceptions.isEmpty();
     }
 
     public synchronized List<RuntimeException> getErrors() {
-        return Collections.unmodifiableList(errors);
+        return Collections.unmodifiableList(runtimeExceptions);
     }
 
     public synchronized void printAll() {
-        if (errors.isEmpty()) {
-            System.out.println("No runtime errors.");
+        if (runtimeExceptions.isEmpty()) {
+            System.out.println("No runtime exceptions.");
             return;
         }
-        System.err.println("=== runtime errors (" + errors.size() + ") ===");
-        for (RuntimeException e : errors) System.err.println("["+e.getLine()+":"+e.getColumn()+"]"+e.getMessage() );
+        System.err.println("Runtime exceptions (" + runtimeExceptions.size() + ")");
+        for (RuntimeException e : runtimeExceptions) System.err.println("["+e.getLine()+":"+e.getColumn()+"]"+e.getMessage() );
     }
 }
 

@@ -1,5 +1,7 @@
 package fr.amvproject.group3.mjj;
 
+import java.util.List;
+
 import fr.amvproject.group3.exceptions.SemanticException;
 import fr.amvproject.group3.exceptions.collectors.RuntimeErrorsCollector;
 import fr.amvproject.group3.exceptions.collectors.SemanticErrorsCollector;
@@ -17,11 +19,16 @@ public class Interpreter {
   private SemanticVisitor semanticVisitor = new SemanticVisitor();
   private Stack stack = interpreterVisitor.getStack();
   private ExecutionContext ctx = interpreterVisitor.getCtx();
+  private List<String> outputBuffer = interpreterVisitor.getOutputBuffer();
   private RuntimeErrorsCollector runtimeErrorsCollector = new RuntimeErrorsCollector();
   private SemanticErrorsCollector semanticErrorsCollector = new SemanticErrorsCollector();
 
   public Stack getStack() {
     return stack;
+  }
+
+  public List<String> getOutputBuffer() {
+    return outputBuffer;
   }
 
   public Interpreter(String mjjProgram) {
@@ -54,6 +61,7 @@ public class Interpreter {
 
   public void restart() {
     ctx.softReset();
+    outputBuffer.clear();
     runtimeErrorsCollector = new RuntimeErrorsCollector(); // TODO .reset()
     semanticErrorsCollector = new SemanticErrorsCollector();
   }
@@ -61,7 +69,7 @@ public class Interpreter {
   public void run() {
     runSemanticAnalysis();
     try {
-      ctx.disableDebug();
+      disableDebug();
       astWrapper.ast.accept(interpreterVisitor);
     } catch (fr.amvproject.group3.exceptions.RuntimeException e) {
       runtimeErrorsCollector.add(e.getMessage(), e.getLine(), e.getColumn());
@@ -71,7 +79,7 @@ public class Interpreter {
   public void runWithDebug() {
     runSemanticAnalysis();
     try {
-      ctx.enableDebug();
+      enableDebug();
       astWrapper.ast.accept(interpreterVisitor);
     } catch (BreakPointHit e) {
       System.out.println(e);
@@ -114,5 +122,13 @@ public class Interpreter {
 
   public void removeBreakpoint(int line) {
     ctx.removeBreakpoint(line);
+  }
+
+  public void disableDebug() {
+    ctx.disableDebug();
+  }
+
+  public void enableDebug() {
+    ctx.enableDebug();
   }
 }

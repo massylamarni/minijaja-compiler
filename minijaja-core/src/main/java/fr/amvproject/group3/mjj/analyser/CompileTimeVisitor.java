@@ -44,6 +44,7 @@ public class CompileTimeVisitor implements AstVisitor<ExpNode> {
     Object value = null;
     if (expNode instanceof IntLiteralNode intLiteralNode) value = intLiteralNode.getValue();
     else if (expNode instanceof BoolLiteralNode boolLiteralNode) value = boolLiteralNode.getValue();
+    else throw new SemanticException("Unhandled expression format", expNode.getLine(), expNode.getColumn());
     return value;
   }
 

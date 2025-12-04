@@ -1,35 +1,14 @@
 package fr.amvproject.group3;
 
 
-import fr.amvproject.group3.mjj.InterpreterVisitor;
-import fr.amvproject.group3.mjj.ast.AstBuilderVisitor;
-import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
-
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.junit.Ignore;
+import fr.amvproject.group3.mjj.Interpreter;
 import org.junit.Test;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class InterpreterVisitorTest {
-
-
-    private ProgramNode buildAstFromCode(String code) {
-        MiniJajaLexer lexer = new MiniJajaLexer(CharStreams.fromString(code));
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        MiniJajaParser parser = new MiniJajaParser(tokens);
-
-        ParseTree tree = parser.program();
-        AstBuilderVisitor builder = new AstBuilderVisitor();
-
-        return (ProgramNode) builder.visit(tree);
-    }
 
     // ######################## ARIMTHMETIC ########################
 
@@ -47,20 +26,11 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
         // When
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            program.accept(interpreter);
-        }finally {
-            System.setOut(originalOut);
-        }
-
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("5"));
 
     }
@@ -79,20 +49,11 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
         // When
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            program.accept(interpreter);
-        }finally {
-            System.setOut(originalOut);
-        }
-
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("-1"));
 
     }
@@ -112,19 +73,10 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("6"));
 
     }
@@ -144,20 +96,11 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("3"));
 
     }
@@ -178,20 +121,11 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("false"));
     }
 
@@ -209,20 +143,11 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("true"));
     }
 
@@ -242,20 +167,11 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("false"));
     }
 
@@ -273,20 +189,11 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("true"));
     }
 
@@ -305,20 +212,11 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("false"));
     }
 
@@ -336,20 +234,11 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("true"));
     }
 
@@ -374,20 +263,11 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("11"));
     }
 
@@ -406,20 +286,11 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("1"));
     }
 
@@ -438,20 +309,11 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("1"));
     }
 
@@ -479,20 +341,11 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("2"));
 
     }
@@ -512,20 +365,11 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("10"));
 
     }
@@ -546,20 +390,11 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("true"));
     }
 
@@ -577,20 +412,11 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("false"));
     }
 
@@ -609,20 +435,11 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("true"));
     }
 
@@ -640,20 +457,11 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("true"));
     }
 
@@ -671,20 +479,11 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("false"));
     }
 
@@ -701,20 +500,11 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("true"));
     }
 
@@ -737,20 +527,11 @@ public class InterpreterVisitorTest {
                 
                 """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("10"));
     }
 
@@ -774,20 +555,11 @@ public class InterpreterVisitorTest {
                 
                 """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("10"));
     }
 
@@ -810,20 +582,11 @@ public class InterpreterVisitorTest {
                 
                 """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("10"));
     }
 
@@ -843,20 +606,11 @@ public class InterpreterVisitorTest {
                 
                 """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("5"));
     }
 
@@ -876,20 +630,11 @@ public class InterpreterVisitorTest {
                 
                 """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("true"));
     }
 
@@ -912,20 +657,11 @@ public class InterpreterVisitorTest {
                 
                 """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("20"));
     }
 
@@ -946,20 +682,11 @@ public class InterpreterVisitorTest {
                 
                 """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("10"));
     }
 
@@ -980,20 +707,11 @@ public class InterpreterVisitorTest {
                 
                 """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("11"));
     }
 
@@ -1009,19 +727,9 @@ public class InterpreterVisitorTest {
         }
         """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-
-        try {
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
-
-        String output = outContent.toString().trim();
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("6"));
     }
 
@@ -1038,19 +746,9 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-
-        try {
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
-
-        String output = outContent.toString().trim();
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("10"));
     }
 
@@ -1070,22 +768,15 @@ public class InterpreterVisitorTest {
             }
             """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();
+        String output1 = interpreter.getOutputBuffer().get(0);
+        String output2 = interpreter.getOutputBuffer().get(1);
+        String output3 = interpreter.getOutputBuffer().get(2);
 
-        try {
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
-
-        String output = outContent.toString().trim();
-        System.out.println("DEBUG OUTPUT: [" + output + "]");
-
-        assertThat(output, is("01011"));
+        assertThat(output1, is("0"));
+        assertThat(output2, is("10"));
+        assertThat(output3, is("11"));
     }
 
     @Test
@@ -1102,21 +793,12 @@ public class InterpreterVisitorTest {
         }
         """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();
+        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("5"));
         assertThat(interpreter.getStack().getQueue().size(), is(0));
     }
@@ -1146,26 +828,17 @@ public class InterpreterVisitorTest {
                 
                 """;
 
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("10"));
     }
 
     // ######################## ERROR HANDLING ########################
 
-    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    @Test
     public void givenDivisionByZero__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1178,16 +851,15 @@ public class InterpreterVisitorTest {
                 }
             }
             """;
-        ProgramNode program = buildAstFromCode(code);
-
         // When
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();
+        assertTrue(interpreter.getRuntimeErrorsCollector().hasErrors());
 
         // Then - exception should be thrown
     }
 
-    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    @Test
     public void givenDivisionByZeroInExpression__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1198,16 +870,15 @@ public class InterpreterVisitorTest {
                 }
             }
             """;
-        ProgramNode program = buildAstFromCode(code);
-
         // When
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();
+        assertTrue(interpreter.getRuntimeErrorsCollector().hasErrors());
 
         // Then - exception should be thrown
     }
 
-    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    @Test
     public void givenArrayIndexOutOfBounds__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1219,16 +890,15 @@ public class InterpreterVisitorTest {
                 }
             }
             """;
-        ProgramNode program = buildAstFromCode(code);
-
         // When
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();
+        assertTrue(interpreter.getRuntimeErrorsCollector().hasErrors());
 
         // Then - exception should be thrown
     }
 
-    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    @Test
     public void givenNegativeArrayIndex__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1240,16 +910,15 @@ public class InterpreterVisitorTest {
                 }
             }
             """;
-        ProgramNode program = buildAstFromCode(code);
-
         // When
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();
+        assertTrue(interpreter.getRuntimeErrorsCollector().hasErrors());
 
         // Then - exception should be thrown
     }
 
-    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    @Test
     public void givenArrayIndexOutOfBoundsInLoop__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1264,16 +933,15 @@ public class InterpreterVisitorTest {
                 }
             }
             """;
-        ProgramNode program = buildAstFromCode(code);
-
         // When
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();
+        assertTrue(interpreter.getRuntimeErrorsCollector().hasErrors());
 
         // Then - exception should be thrown
     }
 
-    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    @Test
     public void givenInfiniteLoop__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1287,16 +955,15 @@ public class InterpreterVisitorTest {
                 }
             }
             """;
-        ProgramNode program = buildAstFromCode(code);
-
         // When
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();
+        assertTrue(interpreter.getRuntimeErrorsCollector().hasErrors());
 
         // Then - exception should be thrown after LOOP_LIMIT iterations
     }
 
-    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    @Test
     public void givenInfiniteLoopWithIncrement__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1310,16 +977,15 @@ public class InterpreterVisitorTest {
                 }
             }
             """;
-        ProgramNode program = buildAstFromCode(code);
-
         // When
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();
+        assertTrue(interpreter.getRuntimeErrorsCollector().hasErrors());
 
         // Then - exception should be thrown after LOOP_LIMIT iterations
     }
 
-    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    @Test
     public void givenInfiniteRecursion__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1333,16 +999,15 @@ public class InterpreterVisitorTest {
                 }
             }
             """;
-        ProgramNode program = buildAstFromCode(code);
-
         // When
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();
+        assertTrue(interpreter.getRuntimeErrorsCollector().hasErrors());
 
         // Then - exception should be thrown after RECURSION_LIMIT calls
     }
 
-    @Test(expected = fr.amvproject.group3.exceptions.RuntimeException.class)
+    @Test
     public void givenInfiniteRecursionWithoutCondition__whenInterpret__thenThrowRuntimeException() throws Exception {
         // Given
         String code = """
@@ -1356,11 +1021,10 @@ public class InterpreterVisitorTest {
                 }
             }
             """;
-        ProgramNode program = buildAstFromCode(code);
-
         // When
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        program.accept(interpreter);
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();
+        assertTrue(interpreter.getRuntimeErrorsCollector().hasErrors());
 
         // Then - exception should be thrown after RECURSION_LIMIT calls
     }
@@ -1383,21 +1047,12 @@ public class InterpreterVisitorTest {
                 }
             }
             """;
-        ProgramNode program = buildAstFromCode(code);
-        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-        PrintStream originalOut = System.out;
-        System.setOut(new PrintStream(outContent));
-
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            // When
-            program.accept(interpreter);
-        } finally {
-            System.setOut(originalOut);
-        }
+         Interpreter interpreter = new Interpreter(code);
+         interpreter.run();
+        
 
         // Then
-        String output = outContent.toString().trim();
+        String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("120"));
     }
 }

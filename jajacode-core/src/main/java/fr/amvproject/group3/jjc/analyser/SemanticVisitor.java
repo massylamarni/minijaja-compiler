@@ -235,7 +235,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   
   @Override
   public TypeNode visitGoto(GotoNode node) {
-    currentAddress = node.getAddress().getValue();
+    currentAddress++;
     return new TypeNode("void");
   }
   
