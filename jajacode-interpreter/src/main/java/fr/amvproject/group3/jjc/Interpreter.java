@@ -6,7 +6,7 @@ import fr.amvproject.group3.exceptions.collectors.SemanticErrorsCollector;
 import fr.amvproject.group3.exceptions.listeners.LexicalErrorsListener;
 import fr.amvproject.group3.exceptions.listeners.SyntaxicErrorsListener;
 import fr.amvproject.group3.jjc.utils.AstOperations.AstWrapper;
-// import fr.amvproject.group3.jjc.analyser.SemanticVisitor;
+import fr.amvproject.group3.jjc.analyser.SemanticVisitor;
 import fr.amvproject.group3.jjc.exceptions.BreakPointHit;
 import fr.amvproject.group3.jjc.exceptions.PausePointHit;
 import fr.amvproject.group3.jjc.utils.AstOperations;
@@ -14,7 +14,7 @@ import fr.amvproject.group3.jjc.utils.AstOperations;
 public class Interpreter {
   private AstWrapper astWrapper;
   private InterpreterVisitor interpreterVisitor = new InterpreterVisitor();
-  // private SemanticVisitor semanticVisitor = new SemanticVisitor();
+  private SemanticVisitor semanticVisitor = new SemanticVisitor();
   private Stack stack = interpreterVisitor.getStack();
   private ExecutionContext ctx = interpreterVisitor.getCtx();
   private RuntimeErrorsCollector runtimeErrorsCollector = new RuntimeErrorsCollector();
@@ -43,7 +43,7 @@ public class Interpreter {
   public RuntimeErrorsCollector getRuntimeErrorsCollector() {
     return runtimeErrorsCollector;
   }
-/*
+
   private void runSemanticAnalysis() {
     try {
       astWrapper.ast.accept(semanticVisitor);
@@ -51,7 +51,6 @@ public class Interpreter {
       semanticErrorsCollector.add(e.getMessage(), e.getLine(), e.getColumn());
     }
   }
-*/
 
   public void restart() {
     ctx.softReset();
@@ -61,7 +60,7 @@ public class Interpreter {
   }
 
   public void run() {
-    // runSemanticAnalysis();
+    runSemanticAnalysis();
     try {
       ctx.disableDebug();
       astWrapper.ast.accept(interpreterVisitor);
@@ -71,7 +70,7 @@ public class Interpreter {
   }
 
   public void runWithDebug() {
-    // runSemanticAnalysis();
+    runSemanticAnalysis();
     try {
       ctx.enableDebug();
       astWrapper.ast.accept(interpreterVisitor);
