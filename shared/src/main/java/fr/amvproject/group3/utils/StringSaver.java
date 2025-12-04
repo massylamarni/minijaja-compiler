@@ -14,7 +14,7 @@ public class StringSaver {
   public static void save(String str, String fileName, String preset) {
     Path dir;
     if (preset.equals("test")) dir = Paths.get("src", "test", "resources");
-    else dir = Paths.get("analyser-miniJaja", "target", "output");
+    else dir = Paths.get("acceptance-test", "target", "output");
 
     try {
       Files.createDirectories(dir);
