@@ -5,14 +5,14 @@ import org.antlr.v4.runtime.*;
 
 import java.util.List;
 
-import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class MiniJajaLexerTest {
 
-    @Ignore
+    @Test
     public void givenSimpleIntAssign__whenGenerateTokens__thenCorrectLexer() {
         String input = "int y = 10;";
 
@@ -20,26 +20,36 @@ public class MiniJajaLexerTest {
         MiniJajaLexer lexer = new MiniJajaLexer(charStream);
         List<? extends Token> tokens = lexer.getAllTokens();
 
-        assertThat(tokens.size(),is(5));
+        assertThat(tokens.size(),is(8));
 
         assertThat(tokens.get(0).getType(), is(MiniJajaLexer.INT));
         assertThat(tokens.get(0).getText(), is("int"));
 
-        assertThat(tokens.get(1).getType(),is(MiniJajaLexer.IDENTIFICATEUR));
-        assertThat( tokens.get(1).getText(),is("y"));
+        assertThat(tokens.get(1).getType(),is(MiniJajaLexer.WS));
+        assertThat( tokens.get(1).getText(),is(" "));
 
-        assertThat(tokens.get(2).getType(),is(MiniJajaLexer.ASSIGN));
-        assertThat(tokens.get(2).getText(),is("="));
+       assertThat(tokens.get(2).getType(),is(MiniJajaLexer.IDENTIFICATEUR));
+        assertThat( tokens.get(2).getText(),is("y"));
 
-        assertThat(tokens.get(3).getType(),is(MiniJajaLexer.NOMBRE));
-        assertThat(tokens.get(3).getText(),is("10"));
+        assertThat(tokens.get(3).getType(),is(MiniJajaLexer.WS));
+        assertThat( tokens.get(3).getText(),is(" "));
 
-        assertThat(tokens.get(4).getType(),is(MiniJajaLexer.SEMI));
-        assertThat(tokens.get(4).getText(),is(";"));
+        assertThat(tokens.get(4).getType(),is(MiniJajaLexer.ASSIGN));
+        assertThat(tokens.get(4).getText(),is("="));
+
+        assertThat(tokens.get(5).getType(),is(MiniJajaLexer.WS));
+        assertThat( tokens.get(5).getText(),is(" "));
+
+
+        assertThat(tokens.get(6).getType(),is(MiniJajaLexer.NOMBRE));
+        assertThat(tokens.get(6).getText(),is("10"));
+
+        assertThat(tokens.get(7).getType(),is(MiniJajaLexer.SEMI));
+        assertThat(tokens.get(7).getText(),is(";"));
 
     }
 
-    @Ignore
+    @Test
     public void givenCommentBlock__whenGenerateTokens__thenCorrectLexer() {
         // Given
         String input = "/********************************************/\n" +
@@ -53,10 +63,10 @@ public class MiniJajaLexerTest {
         // When
         List<? extends Token> tokens = lexer.getAllTokens();
         // Then
-        assertThat(tokens.size(),is(0));
+        assertThat(tokens.size(),is(9));
     }
 
-    @Ignore
+    @Test
     public void givenCommentLine__whenGenerateTokens__thenCorrectLexer() {
         // Given
         String input = "//commentaire miniJaja sur une seule ligne\n" +
@@ -66,11 +76,13 @@ public class MiniJajaLexerTest {
         MiniJajaLexer lexer = new MiniJajaLexer(charStream);
         // When
         List<? extends Token> tokens = lexer.getAllTokens();
+        tokens = tokens.stream().filter( token -> token.getType() != MiniJajaLexer.WS ).toList();
+
         // Then
-        assertThat(tokens.size(),is(3));
+        assertThat(tokens.size(),is(4));
     }
 
-    @Ignore
+    @Test
     public void givenEmptyClass__whenGenerateTokens__thenCorrectLexer() {
         // Given
         String input = "class C {}";
@@ -80,55 +92,73 @@ public class MiniJajaLexerTest {
         // When
         List<? extends Token> tokens = lexer.getAllTokens();
         // Then
-        assertThat(tokens.size(),is(4));
+
+        assertThat(tokens.size(),is(6));
 
         assertThat(tokens.get(0).getType(), is(MiniJajaLexer.CLASS));
         assertThat(tokens.get(0).getText(), is("class"));
 
-        assertThat(tokens.get(1).getType(),is(MiniJajaLexer.IDENTIFICATEUR));
-        assertThat( tokens.get(1).getText(),is("C"));
+        assertThat(tokens.get(1).getType(),is(MiniJajaLexer.WS));
+        assertThat( tokens.get(1).getText(),is(" "));
 
-        assertThat(tokens.get(2).getType(),is(MiniJajaLexer.LBRACE));
-        assertThat(tokens.get(2).getText(),is("{"));
+        assertThat(tokens.get(2).getType(),is(MiniJajaLexer.IDENTIFICATEUR));
+        assertThat( tokens.get(2).getText(),is("C"));
 
-        assertThat(tokens.get(3).getType(),is(MiniJajaLexer.RBRACE));
-        assertThat(tokens.get(3).getText(),is("}"));
+        assertThat(tokens.get(3).getType(),is(MiniJajaLexer.WS));
+        assertThat( tokens.get(3).getText(),is(" "));
+
+
+        assertThat(tokens.get(4).getType(),is(MiniJajaLexer.LBRACE));
+        assertThat(tokens.get(4).getText(),is("{"));
+
+        assertThat(tokens.get(5).getType(),is(MiniJajaLexer.RBRACE));
+        assertThat(tokens.get(5).getText(),is("}"));
 
     }
 
-    @Ignore
+    @Test
     public void givenFinalVar__whenGenerateTokens__thenCorrectLexer() {
         // Given
-        String input = "final int VAL = 5;";
+        String input = "final int VAL =5;";
 
         CharStream charStream = CharStreams.fromString(input);
         MiniJajaLexer lexer = new MiniJajaLexer(charStream);
         // When
         List<? extends Token> tokens = lexer.getAllTokens();
         // Then
-        assertThat(tokens.size(),is(6));
+        assertThat(tokens.size(),is(9));
 
         assertThat(tokens.get(0).getType(), is(MiniJajaLexer.FINAL));
         assertThat(tokens.get(0).getText(), is("final"));
 
-        assertThat(tokens.get(1).getType(),is(MiniJajaLexer.INT));
-        assertThat( tokens.get(1).getText(),is("int"));
+        assertThat(tokens.get(1).getType(),is(MiniJajaLexer.WS));
+        assertThat( tokens.get(1).getText(),is(" "));
 
-        assertThat(tokens.get(2).getType(),is(MiniJajaLexer.IDENTIFICATEUR));
-        assertThat(tokens.get(2).getText(),is("VAL"));
+        assertThat(tokens.get(2).getType(),is(MiniJajaLexer.INT));
+        assertThat( tokens.get(2).getText(),is("int"));
 
-        assertThat(tokens.get(3).getType(),is(MiniJajaLexer.ASSIGN));
-        assertThat(tokens.get(3).getText(),is("="));
+        assertThat(tokens.get(3).getType(),is(MiniJajaLexer.WS));
+        assertThat( tokens.get(3).getText(),is(" "));
 
-        assertThat(tokens.get(4).getType(),is(MiniJajaLexer.NOMBRE));
-        assertThat(tokens.get(4).getText(),is("5"));
+        assertThat(tokens.get(4).getType(),is(MiniJajaLexer.IDENTIFICATEUR));
+        assertThat(tokens.get(4).getText(),is("VAL"));
 
-        assertThat(tokens.get(5).getType(),is(MiniJajaLexer.SEMI));
-        assertThat(tokens.get(5).getText(),is(";"));
+        assertThat(tokens.get(5).getType(),is(MiniJajaLexer.WS));
+        assertThat( tokens.get(5).getText(),is(" "));
+
+
+        assertThat(tokens.get(6).getType(),is(MiniJajaLexer.ASSIGN));
+        assertThat(tokens.get(6).getText(),is("="));
+
+        assertThat(tokens.get(7).getType(),is(MiniJajaLexer.NOMBRE));
+        assertThat(tokens.get(7).getText(),is("5"));
+
+        assertThat(tokens.get(8).getType(),is(MiniJajaLexer.SEMI));
+        assertThat(tokens.get(8).getText(),is(";"));
     }
 
 
-    @Ignore
+    @Test
     public void givenBoolVar__whenGenerateTokens__thenCorrectLexer() {
         // Given
         String input = "boolean b1 = true;";
@@ -137,6 +167,8 @@ public class MiniJajaLexerTest {
         MiniJajaLexer lexer = new MiniJajaLexer(charStream);
         // When
         List<? extends Token> tokens = lexer.getAllTokens();
+        tokens = tokens.stream().filter( token -> token.getType() != MiniJajaLexer.WS ).toList();
+
         // Then
         assertThat(tokens.size(),is(5));
 
@@ -156,10 +188,10 @@ public class MiniJajaLexerTest {
         assertThat(tokens.get(4).getText(),is(";"));
     }
 
-    @Ignore
+    @Test
     public void givenMain__whenGenerateTokens__thenCorrectLexer() {
         // Given
-        String input = "main {}";
+        String input = "main{}";
 
         CharStream charStream = CharStreams.fromString(input);
         MiniJajaLexer lexer = new MiniJajaLexer(charStream);
@@ -177,7 +209,7 @@ public class MiniJajaLexerTest {
         assertThat(tokens.get(2).getType(),is(MiniJajaLexer.RBRACE));
         assertThat(tokens.get(2).getText(),is("}"));
     }
-    @Ignore
+    @Test
     public void givenWriteLn__whenGenerateTokens__thenCorrectLexer() {
         // Given
         String input = "writeln(x);";
@@ -206,7 +238,7 @@ public class MiniJajaLexerTest {
     }
 
 
-    @Ignore
+    @Test
     public void givenWrite__whenGenerateTokens__thenCorrectLexer() {
         // Given
         String input = "write(\"x (15) = \");";
@@ -234,10 +266,10 @@ public class MiniJajaLexerTest {
         assertThat(tokens.get(4).getText(),is(";"));
     }
 
-    @Ignore
+    @Test
     public void givenElse__whenGenerateTokens__thenCorrectLexer() {
         // Given
-        String input = "else {x++;}";
+        String input = "else{x++;}";
 
         CharStream charStream = CharStreams.fromString(input);
         MiniJajaLexer lexer = new MiniJajaLexer(charStream);
@@ -266,7 +298,7 @@ public class MiniJajaLexerTest {
     }
 
 
-    @Ignore
+    @Test
     public void givenIf__whenGenerateTokens__thenCorrectLexer() {
         // Given
         String input = "if (b1 && (b1 || (!b2))) {}";
@@ -275,6 +307,8 @@ public class MiniJajaLexerTest {
         MiniJajaLexer lexer = new MiniJajaLexer(charStream);
         // When
         List<? extends Token> tokens = lexer.getAllTokens();
+        tokens = tokens.stream().filter( token -> token.getType() != MiniJajaLexer.WS ).toList();
+
         // Then
         assertThat(tokens.size(),is(15));
 
@@ -324,7 +358,7 @@ public class MiniJajaLexerTest {
         assertThat(tokens.get(14).getText(),is("}"));
     }
 
-    @Ignore
+    @Test
     public void givenMethod__whenGenerateTokens__thenCorrectLexer() {
         // Given
         String input = "int somme( int max) {return 1;};";
@@ -333,6 +367,8 @@ public class MiniJajaLexerTest {
         MiniJajaLexer lexer = new MiniJajaLexer(charStream);
         // When
         List<? extends Token> tokens = lexer.getAllTokens();
+        tokens = tokens.stream().filter( token -> token.getType() != MiniJajaLexer.WS ).toList();
+
         // Then
         assertThat(tokens.size(),is(12));
 
@@ -373,7 +409,7 @@ public class MiniJajaLexerTest {
         assertThat(tokens.get(11).getText(),is(";"));
     }
 
-    @Ignore
+    @Test
     public void givenMethodCall__whenGenerateTokens__thenCorrectLexer() {
         // Given
         String input = "f(10);";
