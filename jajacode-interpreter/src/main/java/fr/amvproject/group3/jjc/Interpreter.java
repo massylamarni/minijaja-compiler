@@ -63,8 +63,8 @@ public class Interpreter {
     ctx.softReset();
     outputBuffer.clear();
     interpreterVisitor.resetCurrentAddress();
-    runtimeErrorsCollector = new RuntimeErrorsCollector(); // TODO .reset()
-    semanticErrorsCollector = new SemanticErrorsCollector();
+    runtimeErrorsCollector.reset();
+    semanticErrorsCollector.reset();
   }
 
   public void run() {

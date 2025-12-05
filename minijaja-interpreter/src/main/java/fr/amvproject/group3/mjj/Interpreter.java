@@ -62,8 +62,8 @@ public class Interpreter {
   public void restart() {
     ctx.softReset();
     outputBuffer.clear();
-    runtimeErrorsCollector = new RuntimeErrorsCollector(); // TODO .reset()
-    semanticErrorsCollector = new SemanticErrorsCollector();
+    runtimeErrorsCollector.reset();
+    semanticErrorsCollector.reset();
   }
 
   public void run() {

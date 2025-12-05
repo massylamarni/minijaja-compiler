@@ -33,6 +33,10 @@ public class RuntimeErrorsCollector {
         System.err.println("Runtime exceptions (" + runtimeExceptions.size() + ")");
         for (RuntimeException e : runtimeExceptions) System.err.println("["+e.getLine()+":"+e.getColumn()+"]"+e.getMessage() );
     }
+
+    public void reset() {
+        runtimeExceptions.clear();
+    }
 }
 
 

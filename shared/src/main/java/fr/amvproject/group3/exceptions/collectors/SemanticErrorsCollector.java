@@ -33,6 +33,10 @@ public class SemanticErrorsCollector {
         System.err.println("Semantic exceptions (" + semanticExceptions.size() + ")");
         for (SemanticException e : semanticExceptions) System.err.println("["+e.getLine()+":"+e.getColumn()+"]"+e.getMessage() );
     }
+
+    public void reset() {
+        semanticExceptions.clear();
+    }
 }
 
 

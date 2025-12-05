@@ -56,4 +56,8 @@ public class LexicalErrorsListener extends BaseErrorListener {
         }
         return sb.toString();
     }
+
+    public void reset() {
+        errors.clear();
+    }
 }
