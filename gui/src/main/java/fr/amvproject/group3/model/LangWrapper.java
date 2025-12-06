@@ -7,6 +7,7 @@ import fr.amvproject.group3.exceptions.PausePointHit;
 import fr.amvproject.group3.mjj.Interpreter;
 import fr.amvproject.group3.ui.memory.HeapView;
 import fr.amvproject.group3.ui.memory.StackView;
+import fr.amvproject.group3.ui.terminal.nodes.TerminalBodyView;
 import fr.amvproject.group3.ui.workbench.nodes.EditorView;
 import fr.amvproject.group3.utils.EditorUtils;
 
@@ -93,6 +94,7 @@ public class LangWrapper {
   private int jjcPreviousBreakpointHitLine = jjcBreakpointHitLine;
   public boolean isMjj = true;
   public EditorView editorView = null;
+  public TerminalBodyView terminalBodyView = null;
   public StackView stackView = null;
   public HeapView heapView = null;
 
@@ -114,6 +116,7 @@ public class LangWrapper {
       mjjBreakpointHitLine = line;
       stackView.buildMjjStack(mjjInterpreter.getStack());
       heapView.buildHeap(mjjInterpreter.getStack().getHeap());
+      terminalBodyView.addOutput("Breakpoint hit at line " + line);
       mjjInterpreter.getStack().reset();
       mjjInterpreter.getStack().getHeap().reset();
     } else {

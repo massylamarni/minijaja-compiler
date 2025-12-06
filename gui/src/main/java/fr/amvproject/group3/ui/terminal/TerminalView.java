@@ -1,7 +1,10 @@
 package fr.amvproject.group3.ui.terminal;
 
+import fr.amvproject.group3.model.LangWrapper;
 import fr.amvproject.group3.ui.common.ActionButtonView;
 import fr.amvproject.group3.ui.icons.IconType;
+import fr.amvproject.group3.ui.terminal.nodes.TerminalBodyView;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -9,7 +12,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 public class TerminalView extends VBox {
-  public TerminalView() {
+  public TerminalView(LangWrapper langWrapper) {
     this.getStyleClass().add("terminal");
 
     HBox terminalTitleBar = new HBox();
@@ -29,11 +32,9 @@ public class TerminalView extends VBox {
     HBox.setHgrow(terminalSpacer, Priority.ALWAYS);
     terminalTitleBar.getChildren().addAll(terminalSpacer, terminalActionBar);
 
-    Region terminalBody = new Region();
-    terminalBody.getStyleClass().add("terminal-body");
-    VBox.setVgrow(terminalBody, Priority.ALWAYS);
+    ScrollPane terminalBodyScroll = new ScrollPane(new TerminalBodyView(langWrapper));
 
-    this.getChildren().addAll(terminalTitleBar, terminalBody);
+    this.getChildren().addAll(terminalTitleBar, terminalBodyScroll);
   }
 
   private SplitPane findParentSplitPane() {

@@ -17,7 +17,7 @@ public class WorkbenchView extends VBox {
 
     WorkbenchTitleBar workbenchTitleBar = new WorkbenchTitleBar(langWrapper);
     EditorView editorView = new EditorView(langWrapper);
-    TerminalView terminalView = new TerminalView();
+    TerminalView terminalView = new TerminalView(langWrapper);
 
     SplitPane editorTerminalSplit = new SplitPane();
     editorTerminalSplit.setOrientation(Orientation.VERTICAL);

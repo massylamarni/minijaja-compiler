@@ -16,6 +16,7 @@ public class Settings {
   public static final String TERMINAL_HEIGHT = "300px";
   public static final String SM_PADDING = "7px";
   public static final String MD_PADDING = "10px";
+  public static final String LG_PADDING = "15px";
   public static final String SM_FONT_SIZE = "12px";
   public static final String ACTION_BUTTON_BORDER_RADIUS = "5px";
 

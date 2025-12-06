@@ -22,6 +22,7 @@ public class CssManager {
         .replace("${TERMINAL_HEIGHT}", Settings.TERMINAL_HEIGHT)
         .replace("${SM_PADDING}", Settings.SM_PADDING)
         .replace("${MD_PADDING}", Settings.MD_PADDING)
+        .replace("${LG_PADDING}", Settings.LG_PADDING)
         .replace("${SM_FONT_SIZE}", Settings.SM_FONT_SIZE)
         .replace("${ACTION_BUTTON_BORDER_RADIUS}", Settings.ACTION_BUTTON_BORDER_RADIUS)
         .replace("${SH_BROWN}", Settings.SH_BROWN)

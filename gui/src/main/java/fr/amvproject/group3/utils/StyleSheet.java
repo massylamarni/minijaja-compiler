@@ -20,6 +20,7 @@ public class StyleSheet {
     .ide-status-bar {
       -fx-background-color: ${BACKGROUND_DARKER};
       -fx-pref-height: ${STATUS_BAR_HEIGHT};
+      -fx-min-height: ${STATUS_BAR_HEIGHT};
       -fx-border-color: ${BORDER_COLOR};
       -fx-border-width: 1px 1px 1px 1px;
     }
@@ -39,18 +40,8 @@ public class StyleSheet {
 
     .left-sidebar-body {
       -fx-padding: ${MD_PADDING};
-      -fx-background-color: transparent;
-    }
-
-    .left-sidebar-body > .viewport {
-      -fx-background-color: transparent;
-    }
-
-    .left-sidebar-body .scroll-bar {
-      -fx-background-color: transparent;
-    }
-    .left-sidebar-body .thumb {
-      -fx-background-color: ${ICON_COLOR};
+      -fx-border-color: ${BORDER_COLOR};
+      -fx-border-width: 0 0 1px 0;
     }
 
     .stack-item, .heap-item {
@@ -104,6 +95,22 @@ public class StyleSheet {
       -fx-pref-height: ${SIDEBAR_HEIGHT};
     }
 
+    .terminal-body {
+      -fx-padding: 0 ${LG_PADDING} ${SM_PADDING} ${LG_PADDING};
+    }
+
+    .terminal-body .terminal-user-output {
+      -fx-text-fill: ${SH_GREEN};
+    }
+
+    .terminal-body .terminal-path-output {
+      -fx-text-fill: ${SH_DARK_BLUE};
+    }
+
+    .terminal-body .terminal-output {
+      -fx-text-fill: ${ICON_COLOR};
+    }
+
     .action-bar {
       -fx-spacing: 7px;
       -fx-alignment: center-right;
@@ -141,6 +148,21 @@ public class StyleSheet {
     .split-pane .split-pane-divider {
       -fx-background-color: transparent;
       -fx-padding: 0;
+    }
+
+    .scroll-pane {
+      -fx-background-color: transparent;
+    }
+
+    .scroll-pane > .viewport {
+      -fx-background-color: transparent;
+    }
+
+    .scroll-pane .scroll-bar {
+      -fx-background-color: transparent;
+    }
+    .scroll-pane .thumb {
+      -fx-background-color: ${ICON_COLOR};
     }
 
     /* Highlightings */

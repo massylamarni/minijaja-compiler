@@ -16,6 +16,7 @@
 .ide-status-bar {
   -fx-background-color: #181818;
   -fx-pref-height: 22px;
+  -fx-min-height: 22px;
   -fx-border-color: #2b2b2b;
   -fx-border-width: 1px 1px 1px 1px;
 }
@@ -35,18 +36,8 @@
 
 .left-sidebar-body {
   -fx-padding: 10px;
-  -fx-background-color: transparent;
-}
-
-.left-sidebar-body > .viewport {
-  -fx-background-color: transparent;
-}
-
-.left-sidebar-body .scroll-bar {
-  -fx-background-color: transparent;
-}
-.left-sidebar-body .thumb {
-  -fx-background-color: #7d8590;
+  -fx-border-color: #2b2b2b;
+  -fx-border-width: 0 0 1px 0;
 }
 
 .stack-item, .heap-item {
@@ -100,6 +91,22 @@
   -fx-pref-height: 35px;
 }
 
+.terminal-body {
+  -fx-padding: 0 15px 7px 15px;
+}
+
+.terminal-body .terminal-user-output {
+  -fx-text-fill: #4ec9b0;
+}
+
+.terminal-body .terminal-path-output {
+  -fx-text-fill: #569cd6;
+}
+
+.terminal-body .terminal-output {
+  -fx-text-fill: #7d8590;
+}
+
 .action-bar {
   -fx-spacing: 7px;
   -fx-alignment: center-right;
@@ -137,6 +144,21 @@
 .split-pane .split-pane-divider {
   -fx-background-color: transparent;
   -fx-padding: 0;
+}
+
+.scroll-pane {
+  -fx-background-color: transparent;
+}
+
+.scroll-pane > .viewport {
+  -fx-background-color: transparent;
+}
+
+.scroll-pane .scroll-bar {
+  -fx-background-color: transparent;
+}
+.scroll-pane .thumb {
+  -fx-background-color: #7d8590;
 }
 
 /* Highlightings */
