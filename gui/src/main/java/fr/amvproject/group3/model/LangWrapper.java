@@ -5,38 +5,58 @@ import java.util.Set;
 import fr.amvproject.group3.exceptions.BreakPointHit;
 import fr.amvproject.group3.exceptions.PausePointHit;
 import fr.amvproject.group3.mjj.Interpreter;
+import fr.amvproject.group3.ui.memory.HeapView;
+import fr.amvproject.group3.ui.memory.StackView;
 import fr.amvproject.group3.ui.workbench.nodes.EditorView;
 import fr.amvproject.group3.utils.EditorUtils;
 
 public class LangWrapper {
   private String mjjProgram = """
-        /****************************************/
-        /* Programme MiniJaja			*/
-        /* Validation des appels recursifs	*/
-        /****************************************/
+        /********************************************/
+        /* Programme MiniJaja                       */
+        /* Validation de toutes les instructions	*/
+        /* sans tableau                             */
+        /********************************************/
 
-        class factorielle{ 
-            int x=7;
-            
-            void pause(){
-          int i;};
-            
-            int fact(int x){
-                int retour;
-                if (x==0) {
-                    retour=1;
-                }else{
-                    retour=x*fact(x-1);
-                };
-                return retour;
-            };
-            
-            main {
-                int res=fact(x);
-                write ("x(5040) = ");
-            writeln(res);
-                pause(); // res = 5040
-            }
+        class C {
+          int x;
+          int y = 10;
+          final int VAL = 5;
+          boolean b1 = true;
+          boolean b2 = false;
+
+          int  somme( int max) {
+            int t = VAL;
+
+          while ( max > 0) { 
+            t += max;
+            max = max - 1;
+          };
+          return t;
+          };
+
+          boolean test(int a, int b) {
+          return a > b;
+          };
+
+          void f(int z){
+            x = y * z;
+          x = x / z;
+          x++;
+          };
+          
+          main {
+          if (test(y,9) && (b1 || (!b2))) {
+            x = somme(2); // x = 8
+            write("x (8) = ");
+            writeln(x);
+          } else {
+            x++;
+          };
+          f(10); // x = 11;
+          write("x (11) = ");
+          writeln(x);
+          }
         }
       """;
   private String jjcProgram = """
@@ -73,6 +93,8 @@ public class LangWrapper {
   private int jjcPreviousBreakpointHitLine = jjcBreakpointHitLine;
   public boolean isMjj = true;
   public EditorView editorView = null;
+  public StackView stackView = null;
+  public HeapView heapView = null;
 
   public String getProgram() {
     return isMjj ? mjjProgram : jjcProgram;
@@ -80,9 +102,9 @@ public class LangWrapper {
 
   public void updateProgram(String program) {
     if (isMjj) {
-      mjjProgram = program;
+      mjjInterpreter.setProgram(program);
     } else {
-      jjcProgram = program;
+      jjcInterpreter.setProgram(program);
     }
   }
 
@@ -90,9 +112,17 @@ public class LangWrapper {
     if (isMjj) {
       mjjPreviousBreakpointHitLine = mjjBreakpointHitLine;
       mjjBreakpointHitLine = line;
+      stackView.buildMjjStack(mjjInterpreter.getStack());
+      heapView.buildHeap(mjjInterpreter.getStack().getHeap());
+      mjjInterpreter.getStack().reset();
+      mjjInterpreter.getStack().getHeap().reset();
     } else {
       jjcPreviousBreakpointHitLine = jjcBreakpointHitLine;
       jjcBreakpointHitLine = line;
+      stackView.buildJjcStack(jjcInterpreter.getStack());
+      heapView.buildHeap(jjcInterpreter.getStack().getHeap());
+      jjcInterpreter.getStack().reset();
+      jjcInterpreter.getStack().getHeap().reset();
     }
   }
 

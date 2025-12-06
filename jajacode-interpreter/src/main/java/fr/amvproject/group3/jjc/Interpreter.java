@@ -26,8 +26,12 @@ public class Interpreter {
     return stack;
   }
 
-  public Interpreter(String mjjProgram) {
-    astWrapper = AstOperations.getAstFromString(mjjProgram);
+  public Interpreter(String program) {
+    setProgram(program);
+  }
+
+  public void setProgram(String program) {
+    astWrapper = AstOperations.getAstFromString(program);
   }
 
   public LexicalErrorsListener getLexicalErrorsListener() {

@@ -1,52 +1,35 @@
 package fr.amvproject.group3.ui.memory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fr.amvproject.group3.Heap;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import fr.amvproject.group3.model.LangWrapper;
+import fr.amvproject.group3.nodes.ArrayInfoNode;
+import fr.amvproject.group3.nodes.PointerNode;
+import fr.amvproject.group3.ui.memory.nodes.HeapItemView;
 import javafx.scene.layout.VBox;
 
 public class HeapView extends VBox {
-  private final Heap heap;
+  public HeapView(LangWrapper langWrapper) {
+    langWrapper.heapView = this;
 
-  public HeapView(Heap heap) {
-    this.heap = heap;
-    refresh();
+    this.getStyleClass().add("heap-view");
   }
 
-  public void refresh() {
-    getChildren().clear();
+  public void buildHeap(Heap heap) {
+    this.getChildren().clear();
 
-    getChildren().add(new Label("===== HEAP ====="));
-
-    if (heap.getQueue().isEmpty()) {
-      getChildren().add(new Label("[Empty Heap]"));
-      return;
-    }
-
-    int address = 0;
-    int blockStartAddress = 1;
-    int blockSize;
-
+    List<HeapItemView> heapItemViews = new ArrayList<>();
     for (Object value : heap.getQueue()) {
-      HBox row = new HBox(6);
-
-      Label marker;
-      if (address == blockStartAddress - 1) {
-        marker = new Label("#");
-        blockSize = (int) value;
-        blockStartAddress += blockSize + 1;
+      if (value instanceof ArrayInfoNode arrayInfoNode) {
+        heapItemViews.add(new HeapItemView("#", String.valueOf(arrayInfoNode.getSize())));
+      } else if (value instanceof PointerNode pointerNode) {
+        heapItemViews.add(new HeapItemView("*", String.valueOf(pointerNode.getAddress())));
       } else {
-        marker = new Label("@");
+        heapItemViews.add(new HeapItemView("@", String.valueOf(value)));
       }
-
-      row.getChildren().add(marker);
-      row.getChildren().add(new Label(address + ": " + value));
-
-      getChildren().add(row);
-
-      address++;
     }
-
-    getChildren().add(new Label("======================"));
+    this.getChildren().addAll(heapItemViews);
   }
 }

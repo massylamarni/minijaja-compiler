@@ -255,6 +255,10 @@ public class Stack extends StackManager {
     return null;
   }
 
+  public void reset() {
+    queue.clear();
+  }
+
   /* Print stack */
 
   public String print() {

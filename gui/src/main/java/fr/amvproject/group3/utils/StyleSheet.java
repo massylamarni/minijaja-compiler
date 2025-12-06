@@ -39,21 +39,31 @@ public class StyleSheet {
 
     .left-sidebar-body {
       -fx-padding: ${MD_PADDING};
+      -fx-background-color: transparent;
     }
 
-    .stack-item {
+    .left-sidebar-body > .viewport {
+      -fx-background-color: transparent;
+    }
+
+    .left-sidebar-body .scroll-bar {
+      -fx-background-color: transparent;
+    }
+    .left-sidebar-body .thumb {
+      -fx-background-color: ${ICON_COLOR};
+    }
+
+    .stack-item, .heap-item {
       -fx-spacing: ${SM_PADDING};
     }
 
-    .stack-item-key {
+    .stack-item-key, .heap-item-key {
       -fx-text-fill: ${PURPLE_TEXT_COLOR};
-      -fx-font-family: "Droid Sans Mono";
       -fx-font-size: ${SM_FONT_SIZE};
     }
 
-    .stack-item-value {
+    .stack-item-value, .heap-item-value {
       -fx-text-fill: ${ICON_COLOR};
-      -fx-font-family: "Droid Sans Mono";
       -fx-font-size: ${SM_FONT_SIZE};
     }
 

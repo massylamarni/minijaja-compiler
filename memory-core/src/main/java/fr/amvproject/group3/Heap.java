@@ -83,8 +83,6 @@ public class Heap {
     return getArrayInfoNode(pointerNode).getSize();
   }
 
-  // --- Getters for inspection ---
-
   public List<Object> getQueue() {
     return queue;
   }
@@ -99,6 +97,10 @@ public class Heap {
       reverseQueue.add(queue.get(i));
     }
     return reverseQueue;
+  }
+
+  public void reset() {
+    queue.clear();
   }
 
   /* Print Heap */
