@@ -1,7 +1,7 @@
 package fr.amvproject.group3;
 
-public class Main {
+public class MainFx {
     public static void main(String[] args) {
-        TextEdit.main(args);
+        AppFx.main(args);
     }
 }

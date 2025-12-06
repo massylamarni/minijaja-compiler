@@ -1,0 +1,67 @@
+package fr.amvproject.group3.ui.ide.nodes;
+
+import java.io.File;
+
+import fr.amvproject.group3.model.LangWrapper;
+import javafx.geometry.Pos;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+
+public class IdeTitleBarView extends HBox {
+  public IdeTitleBarView(Stage stage, LangWrapper langWrapper) {
+    this.getStyleClass().add("ide-title-bar");
+    this.setAlignment(Pos.CENTER_LEFT);
+
+    Menu menuFile = new Menu("File");
+    MenuItem newItem = new MenuItem("New");
+    MenuItem openItem = new MenuItem("Open...");
+    MenuItem saveItem = new MenuItem("Save...");
+    MenuItem exitItem = new MenuItem("Exit");
+    menuFile.getItems().addAll(newItem, openItem, saveItem, new SeparatorMenuItem(), exitItem);
+
+    Menu menuRun = new Menu("Run");
+    MenuItem runNormallyItem = new MenuItem("Run normally");
+    MenuItem runWithDebugItem = new MenuItem("Run with debug");
+    MenuItem compileItem = new MenuItem("Compile");
+    MenuItem removeAllBreakpointsItem = new MenuItem("Remove all breakpoints");
+    menuRun.getItems().addAll(runNormallyItem, runWithDebugItem, compileItem, removeAllBreakpointsItem);
+
+    MenuBar menuBar = new MenuBar();
+    menuBar.getMenus().addAll(menuFile, menuRun);
+
+    /* Handlers menuFile */
+
+    newItem.setOnAction(e -> {
+      System.out.println("New File");
+    });
+
+    openItem.setOnAction(e -> {
+      FileChooser fileChooser = new FileChooser();
+      fileChooser.setTitle("Open File");
+      File file = fileChooser.showOpenDialog(stage);
+      if (file != null) {
+        System.out.println("Opened: " + file.getAbsolutePath());
+      }
+    });
+
+    saveItem.setOnAction(e -> {
+      FileChooser fileChooser = new FileChooser();
+      fileChooser.setTitle("Save File");
+      File file = fileChooser.showSaveDialog(stage);
+      if (file != null) {
+        System.out.println("Saved: " + file.getAbsolutePath());
+      }
+    });
+
+    exitItem.setOnAction(e -> stage.close());
+
+    /* Handlers menuRun */
+
+    this.getChildren().add(menuBar);
+  }
+}

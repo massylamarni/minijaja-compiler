@@ -3,9 +3,9 @@ package fr.amvproject.group3.jjc;
 import java.util.HashSet;
 import java.util.Set;
 
+import fr.amvproject.group3.exceptions.BreakPointHit;
+import fr.amvproject.group3.exceptions.PausePointHit;
 import fr.amvproject.group3.jjc.ast.AstNode;
-import fr.amvproject.group3.jjc.exceptions.BreakPointHit;
-import fr.amvproject.group3.jjc.exceptions.PausePointHit;
 
 public class ExecutionContext {
     private AstNode currentNode;
@@ -98,12 +98,12 @@ public class ExecutionContext {
         breakPointHitLine = 0;
         if (isPaused()) {
           breakPointHitLine = node.getLine();
-          throw new PausePointHit(currentNode);
+          throw new PausePointHit(currentNode.getClass().getName(), currentNode.getLine(), currentNode.getColumn());
         }
         if (hasBreakpoint() && !ignoreBreakpoints && node.getLine() != previouslyHitBreakpointLine) {
           setIsPaused(true);
           breakPointHitLine = node.getLine();
-          throw new BreakPointHit(currentNode);
+          throw new BreakPointHit(currentNode.getClass().getName(), currentNode.getLine(), currentNode.getColumn());
         }
       }
     }

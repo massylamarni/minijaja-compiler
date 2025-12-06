@@ -1,4 +1,4 @@
-package fr.amvproject.group3.ui;
+package fr.amvproject.group3.ui.memory;
 
 import fr.amvproject.group3.Heap;
 import javafx.scene.control.Label;

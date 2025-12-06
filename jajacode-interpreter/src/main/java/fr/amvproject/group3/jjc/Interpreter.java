@@ -1,5 +1,9 @@
 package fr.amvproject.group3.jjc;
 
+import java.util.Set;
+
+import fr.amvproject.group3.exceptions.BreakPointHit;
+import fr.amvproject.group3.exceptions.PausePointHit;
 import fr.amvproject.group3.exceptions.SemanticException;
 import fr.amvproject.group3.exceptions.collectors.RuntimeErrorsCollector;
 import fr.amvproject.group3.exceptions.collectors.SemanticErrorsCollector;
@@ -7,8 +11,6 @@ import fr.amvproject.group3.exceptions.listeners.LexicalErrorsListener;
 import fr.amvproject.group3.exceptions.listeners.SyntaxicErrorsListener;
 import fr.amvproject.group3.jjc.utils.AstOperations.AstWrapper;
 import fr.amvproject.group3.jjc.analyser.SemanticVisitor;
-import fr.amvproject.group3.jjc.exceptions.BreakPointHit;
-import fr.amvproject.group3.jjc.exceptions.PausePointHit;
 import fr.amvproject.group3.jjc.utils.AstOperations;
 
 public class Interpreter {
@@ -75,7 +77,7 @@ public class Interpreter {
       ctx.enableDebug();
       astWrapper.ast.accept(interpreterVisitor);
     } catch (BreakPointHit e) {
-      System.out.println(e);
+      throw e;
     } catch (fr.amvproject.group3.exceptions.RuntimeException e) {
       runtimeErrorsCollector.add(e.getMessage(), e.getLine(), e.getColumn());
     }
@@ -92,9 +94,9 @@ public class Interpreter {
       ctx.ignoreNextBreakpoint();
       astWrapper.ast.accept(interpreterVisitor);
     } catch (PausePointHit e) {
-      System.out.println(e);
+      throw e;
     } catch (fr.amvproject.group3.exceptions.RuntimeException e) {
-      System.out.println(e);
+      runtimeErrorsCollector.add(e.getMessage(), e.getLine(), e.getColumn());
     }
   }
 
@@ -104,10 +106,14 @@ public class Interpreter {
       interpreterVisitor.resetCurrentAddress();
       astWrapper.ast.accept(interpreterVisitor);
     } catch (PausePointHit e) {
-      System.out.println(e);
+      throw e;
     } catch (fr.amvproject.group3.exceptions.RuntimeException e) {
-      System.out.println(e);
+      runtimeErrorsCollector.add(e.getMessage(), e.getLine(), e.getColumn());
     }
+  }
+
+  public Set<Integer> getBreakpoints() {
+    return ctx.getBreakpoints();
   }
 
   public void addBreakPoint(int line) {
