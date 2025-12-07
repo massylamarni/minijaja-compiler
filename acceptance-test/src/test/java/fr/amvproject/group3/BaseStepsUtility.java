@@ -15,6 +15,7 @@ public class BaseStepsUtility {
     public String currentFileContent;
     public ProgramNode currentCompileCode;
     public String currentFilename;
+    public Exception lastException;
 
     public ByteArrayOutputStream outputCaptor;
     public PrintStream originalOut;
