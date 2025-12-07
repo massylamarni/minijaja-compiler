@@ -1,0 +1,12 @@
+class C {
+  int x = 2;
+
+  boolean f() {
+    return 42; // retourne un int alors que la signature attend boolean
+  };
+
+  main {
+    boolean b = f();
+    
+  }
+}

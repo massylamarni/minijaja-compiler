@@ -1,0 +1,7 @@
+class C {
+  int x = 0;
+  main {
+    write("Hello")
+    // manque le point-virgule ci-dessus -> erreur syntaxe
+  }
+}

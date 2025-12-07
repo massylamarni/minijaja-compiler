@@ -1,0 +1,5 @@
+class C {
+  main {
+    y = 1; // y n'est pas déclaré -> erreur
+  }
+}
