@@ -1,18 +1,13 @@
 package fr.amvproject.group3;
 
-import fr.amvproject.group3.jjc.InterpreterVisitor;
+import fr.amvproject.group3.jjc.ast.PrintVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.program.ProgramNode;
 import fr.amvproject.group3.mjj.ast.AstNode;
 import fr.amvproject.group3.mjj.utils.AstOperations;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 import static fr.amvproject.group3.mjj.utils.NodeOperations.MockToken;
 
 public class StepDefinitionCompilator {
@@ -33,17 +28,25 @@ public class StepDefinitionCompilator {
 
     @And("Execution du programme compilé")
     public void executionDuProgrammeCompilé() {
-        baseStepsUtility.originalOut = System.out;
-        baseStepsUtility.outputCaptor = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(baseStepsUtility.outputCaptor));
-        // When
-        InterpreterVisitor interpreter = new InterpreterVisitor();
+        // Generate the textual JajaCode representation of the compiled ProgramNode
+        baseStepsUtility.lastException = null;
         try {
-            baseStepsUtility.currentCompileCode.accept(interpreter);
-        }finally {
-            System.setOut(baseStepsUtility.originalOut);
+            PrintVisitor printer = new PrintVisitor();
+            String jajacode = baseStepsUtility.currentCompileCode.accept(printer);
+            baseStepsUtility.executionResultJajacode = (jajacode == null) ? "" : jajacode.trim();
+        } catch (Exception e) {
+            baseStepsUtility.lastException = e;
+            baseStepsUtility.executionResultJajacode = "";
         }
-        baseStepsUtility.executionResultJajacode = baseStepsUtility.outputCaptor.toString().trim();
+        // Synchronize state with JajaCode-specific test utility so JCC steps can read the result
+        try {
+            BaseStepsUtilityJcc jjc = BaseStepsUtilityJcc.getInstance();
+            jjc.executionResult = baseStepsUtility.executionResultJajacode;
+            jjc.lastException = baseStepsUtility.lastException;
+            jjc.currentCompileCode = baseStepsUtility.currentCompileCode;
+        } catch (Exception ignore) {
+            // defensive: don't let test-state sync break the step
+        }
     }
 
 
