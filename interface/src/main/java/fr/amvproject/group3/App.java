@@ -39,6 +39,26 @@ public class App {
     // SymbolTable symbolTable = memoryVisitor.getSymbolTable();
     // symbolTable.print();
 
+    /* Compilation */
+
+    String programToCompile = """
+        class C {
+                    int nt[3] ;
+                    int i = 0 ;
+    
+                main {
+                    while (3 > i) {
+                        nt[i] = i * 10 ;
+                        i++ ;
+                    };
+                    write(nt[2]);
+                }
+            }
+        """;
+    Compiler compiler = new Compiler(programToCompile);
+    compiler.compile();
+    System.out.println(compiler.getCompiledProgram());
+
     /* Interpretation */
 
     String programPath = "minijaja-core/src/test/resources/fact.mjj";
