@@ -3,8 +3,11 @@ package fr.amvproject.group3.ui.workbench.nodes;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 
-import fr.amvproject.group3.model.InteractiveWrapper;
+import fr.amvproject.group3.model.wrappers.InteractiveWrapper;
+import fr.amvproject.group3.settings.DefaultPrograms;
 import fr.amvproject.group3.ui.icons.SvgIcons;
+import fr.amvproject.group3.utils.Debouncer;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
@@ -18,17 +21,23 @@ import javafx.scene.shape.SVGPath;
 public class EditorView extends CodeArea {
   public EditorView(InteractiveWrapper langWrapper) {
     langWrapper.getViewsWrapper().setEditorView(this);
-    
+
     this.getStyleClass().add("editor");
     VBox.setVgrow(this, Priority.ALWAYS);
     HBox.setHgrow(this, Priority.ALWAYS);
 
     this.replaceText(langWrapper.getProgram());
-    this.setStyleSpans(0, SyntaxHighlighting.highlightText(langWrapper.getProgram(), true));
+    setSyntaxHighlighting(langWrapper.getProgram());
     this.setParagraphGraphicFactory(LineNumberFactory.get(this));
+
+    Debouncer debouncer = new Debouncer();
     this.textProperty().addListener((obs, oldText, newText) -> {
-      this.setStyleSpans(0, SyntaxHighlighting.highlightText(newText, true));
-      langWrapper.updateProgram(newText);
+      setSyntaxHighlighting(newText);
+      debouncer.debounce(() -> {
+        Platform.runLater(() -> {
+          langWrapper.updateProgram(newText);
+        });
+      }, 1000);
     });
 
     setBreakpointHandler(this, langWrapper);
@@ -64,5 +73,13 @@ public class EditorView extends CodeArea {
       h.getChildren().addAll(breakpointView, lineNumberView);
       return h;
     });
+  }
+
+  public void setSyntaxHighlighting(String program) {
+    this.setStyleSpans(0, SyntaxHighlighting.highlightText(program, true));
+  }
+
+  public void reset(boolean isMjj) {
+    this.replaceText(isMjj ? DefaultPrograms.newMjjProgram : DefaultPrograms.newJjcProgram);
   }
 }

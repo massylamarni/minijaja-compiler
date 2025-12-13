@@ -2,7 +2,7 @@ package fr.amvproject.group3.ui.memory;
 
 import fr.amvproject.group3.mjj.Quad;
 import fr.amvproject.group3.mjj.Stack;
-import fr.amvproject.group3.model.InteractiveWrapper;
+import fr.amvproject.group3.model.wrappers.InteractiveWrapper;
 import fr.amvproject.group3.nodes.PointerNode;
 import fr.amvproject.group3.ui.memory.nodes.StackItemView;
 import javafx.scene.layout.VBox;
@@ -15,7 +15,7 @@ public class StackView extends VBox {
   }
 
   public void buildMjjStack(Stack stack) {
-    this.getChildren().clear();
+    reset();
     for (Quad quad : stack.getQueue()) {
       if (quad.getObj().isTab()) this.getChildren().add(new StackItemView(quad.getIdent().getName(), '@' + String.valueOf(((PointerNode) quad.getValue()).getAddress())));
       else if (!quad.getObj().isMeth()) this.getChildren().add(new StackItemView(quad.getIdent().getName(), String.valueOf(quad.getValue())));
@@ -23,9 +23,13 @@ public class StackView extends VBox {
   }
 
   public void buildJjcStack(fr.amvproject.group3.jjc.Stack stack) {
-    this.getChildren().clear();
+    reset();
     for (fr.amvproject.group3.jjc.Quad quad : stack.getQueue()) {
       if (!quad.getObj().isMeth()) this.getChildren().add(new StackItemView(quad.getIdent().getName(), String.valueOf(quad.getValue())));
     }
+  }
+
+  public void reset() {
+    this.getChildren().clear();
   }
 }

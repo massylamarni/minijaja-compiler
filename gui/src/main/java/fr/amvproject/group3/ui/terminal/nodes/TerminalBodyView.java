@@ -1,6 +1,6 @@
 package fr.amvproject.group3.ui.terminal.nodes;
 
-import fr.amvproject.group3.model.InteractiveWrapper;
+import fr.amvproject.group3.model.wrappers.InteractiveWrapper;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;

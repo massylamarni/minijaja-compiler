@@ -1,6 +1,6 @@
 package fr.amvproject.group3.ui.ide;
 
-import fr.amvproject.group3.model.InteractiveWrapper;
+import fr.amvproject.group3.model.wrappers.InteractiveWrapper;
 import fr.amvproject.group3.ui.ide.nodes.IdeStatusBarView;
 import fr.amvproject.group3.ui.ide.nodes.IdeTitleBarView;
 import fr.amvproject.group3.ui.ide.nodes.LeftSideBarView;

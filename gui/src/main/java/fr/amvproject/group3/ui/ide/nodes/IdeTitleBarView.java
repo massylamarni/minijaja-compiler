@@ -1,15 +1,13 @@
 package fr.amvproject.group3.ui.ide.nodes;
 
-import java.io.File;
-
-import fr.amvproject.group3.model.InteractiveWrapper;
+import fr.amvproject.group3.model.wrappers.InteractiveWrapper;
+import fr.amvproject.group3.utils.FileManager;
 import javafx.geometry.Pos;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.HBox;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class IdeTitleBarView extends HBox {
@@ -37,25 +35,16 @@ public class IdeTitleBarView extends HBox {
     /* Handlers menuFile */
 
     newItem.setOnAction(e -> {
-      System.out.println("New File");
+      langWrapper.reset();
     });
 
     openItem.setOnAction(e -> {
-      FileChooser fileChooser = new FileChooser();
-      fileChooser.setTitle("Open File");
-      File file = fileChooser.showOpenDialog(stage);
-      if (file != null) {
-        System.out.println("Opened: " + file.getAbsolutePath());
-      }
+      FileManager.loadFile(langWrapper.getViewsWrapper().getEditorView(), stage);
+      langWrapper.getViewsWrapper().getEditorView().setSyntaxHighlighting(getAccessibleHelp());
     });
 
     saveItem.setOnAction(e -> {
-      FileChooser fileChooser = new FileChooser();
-      fileChooser.setTitle("Save File");
-      File file = fileChooser.showSaveDialog(stage);
-      if (file != null) {
-        System.out.println("Saved: " + file.getAbsolutePath());
-      }
+      FileManager.saveFile(langWrapper.getViewsWrapper().getEditorView(), stage);
     });
 
     exitItem.setOnAction(e -> stage.close());

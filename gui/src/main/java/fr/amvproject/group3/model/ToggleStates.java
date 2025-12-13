@@ -47,7 +47,7 @@ public class ToggleStates {
     terminalView.closeTerminal();
   }
 
-  public void closeDebugToolBar() {
+  public void hideDebugToolBar() {
     isDebugOn = false;
     debugToolBarView.hideDebugToolBar();
   }
@@ -62,8 +62,14 @@ public class ToggleStates {
     terminalView.openTerminal();
   }
 
-  public void openDebugToolBar() {
+  public void showDebugToolBar() {
     isDebugOn = true;
     debugToolBarView.showDebugToolBar();
+  }
+
+  public void reset() {
+    closeLeftSideBar();
+    closeTerminal();
+    hideDebugToolBar();
   }
 }

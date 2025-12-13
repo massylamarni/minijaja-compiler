@@ -104,7 +104,7 @@ public class SyntaxHighlighting {
         return "sh-dark-green";
 
       default:
-        return "";
+        return "sh-white";
     }
   }
 
@@ -177,7 +177,7 @@ public class SyntaxHighlighting {
         return "sh-dark-green";
 
       default:
-        return "";
+        return "sh-white";
     }
   }
 }

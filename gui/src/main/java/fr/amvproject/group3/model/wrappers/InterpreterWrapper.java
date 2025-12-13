@@ -1,4 +1,4 @@
-package fr.amvproject.group3.model;
+package fr.amvproject.group3.model.wrappers;
 
 import java.util.Set;
 
@@ -53,6 +53,7 @@ public class InterpreterWrapper {
 
   public void runWithDebug() {
     try {
+      viewsWrapper.getToggleStates().showDebugToolBar();
       if (isMjj) mjjInterpreter.runWithDebug();
       else jjcInterpreter.runWithDebug();
       viewsWrapper.setProgramSuccess("Program executed successfully !");
@@ -156,5 +157,14 @@ public class InterpreterWrapper {
       viewsWrapper.getStackView().buildJjcStack(jjcInterpreter.getStack());
       viewsWrapper.getHeapView().buildHeap(jjcInterpreter.getStack().getHeap());
     }
+  }
+
+  public void reset() {
+    mjjBreakpointHitLine = -1;
+    jjcBreakpointHitLine = -1;
+    mjjPreviousBreakpointHitLine = mjjBreakpointHitLine;
+    jjcPreviousBreakpointHitLine = jjcBreakpointHitLine;
+    mjjInterpreter.restart();
+    jjcInterpreter.restart();
   }
 }

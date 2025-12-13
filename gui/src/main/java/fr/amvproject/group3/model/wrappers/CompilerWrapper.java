@@ -1,4 +1,4 @@
-package fr.amvproject.group3.model;
+package fr.amvproject.group3.model.wrappers;
 
 import fr.amvproject.group3.settings.DefaultPrograms;
 import fr.amvproject.group3.Compiler;
@@ -25,5 +25,9 @@ public class CompilerWrapper {
 
   public void  updateProgram(String program) {
     compiler.setProgram(program);
+  }
+
+  public void reset() {
+    updateProgram(DefaultPrograms.newMjjProgram);
   }
 }

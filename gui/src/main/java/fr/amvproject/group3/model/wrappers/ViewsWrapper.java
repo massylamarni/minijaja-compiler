@@ -1,5 +1,6 @@
-package fr.amvproject.group3.model;
+package fr.amvproject.group3.model.wrappers;
 
+import fr.amvproject.group3.model.ToggleStates;
 import fr.amvproject.group3.ui.memory.HeapView;
 import fr.amvproject.group3.ui.memory.StackView;
 import fr.amvproject.group3.ui.terminal.nodes.TerminalBodyView;
@@ -59,14 +60,25 @@ public class ViewsWrapper {
     this.terminalBodyView = terminalBodyView;
   }
 
-  public void writeInTerminal(String text, boolean reset) {
+  public void writeInTerminal(String text, boolean isReset) {
     toggleStates.terminalView.openTerminal();
     getTerminalBodyView().addOutput(text);
-    if (reset) getTerminalBodyView().resetOutput();
+    if (isReset) getTerminalBodyView().resetOutput();
   }
 
   public void setProgramSuccess(String text) {
+    toggleStates.hideDebugToolBar();
     EditorUtils.resetLineHighlighting(getEditorView());
     writeInTerminal(text, true);
+  }
+
+  public void reset() {
+    getTerminalBodyView().clearOutput();
+    EditorUtils.resetLineHighlighting(getEditorView());
+    stackView.reset();
+    heapView.reset();
+    toggleStates.reset();
+    mjjEditorView.reset(true);
+    jjcEditorView.reset(false);
   }
 }

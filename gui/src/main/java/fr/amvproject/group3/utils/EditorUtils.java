@@ -4,7 +4,7 @@ import java.util.Collections;
 
 import org.fxmisc.richtext.CodeArea;
 
-import fr.amvproject.group3.model.InterpreterWrapper;
+import fr.amvproject.group3.model.wrappers.InterpreterWrapper;
 
 public class EditorUtils {
   public static void highlightLine(InterpreterWrapper interpreterWrapper, CodeArea area) {

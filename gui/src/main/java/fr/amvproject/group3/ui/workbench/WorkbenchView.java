@@ -1,6 +1,6 @@
 package fr.amvproject.group3.ui.workbench;
 
-import fr.amvproject.group3.model.InteractiveWrapper;
+import fr.amvproject.group3.model.wrappers.InteractiveWrapper;
 import fr.amvproject.group3.ui.terminal.TerminalView;
 import fr.amvproject.group3.ui.workbench.nodes.EditorView;
 import fr.amvproject.group3.ui.workbench.nodes.WorkbenchTitleBar;

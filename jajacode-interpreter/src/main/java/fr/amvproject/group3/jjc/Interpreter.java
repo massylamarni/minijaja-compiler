@@ -31,7 +31,11 @@ public class Interpreter {
   }
 
   public void setProgram(String program) {
-    astWrapper = AstOperations.getAstFromString(program);
+    try {
+      astWrapper = AstOperations.getAstFromString(program);
+    } catch (Exception e) {
+      // TODO: handle exception
+    }
   }
 
   public LexicalErrorsListener getLexicalErrorsListener() {

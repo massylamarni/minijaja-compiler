@@ -1,6 +1,6 @@
 package fr.amvproject.group3.ui.ide.nodes;
 
-import fr.amvproject.group3.model.InteractiveWrapper;
+import fr.amvproject.group3.model.wrappers.InteractiveWrapper;
 import fr.amvproject.group3.ui.common.ActionButtonView;
 import fr.amvproject.group3.ui.icons.IconType;
 import fr.amvproject.group3.ui.memory.HeapView;

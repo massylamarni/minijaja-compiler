@@ -47,4 +47,12 @@ public class DefaultPrograms {
         23 pop // retrait 0 du main
         24 jcstop
       """;
+
+  public static final String newMjjProgram = """
+      
+      """;
+
+  public static final String newJjcProgram = """
+      
+      """;
 }

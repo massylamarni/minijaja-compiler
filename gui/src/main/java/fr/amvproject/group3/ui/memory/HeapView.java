@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.amvproject.group3.Heap;
-import fr.amvproject.group3.model.InteractiveWrapper;
+import fr.amvproject.group3.model.wrappers.InteractiveWrapper;
 import fr.amvproject.group3.nodes.ArrayInfoNode;
 import fr.amvproject.group3.nodes.PointerNode;
 import fr.amvproject.group3.ui.memory.nodes.HeapItemView;
@@ -18,8 +18,7 @@ public class HeapView extends VBox {
   }
 
   public void buildHeap(Heap heap) {
-    this.getChildren().clear();
-
+    reset();
     List<HeapItemView> heapItemViews = new ArrayList<>();
     for (Object value : heap.getQueue()) {
       if (value instanceof ArrayInfoNode arrayInfoNode) {
@@ -31,5 +30,9 @@ public class HeapView extends VBox {
       }
     }
     this.getChildren().addAll(heapItemViews);
+  }
+
+  public void reset() {
+    this.getChildren().clear();
   }
 }

@@ -1,4 +1,4 @@
-package fr.amvproject.group3.model;
+package fr.amvproject.group3.model.wrappers;
 
 import fr.amvproject.group3.settings.DefaultPrograms;
 
@@ -39,5 +39,12 @@ public class InteractiveWrapper {
 
   public InterpreterWrapper getInterpreterWrapper() {
     return interpreterWrapper;
+  }
+
+  public void reset() {
+    viewsWrapper.reset();
+    compilerWrapper.reset();
+    interpreterWrapper.reset();
+    setIsMjj(true);
   }
 }
