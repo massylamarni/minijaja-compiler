@@ -159,6 +159,14 @@ public class InterpreterWrapper {
     }
   }
 
+  public void removeAllBreakpoints() {
+    if (isMjj) {
+      mjjInterpreter.getBreakpoints().clear();
+    } else {
+      jjcInterpreter.getBreakpoints().clear();
+    }
+  }
+
   public void reset() {
     mjjBreakpointHitLine = -1;
     jjcBreakpointHitLine = -1;

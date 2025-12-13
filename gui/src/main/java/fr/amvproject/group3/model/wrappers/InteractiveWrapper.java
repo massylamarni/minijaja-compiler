@@ -7,6 +7,8 @@ public class InteractiveWrapper {
   private ViewsWrapper viewsWrapper = new ViewsWrapper();
   private InterpreterWrapper interpreterWrapper = new InterpreterWrapper(viewsWrapper);
   private CompilerWrapper compilerWrapper = new CompilerWrapper(viewsWrapper);
+  private String mjjProgram = DefaultPrograms.mjjProgram;
+  private String jjcProgram = DefaultPrograms.jjcProgram;
 
   public boolean isMjj() {
     return isMjj;
@@ -19,12 +21,15 @@ public class InteractiveWrapper {
   }
 
   public String getProgram() {
-    return isMjj ? DefaultPrograms.mjjProgram : DefaultPrograms.jjcProgram;
+    return isMjj ? mjjProgram : jjcProgram;
   }
 
   public void updateProgram(String program) {
     if (isMjj) {
+      mjjProgram = program;
       compilerWrapper.updateProgram(program);
+    } else {
+      jjcProgram = program;
     }
     interpreterWrapper.updateProgram(program);
   }

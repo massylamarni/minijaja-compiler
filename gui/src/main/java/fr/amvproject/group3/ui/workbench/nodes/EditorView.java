@@ -20,8 +20,6 @@ import javafx.scene.shape.SVGPath;
 
 public class EditorView extends CodeArea {
   public EditorView(InteractiveWrapper langWrapper) {
-    langWrapper.getViewsWrapper().setEditorView(this);
-
     this.getStyleClass().add("editor");
     VBox.setVgrow(this, Priority.ALWAYS);
     HBox.setHgrow(this, Priority.ALWAYS);
@@ -40,11 +38,11 @@ public class EditorView extends CodeArea {
       }, 1000);
     });
 
-    setBreakpointHandler(this, langWrapper);
+    setBreakpointHandler(langWrapper);
   }
 
-  private void setBreakpointHandler(CodeArea codeArea, InteractiveWrapper langWrapper) {
-    codeArea.setParagraphGraphicFactory(line -> {
+  private void setBreakpointHandler(InteractiveWrapper langWrapper) {
+    this.setParagraphGraphicFactory(line -> {
       HBox h = new HBox();
       h.setSpacing(5);
       h.setCursor(Cursor.HAND);
@@ -77,6 +75,11 @@ public class EditorView extends CodeArea {
 
   public void setSyntaxHighlighting(String program) {
     this.setStyleSpans(0, SyntaxHighlighting.highlightText(program, true));
+  }
+
+  public void removeAllBreakpoints(InteractiveWrapper langWrapper) {
+    this.setParagraphGraphicFactory(null);
+    setBreakpointHandler(langWrapper);    
   }
 
   public void reset(boolean isMjj) {

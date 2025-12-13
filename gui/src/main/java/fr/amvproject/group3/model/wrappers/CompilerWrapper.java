@@ -1,6 +1,7 @@
 package fr.amvproject.group3.model.wrappers;
 
 import fr.amvproject.group3.settings.DefaultPrograms;
+import fr.amvproject.group3.ui.workbench.nodes.EditorView;
 import fr.amvproject.group3.Compiler;
 import fr.amvproject.group3.exceptions.SemanticException;
 
@@ -23,8 +24,14 @@ public class CompilerWrapper {
     }
   }
 
-  public void  updateProgram(String program) {
+  public void updateProgram(String program) {
     compiler.setProgram(program);
+  }
+
+  public void compile() {
+    EditorView editorView = viewsWrapper.getEditorView(false);
+    editorView.replaceText(getCompiledProgram());
+    viewsWrapper.setWorkBenchActiveEditor(false);
   }
 
   public void reset() {

@@ -10,6 +10,8 @@ import javafx.scene.layout.Region;
 
 public class WorkbenchTitleBar extends HBox {
   public WorkbenchTitleBar(InteractiveWrapper langWrapper, TabPane tabPane) {
+    langWrapper.getViewsWrapper().setWorkBenchTabPane(tabPane);
+
     this.getStyleClass().add("workbench-title-bar");
 
     HBox workbenchActionBar = new HBox();
@@ -20,9 +22,7 @@ public class WorkbenchTitleBar extends HBox {
     ActionButtonView runActionButtonView = new ActionButtonView(IconType.RUN);
 
     compileActionButtonView.setOnAction(e -> {
-      EditorView jjcEditorView = (EditorView) tabPane.getTabs().get(1).getContent();
-      jjcEditorView.replaceText(langWrapper.getCompilerWrapper().getCompiledProgram());
-      tabPane.getSelectionModel().select(tabPane.getTabs().get(1));
+      langWrapper.getCompilerWrapper().compile();
     });
     runWithDebugActionButtonView.setOnAction(e -> langWrapper.getInterpreterWrapper().runWithDebug());
     runActionButtonView.setOnAction(e -> langWrapper.getInterpreterWrapper().run());

@@ -4,6 +4,9 @@ import java.util.Collections;
 
 import org.fxmisc.richtext.CodeArea;
 
+import fr.amvproject.group3.mjj.ast.PrintVisitor;
+import fr.amvproject.group3.mjj.utils.AstOperations;
+import fr.amvproject.group3.mjj.utils.AstOperations.AstWrapper;
 import fr.amvproject.group3.model.wrappers.InterpreterWrapper;
 
 public class EditorUtils {
@@ -22,4 +25,26 @@ public class EditorUtils {
       area.setParagraphStyle(i, Collections.emptyList());
     }
   }
+
+  public static String getFormattedProgram(String program, boolean isMjj) {
+    try {
+      if (isMjj) {
+        AstWrapper astWrapper = AstOperations.getAstFromString(program);
+        if (astWrapper.lexicalErrorsListener.hasErrors() || astWrapper.syntaxicErrorsListener.hasErrors()) {
+          return null;
+        } else {
+          return astWrapper.ast.accept(new PrintVisitor());
+        }
+      } else {
+        fr.amvproject.group3.jjc.utils.AstOperations.AstWrapper astWrapper = fr.amvproject.group3.jjc.utils.AstOperations.getAstFromString(program);
+        if (astWrapper.lexicalErrorsListener.hasErrors() || astWrapper.syntaxicErrorsListener.hasErrors()) {
+          return null;
+        } else {
+          return astWrapper.ast.accept(new fr.amvproject.group3.jjc.ast.PrintVisitor());
+        }
+      }
+    } catch (Exception e) {
+      return null; // TODO: handle exception
+    }
+  } 
 }

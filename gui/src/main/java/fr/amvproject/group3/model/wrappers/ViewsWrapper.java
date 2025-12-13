@@ -6,10 +6,10 @@ import fr.amvproject.group3.ui.memory.StackView;
 import fr.amvproject.group3.ui.terminal.nodes.TerminalBodyView;
 import fr.amvproject.group3.ui.workbench.nodes.EditorView;
 import fr.amvproject.group3.utils.EditorUtils;
+import javafx.scene.control.TabPane;
 
 public class ViewsWrapper {
-  private EditorView mjjEditorView = null;
-  private EditorView jjcEditorView = null;
+  private TabPane workBenchTabPane = null;
   private StackView stackView = null;
   private HeapView heapView = null;
   private TerminalBodyView terminalBodyView = null;
@@ -25,7 +25,19 @@ public class ViewsWrapper {
   }
 
   public EditorView getEditorView() {
-    return isMjj ? mjjEditorView : jjcEditorView;
+    if (isMjj) {
+      return (EditorView) workBenchTabPane.getTabs().get(0).getContent();
+    } else {
+      return (EditorView) workBenchTabPane.getTabs().get(1).getContent();
+    }
+  }
+
+  public EditorView getEditorView(boolean isMjj) {
+    if (isMjj) {
+      return (EditorView) workBenchTabPane.getTabs().get(0).getContent();
+    } else {
+      return (EditorView) workBenchTabPane.getTabs().get(1).getContent();
+    }
   }
 
   public StackView getStackView() {
@@ -40,12 +52,8 @@ public class ViewsWrapper {
     return terminalBodyView;
   }
 
-  public void setEditorView(EditorView editorView) {
-    if (isMjj) {
-      mjjEditorView = editorView;
-    } else {
-      jjcEditorView = editorView;
-    }
+  public void setWorkBenchTabPane(TabPane workBenchTabPane) {
+    this.workBenchTabPane = workBenchTabPane;
   }
 
   public void setStackView(StackView stackView) {
@@ -58,6 +66,14 @@ public class ViewsWrapper {
 
   public void setTerminalBodyView(TerminalBodyView terminalBodyView) {
     this.terminalBodyView = terminalBodyView;
+  }
+
+  public void setWorkBenchActiveEditor(boolean isMjj) {
+    if (isMjj) {
+      workBenchTabPane.getSelectionModel().select(workBenchTabPane.getTabs().get(0));
+    } else {
+      workBenchTabPane.getSelectionModel().select(workBenchTabPane.getTabs().get(1));
+    }
   }
 
   public void writeInTerminal(String text, boolean isReset) {
@@ -78,7 +94,7 @@ public class ViewsWrapper {
     stackView.reset();
     heapView.reset();
     toggleStates.reset();
-    mjjEditorView.reset(true);
-    jjcEditorView.reset(false);
+    getEditorView(true).reset(true);
+    getEditorView(false).reset(false);
   }
 }
