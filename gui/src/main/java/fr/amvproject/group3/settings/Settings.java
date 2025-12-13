@@ -9,6 +9,7 @@ public class Settings {
   public static final String BORDER_COLOR = "#2b2b2b";
   public static final String ICON_COLOR = "#7d8590";
   public static final String LIGHT_TEXT_COLOR = "#ffffff";
+  public static final String DIMM_TEXT_COLOR = "#aaaaaa";
   public static final String PURPLE_TEXT_COLOR = "#d2a8ff";
   public static final String SIDEBAR_HEIGHT = "35px";
   public static final String STATUS_BAR_HEIGHT = "22px";

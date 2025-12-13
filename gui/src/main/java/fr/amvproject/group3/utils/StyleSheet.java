@@ -139,6 +139,40 @@ public class StyleSheet {
       -fx-text-fill: ${ICON_COLOR};
     }
 
+    .menu-bar .menu {
+      -fx-background-color: ${BACKGROUND_DARKER};
+    }
+
+    .menu-bar .menu:hover, .menu-bar .menu:armed {
+      -fx-background-color: #ffffff30;
+    }
+
+    .menu .menu-item:armed, .menu .menu-item:hover {
+      -fx-background-color: #ffffff30;
+    }
+
+    .menu .menu-item {
+      -fx-background-color: ${BACKGROUND_DARK};
+    }
+
+    .context-menu {
+      -fx-background-color: ${BACKGROUND_DARK};
+      -fx-border-color: ${BORDER_COLOR};
+      -fx-border-width: 1px;
+      -fx-border-radius: ${ACTION_BUTTON_BORDER_RADIUS};
+      -fx-background-radius: ${ACTION_BUTTON_BORDER_RADIUS};
+    }
+
+    .context-menu .label {
+      -fx-padding: 0 ${LG_PADDING} 0 ${LG_PADDING};
+      -fx-text-fill: ${DIMM_TEXT_COLOR};
+    }
+
+    .context-menu > * > .separator > .line {
+      -fx-border-color: ${BORDER_COLOR};
+    }
+
+
     .split-pane {
       -fx-background-color: transparent;
       -fx-border-color: transparent;
@@ -202,6 +236,10 @@ public class StyleSheet {
 
     .tab-pane .tab:selected .tab-label {
       -fx-text-fill: ${LIGHT_TEXT_COLOR};
+    }
+
+    .styled-text-area:focused .selection {
+      -fx-fill: #ffffff30;
     }
 
     /* Highlightings */

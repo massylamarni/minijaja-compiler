@@ -17,8 +17,8 @@ public class IdeTitleBarView extends HBox {
 
     Menu menuFile = new Menu("File");
     MenuItem newItem = new MenuItem("New");
-    MenuItem openItem = new MenuItem("Open...");
-    MenuItem saveItem = new MenuItem("Save...");
+    MenuItem openItem = new MenuItem("Open");
+    MenuItem saveItem = new MenuItem("Save");
     MenuItem exitItem = new MenuItem("Exit");
     menuFile.getItems().addAll(newItem, openItem, saveItem, new SeparatorMenuItem(), exitItem);
 

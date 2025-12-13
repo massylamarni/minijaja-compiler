@@ -15,6 +15,7 @@ public class CssManager {
         .replace("${BORDER_COLOR}", Settings.BORDER_COLOR)
         .replace("${ICON_COLOR}", Settings.ICON_COLOR)
         .replace("${LIGHT_TEXT_COLOR}", Settings.LIGHT_TEXT_COLOR)
+        .replace("${DIMM_TEXT_COLOR}", Settings.DIMM_TEXT_COLOR)
         .replace("${PURPLE_TEXT_COLOR}", Settings.PURPLE_TEXT_COLOR)
         .replace("${SIDEBAR_HEIGHT}", Settings.SIDEBAR_HEIGHT)
         .replace("${STATUS_BAR_HEIGHT}", Settings.STATUS_BAR_HEIGHT)
