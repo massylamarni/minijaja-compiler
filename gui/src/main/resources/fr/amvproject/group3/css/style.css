@@ -15,8 +15,8 @@
 
 .ide-status-bar {
   -fx-background-color: #181818;
-  -fx-pref-height: 22px;
-  -fx-min-height: 22px;
+  -fx-pref-height: 20;
+  -fx-min-height: 20;
   -fx-border-color: #2b2b2b;
   -fx-border-width: 1px 1px 1px 1px;
 }
@@ -49,7 +49,7 @@
 }
 
 .stack-item-value, .heap-item-value {
-  -fx-text-fill: #7d8590;
+  -fx-text-fill: #cccccc;
   -fx-font-size: 12px;
 }
 
@@ -62,6 +62,7 @@
   -fx-pref-height: 35px;
   -fx-border-color: #2b2b2b;
   -fx-border-width: 0 0 1px 0;
+  -fx-alignment: center;
 }
 
 .editor {
@@ -70,7 +71,7 @@
 }
 
 .editor-line-number {
-  -fx-text-fill: #7d8590;
+  -fx-text-fill: #cccccc;
   -fx-padding: 0 7px;
 }
 
@@ -103,19 +104,22 @@
 }
 
 .terminal-body .terminal-output {
-  -fx-text-fill: #7d8590;
+  -fx-text-fill: #cccccc;
 }
 
 .action-bar {
-  -fx-spacing: 7px;
+  -fx-spacing: 5px;
   -fx-alignment: center-right;
   -fx-padding: 7px;
 }
 
 .action-button {
+  -fx-padding: 0;
   -fx-background-color: transparent;
-  -fx-pref-width: 22px;
-  -fx-pref-height: 22px;
+  -fx-pref-width: 20;
+  -fx-pref-height: 20;
+  -fx-max-width: 20;
+  -fx-max-height: 20;
   -fx-alignment: center;
   -fx-background-radius: 5px;
   -fx-cursor: hand;
@@ -125,6 +129,14 @@
   -fx-background-color: #2b2b2b;
 }
 
+.debug-toolbar {
+  -fx-border-color: #2b2b2b;
+  -fx-border-width: 1px;
+  -fx-border-radius: 5px;
+  -fx-max-height: 22px;
+  -fx-padding: 3px;
+}
+
 /* Defaults */
 
 .menu-bar {
@@ -132,7 +144,7 @@
 }
 
 .menu-bar .label {
-  -fx-text-fill: #7d8590;
+  -fx-text-fill: #cccccc;
 }
 
 .menu-bar .menu {
@@ -161,7 +173,7 @@
 
 .context-menu .label {
   -fx-padding: 0 15px 0 15px;
-  -fx-text-fill: #aaaaaa;
+  -fx-text-fill: #dddddd;
 }
 
 .context-menu > * > .separator > .line {
@@ -191,7 +203,7 @@
   -fx-background-color: transparent;
 }
 .scroll-pane .thumb {
-  -fx-background-color: #7d8590;
+  -fx-background-color: #cccccc;
 }
 
 .tab-pane {

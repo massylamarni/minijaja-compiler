@@ -12,7 +12,30 @@ public class ActionButtonView extends Button {
     this.getStyleClass().add("action-button");
 
     SVGPath icon = getIcon(iconName);
-    icon.setFill(Color.web(Settings.ICON_COLOR));
+    switch (iconName) {
+      case DEBUG_STOP:
+        icon.setFill(Color.web("#d07766"));
+        break;
+      case DEBUG_RESTART:
+        icon.setFill(Color.web("#80c080"));
+        break;
+      case DEBUG_CONTINUE:
+        icon.setFill(Color.web("#6699cc"));
+        break;
+      case DEBUG_PAUSE:
+        icon.setFill(Color.web("#6699cc"));
+        break;
+      case DEBUG_STEP_IN:
+        icon.setFill(Color.web("#6699cc"));
+        break;
+      case DEBUG_STEP_OUT:
+        icon.setFill(Color.web("#6699cc"));
+        break;
+      
+    
+      default:
+        icon.setFill(Color.web(Settings.ICON_COLOR));
+    }
 
     this.setGraphic(icon);
   }

@@ -7,19 +7,21 @@ public class Settings {
   public static final String BACKGROUND_DARK = "#1f1f1f";
   public static final String BACKGROUND_DARKER = "#181818";
   public static final String BORDER_COLOR = "#2b2b2b";
-  public static final String ICON_COLOR = "#7d8590";
+  public static final String ICON_COLOR = "#cccccc";
   public static final String LIGHT_TEXT_COLOR = "#ffffff";
-  public static final String DIMM_TEXT_COLOR = "#aaaaaa";
+  public static final String DIMM_TEXT_COLOR = "#dddddd";
   public static final String PURPLE_TEXT_COLOR = "#d2a8ff";
   public static final String SIDEBAR_HEIGHT = "35px";
-  public static final String STATUS_BAR_HEIGHT = "22px";
+  public static final String SM_BAR_HEIGHT = "22px";
   public static final String LEFT_SIDEBAR_WIDTH = "250px";
   public static final String TERMINAL_HEIGHT = "300px";
   public static final String SM_PADDING = "7px";
   public static final String MD_PADDING = "10px";
   public static final String LG_PADDING = "15px";
   public static final String SM_FONT_SIZE = "12px";
+  public static final String ACTION_BUTTON_ICON_HEIGHT = "20";
   public static final String ACTION_BUTTON_BORDER_RADIUS = "5px";
+  public static final String ACTION_BUTTON_CONTAINER_GAP = "5px";
 
   /* Syntax Highlighting */
 

@@ -19,8 +19,8 @@ public class StyleSheet {
 
     .ide-status-bar {
       -fx-background-color: ${BACKGROUND_DARKER};
-      -fx-pref-height: ${STATUS_BAR_HEIGHT};
-      -fx-min-height: ${STATUS_BAR_HEIGHT};
+      -fx-pref-height: ${ACTION_BUTTON_ICON_HEIGHT};
+      -fx-min-height: ${ACTION_BUTTON_ICON_HEIGHT};
       -fx-border-color: ${BORDER_COLOR};
       -fx-border-width: 1px 1px 1px 1px;
     }
@@ -66,6 +66,7 @@ public class StyleSheet {
       -fx-pref-height: ${SIDEBAR_HEIGHT};
       -fx-border-color: ${BORDER_COLOR};
       -fx-border-width: 0 0 1px 0;
+      -fx-alignment: center;
     }
 
     .editor {
@@ -111,15 +112,18 @@ public class StyleSheet {
     }
 
     .action-bar {
-      -fx-spacing: 7px;
+      -fx-spacing: ${ACTION_BUTTON_CONTAINER_GAP};
       -fx-alignment: center-right;
       -fx-padding: ${SM_PADDING};
     }
 
     .action-button {
+      -fx-padding: 0;
       -fx-background-color: transparent;
-      -fx-pref-width: 22px;
-      -fx-pref-height: 22px;
+      -fx-pref-width: ${ACTION_BUTTON_ICON_HEIGHT};
+      -fx-pref-height: ${ACTION_BUTTON_ICON_HEIGHT};
+      -fx-max-width: ${ACTION_BUTTON_ICON_HEIGHT};
+      -fx-max-height: ${ACTION_BUTTON_ICON_HEIGHT};
       -fx-alignment: center;
       -fx-background-radius: ${ACTION_BUTTON_BORDER_RADIUS};
       -fx-cursor: hand;
@@ -127,6 +131,14 @@ public class StyleSheet {
 
     .action-button:hover {
       -fx-background-color: ${BORDER_COLOR};
+    }
+
+    .debug-toolbar {
+      -fx-border-color: ${BORDER_COLOR};
+      -fx-border-width: 1px;
+      -fx-border-radius: ${ACTION_BUTTON_BORDER_RADIUS};
+      -fx-max-height: ${SM_BAR_HEIGHT};
+      -fx-padding: 3px;
     }
 
     /* Defaults */
