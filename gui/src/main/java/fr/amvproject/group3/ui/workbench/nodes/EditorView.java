@@ -25,12 +25,12 @@ public class EditorView extends CodeArea {
     HBox.setHgrow(this, Priority.ALWAYS);
 
     this.replaceText(langWrapper.getProgram());
-    setSyntaxHighlighting(langWrapper.getProgram());
+    setSyntaxHighlighting(langWrapper.getProgram(), langWrapper);
     this.setParagraphGraphicFactory(LineNumberFactory.get(this));
 
     Debouncer debouncer = new Debouncer();
     this.textProperty().addListener((obs, oldText, newText) -> {
-      setSyntaxHighlighting(newText);
+      setSyntaxHighlighting(newText, langWrapper);
       debouncer.debounce(() -> {
         Platform.runLater(() -> {
           langWrapper.updateProgram(newText);
@@ -73,8 +73,8 @@ public class EditorView extends CodeArea {
     });
   }
 
-  public void setSyntaxHighlighting(String program) {
-    this.setStyleSpans(0, SyntaxHighlighting.highlightText(program, true));
+  public void setSyntaxHighlighting(String program, InteractiveWrapper langWrapper) {
+    this.setStyleSpans(0, SyntaxHighlighting.highlightText(program, langWrapper.isMjj()));
   }
 
   public void removeAllBreakpoints(InteractiveWrapper langWrapper) {

@@ -18,11 +18,17 @@ public class SyntaxHighlighting {
 
   public static StyleSpans<Collection<String>> highlightText(String text, boolean isMjj) {
     CommonTokenStream tokens;
+    MiniJajaLexer mjjLexer = new MiniJajaLexer(CharStreams.fromString(text));
+    JajaCodeLexer jjcLexer = new JajaCodeLexer(CharStreams.fromString(text));
+    mjjLexer.removeErrorListeners();
+    jjcLexer.removeErrorListeners();
+
     if (isMjj) {
-      tokens = new CommonTokenStream(new MiniJajaLexer(CharStreams.fromString(text)));
+      tokens = new CommonTokenStream(mjjLexer);
     } else {
-      tokens = new CommonTokenStream(new JajaCodeLexer(CharStreams.fromString(text)));
+      tokens = new CommonTokenStream(jjcLexer);
     }
+
     tokens.fill();
 
     StyleSpansBuilder<Collection<String>> spans = new StyleSpansBuilder<>();
@@ -31,14 +37,14 @@ public class SyntaxHighlighting {
     for (Token token : tokens.getTokens()) {
       int start = token.getStartIndex();
       int end = token.getStopIndex() + 1;
-      if (start > lastIndex) spans.add(Collections.emptyList(), start - lastIndex);
+      if (start > lastIndex) spans.add(Collections.singleton("sh-white"), start - lastIndex);
       String tokenClass = isMjj ? getMjjTokenClass(token.getType()) : getJjcTokenClass(token.getType());
       spans.add(Collections.singleton(tokenClass), end - start);
       lastIndex = end;
     }
 
     // Remaining text after last token
-    if (lastIndex < text.length()) spans.add(Collections.emptyList(), text.length() - lastIndex);
+    if (lastIndex < text.length()) spans.add(Collections.singleton("sh-white"), text.length() - lastIndex);
 
     return spans.create();
   }

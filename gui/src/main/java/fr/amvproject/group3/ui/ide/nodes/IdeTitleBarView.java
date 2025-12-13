@@ -45,7 +45,6 @@ public class IdeTitleBarView extends HBox {
 
     openItem.setOnAction(e -> {
       FileManager.loadFile(langWrapper.getViewsWrapper().getEditorView(), stage);
-      langWrapper.getViewsWrapper().getEditorView().setSyntaxHighlighting(getAccessibleHelp());
     });
 
     saveItem.setOnAction(e -> {
