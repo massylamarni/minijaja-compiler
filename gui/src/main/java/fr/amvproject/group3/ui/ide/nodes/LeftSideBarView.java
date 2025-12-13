@@ -1,6 +1,6 @@
 package fr.amvproject.group3.ui.ide.nodes;
 
-import fr.amvproject.group3.model.LangWrapper;
+import fr.amvproject.group3.model.InteractiveWrapper;
 import fr.amvproject.group3.ui.common.ActionButtonView;
 import fr.amvproject.group3.ui.icons.IconType;
 import fr.amvproject.group3.ui.memory.HeapView;
@@ -14,15 +14,15 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 public class LeftSideBarView extends VBox {
-  public LeftSideBarView(LangWrapper langWrapper) {
-    langWrapper.toggleStates.leftSideBarView = this;
+  public LeftSideBarView(InteractiveWrapper langWrapper) {
+    langWrapper.getViewsWrapper().getToggleStates().leftSideBarView = this;
 
     this.getStyleClass().add("left-sidebar");
     HBox.setHgrow(this, Priority.NEVER);
 
     ActionButtonView closActionButtonView = new ActionButtonView(IconType.CLOSE);
     closActionButtonView.setOnAction(e -> {
-      langWrapper.toggleStates.closeLeftSideBar();
+      langWrapper.getViewsWrapper().getToggleStates().closeLeftSideBar();
     });
 
     Label leftSidebarStackTitle = new Label("Stack view");

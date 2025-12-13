@@ -1,6 +1,6 @@
 package fr.amvproject.group3.ui.ide;
 
-import fr.amvproject.group3.model.LangWrapper;
+import fr.amvproject.group3.model.InteractiveWrapper;
 import fr.amvproject.group3.ui.ide.nodes.IdeStatusBarView;
 import fr.amvproject.group3.ui.ide.nodes.IdeTitleBarView;
 import fr.amvproject.group3.ui.ide.nodes.LeftSideBarView;
@@ -15,7 +15,7 @@ public class IdeView extends VBox {
   public IdeView(Stage stage) {
     this.getStyleClass().add("ide");
 
-    LangWrapper langWrapper = new LangWrapper();
+    InteractiveWrapper langWrapper = new InteractiveWrapper();
 
     IdeTitleBarView ideTitleBarView = new IdeTitleBarView(stage, langWrapper);
     IdeStatusBarView ideStatusBarView = new IdeStatusBarView();
@@ -30,9 +30,9 @@ public class IdeView extends VBox {
     this.getChildren().addAll(ideTitleBarView, ideBody, ideStatusBarView);
 
     Platform.runLater(() -> {
-      langWrapper.toggleStates.holdLeftSideBarState();
-      langWrapper.toggleStates.holdTerminalState();
-      langWrapper.toggleStates.holdDebugToolBarState();
+      langWrapper.getViewsWrapper().getToggleStates().holdLeftSideBarState();
+      langWrapper.getViewsWrapper().getToggleStates().holdTerminalState();
+      langWrapper.getViewsWrapper().getToggleStates().holdDebugToolBarState();
     });
   }
 }

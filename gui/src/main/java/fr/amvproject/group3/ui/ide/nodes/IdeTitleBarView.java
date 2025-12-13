@@ -2,7 +2,7 @@ package fr.amvproject.group3.ui.ide.nodes;
 
 import java.io.File;
 
-import fr.amvproject.group3.model.LangWrapper;
+import fr.amvproject.group3.model.InteractiveWrapper;
 import javafx.geometry.Pos;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -13,7 +13,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class IdeTitleBarView extends HBox {
-  public IdeTitleBarView(Stage stage, LangWrapper langWrapper) {
+  public IdeTitleBarView(Stage stage, InteractiveWrapper langWrapper) {
     this.getStyleClass().add("ide-title-bar");
     this.setAlignment(Pos.CENTER_LEFT);
 

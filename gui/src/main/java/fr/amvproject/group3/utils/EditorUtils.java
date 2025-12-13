@@ -4,15 +4,15 @@ import java.util.Collections;
 
 import org.fxmisc.richtext.CodeArea;
 
-import fr.amvproject.group3.model.LangWrapper;
+import fr.amvproject.group3.model.InterpreterWrapper;
 
 public class EditorUtils {
-  public static void highlightLine(LangWrapper langWrapper, CodeArea area) {
-    if (langWrapper.getPreviousBreakpointHitLine() != -1) {
-      area.setParagraphStyle(langWrapper.getPreviousBreakpointHitLine() - 1, Collections.emptyList());
+  public static void highlightLine(InterpreterWrapper interpreterWrapper, CodeArea area) {
+    if (interpreterWrapper.getPreviousBreakpointHitLine() != -1) {
+      area.setParagraphStyle(interpreterWrapper.getPreviousBreakpointHitLine() - 1, Collections.emptyList());
     }
 
-    area.setParagraphStyle(langWrapper.getBreakpointHitLine() - 1, Collections.singleton("line-highlight"));
+    area.setParagraphStyle(interpreterWrapper.getBreakpointHitLine() - 1, Collections.singleton("line-highlight"));
   }
 
   public static void resetLineHighlighting(CodeArea area) {

@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.amvproject.group3.Heap;
-import fr.amvproject.group3.model.LangWrapper;
+import fr.amvproject.group3.model.InteractiveWrapper;
 import fr.amvproject.group3.nodes.ArrayInfoNode;
 import fr.amvproject.group3.nodes.PointerNode;
 import fr.amvproject.group3.ui.memory.nodes.HeapItemView;
 import javafx.scene.layout.VBox;
 
 public class HeapView extends VBox {
-  public HeapView(LangWrapper langWrapper) {
-    langWrapper.setHeapView(this);
+  public HeapView(InteractiveWrapper langWrapper) {
+    langWrapper.getViewsWrapper().setHeapView(this);
 
     this.getStyleClass().add("heap-view");
   }

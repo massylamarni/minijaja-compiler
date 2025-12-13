@@ -1,6 +1,6 @@
 package fr.amvproject.group3.ui.workbench.nodes;
 
-import fr.amvproject.group3.model.LangWrapper;
+import fr.amvproject.group3.model.InteractiveWrapper;
 import fr.amvproject.group3.ui.common.ActionButtonView;
 import fr.amvproject.group3.ui.icons.IconType;
 import javafx.scene.control.TabPane;
@@ -9,7 +9,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
 public class WorkbenchTitleBar extends HBox {
-  public WorkbenchTitleBar(LangWrapper langWrapper, TabPane tabPane) {
+  public WorkbenchTitleBar(InteractiveWrapper langWrapper, TabPane tabPane) {
     this.getStyleClass().add("workbench-title-bar");
 
     HBox workbenchActionBar = new HBox();
@@ -21,11 +21,11 @@ public class WorkbenchTitleBar extends HBox {
 
     compileActionButtonView.setOnAction(e -> {
       EditorView jjcEditorView = (EditorView) tabPane.getTabs().get(1).getContent();
-      jjcEditorView.replaceText(langWrapper.getCompiledProgram());
+      jjcEditorView.replaceText(langWrapper.getCompilerWrapper().getCompiledProgram());
       tabPane.getSelectionModel().select(tabPane.getTabs().get(1));
     });
-    runWithDebugActionButtonView.setOnAction(e -> langWrapper.runWithDebug());
-    runActionButtonView.setOnAction(e -> langWrapper.run());
+    runWithDebugActionButtonView.setOnAction(e -> langWrapper.getInterpreterWrapper().runWithDebug());
+    runActionButtonView.setOnAction(e -> langWrapper.getInterpreterWrapper().run());
 
     workbenchActionBar.getChildren().addAll(compileActionButtonView, runWithDebugActionButtonView, runActionButtonView);
 

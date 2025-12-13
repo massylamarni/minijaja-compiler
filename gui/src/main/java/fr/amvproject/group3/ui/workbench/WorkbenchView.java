@@ -1,6 +1,6 @@
 package fr.amvproject.group3.ui.workbench;
 
-import fr.amvproject.group3.model.LangWrapper;
+import fr.amvproject.group3.model.InteractiveWrapper;
 import fr.amvproject.group3.ui.terminal.TerminalView;
 import fr.amvproject.group3.ui.workbench.nodes.EditorView;
 import fr.amvproject.group3.ui.workbench.nodes.WorkbenchTitleBar;
@@ -13,14 +13,14 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 public class WorkbenchView extends VBox {
-  public WorkbenchView(LangWrapper langWrapper) {
+  public WorkbenchView(InteractiveWrapper langWrapper) {
     this.getStyleClass().add("workbench");
     HBox.setHgrow(this, Priority.ALWAYS);
 
     EditorView mjjEditorView = new EditorView(langWrapper);
-    langWrapper.isMjj = false;
+    langWrapper.setIsMjj(false);
     EditorView jjcEditorView = new EditorView(langWrapper);
-    langWrapper.isMjj = true;
+    langWrapper.setIsMjj(true);
 
     TabPane tabPane = new TabPane();
     Tab tab1 = new Tab("MiniJaja", mjjEditorView);
@@ -39,11 +39,11 @@ public class WorkbenchView extends VBox {
     VBox.setVgrow(editorTerminalSplit, Priority.ALWAYS);
 
     tabPane.getSelectionModel().selectedItemProperty().addListener((obs, oldTab, newTab) -> {
-      langWrapper.isMjj = !langWrapper.isMjj;
+      langWrapper.setIsMjj(!langWrapper.isMjj());
       editorTerminalSplit.getItems().set(0,
         newTab == tab1 ? mjjEditorView : jjcEditorView
       );
-      langWrapper.toggleStates.holdTerminalState();
+      langWrapper.getViewsWrapper().getToggleStates().holdTerminalState();
     });
 
     this.getChildren().addAll(

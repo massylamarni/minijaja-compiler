@@ -3,7 +3,7 @@ package fr.amvproject.group3.ui.workbench.nodes;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 
-import fr.amvproject.group3.model.LangWrapper;
+import fr.amvproject.group3.model.InteractiveWrapper;
 import fr.amvproject.group3.ui.icons.SvgIcons;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -16,8 +16,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 
 public class EditorView extends CodeArea {
-  public EditorView(LangWrapper langWrapper) {
-    langWrapper.setEditorView(this);
+  public EditorView(InteractiveWrapper langWrapper) {
+    langWrapper.getViewsWrapper().setEditorView(this);
     
     this.getStyleClass().add("editor");
     VBox.setVgrow(this, Priority.ALWAYS);
@@ -34,7 +34,7 @@ public class EditorView extends CodeArea {
     setBreakpointHandler(this, langWrapper);
   }
 
-  private void setBreakpointHandler(CodeArea codeArea, LangWrapper langWrapper) {
+  private void setBreakpointHandler(CodeArea codeArea, InteractiveWrapper langWrapper) {
     codeArea.setParagraphGraphicFactory(line -> {
       HBox h = new HBox();
       h.setSpacing(5);
@@ -46,16 +46,16 @@ public class EditorView extends CodeArea {
       lineNumberView.getStyleClass().add("editor-line-number");
 
       SVGPath breakpointView = SvgIcons.breakPointIcon();
-      breakpointView.setVisible(langWrapper.getBreakpoints().contains(relevantLine));
+      breakpointView.setVisible(langWrapper.getInterpreterWrapper().getBreakpoints().contains(relevantLine));
       breakpointView.setFill(Color.RED);
 
       h.setOnMouseClicked(e -> {
         if (e.getButton() == MouseButton.PRIMARY) {
-          if (langWrapper.getBreakpoints().contains(relevantLine)) {
-            langWrapper.removeBreakpoint(relevantLine);
+          if (langWrapper.getInterpreterWrapper().getBreakpoints().contains(relevantLine)) {
+            langWrapper.getInterpreterWrapper().removeBreakpoint(relevantLine);
             breakpointView.setVisible(false);
           } else {
-            langWrapper.addBreakPoint(relevantLine);
+            langWrapper.getInterpreterWrapper().addBreakPoint(relevantLine);
             breakpointView.setVisible(true);
           }
         }

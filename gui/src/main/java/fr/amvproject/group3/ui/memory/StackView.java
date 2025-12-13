@@ -2,14 +2,14 @@ package fr.amvproject.group3.ui.memory;
 
 import fr.amvproject.group3.mjj.Quad;
 import fr.amvproject.group3.mjj.Stack;
-import fr.amvproject.group3.model.LangWrapper;
+import fr.amvproject.group3.model.InteractiveWrapper;
 import fr.amvproject.group3.nodes.PointerNode;
 import fr.amvproject.group3.ui.memory.nodes.StackItemView;
 import javafx.scene.layout.VBox;
 
 public class StackView extends VBox {
-  public StackView(LangWrapper langWrapper) {
-    langWrapper.setStackView(this);
+  public StackView(InteractiveWrapper langWrapper) {
+    langWrapper.getViewsWrapper().setStackView(this);
 
     this.getStyleClass().add("stack-view");
   }

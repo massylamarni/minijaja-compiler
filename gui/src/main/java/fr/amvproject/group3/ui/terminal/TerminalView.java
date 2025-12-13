@@ -1,6 +1,6 @@
 package fr.amvproject.group3.ui.terminal;
 
-import fr.amvproject.group3.model.LangWrapper;
+import fr.amvproject.group3.model.InteractiveWrapper;
 import fr.amvproject.group3.ui.common.ActionButtonView;
 import fr.amvproject.group3.ui.icons.IconType;
 import fr.amvproject.group3.ui.terminal.nodes.TerminalBodyView;
@@ -12,8 +12,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 public class TerminalView extends VBox {
-  public TerminalView(LangWrapper langWrapper) {
-    langWrapper.toggleStates.terminalView = this;
+  public TerminalView(InteractiveWrapper langWrapper) {
+    langWrapper.getViewsWrapper().getToggleStates().terminalView = this;
 
     this.getStyleClass().add("terminal");
 
@@ -22,7 +22,7 @@ public class TerminalView extends VBox {
 
     ActionButtonView closActionButtonView = new ActionButtonView(IconType.CLOSE);
     closActionButtonView.setOnAction(e -> {
-      langWrapper.toggleStates.closeTerminal();
+      langWrapper.getViewsWrapper().getToggleStates().closeTerminal();
     });
 
     HBox terminalActionBar = new HBox();

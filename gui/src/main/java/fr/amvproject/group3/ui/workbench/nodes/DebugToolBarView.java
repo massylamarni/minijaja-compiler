@@ -1,14 +1,14 @@
 package fr.amvproject.group3.ui.workbench.nodes;
 
-import fr.amvproject.group3.model.LangWrapper;
+import fr.amvproject.group3.model.InteractiveWrapper;
 import fr.amvproject.group3.ui.common.ActionButtonView;
 import fr.amvproject.group3.ui.icons.IconType;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 
 public class DebugToolBarView extends HBox {
-  public DebugToolBarView(LangWrapper langWrapper) {
-    langWrapper.toggleStates.debugToolBarView = this;
+  public DebugToolBarView(InteractiveWrapper langWrapper) {
+    langWrapper.getViewsWrapper().getToggleStates().debugToolBarView = this;
 
     this.getStyleClass().add("debug-toolbar");
     this.setSpacing(8);
@@ -20,11 +20,11 @@ public class DebugToolBarView extends HBox {
     ActionButtonView restartButton = new ActionButtonView(IconType.DEBUG_RESTART);
     ActionButtonView stopButton = new ActionButtonView(IconType.DEBUG_STOP);
 
-    continueButton.setOnAction(e -> langWrapper.resume());
-    stepInButton.setOnAction(e -> langWrapper.stepForward());
-    stepOutButton.setOnAction(e -> langWrapper.stepBackward());
-    restartButton.setOnAction(e -> langWrapper.restart());
-    stopButton.setOnAction(e -> langWrapper.restart());
+    continueButton.setOnAction(e -> langWrapper.getInterpreterWrapper().resume());
+    stepInButton.setOnAction(e -> langWrapper.getInterpreterWrapper().stepForward());
+    stepOutButton.setOnAction(e -> langWrapper.getInterpreterWrapper().stepBackward());
+    restartButton.setOnAction(e -> langWrapper.getInterpreterWrapper().restart());
+    stopButton.setOnAction(e -> langWrapper.getInterpreterWrapper().restart());
 
     this.getChildren().addAll(
       continueButton,

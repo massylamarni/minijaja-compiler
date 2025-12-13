@@ -1,14 +1,14 @@
 package fr.amvproject.group3.ui.terminal.nodes;
 
-import fr.amvproject.group3.model.LangWrapper;
+import fr.amvproject.group3.model.InteractiveWrapper;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 public class TerminalBodyView extends VBox {
-  public TerminalBodyView(LangWrapper langWrapper) {
-    langWrapper.setTerminalBodyView(this);
+  public TerminalBodyView(InteractiveWrapper langWrapper) {
+    langWrapper.getViewsWrapper().setTerminalBodyView(this);
 
     this.getStyleClass().add("terminal-body");
     VBox.setVgrow(this, Priority.ALWAYS);
