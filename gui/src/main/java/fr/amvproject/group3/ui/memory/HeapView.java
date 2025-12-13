@@ -12,7 +12,7 @@ import javafx.scene.layout.VBox;
 
 public class HeapView extends VBox {
   public HeapView(LangWrapper langWrapper) {
-    langWrapper.heapView = this;
+    langWrapper.setHeapView(this);
 
     this.getStyleClass().add("heap-view");
   }

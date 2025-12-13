@@ -3,12 +3,13 @@ package fr.amvproject.group3.ui.workbench.nodes;
 import fr.amvproject.group3.model.LangWrapper;
 import fr.amvproject.group3.ui.common.ActionButtonView;
 import fr.amvproject.group3.ui.icons.IconType;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
 public class WorkbenchTitleBar extends HBox {
-  public WorkbenchTitleBar(LangWrapper langWrapper) {
+  public WorkbenchTitleBar(LangWrapper langWrapper, TabPane tabPane) {
     this.getStyleClass().add("workbench-title-bar");
 
     HBox workbenchActionBar = new HBox();
@@ -18,16 +19,18 @@ public class WorkbenchTitleBar extends HBox {
     ActionButtonView runWithDebugActionButtonView = new ActionButtonView(IconType.RUN_WITH_DEBUG);
     ActionButtonView runActionButtonView = new ActionButtonView(IconType.RUN);
 
-    compileActionButtonView.setOnAction(null); // TODO compile
+    compileActionButtonView.setOnAction(e -> {
+      EditorView jjcEditorView = (EditorView) tabPane.getTabs().get(1).getContent();
+      jjcEditorView.replaceText(langWrapper.getCompiledProgram());
+      tabPane.getSelectionModel().select(tabPane.getTabs().get(1));
+    });
     runWithDebugActionButtonView.setOnAction(e -> langWrapper.runWithDebug());
     runActionButtonView.setOnAction(e -> langWrapper.run());
 
     workbenchActionBar.getChildren().addAll(compileActionButtonView, runWithDebugActionButtonView, runActionButtonView);
 
-    Region spacerLeft = new Region();
-    HBox.setHgrow(spacerLeft, Priority.ALWAYS);
-    Region spacerRight = new Region();
-    HBox.setHgrow(spacerRight, Priority.ALWAYS);
-    this.getChildren().addAll(spacerLeft, new DebugToolBar(langWrapper), spacerRight, workbenchActionBar);
+    Region hSpacer = new Region();
+    HBox.setHgrow(hSpacer, Priority.ALWAYS);
+    this.getChildren().addAll(tabPane, new DebugToolBarView(langWrapper), hSpacer, workbenchActionBar);
   }
 }

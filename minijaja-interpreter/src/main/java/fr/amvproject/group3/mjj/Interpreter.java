@@ -69,7 +69,7 @@ public class Interpreter {
   }
 
   public void run() {
-    runSemanticAnalysis();
+    // runSemanticAnalysis();
     try {
       ctx.disableDebug();
       astWrapper.ast.accept(interpreterVisitor);
@@ -79,7 +79,7 @@ public class Interpreter {
   }
 
   public void runWithDebug() {
-    runSemanticAnalysis();
+    // runSemanticAnalysis();
     try {
       ctx.enableDebug();
       astWrapper.ast.accept(interpreterVisitor);

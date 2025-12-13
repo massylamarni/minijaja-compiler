@@ -55,9 +55,9 @@ public class SyntaxHighlighting {
       case MiniJajaLexer.RPAREN:
       case MiniJajaLexer.LBRACK:
       case MiniJajaLexer.RBRACK:
+      case MiniJajaLexer.MAIN:
         return "sh-dark-blue";
 
-      case MiniJajaLexer.MAIN:
       case MiniJajaLexer.WRITE:
       case MiniJajaLexer.WRITELN:
       case MiniJajaLexer.LENGTH:

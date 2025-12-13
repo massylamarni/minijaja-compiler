@@ -5,6 +5,7 @@ import fr.amvproject.group3.ui.ide.nodes.IdeStatusBarView;
 import fr.amvproject.group3.ui.ide.nodes.IdeTitleBarView;
 import fr.amvproject.group3.ui.ide.nodes.LeftSideBarView;
 import fr.amvproject.group3.ui.workbench.WorkbenchView;
+import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.*;
@@ -27,5 +28,11 @@ public class IdeView extends VBox {
     VBox.setVgrow(ideBody, Priority.ALWAYS);
 
     this.getChildren().addAll(ideTitleBarView, ideBody, ideStatusBarView);
+
+    Platform.runLater(() -> {
+      langWrapper.toggleStates.holdLeftSideBarState();
+      langWrapper.toggleStates.holdTerminalState();
+      langWrapper.toggleStates.holdDebugToolBarState();
+    });
   }
 }

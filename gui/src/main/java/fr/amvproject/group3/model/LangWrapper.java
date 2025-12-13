@@ -2,6 +2,7 @@ package fr.amvproject.group3.model;
 
 import java.util.Set;
 
+import fr.amvproject.group3.Compiler;
 import fr.amvproject.group3.exceptions.BreakPointHit;
 import fr.amvproject.group3.exceptions.PausePointHit;
 import fr.amvproject.group3.mjj.Interpreter;
@@ -20,43 +21,15 @@ public class LangWrapper {
         /********************************************/
 
         class C {
-          int x;
-          int y = 10;
-          final int VAL = 5;
-          boolean b1 = true;
-          boolean b2 = false;
+          int nt[3] ;
+          int i = 0 ;
 
-          int  somme( int max) {
-            int t = VAL;
-
-          while ( max > 0) { 
-            t += max;
-            max = max - 1;
-          };
-          return t;
-          };
-
-          boolean test(int a, int b) {
-          return a > b;
-          };
-
-          void f(int z){
-            x = y * z;
-          x = x / z;
-          x++;
-          };
-          
           main {
-          if (test(y,9) && (b1 || (!b2))) {
-            x = somme(2); // x = 8
-            write("x (8) = ");
-            writeln(x);
-          } else {
-            x++;
-          };
-          f(10); // x = 11;
-          write("x (11) = ");
-          writeln(x);
+            while (3 > i) {
+              nt[i] = i * 10 ;
+              i++ ;
+            };
+            write(nt[2]);
           }
         }
       """;
@@ -86,20 +59,59 @@ public class LangWrapper {
         23 pop // retrait 0 du main
         24 jcstop
       """;
+  private Compiler compiler = new Compiler(mjjProgram);
   private Interpreter mjjInterpreter = new Interpreter(mjjProgram);
   private fr.amvproject.group3.jjc.Interpreter jjcInterpreter = new fr.amvproject.group3.jjc.Interpreter(jjcProgram);
   private int mjjBreakpointHitLine = -1;
   private int jjcBreakpointHitLine = -1;
   private int mjjPreviousBreakpointHitLine = mjjBreakpointHitLine;
   private int jjcPreviousBreakpointHitLine = jjcBreakpointHitLine;
+  private EditorView mjjEditorView = null;
+  private EditorView jjcEditorView = null;
+  private StackView stackView = null;
+  private HeapView heapView = null;
+  private TerminalBodyView terminalBodyView = null;
   public boolean isMjj = true;
-  public EditorView editorView = null;
-  public TerminalBodyView terminalBodyView = null;
-  public StackView stackView = null;
-  public HeapView heapView = null;
+  public ToggleStates toggleStates = new ToggleStates();
 
   public String getProgram() {
     return isMjj ? mjjProgram : jjcProgram;
+  }
+
+  public EditorView getEditorView() {
+    return isMjj ? mjjEditorView : jjcEditorView;
+  }
+
+  public StackView getStackView() {
+    return stackView;
+  }
+
+  public HeapView getHeapView() {
+    return heapView;
+  }
+
+  public TerminalBodyView getTerminalBodyView() {
+    return terminalBodyView;
+  }
+
+  public void setEditorView(EditorView editorView) {
+    if (isMjj) {
+      mjjEditorView = editorView;
+    } else {
+      jjcEditorView = editorView;
+    }
+  }
+
+  public void setStackView(StackView stackView) {
+    this.stackView = stackView;
+  }
+
+  public void setHeapView(HeapView heapView) {
+    this.heapView = heapView;
+  }
+
+  public void setTerminalBodyView(TerminalBodyView terminalBodyView) {
+    this.terminalBodyView = terminalBodyView;
   }
 
   public void updateProgram(String program) {
@@ -114,16 +126,16 @@ public class LangWrapper {
     if (isMjj) {
       mjjPreviousBreakpointHitLine = mjjBreakpointHitLine;
       mjjBreakpointHitLine = line;
-      stackView.buildMjjStack(mjjInterpreter.getStack());
-      heapView.buildHeap(mjjInterpreter.getStack().getHeap());
-      terminalBodyView.addOutput("Breakpoint hit at line " + line);
+      getStackView().buildMjjStack(mjjInterpreter.getStack());
+      getHeapView().buildHeap(mjjInterpreter.getStack().getHeap());
+      getTerminalBodyView().addOutput("Breakpoint hit at line " + line);
       mjjInterpreter.getStack().reset();
       mjjInterpreter.getStack().getHeap().reset();
     } else {
       jjcPreviousBreakpointHitLine = jjcBreakpointHitLine;
       jjcBreakpointHitLine = line;
-      stackView.buildJjcStack(jjcInterpreter.getStack());
-      heapView.buildHeap(jjcInterpreter.getStack().getHeap());
+      getStackView().buildJjcStack(jjcInterpreter.getStack());
+      getHeapView().buildHeap(jjcInterpreter.getStack().getHeap());
       jjcInterpreter.getStack().reset();
       jjcInterpreter.getStack().getHeap().reset();
     }
@@ -141,18 +153,23 @@ public class LangWrapper {
     return isMjj ? mjjInterpreter : jjcInterpreter;
   }
 
+  public String getCompiledProgram() {
+    compiler.compile();
+    return compiler.getCompiledProgram();
+  }
+
   public void restart() {
     try {
       if (isMjj) mjjInterpreter.restart();
       else jjcInterpreter.restart();
-      EditorUtils.resetLineHighlighting(editorView);
+      EditorUtils.resetLineHighlighting(getEditorView());
       runWithDebug();
     } catch (BreakPointHit bph) {
       setBreakPointHit(bph.getLine());
-      EditorUtils.highlightLine(this, editorView);
+      EditorUtils.highlightLine(this, getEditorView());
     } catch (PausePointHit pph) {
       setBreakPointHit(pph.getLine());
-      EditorUtils.highlightLine(this, editorView);
+      EditorUtils.highlightLine(this, getEditorView());
     }
   }
 
@@ -162,10 +179,10 @@ public class LangWrapper {
       else jjcInterpreter.run();
     } catch (BreakPointHit bph) {
       setBreakPointHit(bph.getLine());
-      EditorUtils.highlightLine(this, editorView);
+      EditorUtils.highlightLine(this, getEditorView());
     } catch (PausePointHit pph) {
       setBreakPointHit(pph.getLine());
-      EditorUtils.highlightLine(this, editorView);
+      EditorUtils.highlightLine(this, getEditorView());
     }
   }
 
@@ -175,10 +192,10 @@ public class LangWrapper {
       else jjcInterpreter.runWithDebug();
     } catch (BreakPointHit bph) {
       setBreakPointHit(bph.getLine());
-      EditorUtils.highlightLine(this, editorView);
+      EditorUtils.highlightLine(this, getEditorView());
     } catch (PausePointHit pph) {
       setBreakPointHit(pph.getLine());
-      EditorUtils.highlightLine(this, editorView);
+      EditorUtils.highlightLine(this, getEditorView());
     }
   }
 
@@ -188,10 +205,10 @@ public class LangWrapper {
       else jjcInterpreter.resume();
     } catch (BreakPointHit bph) {
       setBreakPointHit(bph.getLine());
-      EditorUtils.highlightLine(this, editorView);
+      EditorUtils.highlightLine(this, getEditorView());
     } catch (PausePointHit pph) {
       setBreakPointHit(pph.getLine());
-      EditorUtils.highlightLine(this, editorView);
+      EditorUtils.highlightLine(this, getEditorView());
     }
   }
 
@@ -201,10 +218,10 @@ public class LangWrapper {
       else jjcInterpreter.stepForward();
     } catch (BreakPointHit bph) {
       setBreakPointHit(bph.getLine());
-      EditorUtils.highlightLine(this, editorView);
+      EditorUtils.highlightLine(this, getEditorView());
     } catch (PausePointHit pph) {
       setBreakPointHit(pph.getLine());
-      EditorUtils.highlightLine(this, editorView);
+      EditorUtils.highlightLine(this, getEditorView());
     }
   }
 
@@ -214,10 +231,10 @@ public class LangWrapper {
       else jjcInterpreter.stepBackward();
     } catch (BreakPointHit bph) {
       setBreakPointHit(bph.getLine());
-      EditorUtils.highlightLine(this, editorView);
+      EditorUtils.highlightLine(this, getEditorView());
     } catch (PausePointHit pph) {
       setBreakPointHit(pph.getLine());
-      EditorUtils.highlightLine(this, editorView);
+      EditorUtils.highlightLine(this, getEditorView());
     }
   }
 

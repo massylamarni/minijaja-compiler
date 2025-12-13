@@ -9,7 +9,7 @@ import javafx.scene.layout.VBox;
 
 public class StackView extends VBox {
   public StackView(LangWrapper langWrapper) {
-    langWrapper.stackView = this;
+    langWrapper.setStackView(this);
 
     this.getStyleClass().add("stack-view");
   }

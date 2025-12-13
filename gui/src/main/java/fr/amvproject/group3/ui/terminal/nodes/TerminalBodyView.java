@@ -8,7 +8,7 @@ import javafx.scene.layout.VBox;
 
 public class TerminalBodyView extends VBox {
   public TerminalBodyView(LangWrapper langWrapper) {
-    langWrapper.terminalBodyView = this;
+    langWrapper.setTerminalBodyView(this);
 
     this.getStyleClass().add("terminal-body");
     VBox.setVgrow(this, Priority.ALWAYS);

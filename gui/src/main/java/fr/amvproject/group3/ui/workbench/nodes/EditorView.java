@@ -16,7 +16,7 @@ import javafx.scene.shape.Circle;
 
 public class EditorView extends CodeArea {
   public EditorView(LangWrapper langWrapper) {
-    langWrapper.editorView = this;
+    langWrapper.setEditorView(this);
     
     this.getStyleClass().add("editor");
     VBox.setVgrow(this, Priority.ALWAYS);

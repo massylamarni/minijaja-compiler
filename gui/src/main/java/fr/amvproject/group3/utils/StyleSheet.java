@@ -30,12 +30,11 @@ public class StyleSheet {
       -fx-pref-width: ${LEFT_SIDEBAR_WIDTH};
       -fx-border-color: ${BORDER_COLOR};
       -fx-border-width: 0 1px 0 0;
-      -fx-padding: 0 ${SM_PADDING};
     }
 
     .left-sidebar-title {
       -fx-text-fill: ${LIGHT_TEXT_COLOR};
-      -fx-padding: ${SM_PADDING} ${MD_PADDING} 0 ${MD_PADDING};
+      -fx-padding: 0 ${MD_PADDING} 0 ${MD_PADDING};
     }
 
     .left-sidebar-body {
@@ -163,6 +162,46 @@ public class StyleSheet {
     }
     .scroll-pane .thumb {
       -fx-background-color: ${ICON_COLOR};
+    }
+
+    .tab-pane {
+      -fx-background-color: ${BACKGROUND_DARKER};
+    }
+
+    .tab-pane .tab-header-area .tab-header-background {
+      -fx-background-color: ${BACKGROUND_DARKER};
+    }
+
+    .tab-pane .tab-header-area {
+      -fx-background-color: ${BACKGROUND_DARKER};
+      -fx-padding: 0 0 0 0;
+    }
+
+    .tab-pane .tab {
+      -fx-background-color: ${BACKGROUND_DARKER};
+      -fx-background-insets: 0;
+      -fx-padding: ${SM_PADDING} ${MD_PADDING} ${SM_PADDING} ${MD_PADDING};
+      -fx-border-color: ${BORDER_COLOR} ${BORDER_COLOR} transparent ${BORDER_COLOR};
+      -fx-border-width: 1 1 0 1;
+      -fx-cursor: hand;
+    }
+
+    .tab-pane .tab-label {
+      -fx-text-fill: ${LIGHT_TEXT_COLOR};
+    }
+
+    .tab-pane .tab:hover {
+      -fx-background-color: #ffffff10;
+    }
+
+    .tab-pane .tab:selected {
+      -fx-background-color: ${BACKGROUND_DARK};
+      -fx-border-color: ${BORDER_COLOR} ${BORDER_COLOR} transparent ${BORDER_COLOR};
+      -fx-border-width: 1 1 0 1;
+    }
+
+    .tab-pane .tab:selected .tab-label {
+      -fx-text-fill: ${LIGHT_TEXT_COLOR};
     }
 
     /* Highlightings */

@@ -42,7 +42,7 @@ public class Compiler {
   }
 
   public void compile() {
-    runSemanticAnalysis();
+    // runSemanticAnalysis();
     compiledProgramNode = new ProgramNode(astWrapper.ast.accept(compilerVisitor));
   }
 

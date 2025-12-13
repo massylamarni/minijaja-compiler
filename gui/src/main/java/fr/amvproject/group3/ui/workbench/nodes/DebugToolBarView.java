@@ -6,8 +6,10 @@ import fr.amvproject.group3.ui.icons.IconType;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 
-public class DebugToolBar extends HBox {
-  public DebugToolBar(LangWrapper langWrapper) {
+public class DebugToolBarView extends HBox {
+  public DebugToolBarView(LangWrapper langWrapper) {
+    langWrapper.toggleStates.debugToolBarView = this;
+
     this.getStyleClass().add("debug-toolbar");
     this.setSpacing(8);
     this.setAlignment(Pos.CENTER);
@@ -31,5 +33,15 @@ public class DebugToolBar extends HBox {
       restartButton,
       stopButton
     );
+  }
+
+  public void hideDebugToolBar() {
+    this.setVisible(false);
+    this.setManaged(false);
+  }
+
+  public void showDebugToolBar() {
+    this.setVisible(true);
+    this.setManaged(true);
   }
 }

@@ -13,6 +13,8 @@ import javafx.scene.layout.VBox;
 
 public class TerminalView extends VBox {
   public TerminalView(LangWrapper langWrapper) {
+    langWrapper.toggleStates.terminalView = this;
+
     this.getStyleClass().add("terminal");
 
     HBox terminalTitleBar = new HBox();
@@ -20,21 +22,29 @@ public class TerminalView extends VBox {
 
     ActionButtonView closActionButtonView = new ActionButtonView(IconType.CLOSE);
     closActionButtonView.setOnAction(e -> {
-      this.setMinHeight(0);
-      findParentSplitPane().setDividerPositions(1.0);
+      langWrapper.toggleStates.closeTerminal();
     });
 
     HBox terminalActionBar = new HBox();
     terminalActionBar.getStyleClass().add("action-bar");
     terminalActionBar.getChildren().add(closActionButtonView);
 
-    Region terminalSpacer = new Region();
-    HBox.setHgrow(terminalSpacer, Priority.ALWAYS);
-    terminalTitleBar.getChildren().addAll(terminalSpacer, terminalActionBar);
+    Region hSpacer = new Region();
+    HBox.setHgrow(hSpacer, Priority.ALWAYS);
+    terminalTitleBar.getChildren().addAll(hSpacer, terminalActionBar);
 
     ScrollPane terminalBodyScroll = new ScrollPane(new TerminalBodyView(langWrapper));
 
     this.getChildren().addAll(terminalTitleBar, terminalBodyScroll);
+  }
+
+  public void closeTerminal() {
+    this.setMinHeight(0);
+    findParentSplitPane().setDividerPositions(1.0);
+  }
+
+  public void openTerminal() {
+    findParentSplitPane().setDividerPositions(0.5);
   }
 
   private SplitPane findParentSplitPane() {
