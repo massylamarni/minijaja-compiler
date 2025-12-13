@@ -11,5 +11,7 @@ public enum IconType {
   DEBUG_STEP_OUT,
   DEBUG_STOP,
   SEARCH,
-  CLOSE
+  CLOSE,
+  BREAKPOINT,
+  INVALID_BREAKPOINT
 }

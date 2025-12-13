@@ -35,4 +35,17 @@ public class TerminalBodyView extends VBox {
     terminalDefaultOutput.getChildren().addAll(terminalUserOutput, terminalPathOutput);
     this.getChildren().add(terminalDefaultOutput);
   }
+
+  public void clearOutput() {
+    HBox terminalDefaultOutput = new HBox();
+
+    Label terminalUserOutput = new Label("user@USER:");
+    terminalUserOutput.getStyleClass().add("terminal-user-output");
+
+    Label terminalPathOutput = new Label("~/fr/amvproject/groupe-3$ ");
+    terminalPathOutput.getStyleClass().add("terminal-path-output");
+
+    terminalDefaultOutput.getChildren().addAll(terminalUserOutput, terminalPathOutput);
+    this.getChildren().setAll(terminalDefaultOutput);
+  }
 }

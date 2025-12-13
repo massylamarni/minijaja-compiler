@@ -71,6 +71,7 @@ public class Interpreter {
   public void run() {
     // runSemanticAnalysis();
     try {
+      ctx.softReset();
       ctx.disableDebug();
       astWrapper.ast.accept(interpreterVisitor);
     } catch (fr.amvproject.group3.exceptions.RuntimeException e) {
@@ -81,6 +82,7 @@ public class Interpreter {
   public void runWithDebug() {
     // runSemanticAnalysis();
     try {
+      ctx.softReset();
       ctx.enableDebug();
       astWrapper.ast.accept(interpreterVisitor);
     } catch (BreakPointHit e) {

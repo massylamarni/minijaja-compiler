@@ -4,6 +4,7 @@ import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 
 import fr.amvproject.group3.model.LangWrapper;
+import fr.amvproject.group3.ui.icons.SvgIcons;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
@@ -12,7 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
+import javafx.scene.shape.SVGPath;
 
 public class EditorView extends CodeArea {
   public EditorView(LangWrapper langWrapper) {
@@ -44,7 +45,7 @@ public class EditorView extends CodeArea {
       Label lineNumberView = new Label(String.valueOf(relevantLine));
       lineNumberView.getStyleClass().add("editor-line-number");
 
-      Circle breakpointView = new Circle(5);
+      SVGPath breakpointView = SvgIcons.breakPointIcon();
       breakpointView.setVisible(langWrapper.getBreakpoints().contains(relevantLine));
       breakpointView.setFill(Color.RED);
 

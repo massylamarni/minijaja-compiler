@@ -79,7 +79,8 @@ public class ExecutionContext {
     public void softReset() {
       currentNode = null;
       previousNode = null;
-      // stack.reset();
+      stack.reset();
+      stack.getHeap().reset();
       isPaused = false;
       breakPointHitLine = 0;
       previouslyHitBreakpointLine = -1;
