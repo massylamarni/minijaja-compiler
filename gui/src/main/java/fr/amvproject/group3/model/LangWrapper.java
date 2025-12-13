@@ -117,6 +117,7 @@ public class LangWrapper {
   public void updateProgram(String program) {
     if (isMjj) {
       mjjInterpreter.setProgram(program);
+      compiler.setProgram(program);
     } else {
       jjcInterpreter.setProgram(program);
     }

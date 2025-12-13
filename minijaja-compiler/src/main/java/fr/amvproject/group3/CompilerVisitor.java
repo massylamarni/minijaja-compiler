@@ -42,6 +42,12 @@ public class CompilerVisitor implements fr.amvproject.group3.mjj.ast.AstVisitor<
   private int counterSilencer = 0;  // Used to get the instruction count before adding them
   private int k = 0; // Used for parameters
 
+  public void reset() {
+    instrCount = 0;
+    counterSilencer = 0;
+    k = 0;
+  }
+
   // A Jjc program is a list of classes
   private ClassNode newClass(InstrNode node) {
     return new ClassNode(new AddressNode(String.valueOf(counterSilencer == 0 ? ++instrCount : instrCount), 0, 0), node);
