@@ -25,13 +25,13 @@ public class SemanticErrorsCollector {
         return Collections.unmodifiableList(semanticExceptions);
     }
 
-    public synchronized void printAll() {
-        if (semanticExceptions.isEmpty()) {
-            System.out.println("No semantic exceptions.");
-            return;
+    public String toMessage() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Semantic Exceptions: ");
+        for (RuntimeException se : semanticExceptions) {
+            sb.append(se.toString()).append("\n");
         }
-        System.err.println("Semantic exceptions (" + semanticExceptions.size() + ")");
-        for (SemanticException e : semanticExceptions) System.err.println("["+e.getLine()+":"+e.getColumn()+"]"+e.getMessage() );
+        return sb.toString();
     }
 
     public void reset() {

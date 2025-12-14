@@ -9,6 +9,7 @@ import fr.amvproject.group3.settings.DefaultPrograms;
 import fr.amvproject.group3.utils.EditorUtils;
 
 public class InterpreterWrapper {
+
   private ViewsWrapper viewsWrapper;
   private Interpreter mjjInterpreter = new Interpreter(DefaultPrograms.mjjProgram);
   private fr.amvproject.group3.jjc.Interpreter jjcInterpreter = new fr.amvproject.group3.jjc.Interpreter(DefaultPrograms.jjcProgram);
@@ -43,7 +44,7 @@ public class InterpreterWrapper {
     try {
       if (isMjj) mjjInterpreter.run();
       else jjcInterpreter.run();
-      viewsWrapper.setProgramSuccess("Program executed successfully !");
+      onEof();
     } catch (BreakPointHit bph) {
       setBreakPointHit(bph.getLine());
     } catch (PausePointHit pph) {
@@ -56,7 +57,7 @@ public class InterpreterWrapper {
       viewsWrapper.getToggleStates().showDebugToolBar();
       if (isMjj) mjjInterpreter.runWithDebug();
       else jjcInterpreter.runWithDebug();
-      viewsWrapper.setProgramSuccess("Program executed successfully !");
+      onEof();
     } catch (BreakPointHit bph) {
       setBreakPointHit(bph.getLine());
     } catch (PausePointHit pph) {
@@ -68,7 +69,7 @@ public class InterpreterWrapper {
     try {
       if (isMjj) mjjInterpreter.resume();
       else jjcInterpreter.resume();
-      viewsWrapper.setProgramSuccess("Program executed successfully !");
+      onEof();
     } catch (BreakPointHit bph) {
       setBreakPointHit(bph.getLine());
     } catch (PausePointHit pph) {
@@ -80,7 +81,7 @@ public class InterpreterWrapper {
     try {
       if (isMjj) mjjInterpreter.stepForward();
       else jjcInterpreter.stepForward();
-      viewsWrapper.setProgramSuccess("Program executed successfully !");
+      onEof();
     } catch (BreakPointHit bph) {
       setBreakPointHit(bph.getLine());
     } catch (PausePointHit pph) {
@@ -164,6 +165,66 @@ public class InterpreterWrapper {
       mjjInterpreter.getBreakpoints().clear();
     } else {
       jjcInterpreter.getBreakpoints().clear();
+    }
+  }
+
+  private boolean printErrors() {
+    boolean hasErrors = false;
+    if (isMjj) {
+      if (mjjInterpreter.getLexicalErrorsListener().hasErrors()) {
+        viewsWrapper.writeInTerminal(mjjInterpreter.getLexicalErrorsListener().toMessage(), false);
+        hasErrors = true;
+      }
+      if (mjjInterpreter.getSyntaxicErrorsListener().hasErrors()) {
+        viewsWrapper.writeInTerminal(mjjInterpreter.getSyntaxicErrorsListener().toMessage(), false);
+        hasErrors = true;
+      }
+      if (mjjInterpreter.getRuntimeErrorsCollector().hasErrors()) {
+        viewsWrapper.writeInTerminal(mjjInterpreter.getRuntimeErrorsCollector().toMessage(), false);
+        hasErrors = true;
+      }
+      if (mjjInterpreter.getSemanticErrorsCollector().hasErrors()) {
+        viewsWrapper.writeInTerminal(mjjInterpreter.getSemanticErrorsCollector().toMessage(), false);
+        hasErrors = true;
+      }
+    } else {
+      if (jjcInterpreter.getLexicalErrorsListener().hasErrors()) {
+        viewsWrapper.writeInTerminal(jjcInterpreter.getLexicalErrorsListener().toMessage(), false);
+        hasErrors = true;
+      }
+      if (jjcInterpreter.getSyntaxicErrorsListener().hasErrors()) {
+        viewsWrapper.writeInTerminal(jjcInterpreter.getSyntaxicErrorsListener().toMessage(), false);
+        hasErrors = true;
+      }
+      if (jjcInterpreter.getRuntimeErrorsCollector().hasErrors()) {
+        hasErrors = true;
+        viewsWrapper.writeInTerminal(jjcInterpreter.getRuntimeErrorsCollector().toMessage(), false);
+      }
+      if (jjcInterpreter.getSemanticErrorsCollector().hasErrors()) {
+        viewsWrapper.writeInTerminal(jjcInterpreter.getSemanticErrorsCollector().toMessage(), false);
+        hasErrors = true;
+      }
+    }
+    return hasErrors;
+  }
+
+  private void onEof() {
+    if (isMjj) {
+      if (mjjInterpreter.getOutputBuffer().size() != 0) {
+        for (String output : mjjInterpreter.getOutputBuffer()) {
+          viewsWrapper.writeInTerminal(output, false);
+        }
+      }
+      if (!printErrors()) viewsWrapper.setProgramSuccess("Program executed successfully !");
+      else viewsWrapper.setProgramFailed("Program terminated with errors !");
+    } else {
+      if (jjcInterpreter.getOutputBuffer().size() != 0) {
+        for (String output : jjcInterpreter.getOutputBuffer()) {
+          viewsWrapper.writeInTerminal(output, false);
+        }
+      }
+      if (!printErrors()) viewsWrapper.setProgramSuccess("Program executed successfully !");
+      else viewsWrapper.setProgramFailed("Program terminated with errors !");
     }
   }
 

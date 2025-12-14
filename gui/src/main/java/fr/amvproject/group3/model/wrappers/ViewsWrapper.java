@@ -88,6 +88,12 @@ public class ViewsWrapper {
     writeInTerminal(text, true);
   }
 
+  public void setProgramFailed(String text) {
+    toggleStates.hideDebugToolBar();
+    EditorUtils.resetLineHighlighting(getEditorView());
+    writeInTerminal(text, true);
+  }
+
   public void reset() {
     getTerminalBodyView().clearOutput();
     EditorUtils.resetLineHighlighting(getEditorView());

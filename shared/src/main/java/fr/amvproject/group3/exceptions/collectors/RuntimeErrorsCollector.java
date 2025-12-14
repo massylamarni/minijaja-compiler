@@ -25,13 +25,13 @@ public class RuntimeErrorsCollector {
         return Collections.unmodifiableList(runtimeExceptions);
     }
 
-    public synchronized void printAll() {
-        if (runtimeExceptions.isEmpty()) {
-            System.out.println("No runtime exceptions.");
-            return;
+    public String toMessage() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Runtime Exception: ");
+        for (RuntimeException se : runtimeExceptions) {
+            sb.append(se.toString()).append("\n");
         }
-        System.err.println("Runtime exceptions (" + runtimeExceptions.size() + ")");
-        for (RuntimeException e : runtimeExceptions) System.err.println("["+e.getLine()+":"+e.getColumn()+"]"+e.getMessage() );
+        return sb.toString();
     }
 
     public void reset() {

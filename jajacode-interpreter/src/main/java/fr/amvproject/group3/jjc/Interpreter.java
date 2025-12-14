@@ -1,5 +1,6 @@
 package fr.amvproject.group3.jjc;
 
+import java.util.List;
 import java.util.Set;
 
 import fr.amvproject.group3.exceptions.BreakPointHit;
@@ -25,6 +26,10 @@ public class Interpreter {
 
   public Stack getStack() {
     return stack;
+  }
+  
+  public List<String> getOutputBuffer() {
+    return outputBuffer;
   }
 
   public Interpreter(String program) {

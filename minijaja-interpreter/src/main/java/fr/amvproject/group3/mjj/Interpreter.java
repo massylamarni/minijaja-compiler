@@ -1,5 +1,6 @@
 package fr.amvproject.group3.mjj;
 
+import java.util.List;
 import java.util.Set;
 
 import fr.amvproject.group3.exceptions.BreakPointHit;
@@ -25,6 +26,10 @@ public class Interpreter {
 
   public Stack getStack() {
     return stack;
+  }
+
+  public List<String> getOutputBuffer() {
+    return outputBuffer;
   }
 
   public Interpreter(String program) {
@@ -71,7 +76,7 @@ public class Interpreter {
   }
 
   public void run() {
-    // runSemanticAnalysis();
+    runSemanticAnalysis();
     try {
       ctx.softReset();
       ctx.disableDebug();
@@ -82,7 +87,7 @@ public class Interpreter {
   }
 
   public void runWithDebug() {
-    // runSemanticAnalysis();
+    runSemanticAnalysis();
     try {
       ctx.softReset();
       ctx.enableDebug();

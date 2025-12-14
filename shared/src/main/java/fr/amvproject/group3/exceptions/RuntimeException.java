@@ -17,5 +17,9 @@ public class RuntimeException extends java.lang.RuntimeException {
   public int getColumn() {
     return column;
   }
-}
 
+  @Override
+  public String toString() {
+    return "[" + line + ":" + column + " ] " + super.getMessage();
+  }
+}
