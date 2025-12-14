@@ -26,6 +26,7 @@ public class EditorView extends CodeArea {
 
     this.replaceText(langWrapper.getProgram());
     setSyntaxHighlighting(langWrapper.getProgram(), langWrapper);
+    langWrapper.getInterpreterWrapper().runSemanticAnalysis();
     this.setParagraphGraphicFactory(LineNumberFactory.get(this));
 
     Debouncer debouncer = new Debouncer();
@@ -34,8 +35,10 @@ public class EditorView extends CodeArea {
       debouncer.debounce(() -> {
         Platform.runLater(() -> {
           langWrapper.updateProgram(newText);
+          langWrapper.getInterpreterWrapper().runSemanticAnalysis();
+          refreshBreakpointHandler(langWrapper);
         });
-      }, 1000);
+      }, 200);
     });
 
     setBreakpointHandler(langWrapper);
@@ -56,9 +59,6 @@ public class EditorView extends CodeArea {
       Label lineNumberView = new Label(String.valueOf(relevantLine));
       lineNumberView.getStyleClass().add("editor-line-number");
 
-      langWrapper.getInterpreterWrapper().runSemanticAnalysis();
-      System.out.println(langWrapper.getInterpreterWrapper().getExploredLines());
-      System.out.println("-----------------");
       boolean isValidBreakpoint = langWrapper.getInterpreterWrapper().getExploredLines().contains(relevantLine);
       SVGPath breakpointView = isValidBreakpoint ? SvgIcons.breakPointIcon() : SvgIcons.invalidBreakPointIcon();
       breakpointView.setVisible(langWrapper.getInterpreterWrapper().getBreakpoints().contains(relevantLine));
@@ -81,7 +81,7 @@ public class EditorView extends CodeArea {
     });
   }
 
-  public void removeAllBreakpoints(InteractiveWrapper langWrapper) {
+  public void refreshBreakpointHandler(InteractiveWrapper langWrapper) {
     this.setParagraphGraphicFactory(null);
     setBreakpointHandler(langWrapper);    
   }

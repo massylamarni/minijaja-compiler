@@ -42,7 +42,6 @@ public class InterpreterWrapper {
     } else {
       jjcInterpreter.runSemanticAnalysis();
     }
-    printErrors();
   }
 
   public void restart() {

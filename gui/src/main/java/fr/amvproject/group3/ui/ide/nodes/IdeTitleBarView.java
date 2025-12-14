@@ -64,7 +64,7 @@ public class IdeTitleBarView extends HBox {
 
     removeAllBreakpointsItem.setOnAction(e -> {
       langWrapper.getInterpreterWrapper().removeAllBreakpoints();
-      langWrapper.getViewsWrapper().getEditorView().removeAllBreakpoints(langWrapper);
+      langWrapper.getViewsWrapper().getEditorView().refreshBreakpointHandler(langWrapper);
     });
 
     /* Handlers menuRun */
