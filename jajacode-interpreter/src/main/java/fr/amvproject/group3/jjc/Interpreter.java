@@ -27,6 +27,10 @@ public class Interpreter {
   public Stack getStack() {
     return stack;
   }
+  
+  public SemanticVisitor getSemanticVisitor() {
+    return semanticVisitor;
+  }
 
   public List<String> getOutputBuffer() {
     return outputBuffer;
@@ -60,7 +64,7 @@ public class Interpreter {
     return runtimeErrorsCollector;
   }
 
-  private void runSemanticAnalysis() {
+  public void runSemanticAnalysis() {
     try {
       astWrapper.ast.accept(semanticVisitor);
     } catch (SemanticException e) {

@@ -1,5 +1,6 @@
 package fr.amvproject.group3.model.wrappers;
 
+import java.util.List;
 import java.util.Set;
 
 import fr.amvproject.group3.exceptions.BreakPointHit;
@@ -25,6 +26,23 @@ public class InterpreterWrapper {
 
   public void setIsMjj(boolean isMjj) {
     this.isMjj = isMjj;
+  }
+
+  public List<Integer> getExploredLines() {
+    if (isMjj) {
+      return mjjInterpreter.getSemanticVisitor().getExploredLines();
+    } else {
+      return jjcInterpreter.getSemanticVisitor().getExploredLines();
+    }
+  }
+
+  public void runSemanticAnalysis() {
+    if (isMjj) {
+      mjjInterpreter.runSemanticAnalysis();
+    } else {
+      jjcInterpreter.runSemanticAnalysis();
+    }
+    printErrors();
   }
 
   public void restart() {

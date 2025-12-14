@@ -41,6 +41,10 @@ public class EditorView extends CodeArea {
     setBreakpointHandler(langWrapper);
   }
 
+  public void setSyntaxHighlighting(String program, InteractiveWrapper langWrapper) {
+    this.setStyleSpans(0, SyntaxHighlighting.highlightText(program, langWrapper.isMjj()));
+  }
+
   private void setBreakpointHandler(InteractiveWrapper langWrapper) {
     this.setParagraphGraphicFactory(line -> {
       HBox h = new HBox();
@@ -52,9 +56,13 @@ public class EditorView extends CodeArea {
       Label lineNumberView = new Label(String.valueOf(relevantLine));
       lineNumberView.getStyleClass().add("editor-line-number");
 
-      SVGPath breakpointView = SvgIcons.breakPointIcon();
+      langWrapper.getInterpreterWrapper().runSemanticAnalysis();
+      System.out.println(langWrapper.getInterpreterWrapper().getExploredLines());
+      System.out.println("-----------------");
+      boolean isValidBreakpoint = langWrapper.getInterpreterWrapper().getExploredLines().contains(relevantLine);
+      SVGPath breakpointView = isValidBreakpoint ? SvgIcons.breakPointIcon() : SvgIcons.invalidBreakPointIcon();
       breakpointView.setVisible(langWrapper.getInterpreterWrapper().getBreakpoints().contains(relevantLine));
-      breakpointView.setFill(Color.RED);
+      breakpointView.setFill(isValidBreakpoint ? Color.RED : Color.GREY);
 
       h.setOnMouseClicked(e -> {
         if (e.getButton() == MouseButton.PRIMARY) {
@@ -71,10 +79,6 @@ public class EditorView extends CodeArea {
       h.getChildren().addAll(breakpointView, lineNumberView);
       return h;
     });
-  }
-
-  public void setSyntaxHighlighting(String program, InteractiveWrapper langWrapper) {
-    this.setStyleSpans(0, SyntaxHighlighting.highlightText(program, langWrapper.isMjj()));
   }
 
   public void removeAllBreakpoints(InteractiveWrapper langWrapper) {
