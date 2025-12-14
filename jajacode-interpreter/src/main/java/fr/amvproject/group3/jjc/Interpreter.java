@@ -150,7 +150,6 @@ public class Interpreter {
   }
 
   public void partialReset() {
-    ctx.resetMemory();
     outputBuffer.clear();
     runtimeErrorsCollector.reset();
     semanticErrorsCollector.reset();

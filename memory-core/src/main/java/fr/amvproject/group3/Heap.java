@@ -101,6 +101,7 @@ public class Heap {
 
   public void reset() {
     queue.clear();
+    nextAddress = 0;
   }
 
   /* Print Heap */
