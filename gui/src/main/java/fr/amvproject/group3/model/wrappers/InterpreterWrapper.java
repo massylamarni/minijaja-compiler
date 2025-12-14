@@ -206,6 +206,7 @@ public class InterpreterWrapper {
         hasErrors = true;
       }
     }
+    viewsWrapper.writeInTerminal(mjjInterpreter.getStack().getHeap().print(), false);
     return hasErrors;
   }
 

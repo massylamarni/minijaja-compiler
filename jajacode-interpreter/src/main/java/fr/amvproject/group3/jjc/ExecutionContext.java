@@ -17,6 +17,7 @@ public class ExecutionContext {
     private int previouslyHitBreakpointLine = -1;
     private boolean ignoreNextBreakpoint = false;
     private boolean ignoreBreakpoints = true;
+    private boolean isExecutionSuccessful = false;
 
     public ExecutionContext(Stack stack) {
         this.stack = stack;
@@ -42,6 +43,10 @@ public class ExecutionContext {
       return isPaused;
     }
 
+    public boolean isExecutionSuccessful() {
+      return isExecutionSuccessful;
+    }
+
     public void setCurrentNode(AstNode node) {
         currentNode = node;
     }
@@ -52,6 +57,10 @@ public class ExecutionContext {
 
     public void setIsPaused(boolean isPaused) {
         this.isPaused = isPaused;
+    }
+
+    public void setIsExecutionSuccessful(boolean isExecutionSuccessful) {
+      this.isExecutionSuccessful = isExecutionSuccessful;
     }
 
     public void addBreakPoint(int line) {
@@ -76,12 +85,16 @@ public class ExecutionContext {
       }
     }
 
+    public void resetMemory() {
+      stack.reset();
+      stack.getHeap().reset();
+    }
+
     public void softReset() {
       currentNode = null;
       previousNode = null;
-      stack.reset();
-      stack.getHeap().reset();
       isPaused = false;
+      resetMemory();
       breakPointHitLine = 0;
       previouslyHitBreakpointLine = -1;
     }

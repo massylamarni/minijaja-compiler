@@ -81,6 +81,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
       ctx.recordNode(instrNode);
       instrNode.accept(this);
     }
+    ctx.setIsExecutionSuccessful(true);
     return null;
   }
 

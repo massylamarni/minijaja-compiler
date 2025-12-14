@@ -14,4 +14,9 @@ public class PointerNode {
   public void setAddress(int address) {
     this.address = address;
   }
+
+  @Override
+  public String toString() {
+    return "@: " + address;
+  }
 }

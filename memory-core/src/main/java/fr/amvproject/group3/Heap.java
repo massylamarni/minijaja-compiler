@@ -107,28 +107,15 @@ public class Heap {
 
   public String print() {
     StringBuilder sb = new StringBuilder();
-    sb.append("===== HEAP =====\n");
 
     if (queue.isEmpty()) {
       sb.append("[Empty Heap]\n");
     } else {
-      int address = 0;
-      int blockStartAddress = 1;
-      int blockSize;
       for (Object value : queue) {
-        if (address == blockStartAddress - 1) {
-          sb.append("#");
-          blockSize = (int) value;
-          blockStartAddress = blockStartAddress + blockSize + 1;
-        } else {
-          sb.append("@");
-        }
-        sb.append(address).append(": ").append(value).append("\n");
-        address++;
+        sb.append(value).append("\n");
       }
     }
 
-    sb.append("======================\n");
     return sb.toString();
   }
 }

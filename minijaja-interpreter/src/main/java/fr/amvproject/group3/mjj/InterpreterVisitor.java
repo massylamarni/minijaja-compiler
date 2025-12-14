@@ -76,6 +76,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         for (ClassNode classe : node.getClasses()) {
             classe.accept(this);
         }
+        ctx.setIsExecutionSuccessful(true);
         return null;
     }
 
