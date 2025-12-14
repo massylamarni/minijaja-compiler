@@ -1,14 +1,14 @@
-package fr.amvproject.group3;
+package fr.amvproject.group3.mjj;
 
 
-import fr.amvproject.group3.mjj.InterpreterVisitor;
+import fr.amvproject.group3.MiniJajaLexer;
+import fr.amvproject.group3.MiniJajaParser;
 import fr.amvproject.group3.mjj.ast.AstBuilderVisitor;
 import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
