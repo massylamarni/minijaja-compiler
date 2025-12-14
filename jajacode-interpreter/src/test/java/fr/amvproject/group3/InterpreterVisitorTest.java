@@ -31,6 +31,58 @@ public class InterpreterVisitorTest {
         return (ProgramNode) builder.visit(tree);
     }
 
+    @Test
+    public void givenSimpleAdditionCodeWithCst__whenInterpret__thenStackHaveResult() throws Exception {
+        // Given
+        /*
+            class Test {
+                final int x = 2;
+                int y = 3;
+                main {
+                    x = x + y;
+                    write(x);
+                }
+            }
+        */
+        String code = """
+            1 init
+            2 push(2)
+            3 new(x, entier, cst, 0)
+            4 push(3)
+            5 new(y, entier, var, 0)
+            6 load(x)
+            7 load(y)
+            8 add
+            9 store(x)
+            10 load(x)
+            11 write
+            12 push(0)
+            13 swap
+            14 pop
+            15 swap
+            16 pop
+            17 pop
+            18 jcstop
+            """;
+
+        ProgramNode program = buildAstFromCode(code);
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outContent));
+        // When
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        try {
+            program.accept(interpreter);
+        }finally {
+            System.setOut(originalOut);
+        }
+
+        // Then
+        String output = outContent.toString().trim();
+        assertThat(output, is("5"));
+
+    }
+
     // ######################## ARIMTHMETIC ########################
 
     @Test
@@ -1167,7 +1219,7 @@ public class InterpreterVisitorTest {
         /*
             class C {
                     int x = 5 ;
-                
+
                 int fct(int v) {
                     int y = 5 + v;
                     write(y) ;
@@ -1235,7 +1287,7 @@ public class InterpreterVisitorTest {
         /*
             class C {
                     int x = 5 ;
-                
+
                 int fct(int v) {
                     int y = 5 + v;
                     return y ;
@@ -1302,7 +1354,7 @@ public class InterpreterVisitorTest {
         /*
             class C {
                     int x = 5 ;
-                
+
                 int fct(int v) {
                     int y = 5 + v;
                     return y ;
@@ -1372,7 +1424,7 @@ public class InterpreterVisitorTest {
             class C {
                     int x = 5 ;
                     int nt[3] ;
-    
+
                 main {
                     nt[0] = x ;
                     write(nt[0]);
@@ -1423,7 +1475,7 @@ public class InterpreterVisitorTest {
         /*
             class C {
                     boolean nt[2] ;
-    
+
                 main {
                     nt[0] = true ;
                     nt[1] = false ;
@@ -1475,7 +1527,7 @@ public class InterpreterVisitorTest {
             class C {
                     int nt[3] ;
                     int i = 0 ;
-    
+
                 main {
                     while (3 > i) {
                         nt[i] = i * 10 ;
@@ -1540,7 +1592,7 @@ public class InterpreterVisitorTest {
             class C {
                     int tab1[1] ;
                     int tab2[1] ;
-    
+
                 main {
                     tab1[0] = 10 ;
                     tab2[0] += tab1[0] ;
@@ -1596,8 +1648,8 @@ public class InterpreterVisitorTest {
         /*
             class C {
                     int tab1[1] ;
-                    
-    
+
+
                 main {
                     tab1[0] = 10 ;
                     tab1[0]++ ;
@@ -1689,7 +1741,7 @@ public class InterpreterVisitorTest {
         /*
             class C {
                 int tab1[1];
-                
+
                 main {
                     tab1[0] = 10;
                     write(tab1[0]);
@@ -1734,7 +1786,7 @@ public class InterpreterVisitorTest {
         /*
             class C {
                 int tab1[1];
-                
+
                 main {
                     write(tab1[0]);    // 1. Valeur initiale
                     tab1[0] = 10;
@@ -1794,7 +1846,7 @@ public class InterpreterVisitorTest {
         /*
             class C {
                 int nt[5];
-                
+
                 main {
                     int size = length(nt);
                     write(size);
@@ -1859,7 +1911,7 @@ public class InterpreterVisitorTest {
                     write(res1);
                 }
                 }
-                
+
                 """;
         */
         String code = """ 

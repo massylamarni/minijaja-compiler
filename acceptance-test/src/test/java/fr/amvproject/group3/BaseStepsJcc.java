@@ -35,7 +35,7 @@ public class BaseStepsJcc {
        public String jjcfile(String jjcfile) {
            return jjcfile;
        }
-   
+
        @ParameterType("([\\w\\-./\\\\]+\\.out)")
        public String outfile(String outfile) {
            return outfile;
@@ -82,24 +82,19 @@ public class BaseStepsJcc {
         jjcState.outputCaptor = new ByteArrayOutputStream();
         System.setOut(new PrintStream(jjcState.outputCaptor));
         try {
-            // The ProgramNode 'program' is no longer directly used for execution,
-            // as the Interpreter now takes the raw program content.
-            // If `jjcState.currentProgramContent` is null or parsing fails,
-            // the Interpreter constructor will likely throw an exception.
+
             if (jjcState.currentProgramContent == null || jjcState.currentProgramContent.isEmpty()) {
                 jjcState.lastException = new IllegalStateException("Le programme JajaCode n'a pas été chargé.");
-                return; // Exit the method as there's nothing to interpret
+                return;
             }
 
             Interpreter interpreter = new Interpreter(jjcState.currentProgramContent);
             interpreter.run();
 
             if (interpreter.getSemanticErrorsCollector().hasErrors()) {
-                // If semantic errors occurred,
                 SemanticException semanticError = interpreter.getSemanticErrorsCollector().getErrors().get(0);
                 jjcState.lastException = semanticError;
             } else if (interpreter.getRuntimeErrorsCollector().hasErrors()) {
-                // If runtime errors occurred,
                 fr.amvproject.group3.exceptions.RuntimeException runtimeError = interpreter.getRuntimeErrorsCollector().getErrors().get(0);
                 jjcState.lastException = runtimeError;
             }
@@ -113,7 +108,7 @@ public class BaseStepsJcc {
             }
         }
     }
-    /* 
+    /*
     @Then("le résultat final doit être correct jcc")
     public void le_résultat_final_doit_être_correct() throws IOException {
         if (jjcState.lastException != null) {
@@ -138,11 +133,10 @@ public class BaseStepsJcc {
 
         String expectedOutput = base.loadResource(outfile).trim();
         String actualOutput = (jjcState.executionResult == null) ? "" : jjcState.executionResult.trim();
-        // Normalize line endings to avoid OS-specific differences (CRLF vs LF)
         expectedOutput = expectedOutput.replace("\r\n", "\n");
         actualOutput = actualOutput.replace("\r\n", "\n");
         assertThat("Le résultat de l'interprétation JajaCode ne correspond pas à l'attendu pour " + outfile + ".", actualOutput, is(equalTo(expectedOutput)));
     }
 
-   
+
 }

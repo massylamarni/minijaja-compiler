@@ -18,8 +18,8 @@ public class StepDefinitionInterpreterJajacode {
     private final BaseStepsUtility base = BaseStepsUtility.getInstance();
     private final BaseStepsUtilityJcc jccState = BaseStepsUtilityJcc.getInstance();
 
-    
-    
+
+
     @When("Interpretation du programme jajacode")
     public void interpretationDuProgrammeJajacode() {
         jccState.originalOut = System.out;
@@ -33,20 +33,19 @@ public class StepDefinitionInterpreterJajacode {
             Interpreter interpreter = new Interpreter(jccState.currentProgramContent);
             interpreter.run();
 
-            // Store results in the appropriate utility class
             jccState.executionResult = jccState.outputCaptor.toString().trim();
         } catch (Exception e) {
-            jccState.lastException = e; // Store exception for later assertions
+            jccState.lastException = e;
         } finally {
             System.setOut(jccState.originalOut);
         }
     }
 
-   
+
 
      @Then("Une erreur d'exécution doit être détectée")
     public void uneErreurDExécutionDoitÊtreDétectée() {
         assertThat(jccState.lastException, is(notNullValue()));
     }
-   
+
 }

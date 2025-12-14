@@ -6,7 +6,7 @@ Feature: Jajacode Valid Programs
   Scenario Outline: Execution Jajacode produit le résultat attendu pour <file>
     Given Un programme Minijaja du fichier <file>
     When Compilation du programme
-    And Execution du programme compilé
+    And Verification du programme compilé
     Then le résultat final doit être correct jcc <out>
 
   Examples:
