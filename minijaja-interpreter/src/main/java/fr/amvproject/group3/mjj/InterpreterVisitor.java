@@ -55,6 +55,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     private int recursionCount = 0;
     private final Stack stack = new Stack();
     private ExecutionContext ctx = new ExecutionContext(stack); // final
+    private List<String> outputBuffer = new ArrayList<>();
 
     public Stack getStack() {
         return stack;
@@ -62,6 +63,10 @@ public class InterpreterVisitor implements AstVisitor<Object> {
 
     public ExecutionContext getCtx() {
       return ctx;
+    }
+
+    public List<String> getOutputBuffer() {
+      return outputBuffer;
     }
 
     // ========== PROGRAM ==========
@@ -416,9 +421,9 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         ctx.recordNode(node);
         Object value = evalExp(node.getExp());
         if (node.isLn()) {
-            System.out.println(value);  // TODO Write in an output buffer instead
+            outputBuffer.add(String.valueOf(value) + '\n');
         } else {
-            System.out.print(value);
+            outputBuffer.add(String.valueOf(value));
         }
         return null;
     }

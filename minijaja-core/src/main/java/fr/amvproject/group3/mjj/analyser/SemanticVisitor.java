@@ -75,6 +75,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
     Symbols leftSym = scopeManager.lookup(identNode);
     ExpNode evaluatedRightExpNode;
     try {
+      if (rightExpNode instanceof BinaryExpNode || rightExpNode instanceof UnaryExpNode) return;
       evaluatedRightExpNode = (ExpNode) rightExpNode.accept(compileTimeVisitor);
 
       if (leftSym instanceof ClassSymbol) throw new SemanticException("Can't affact a new value to a class !", identNode.getLine(), identNode.getColumn());
@@ -207,9 +208,10 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
     // Check if return value types match declared return type
     for (InstrNode instrNode : node.getInstrs().getList()) {
-      if (!instrNode.accept(this).getName().equals(node.getReturnType().getName())) {
-        ReturnNode returnNode = (ReturnNode) instrNode;
-        throw new SemanticException("Return expression does not match the declared method type " + node.getReturnType().getName(), returnNode.getLine(), returnNode.getColumn());
+      if (instrNode instanceof ReturnNode returnNode) {
+        if (!instrNode.accept(this).getName().equals(node.getReturnType().getName())) {
+          throw new SemanticException("Return expression does not match the declared method type " + node.getReturnType().getName(), returnNode.getLine(), returnNode.getColumn());
+        }
       }
     }
     scopeManager.exitScope();

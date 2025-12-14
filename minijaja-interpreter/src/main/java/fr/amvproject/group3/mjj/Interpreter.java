@@ -19,6 +19,7 @@ public class Interpreter {
   private SemanticVisitor semanticVisitor = new SemanticVisitor();
   private Stack stack = interpreterVisitor.getStack();
   private ExecutionContext ctx = interpreterVisitor.getCtx();
+  private List<String> outputBuffer = interpreterVisitor.getOutputBuffer();
   private RuntimeErrorsCollector runtimeErrorsCollector = new RuntimeErrorsCollector();
   private SemanticErrorsCollector semanticErrorsCollector = new SemanticErrorsCollector();
 
@@ -64,8 +65,9 @@ public class Interpreter {
 
   public void restart() {
     ctx.softReset();
-    runtimeErrorsCollector = new RuntimeErrorsCollector(); // TODO .reset()
-    semanticErrorsCollector = new SemanticErrorsCollector();
+    outputBuffer.clear();
+    runtimeErrorsCollector.reset();
+    semanticErrorsCollector.reset();
   }
 
   public void run() {
@@ -130,5 +132,13 @@ public class Interpreter {
 
   public void removeBreakpoint(int line) {
     ctx.removeBreakpoint(line);
+  }
+
+  public void disableDebug() {
+    ctx.disableDebug();
+  }
+
+  public void enableDebug() {
+    ctx.enableDebug();
   }
 }
