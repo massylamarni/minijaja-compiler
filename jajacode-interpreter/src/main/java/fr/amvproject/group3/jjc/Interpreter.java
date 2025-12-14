@@ -27,7 +27,7 @@ public class Interpreter {
   public Stack getStack() {
     return stack;
   }
-  
+
   public List<String> getOutputBuffer() {
     return outputBuffer;
   }
@@ -66,14 +66,6 @@ public class Interpreter {
     } catch (SemanticException e) {
       semanticErrorsCollector.add(e.getMessage(), e.getLine(), e.getColumn());
     }
-  }
-
-  public void restart() {
-    ctx.softReset();
-    outputBuffer.clear();
-    interpreterVisitor.resetCurrentAddress();
-    runtimeErrorsCollector.reset();
-    semanticErrorsCollector.reset();
   }
 
   public void run() {
@@ -127,6 +119,10 @@ public class Interpreter {
     }
   }
 
+  public void onLastInstruction() {
+    reset();
+  }
+
   public Set<Integer> getBreakpoints() {
     return ctx.getBreakpoints();
   }
@@ -145,5 +141,13 @@ public class Interpreter {
 
   public void enableDebug() {
     ctx.enableDebug();
+  }
+
+  public void reset() {
+    ctx.softReset();
+    outputBuffer.clear();
+    interpreterVisitor.resetCurrentAddress();
+    runtimeErrorsCollector.reset();
+    semanticErrorsCollector.reset();
   }
 }

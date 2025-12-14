@@ -64,7 +64,7 @@ public class LeftSideBarView extends VBox {
   }
 
   public void openLeftSideBar() {
-    findParentSplitPane().setDividerPositions(0.5);
+    findParentSplitPane().setDividerPositions(0.3);
   }
 
   private SplitPane findParentSplitPane() {

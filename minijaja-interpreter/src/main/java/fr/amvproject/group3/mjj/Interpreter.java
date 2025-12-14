@@ -68,17 +68,9 @@ public class Interpreter {
     }
   }
 
-  public void restart() {
-    ctx.softReset();
-    outputBuffer.clear();
-    runtimeErrorsCollector.reset();
-    semanticErrorsCollector.reset();
-  }
-
   public void run() {
     runSemanticAnalysis();
     try {
-      ctx.softReset();
       ctx.disableDebug();
       astWrapper.ast.accept(interpreterVisitor);
     } catch (fr.amvproject.group3.exceptions.RuntimeException e) {
@@ -89,7 +81,6 @@ public class Interpreter {
   public void runWithDebug() {
     runSemanticAnalysis();
     try {
-      ctx.softReset();
       ctx.enableDebug();
       astWrapper.ast.accept(interpreterVisitor);
     } catch (BreakPointHit e) {
@@ -127,6 +118,10 @@ public class Interpreter {
     }
   }
 
+  public void onLastInstruction() {
+    reset();
+  }
+
   public Set<Integer> getBreakpoints() {
     return ctx.getBreakpoints();
   }
@@ -145,5 +140,12 @@ public class Interpreter {
 
   public void enableDebug() {
     ctx.enableDebug();
+  }
+
+  public void reset() {
+    ctx.softReset();
+    outputBuffer.clear();
+    runtimeErrorsCollector.reset();
+    semanticErrorsCollector.reset();
   }
 }

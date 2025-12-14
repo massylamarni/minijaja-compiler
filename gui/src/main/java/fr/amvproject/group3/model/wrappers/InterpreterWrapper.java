@@ -29,8 +29,8 @@ public class InterpreterWrapper {
 
   public void restart() {
     try {
-      if (isMjj) mjjInterpreter.restart();
-      else jjcInterpreter.restart();
+      if (isMjj) mjjInterpreter.reset();
+      else jjcInterpreter.reset();
       EditorUtils.resetLineHighlighting(viewsWrapper.getEditorView());
       runWithDebug();
     } catch (BreakPointHit bph) {
@@ -123,6 +123,7 @@ public class InterpreterWrapper {
   }
 
   public void setBreakPointHit(int line) {
+    viewsWrapper.getToggleStates().openLeftSideBar();
     if (isMjj) {
       mjjPreviousBreakpointHitLine = mjjBreakpointHitLine;
       mjjBreakpointHitLine = line;
@@ -233,7 +234,7 @@ public class InterpreterWrapper {
     jjcBreakpointHitLine = -1;
     mjjPreviousBreakpointHitLine = mjjBreakpointHitLine;
     jjcPreviousBreakpointHitLine = jjcBreakpointHitLine;
-    mjjInterpreter.restart();
-    jjcInterpreter.restart();
+    mjjInterpreter.reset();
+    jjcInterpreter.reset();
   }
 }
