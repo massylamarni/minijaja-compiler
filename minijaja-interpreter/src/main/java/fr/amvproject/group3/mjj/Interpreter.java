@@ -74,28 +74,26 @@ public class Interpreter {
 
   public void run() {
     runSemanticAnalysis();
+    if(ctx.isExecutionSuccessful()) partialReset();
+    ctx.disableDebug();
     try {
-      ctx.disableDebug();
-      partialReset();
       astWrapper.ast.accept(interpreterVisitor);
     } catch (fr.amvproject.group3.exceptions.RuntimeException e) {
       runtimeErrorsCollector.add(e.getMessage(), e.getLine(), e.getColumn());
     }
-    onLastInstruction();
   }
 
   public void runWithDebug() {
     runSemanticAnalysis();
+    if(ctx.isExecutionSuccessful()) partialReset();
+    ctx.enableDebug();
     try {
-      ctx.enableDebug();
-      partialReset();
       astWrapper.ast.accept(interpreterVisitor);
     } catch (BreakPointHit e) {
       throw e;
     } catch (fr.amvproject.group3.exceptions.RuntimeException e) {
       runtimeErrorsCollector.add(e.getMessage(), e.getLine(), e.getColumn());
     }
-    onLastInstruction();
   }
 
   public void resume() {
@@ -105,32 +103,28 @@ public class Interpreter {
   }
 
   public void stepForward() {
+    if(ctx.isExecutionSuccessful()) partialReset();
+    ctx.ignoreNextBreakpoint();
     try {
-      ctx.ignoreNextBreakpoint();
-      partialReset();
       astWrapper.ast.accept(interpreterVisitor);
     } catch (PausePointHit e) {
       throw e;
     } catch (fr.amvproject.group3.exceptions.RuntimeException e) {
       runtimeErrorsCollector.add(e.getMessage(), e.getLine(), e.getColumn());
     }
-    onLastInstruction();
   }
 
   public void stepBackward() {
+    if(ctx.isExecutionSuccessful()) partialReset();
+    ctx.disableDebug();
+    ctx.decBreakPointHitLine();
     try {
-      ctx.decBreakPointHitLine();
-      partialReset();
       astWrapper.ast.accept(interpreterVisitor);
     } catch (PausePointHit e) {
       throw e;
     } catch (fr.amvproject.group3.exceptions.RuntimeException e) {
       runtimeErrorsCollector.add(e.getMessage(), e.getLine(), e.getColumn());
     }
-  }
-
-  public void onLastInstruction() {
-    if(ctx.isExecutionSuccessful()) reset();
   }
 
   public Set<Integer> getBreakpoints() {
