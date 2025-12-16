@@ -97,9 +97,16 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   /* Visitors */
 
+  public void reset() {
+    symbolTable.reset();
+    scopeManager.reset();
+    exploredLines.clear();
+    currentAddress = 1;
+  }
+
   @Override
   public TypeNode visitProgram(ProgramNode node) {
-    exploredLines.clear();
+    reset();
     Map<Integer, InstrNode> instrsMap = new HashMap<>();
     for (ClassNode classe : node.getClasses()) {
       instrsMap.put(classe.getAddress().getValue(), classe.getInstr());
@@ -109,6 +116,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
       exploredLines.add(instrNode.getLine());
       instrNode.accept(this);
     }
+    exploredLines.add(currentAddress);
     return new TypeNode("void");
   }
 
