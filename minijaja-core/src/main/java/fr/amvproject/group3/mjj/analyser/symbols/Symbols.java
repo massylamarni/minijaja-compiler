@@ -31,7 +31,7 @@ public abstract class Symbols {
     if (this instanceof VarSymbol) return new ObjNode("var", getLine(), getColumn());
     if (this instanceof CstSymbol cstSymbol) return new ObjNode(cstSymbol.isVcst() ? "vcst" : "cst", getLine(), getColumn());
     if (this instanceof TableSymbol) return new ObjNode("arr_pointer", getLine(), getColumn());
-    if (this instanceof MethodSymbol) return new ObjNode("meth", getLine(), getColumn());
+    if (this instanceof MethodSymbol) return new ObjNode("meth_pointer", getLine(), getColumn());
     if (this instanceof ClassSymbol) return new ObjNode("class", getLine(), getColumn());
     return new ObjNode("literal", getLine(), getColumn()); 
   }

@@ -14,7 +14,6 @@ import fr.amvproject.group3.mjj.ast.nodes.exprs.LengthNode;
 import fr.amvproject.group3.mjj.ast.nodes.exprs.UnaryExpNode;
 import fr.amvproject.group3.mjj.ast.nodes.instrs.*;
 import fr.amvproject.group3.mjj.ast.nodes.other.BinaryOpNode;
-import fr.amvproject.group3.mjj.ast.nodes.other.ObjNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.TypeMethNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.UnaryOpNode;
 import org.junit.Before;
@@ -24,6 +23,7 @@ import org.junit.Test;
 import fr.amvproject.group3.exceptions.SemanticException;
 import fr.amvproject.group3.mjj.analyser.nodes.SymbolIdentity;
 import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
+import fr.amvproject.group3.mjj.analyser.nodes.ObjNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.*;
 import fr.amvproject.group3.mjj.ast.nodes.intermediate.*;
 import fr.amvproject.group3.mjj.ast.nodes.program.ClassNode;
@@ -45,7 +45,7 @@ public class SemanticVisitorTest {
     // ------------------------
     // Variables simples
     // ------------------------
-    @Ignore//
+    @Test
     public void testVarDeclaration_GivenVarDecl_WhenVisited_ThenSymbolTableUpdated() {
 
         // Given
@@ -67,7 +67,7 @@ public class SemanticVisitorTest {
     }
 
 
-    @Ignore//(expected = SemanticException.class)
+    @Test(expected = SemanticException.class)
     public void testDoubleVarDeclaration_GivenSameVarTwice_WhenDeclared_ThenThrowSemanticException() {
 
         // Given
@@ -89,7 +89,7 @@ public class SemanticVisitorTest {
     }
 
 
-    @Ignore//(expected = SemanticException.class)
+    @Test(expected = SemanticException.class)
     public void testUseUndeclaredVar_GivenUnknownIdent_WhenVisited_ThenThrowSemanticException() {
 
         // Given
@@ -104,7 +104,7 @@ public class SemanticVisitorTest {
     // ------------------------
     // Assignation
     // ------------------------
-    @Ignore//
+    @Test
     public void testAssignCompatibleType_GivenDeclaredInt_WhenAssignInt_ThenOK() {
 
         // Given
@@ -126,7 +126,7 @@ public class SemanticVisitorTest {
     }
 
 
-    @Ignore//(expected = SemanticException.class)
+    @Test(expected = SemanticException.class)
     public void testAssignIncompatibleType_GivenIntVar_WhenAssignBool_ThenThrowSemanticException() {
 
         // Given
@@ -150,7 +150,7 @@ public class SemanticVisitorTest {
     // ------------------------
     // Expressions binaires
     // ------------------------
-    @Ignore//
+    @Test
     public void testBinaryExpCompatibleTypes_GivenTwoInts_WhenAdd_ThenReturnInt() {
 
         // Given
@@ -164,7 +164,7 @@ public class SemanticVisitorTest {
         // Then
         assertThat(type.getTypeNode().getName(), is("int"));
     }
-    @Ignore//(expected = SemanticException.class)
+    @Test(expected = SemanticException.class)
     public void testBinaryExpIncompatibleTypes_GivenIntAndBool_WhenAdd_ThenThrowSemanticException() {
 
         // Given
@@ -181,7 +181,7 @@ public class SemanticVisitorTest {
     // ------------------------
     // If / While
     // ------------------------
-    @Ignore//
+    @Test
     public void testIfBooleanCondition_GivenBool_WhenIf_ThenOK() {
 
         // Given
@@ -200,7 +200,7 @@ public class SemanticVisitorTest {
     }
 
 
-    @Ignore//(expected = SemanticException.class)
+    @Test(expected = SemanticException.class)
     public void testIfNonBoolean_GivenInt_WhenIf_ThenThrowSemanticException() {
 
         // Given
@@ -218,7 +218,7 @@ public class SemanticVisitorTest {
     }
 
 
-    @Ignore//
+    @Test
     public void testWhileBoolean_GivenBool_WhenWhile_ThenOK() {
 
         // Given
@@ -235,7 +235,7 @@ public class SemanticVisitorTest {
         assertThat(type.getTypeNode().getName(), is("void"));
     }
 
-    @Ignore//(expected = SemanticException.class)
+    @Test(expected = SemanticException.class)
     public void testWhileNonBoolean_GivenInt_WhenWhile_ThenThrowSemanticException() {
 
         // Given
@@ -254,7 +254,7 @@ public class SemanticVisitorTest {
     // ------------------------
     // Program / Class
     // ------------------------
-    @Ignore//
+    @Test
     public void testVisitProgram_GivenEmptyClass_WhenVisited_ThenOK() {
 
         // Given
@@ -276,7 +276,7 @@ public class SemanticVisitorTest {
         assertThat(type.getTypeNode().getName(), is("void"));
     }
 
-    @Ignore//(expected = SemanticException.class)
+    @Test(expected = SemanticException.class)
     public void givenBooleanIndex_whenVisitTable_thenThrowSemanticException() {
         // Given
         IdentNode ident = new IdentNode(new MockToken("arr", 1, 1));
@@ -291,7 +291,7 @@ public class SemanticVisitorTest {
     // ----------------------------------------------------------
     // CONSTANT DECLARATION
     // ----------------------------------------------------------
-    @Ignore//
+    @Test
     public void givenValidConst_whenVisitCst_thenConstStored() {
         // Given
         IdentNode id = new IdentNode(new MockToken("PI", 1, 1));
@@ -308,7 +308,7 @@ public class SemanticVisitorTest {
         assertThat(sym.isVcst(), is(false));
     }
 
-    @Ignore//(expected = SemanticException.class)
+    @Test(expected = SemanticException.class)
     public void givenInvalidConstType_whenVisitCst_thenThrowSemanticException() {
         // Given
         IdentNode id = new IdentNode(new MockToken("PI", 1, 1));
@@ -325,7 +325,7 @@ public class SemanticVisitorTest {
     // ----------------------------------------------------------
     // METHOD DECLARATION
     // ----------------------------------------------------------
-    @Ignore//
+    @Test
     public void givenValidMethod_whenVisitMethod_thenMethodRegistered() {
         // Given
         IdentNode id = new IdentNode(new MockToken("add", 1, 1));
@@ -348,7 +348,7 @@ public class SemanticVisitorTest {
         assertThat(sym.getParamsType().size(), is(0));
     }
 
-    @Ignore//(expected = SemanticException.class)
+    @Test(expected = SemanticException.class)
     public void givenDuplicateSignature_whenVisitMethod_thenThrowSemanticException() {
         // Given
         IdentNode id = new IdentNode(new MockToken("add", 1, 1));
@@ -374,7 +374,7 @@ public class SemanticVisitorTest {
         // Then → exception attendue
     }
 
-    @Ignore//(expected = SemanticException.class)
+    @Test(expected = SemanticException.class)
     public void givenWrongReturnType_whenVisitMethod_thenThrowSemanticException() {
         // Given
         IdentNode id = new IdentNode(new MockToken("test", 1, 1));
@@ -394,7 +394,7 @@ public class SemanticVisitorTest {
         // Then → exception attendue
     }
 
-    @Ignore//
+    @Test
     public void givenMethodWithParameters_whenVisitMethod_thenParametersStored() {
         // Given
         IdentNode id = new IdentNode(new MockToken("sum",1,1));
@@ -421,7 +421,7 @@ public class SemanticVisitorTest {
         assertThat(sym.getParamsType().get(1).getTypeNode().getName(), is("int"));
     }
 
-    @Ignore//
+    @Test
     public void testUnaryExp_GivenIntAndNeg_WhenVisited_ThenReturnInt() {
 
         // Given
@@ -437,7 +437,7 @@ public class SemanticVisitorTest {
         assertThat(type.getTypeNode().getName(), is("int"));
     }
 
-    @Ignore//
+    @Test
     public void testUnaryExp_GivenBoolAndNot_WhenVisited_ThenReturnBoolean() {
 
         // Given
@@ -452,7 +452,7 @@ public class SemanticVisitorTest {
         // Then
         assertThat(type.getTypeNode().getName(), is("boolean"));
     }
-    @Ignore//(expected = SemanticException.class)
+    @Test(expected = SemanticException.class)
     public void testUnaryExp_GivenIntAndNot_WhenVisited_ThenThrowSemanticException() {
 
         // Given
@@ -467,7 +467,7 @@ public class SemanticVisitorTest {
         // Then → exception
     }
 
-    @Ignore//(expected = SemanticException.class)
+    @Test(expected = SemanticException.class)
     public void testUnaryExp_GivenBoolAndNeg_WhenVisited_ThenThrowSemanticException() {
 
         // Given
@@ -483,7 +483,7 @@ public class SemanticVisitorTest {
     }
 
 
-    @Ignore//
+    @Test
     public void testAddAssign_GivenIntVar_WhenAddAssignInt_ThenOK() {
 
         // Given
@@ -505,7 +505,7 @@ public class SemanticVisitorTest {
     }
 
 
-    @Ignore//(expected = SemanticException.class)
+    @Test(expected = SemanticException.class)
     public void testAddAssign_GivenIntVar_WhenAddAssignBool_ThenThrowSemanticException() {
 
         // Given
@@ -526,7 +526,7 @@ public class SemanticVisitorTest {
     }
 
 
-    @Ignore//
+    @Test
     public void testInc_GivenIntVar_WhenInc_ThenOK() {
 
         // Given
@@ -543,7 +543,7 @@ public class SemanticVisitorTest {
         assertThat(type.getTypeNode().getName(), is("void"));
     }
 
-    @Ignore//(expected = SemanticException.class)
+    @Test(expected = SemanticException.class)
     public void testInc_GivenBoolVar_WhenInc_ThenThrowSemanticException() {
 
         // Given
@@ -559,7 +559,7 @@ public class SemanticVisitorTest {
         // Then → exception
     }
 
-    @Ignore//(expected = SemanticException.class)
+    @Test(expected = SemanticException.class)
     public void testLength_GivenClassSymbol_WhenVisited_ThenThrowSemanticException() {
 
         // Given
@@ -575,7 +575,7 @@ public class SemanticVisitorTest {
     }
 
 
-    @Ignore//(expected = SemanticException.class)
+    @Test(expected = SemanticException.class)
     public void testLength_GivenMethodSymbol_WhenVisited_ThenThrowSemanticException() {
 
         // Given
@@ -588,7 +588,7 @@ public class SemanticVisitorTest {
         visitor.visitLength(len);
     }
 
-    @Ignore//(expected = SemanticException.class)
+    @Test(expected = SemanticException.class)
     public void testLength_GivenConstant_WhenVisited_ThenThrowSemanticException() {
 
         // Given
@@ -601,7 +601,7 @@ public class SemanticVisitorTest {
         visitor.visitLength(len);
     }
 
-    @Ignore//(expected = SemanticException.class)
+    @Test(expected = SemanticException.class)
     public void testLength_GivenVariable_WhenVisited_ThenThrowSemanticException() {
 
         // Given
@@ -615,7 +615,7 @@ public class SemanticVisitorTest {
     }
 
 
-    @Ignore//(expected = SemanticException.class)
+    @Test(expected = SemanticException.class)
     public void testWrite_GivenClassSymbol_WhenVisited_ThenThrowSemanticException() {
 
         // Given
@@ -628,7 +628,7 @@ public class SemanticVisitorTest {
         visitor.visitWrite(write);
     }
 
-    @Ignore//(expected = SemanticException.class)
+    @Test(expected = SemanticException.class)
     public void testWrite_GivenMethodSymbol_WhenVisited_ThenThrowSemanticException() {
 
         // Given
@@ -641,7 +641,7 @@ public class SemanticVisitorTest {
         visitor.visitWrite(write);
     }
 
-    @Ignore//
+    @Test
     public void testWrite_GivenVarInt_WhenVisited_ThenOK() {
 
         // Given
@@ -657,7 +657,7 @@ public class SemanticVisitorTest {
         assertThat(type.getTypeNode().getName(), is("void"));
     }
 
-    @Ignore//
+    @Test
     public void testStringLiteral_GivenLiteral_WhenVisited_ThenReturnString() {
 
         // Given
@@ -671,7 +671,7 @@ public class SemanticVisitorTest {
     }
 
 
-    @Ignore//
+    @Test
     public void testCallExp_GivenMatchingParams_WhenVisited_ThenReturnMethodType() {
 
         // Given
@@ -694,7 +694,7 @@ public class SemanticVisitorTest {
         assertThat(type.getTypeNode().getName(), is("int"));
     }
 
-    @Ignore//(expected = SemanticException.class)
+    @Test(expected = SemanticException.class)
     public void testCallExp_GivenWrongParamType_WhenVisited_ThenThrowSemanticException() {
 
         // Given
@@ -713,7 +713,7 @@ public class SemanticVisitorTest {
         visitor.visitCallExp(node);
     }
 
-    @Ignore//
+    @Test
     public void testCallInstr_GivenValidCall_WhenVisited_ThenReturnVoid() {
 
         // Given

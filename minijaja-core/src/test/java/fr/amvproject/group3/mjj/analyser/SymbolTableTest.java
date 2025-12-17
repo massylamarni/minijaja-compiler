@@ -2,9 +2,9 @@ package fr.amvproject.group3.mjj.analyser;
 
 import fr.amvproject.group3.mjj.analyser.nodes.SymbolIdentity;
 import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
+import fr.amvproject.group3.mjj.analyser.nodes.ObjNode;
 import fr.amvproject.group3.mjj.analyser.symbols.*;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
-import fr.amvproject.group3.mjj.ast.nodes.other.ObjNode;
 import fr.amvproject.group3.mjj.utils.NodeOperations.MockToken;
 
 import org.junit.Ignore;
@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.*;
 
 public class SymbolTableTest {
 
-    @Ignore
+    @Test
     public void givenClassIdentWhenAddClassSymbolThenLookupReturnsClassSymbol() {
         // Given
         SymbolTable table = new SymbolTable();
@@ -33,7 +33,7 @@ public class SymbolTableTest {
         assertThat(result.getIdentNode().getName(), is("MyClass"));
     }
 
-    @Ignore
+    @Test
     public void givenVarIdentAndTypeWhenAddVarSymbolThenLookupReturnsVarSymbol() {
         // Given
         SymbolTable table = new SymbolTable();
@@ -50,7 +50,7 @@ public class SymbolTableTest {
         assertThat(result.getIdentNode().getName(), is("x"));
     }
 
-    @Ignore
+    @Test
     public void givenConstIdentAndTypeWhenAddConstSymbolThenLookupReturnsCstSymbol() {
         // Given
         SymbolTable table = new SymbolTable();
@@ -68,7 +68,7 @@ public class SymbolTableTest {
         assertThat(cst.isVcst(), is(true));
     }
 
-    @Ignore
+    @Test
     public void givenMethodIdentTypeAndParamsWhenAddMethodSymbolThenLookupReturnsMethodSymbol() {
         // Given
         SymbolTable table = new SymbolTable();
@@ -87,7 +87,7 @@ public class SymbolTableTest {
         assertThat(method.getParamsType().size(), is(2));
     }
 
-    @Ignore
+    @Test
     public void givenExistingSymbolWhenRecordUsageThenUsageIsRecorded() {
         // Given
         SymbolTable table = new SymbolTable();

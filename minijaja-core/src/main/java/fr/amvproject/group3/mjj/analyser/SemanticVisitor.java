@@ -87,32 +87,32 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
   }
 
   private void checkIfObjCompatibleToAssign(ObjNode leftExpObj, ObjNode rightExpObj, int line, int column) {
-    if (leftExpObj.isMeth()) throw new SemanticException("Can't affect a new value to a method pointer !", line, column);
+    if (leftExpObj.isMethPointer()) throw new SemanticException("Can't affect a new value to a method pointer !", line, column);
     else if (leftExpObj.isCst()) throw new SemanticException("Can't assign a new value to a final !", line, column);
     else if (leftExpObj.isArrPointer()) {
       if (!rightExpObj.isArrPointer()) throw new SemanticException("Table pointer can only be affected with another table pointer", line, column);
-    } else if (!(leftExpObj.isVar() || leftExpObj.isArrAccess() || leftExpObj.isVcst())) {
+    } else if (!(leftExpObj.isVar() || leftExpObj.isArrAccess() || leftExpObj.isMethCall() || leftExpObj.isVcst())) {
       throw new SemanticException("Can't affect a new value to a class !", line, column);
     }
-    if (rightExpObj.isMeth()) throw new SemanticException("Can't use a method pointer in an expression", line, column);
+    if (rightExpObj.isMethPointer()) throw new SemanticException("Can't use a method pointer in an expression", line, column);
     else if (rightExpObj.isArrPointer()) {
       if (!leftExpObj.isArrPointer()) throw new SemanticException("Table pointer can only be affected with another table pointer", line, column);
-    } else if (!(rightExpObj.isCst() || rightExpObj.isVar()|| rightExpObj.isArrAccess() || rightExpObj.isVcst() || rightExpObj.isLiteral())) {
+    } else if (!(rightExpObj.isCst() || rightExpObj.isVar()|| rightExpObj.isArrAccess() || rightExpObj.isMethCall() || rightExpObj.isVcst() || rightExpObj.isLiteral())) {
       throw new SemanticException("Can't affect a value to a class", line, column);
     }
   }
 
   private void checkIfObjCompatibleInExpression(ObjNode leftExpObj, ObjNode rightExpObj, int line, int column) {
-    if (leftExpObj.isMeth()) throw new SemanticException("Method pointer not compatible with " + rightExpObj.getName() + " !", line, column);
+    if (leftExpObj.isMethPointer()) throw new SemanticException("Method pointer not compatible with " + rightExpObj.getName() + " !", line, column);
     else if (leftExpObj.isArrPointer()) {
       if (!rightExpObj.isArrPointer()) throw new SemanticException("Table pointer not compatible with " + rightExpObj.getName() + " !", line, column);
-    } else if (!(leftExpObj.isVar() || leftExpObj.isArrAccess() || leftExpObj.isVcst() || leftExpObj.isLiteral())) {
+    } else if (!(leftExpObj.isVar() || leftExpObj.isArrAccess() || leftExpObj.isMethCall() || leftExpObj.isVcst() || leftExpObj.isLiteral())) {
       throw new SemanticException("Class can't be used in an expression !", line, column);
     }
-    if (rightExpObj.isMeth()) throw new SemanticException("Can't use a method pointer in an expression", line, column);
+    if (rightExpObj.isMethPointer()) throw new SemanticException("Can't use a method pointer in an expression", line, column);
     else if (rightExpObj.isArrPointer()) {
       if (!leftExpObj.isArrPointer()) throw new SemanticException("Table pointer not compatible with " + rightExpObj.getName() + " !", line, column);
-    } else if (!(rightExpObj.isCst() || rightExpObj.isVar() || rightExpObj.isArrAccess() || rightExpObj.isVcst() || rightExpObj.isLiteral())) {
+    } else if (!(rightExpObj.isCst() || rightExpObj.isVar() || rightExpObj.isArrAccess() || rightExpObj.isMethCall() || rightExpObj.isVcst() || rightExpObj.isLiteral())) {
       throw new SemanticException("Class can't be used in an expression !", line, column);
     }
   }
@@ -131,7 +131,7 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
     for (ClassNode classeNode : node.getClasses()) {
       classeNode.accept(this);
     }
-    return null;
+    return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
@@ -144,7 +144,7 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
     node.getDecls().accept(this);
     node.getMain().accept(this);
     scopeManager.exitScope();
-    return null;
+    return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
@@ -152,7 +152,7 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
     for (DeclNode declNode : node.getList()) {
       declNode.accept(this);
     }
-    return null;
+    return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
@@ -160,7 +160,7 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
     for (VarDeclNode varDeclNode : node.getList()) {
       varDeclNode.accept(this);
     }
-    return null;
+    return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
@@ -173,20 +173,20 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
     checkIfTypeCompatibleToAssign(new TypeNode(node.getType().getName()), rightSymId.getTypeNode(), node.getLine(), node.getColumn());
 
     symbolTable.addSymbol(node.getIdent(), new TypeNode(node.getType().getName()), leftExpObjNode);
-    return null;
+    return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
   public SymbolIdentity visitCst(CstNode node) {
     exploredLines.add(node.getLine());
     checkIfExistsToDeclare(node.getIdent());
-    ObjNode leftExpObjNode = new ObjNode(node.isVcst() ? "vcst" : "cst", node.getLine(), node.getColumn());
+    ObjNode leftExpObjNode = new ObjNode("vcst", node.getLine(), node.getColumn());
     SymbolIdentity rightSymId = node.getInitExp().accept(this);
     checkIfObjCompatibleToAssign(leftExpObjNode, rightSymId.getObjNode(), node.getLine(), node.getColumn());
     checkIfTypeCompatibleToAssign(new TypeNode(node.getType().getName()), rightSymId.getTypeNode(), node.getLine(), node.getColumn());
 
     symbolTable.addSymbol(node.getIdent(), new TypeNode(node.getType().getName()), node.isVcst());
-    return null;
+    return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
@@ -196,7 +196,7 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
     checkIfTabIndexIsInteger(node.getSizeExp(), node.getLine(), node.getColumn());
 
     symbolTable.addSymbol(node.getIdent(), new TypeNode(node.getType().getName()), new ObjNode("arr_pointer", node.getLine(), node.getColumn()));
-    return null;
+    return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
@@ -216,7 +216,7 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
       List<SymbolIdentity> symParamsTypeValue = sym.getParamsType();
 
       for (int i = 0; i < paramsTypeValue.size(); i++) {
-        if (!paramsTypeValue.get(i).sameAs(symParamsTypeValue.get(i))) {
+        if (!paramsTypeValue.get(i).IsParamCompatibleWith(symParamsTypeValue.get(i))) {
           hasSameParamsType = false;
           break;
         }
@@ -241,7 +241,7 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
     scopeManager.exitScope();
 
     symbolTable.addSymbol(node.getIdent(), new TypeNode(node.getReturnType().getName()), paramsTypeValue);
-    return null;
+    return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
@@ -251,12 +251,12 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
     node.getVars().accept(this);
     node.getInstrs().accept(this);
     scopeManager.exitScope();
-    return null;
+    return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
   public SymbolIdentity visitParams(ParamsNode node) { // Not used, implemented directly in visitMethod
-    return null;
+    return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
@@ -274,12 +274,12 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
     for (InstrNode instrNode : node.getList()) {
       instrNode.accept(this);
     }
-    return null;
+    return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
   public SymbolIdentity visitListExp(ListExpNode node) {
-    return null;
+    return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
@@ -298,8 +298,8 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
       throw new SemanticException("Incompatible operand, expecting Integer, Boolean given", node.getLine(), node.getColumn());
     }
 
-    if (node.getOp().givesInteger()) return new SymbolIdentity(new TypeNode("int"), null);
-    return new SymbolIdentity(new TypeNode("boolean"), null);
+    if (node.getOp().givesInteger()) return new SymbolIdentity(new TypeNode("int"), new ObjNode("literal", node.getLine(), node.getColumn()));
+    return new SymbolIdentity(new TypeNode("boolean"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
@@ -314,8 +314,8 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
       throw new SemanticException("Incompatible operand, expecting Integer, Boolean given", node.getLine(), node.getColumn());
     }
 
-    if (node.getOp().isNeg()) return new SymbolIdentity(new TypeNode("int"), null);
-    return new SymbolIdentity(new TypeNode("boolean"), null);
+    if (node.getOp().isNeg()) return new SymbolIdentity(new TypeNode("int"), new ObjNode("literal", node.getLine(), node.getColumn()));
+    return new SymbolIdentity(new TypeNode("boolean"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
@@ -327,20 +327,20 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
     checkIfObjCompatibleToAssign(leftSymId.getObjNode(), rightSymId.getObjNode(), node.getLine(), node.getColumn());
     checkIfTypeCompatibleToAssign(leftSymId.getTypeNode(), rightSymId.getTypeNode(), node.getLine(), node.getColumn());
 
-    return null;
+    return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
   public SymbolIdentity visitAddAssign(AddAssignNode node) {
     AssignNode assignNode = NodeOperations.addAssignToAssign(node);
     visitAssign(assignNode);
-    return null;
+    return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   public SymbolIdentity visitInc(IncNode node) {
     AssignNode assignNode = NodeOperations.incToAssign(node);
     visitAssign(assignNode);
-    return null;
+    return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
@@ -360,7 +360,7 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
     if (sym instanceof VarSymbol) {
       throw new SemanticException("Incompatible parameter for Length, expecting Array pointer, Variable given", node.getLine(), node.getColumn());
     }
-    return new SymbolIdentity(new TypeNode("int"), null);
+    return new SymbolIdentity(new TypeNode("int"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
@@ -380,7 +380,7 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
       node.getElseInstrs().accept(this);
       scopeManager.exitScope();
     }
-    return null;
+    return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
@@ -393,7 +393,7 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
     scopeManager.newScope();
     node.getInstrs().accept(this);
     scopeManager.exitScope();
-    return null;
+    return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
@@ -412,7 +412,7 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
         throw new SemanticException("Incompatible parameter for Length, expecting, Variable, Final or Array access, Array pointer given", node.getLine(), node.getColumn());
       }
     }
-    return null;
+    return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
@@ -423,17 +423,17 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
 
   @Override
   public SymbolIdentity visitBoolLiteral(BoolLiteralNode node) {
-    return new SymbolIdentity(new TypeNode("boolean"), null);
+    return new SymbolIdentity(new TypeNode("boolean"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
   public SymbolIdentity visitIntLiteral(IntLiteralNode node) {
-    return new SymbolIdentity(new TypeNode("int"), null);
+    return new SymbolIdentity(new TypeNode("int"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
   public SymbolIdentity visitStringLiteral(StringLiteralNode node) {
-    return new SymbolIdentity(new TypeNode("string"), null);
+    return new SymbolIdentity(new TypeNode("string"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override
@@ -459,18 +459,18 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
 
     List<SymbolIdentity> symParamsTypeValue = sym.getParamsType();
     for (int i = 0; i < listExpTypeValue.size(); i++) {
-      if (!listExpTypeValue.get(i).sameAs(symParamsTypeValue.get(i))) {
+      if (!listExpTypeValue.get(i).IsParamCompatibleWith(symParamsTypeValue.get(i))) {
         throw new SemanticException("Method " + node.getIdent().getName() + " uses different parameter type from the declared one, at line " + sym.getLine(), node.getLine(), node.getColumn());
       }
     }
 
-    return new SymbolIdentity(sym.getTypeNode(), sym.getObjNode());
+    return new SymbolIdentity(sym.getTypeNode(), new ObjNode("meth_call", node.getLine(), node.getColumn()));
   }
 
   @Override
   public SymbolIdentity visitCallInstr(CallInstrNode node) {
     visitCallExp(new CallExpNode(node.getIdent(), node.getListExp()));
-    return null;
+    return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
   @Override

@@ -8,11 +8,12 @@ public class ObjNode extends AstNode {
     VAR("var"),
     ARR_POINTER("arr_pointer"),
     ARR_ACCESS("arr_access"),
+    METH_POINTER("meth_pointer"),
+    METH_CALL("meth_call"),
     CST("cst"),
-    VCST("vsct"),
+    VCST("vcst"),
     CLASS("class"),
-    LITERAL("literal"),
-    METH("meth");
+    LITERAL("literal");
 
     private final String name;
 
@@ -73,8 +74,12 @@ public class ObjNode extends AstNode {
     return obj == ObjName.ARR_ACCESS;
   }
 
-  public boolean isMeth() {
-    return obj == ObjName.METH;
+  public boolean isMethPointer() {
+    return obj == ObjName.METH_POINTER;
+  }
+
+  public boolean isMethCall() {
+    return obj == ObjName.METH_CALL;
   }
 
   @Override

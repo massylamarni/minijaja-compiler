@@ -1,9 +1,9 @@
 package fr.amvproject.group3.mjj.analyser;
 
 import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
+import fr.amvproject.group3.mjj.analyser.nodes.ObjNode;
 import fr.amvproject.group3.mjj.analyser.symbols.Symbols;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
-import fr.amvproject.group3.mjj.ast.nodes.other.ObjNode;
 
 import static fr.amvproject.group3.mjj.utils.NodeOperations.MockToken;
 import org.junit.Test;

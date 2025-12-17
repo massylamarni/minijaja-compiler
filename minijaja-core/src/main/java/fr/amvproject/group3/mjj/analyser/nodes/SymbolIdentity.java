@@ -14,11 +14,14 @@ public class SymbolIdentity {
   }
 
   public ObjNode getObjNode() {
-    return objNode != null ? objNode : new ObjNode("literal", 0, 0);
+    return objNode;
   }
 
-  public boolean sameAs(SymbolIdentity other) {
-    return this.typeNode.sameAs(other.typeNode) && this.objNode.sameAs(other.objNode);
+  public boolean IsParamCompatibleWith(SymbolIdentity other) {
+    if (!this.typeNode.sameAs(other.typeNode)) return false;
+    if (this.objNode.isClass() || this.objNode.isArrPointer() || this.objNode.isMethPointer()) return false;
+    if (!other.objNode.isVar()) return false;
+    return true;
   }
   
 }
