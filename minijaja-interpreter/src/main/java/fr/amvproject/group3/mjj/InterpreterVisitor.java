@@ -53,7 +53,8 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     private static final int LOOP_LIMIT = 1000000;
     private static final int RECURSION_LIMIT = 100;
     private int recursionCount = 0;
-    private final Stack stack = new Stack();
+    private Stack stack = new Stack();
+    private final ScopeManager scopeManager = new ScopeManager(stack);
     private ExecutionContext ctx = new ExecutionContext(stack); // final
     private List<String> outputBuffer = new ArrayList<>();
 
@@ -72,6 +73,8 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     // ========== PROGRAM ==========
     @Override
     public Object visitProgram(ProgramNode node) {
+        scopeManager.reset();
+        stack = scopeManager.getStackRef();
         ctx.recordNode(node);
         for (ClassNode classe : node.getClasses()) {
             classe.accept(this);
@@ -93,12 +96,14 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         ctx.recordNode(node);
         stack.declVar(node.getIdent(), null, new TypeMethNode("void", node.getLine(), node.getColumn()));
         
+        stack = scopeManager.newScope();
         node.getDecls().accept(this);
         node.getMain().accept(this);
 
         retraitDecls(node.getDecls());
         stack.retirerDecl(node.getIdent());
-        
+
+        stack = scopeManager.exitScope();
         return null;
     }
 
@@ -193,9 +198,12 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     @Override
     public Object visitMain(MainNode node) {
         ctx.recordNode(node);
+
+        stack = scopeManager.newScope();
         node.getVars().accept(this);
         node.getInstrs().accept(this);
         retraitVars(node.getVars());
+        stack = scopeManager.exitScope();
         
         return null;
     }
@@ -209,9 +217,8 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     @Override
     public Object visitReturn(ReturnNode node) {
         ctx.recordNode(node);
-        IdentNode classVar = stack.peekTail().getIdent();
         Object returnValue = evalExp(node.getExp());
-        stack.affecterVal(classVar, returnValue); // La valeur de retour est sauvegardé dans la classe
+        scopeManager.affecterValClassQuad(returnValue); // La valeur de retour est sauvegardé dans la classe
         
         return null;
     }
@@ -228,6 +235,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         if (recursionCount++ > RECURSION_LIMIT) {
             throw new fr.amvproject.group3.exceptions.RuntimeException("Infinite recursion detected !", node.getLine(), node.getColumn());
         }
+        stack = scopeManager.exitScope();
 
         boolean isMethodFound = false;
         int depth = 0;
@@ -281,12 +289,9 @@ public class InterpreterVisitor implements AstVisitor<Object> {
                 depth++;
             }
         }
+        stack = scopeManager.backToScope();
 
-        // on recupere la valeur de retour
-        IdentNode returnIdentNode = stack.peekTail().getIdent();
-        Object returnValue = stack.val(returnIdentNode);
-
-        return returnValue;
+        return scopeManager.valClassQuad();
     }
 
     /**

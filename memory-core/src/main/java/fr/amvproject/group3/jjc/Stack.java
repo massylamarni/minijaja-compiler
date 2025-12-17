@@ -51,7 +51,7 @@ public class Stack extends StackManager {
     return queue.get(queue.size() - 1);
   }
 
-  public Quad peekTail() {
+  public Quad getClassQuad() {
     if (queue.isEmpty()) return null;
     return queue.get(0);
   }

@@ -27,6 +27,10 @@ public class Stack extends StackManager {
     return heap;
   }
 
+  public void setQueue(List<Quad> queue) {
+    this.queue = queue;
+  }
+
   // --- Stack Operations ---
   public void push(Quad q) {
     queue.add(q);
@@ -55,7 +59,7 @@ public class Stack extends StackManager {
     return queue.get(queue.size() - 1);
   }
 
-  public Quad peekTail() {
+  public Quad getClassQuad() {
     if (queue.isEmpty()) return null;
     return queue.get(0);
   }
