@@ -18,7 +18,6 @@ public class Interpreter {
   private AstWrapper astWrapper;
   private InterpreterVisitor interpreterVisitor = new InterpreterVisitor();
   private SemanticVisitor semanticVisitor = new SemanticVisitor();
-  private Stack stack = interpreterVisitor.getStack();
   private ExecutionContext ctx = interpreterVisitor.getCtx();
   private List<String> outputBuffer = interpreterVisitor.getOutputBuffer();
   private RuntimeErrorsCollector runtimeErrorsCollector = new RuntimeErrorsCollector();
@@ -27,7 +26,7 @@ public class Interpreter {
   private PausePointHit pausePointHit = null;
 
   public Stack getStack() {
-    return stack;
+    return interpreterVisitor.getStack();
   }
 
   public SemanticVisitor getSemanticVisitor() {
