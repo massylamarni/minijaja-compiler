@@ -1,9 +1,9 @@
 package fr.amvproject.group3.mjj;
 
+import fr.amvproject.group3.exceptions.BreakPointHit;
+import fr.amvproject.group3.exceptions.PausePointHit;
 import fr.amvproject.group3.mjj.ast.AstNode;
 import fr.amvproject.group3.mjj.ast.AstVisitor;
-import fr.amvproject.group3.mjj.exceptions.BreakPointHit;
-import fr.amvproject.group3.mjj.exceptions.PausePointHit;
 import org.junit.Before;
 import org.junit.Test;
 

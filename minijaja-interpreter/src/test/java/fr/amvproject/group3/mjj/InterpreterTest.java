@@ -68,7 +68,7 @@ public class InterpreterTest {
         interpreter.run();
 
         // When
-        interpreter.restart();
+        interpreter.reset();
 
         // Then
         assertThat(interpreter.getRuntimeErrorsCollector().getErrors().isEmpty(), is(true));

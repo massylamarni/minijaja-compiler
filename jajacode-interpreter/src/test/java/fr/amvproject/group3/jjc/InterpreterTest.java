@@ -23,7 +23,7 @@ public class InterpreterTest {
     @Test
     public void shouldRunProgramWithoutErrors() {
         // Given
-        interpreter.restart();
+        interpreter.reset();
 
         // When
         interpreter.run();
@@ -36,7 +36,7 @@ public class InterpreterTest {
     @Test
     public void shouldRunProgramWithDebug() {
         // Given
-        interpreter.restart();
+        interpreter.reset();
 
         // When
         interpreter.runWithDebug();
@@ -55,21 +55,6 @@ public class InterpreterTest {
 
         // Then
         assertTrue(true);
-    }
-
-    @Test
-    public void shouldRestartInterpreter() {
-        // Given
-        interpreter.run();
-        RuntimeErrorsCollector oldRuntimeErrors = interpreter.getRuntimeErrorsCollector();
-        SemanticErrorsCollector oldSemanticErrors = interpreter.getSemanticErrorsCollector();
-
-        // When
-        interpreter.restart();
-
-        // Then
-        assertThat(interpreter.getRuntimeErrorsCollector(), is(not(equalTo(oldRuntimeErrors))));
-        assertThat(interpreter.getSemanticErrorsCollector(), is(not(equalTo(oldSemanticErrors))));
     }
 
     @Test
