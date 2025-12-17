@@ -78,17 +78,19 @@ public class Interpreter {
     return runtimeErrorsCollector;
   }
 
-  public void runSemanticAnalysis() {
+  public boolean runSemanticAnalysis() {
     try {
       astWrapper.ast.accept(semanticVisitor);
+      return true;
     } catch (SemanticException e) {
       semanticErrorsCollector.add(e.getMessage(), e.getLine(), e.getColumn());
+      return false;
     }
   }
 
   public void run() {
-    runSemanticAnalysis();
     reset();
+    if (!runSemanticAnalysis()) return;
     ctx.disableDebug();
     try {
       astWrapper.ast.accept(interpreterVisitor);
@@ -98,8 +100,8 @@ public class Interpreter {
   }
 
   public void runWithDebug() {
-    runSemanticAnalysis();
     reset();
+    if (!runSemanticAnalysis()) return;
     ctx.enableDebug();
     try {
       astWrapper.ast.accept(interpreterVisitor);

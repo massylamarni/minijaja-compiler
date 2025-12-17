@@ -4,7 +4,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import fr.amvproject.group3.mjj.analyser.nodes.SymbolIdentity;
 import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
+import fr.amvproject.group3.mjj.analyser.nodes.ObjNode;
 import fr.amvproject.group3.mjj.analyser.symbols.ClassSymbol;
 import fr.amvproject.group3.mjj.analyser.symbols.CstSymbol;
 import fr.amvproject.group3.mjj.analyser.symbols.MethodSymbol;
@@ -12,7 +14,6 @@ import fr.amvproject.group3.mjj.analyser.symbols.Symbols;
 import fr.amvproject.group3.mjj.analyser.symbols.TableSymbol;
 import fr.amvproject.group3.mjj.analyser.symbols.VarSymbol;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
-import fr.amvproject.group3.mjj.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.utils.StringSaver;
 
 public class SymbolTable {
@@ -26,19 +27,19 @@ public class SymbolTable {
     symbols.put(identNode, new ClassSymbol(identNode));
   }
 
-  public void addSymbol(IdentNode identNode, TypeNode typeNode) {
-    symbols.put(identNode, new VarSymbol(identNode, typeNode));
+  public void addSymbol(IdentNode identNode, TypeNode typeNode, ObjNode objNode) {
+    if (objNode.isVar()) {
+      symbols.put(identNode, new VarSymbol(identNode, typeNode));
+    } else {
+      symbols.put(identNode, new TableSymbol(identNode, typeNode));
+    }
   }
 
   public void addSymbol(IdentNode identNode, TypeNode typeNode, boolean isVcst) {
     symbols.put(identNode, new CstSymbol(identNode, typeNode, isVcst));
   }
 
-  public void addSymbol(IdentNode identNode, TypeNode typeNode, ExpNode sizExpNode) {
-    symbols.put(identNode, new TableSymbol(identNode, typeNode, sizExpNode));
-  }
-
-  public void addSymbol(IdentNode identNode, TypeNode returnType, List<TypeNode> paramsType) {
+  public void addSymbol(IdentNode identNode, TypeNode returnType, List<SymbolIdentity> paramsType) {
     symbols.put(identNode, new MethodSymbol(identNode, returnType, paramsType));
   }
 

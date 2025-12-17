@@ -3,6 +3,8 @@ package fr.amvproject.group3.mjj.analyser;
 import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
 import fr.amvproject.group3.mjj.analyser.symbols.Symbols;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
+import fr.amvproject.group3.mjj.ast.nodes.other.ObjNode;
+
 import static fr.amvproject.group3.mjj.utils.NodeOperations.MockToken;
 import org.junit.Test;
 
@@ -64,7 +66,7 @@ public class ScopeManagerTest {
         ScopeManager scopeManager = new ScopeManager(root);
         IdentNode ident = new IdentNode(new MockToken("x", 1,0));
         TypeNode type = new TypeNode("int");
-        root.addSymbol(ident, type);
+        root.addSymbol(ident, type, new ObjNode("var", 0, 0));
 
         // When
         Symbols result = scopeManager.lookup(ident);
@@ -81,7 +83,7 @@ public class ScopeManagerTest {
         ScopeManager scopeManager = new ScopeManager(root);
 
         IdentNode ident = new IdentNode(new MockToken("y", 2,0));
-        root.addSymbol(ident, new TypeNode("int"));
+        root.addSymbol(ident, new TypeNode("int"), new ObjNode("var", 0, 0));
 
         scopeManager.newScope(); // go to child scope
 
