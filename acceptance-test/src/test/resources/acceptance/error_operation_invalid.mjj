@@ -1,0 +1,9 @@
+class C {
+  boolean b = true;
+
+  main {
+    int r = b + 1; // addition entre boolean et int -> erreur de type / opérateur invalide
+    write("r = ");
+    writeln(r);
+  }
+}

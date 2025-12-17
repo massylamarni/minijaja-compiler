@@ -1,0 +1,12 @@
+class C {
+   void infiniteRec() {
+        infiniteRec();
+    };
+  
+    main {
+        // Appelle la fonction récursive pour provoquer un overflow
+        infiniteRec();
+    }
+
+   
+}

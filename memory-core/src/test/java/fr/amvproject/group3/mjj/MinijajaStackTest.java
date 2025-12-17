@@ -2,11 +2,15 @@ package fr.amvproject.group3.mjj;
 
 import fr.amvproject.group3.mjj.Quad;
 import fr.amvproject.group3.mjj.Stack;
+import fr.amvproject.group3.mjj.ast.AstNode;
+import fr.amvproject.group3.mjj.ast.AstVisitor;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.InstrsNode;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.ListExpNode;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.ParamsNode;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.VarsNode;
 import fr.amvproject.group3.mjj.ast.nodes.decls.MethodNode;
+import fr.amvproject.group3.mjj.ast.nodes.finals.BoolLiteralNode;
+import fr.amvproject.group3.mjj.ast.nodes.finals.IntLiteralNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.ParamNode;
 import fr.amvproject.group3.mjj.ast.nodes.intermediate.ExpNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.TypeNode;
@@ -14,7 +18,6 @@ import fr.amvproject.group3.mjj.utils.NodeOperations.MockToken;
 import fr.amvproject.group3.nodes.ObjNode;
 import fr.amvproject.group3.nodes.PointerNode;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
@@ -270,17 +273,45 @@ public class MinijajaStackTest {
         assertTrue(((TypeMethNode) stack.peek().getType()).isBoolean());
     }
 
-    @Ignore // TODO
+    @Test
     public void givenStack__whenExpParam__thenParamsAreDeclared() {
         // Given
         Stack stack = new Stack();
 
         List<ParamNode> paramList = new ArrayList<>();
-        paramList.add(new ParamNode(new TypeNode(new MockToken("int",1,0)), new IdentNode(new MockToken("param1", 2,0))));
-        paramList.add(new ParamNode(new TypeNode(new MockToken("boolean",1,0)), new IdentNode(new MockToken("param2", 3,0))));
+        paramList.add(new ParamNode(
+                new TypeNode(new MockToken("int",1,0)),
+                new IdentNode(new MockToken("param1", 2,0))
+        ));
+        paramList.add(new ParamNode(
+                new TypeNode(new MockToken("boolean",1,0)),
+                new IdentNode(new MockToken("param2", 3,0))
+        ));
         ParamsNode params = new ParamsNode(paramList);
 
         List<ExpNode> expList = new ArrayList<>();
+        expList.add(new ExpNode(1,0) {
+            @Override
+            public <T> T accept(AstVisitor<T> visitor) {
+                return null;
+            }
+
+            @Override
+            public boolean sameAs(AstNode other) {
+                return false;
+            }
+        });
+        expList.add(new ExpNode(1,0) {
+            @Override
+            public <T> T accept(AstVisitor<T> visitor) {
+                return null;
+            }
+
+            @Override
+            public boolean sameAs(AstNode other) {
+                return false;
+            }
+        });
 
         ListExpNode listExpNode = new ListExpNode(expList);
 
@@ -289,8 +320,10 @@ public class MinijajaStackTest {
 
         // Then
         assertThat(stack.getQueue().size(), is(2));
-        assertThat(stack.peek().getIdent().getName(), is("param2"));
+        assertThat(stack.pop().getIdent().getName(), is("param2"));
+        assertThat(stack.pop().getIdent().getName(), is("param1"));
     }
+
 
 
     @Test

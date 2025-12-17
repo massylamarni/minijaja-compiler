@@ -1,0 +1,9 @@
+class C {
+  int x = 1;
+  int x = 2; // redéclaration de 'x' -> erreur de nom dupliqué
+
+  main {
+    write("x = ");
+    writeln(x);
+  }
+}

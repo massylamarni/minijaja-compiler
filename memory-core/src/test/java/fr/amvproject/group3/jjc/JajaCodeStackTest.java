@@ -9,6 +9,8 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static fr.amvproject.group3.jjc.utils.NodeOperations.MockToken;
@@ -244,5 +246,118 @@ public class JajaCodeStackTest {
         // Then
         assertTrue(obj.isVar());
     }
+
+    @Test
+    public void givenStack__whenPushWithNameAndValue__thenQuadIsAdded() {
+        Stack stack = new Stack();
+
+        stack.push("x", 42);
+
+        assertThat(stack.getQueue().size(), is(1));
+        assertThat(stack.peek().getIdent().getName(), is("x"));
+        assertThat(stack.peek().getValue(), is(42));
+        assertTrue(stack.peek().getObj().isCst());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void givenEmptyStack__whenPop__thenExceptionIsThrown() {
+        Stack stack = new Stack();
+        stack.pop();
+    }
+    @Test
+    public void givenStack__whenPeekAndPeekTail__thenCorrectElementsReturned() {
+        Stack stack = new Stack();
+        stack.push("a", 1);
+        stack.push("b", 2);
+        stack.push("c", 3);
+
+        assertThat(stack.peek().getIdent().getName(), is("c"));
+        assertThat(stack.peekTail().getIdent().getName(), is("a"));
+        assertThat(stack.getQueue().size(), is(3));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void givenStackWithOneElement__whenSwap__thenExceptionIsThrown() {
+        Stack stack = new Stack();
+        stack.push("x", 1);
+
+        stack.swap();
+    }
+
+    @Test
+    public void givenStack__whenIdentVal__thenQuadIsReplacedAtDepth() {
+        Stack stack = new Stack();
+        IdentNode a = new IdentNode(new MockToken("a",1,0));
+        IdentNode b = new IdentNode(new MockToken("b",2,0));
+
+        stack.declVar(a, 1, new TypeNode(new MockToken("entier",1,0)));
+        stack.declVar(b, 2, new TypeNode(new MockToken("entier",1,0)));
+
+        stack.identVal(new IdentNode(new MockToken("x",3,0)),
+                new TypeNode(new MockToken("boolean",1,0)),
+                1);
+
+        assertThat(stack.getQueue().get(0).getIdent().getName(), is("x"));
+        assertTrue(((TypeNode) stack.getQueue().get(0).getType()).isBoolean());
+    }
+
+    @Test
+    public void givenCst__whenAffecterVal__thenValueIsNotChanged() {
+        Stack stack = new Stack();
+        IdentNode ident = new IdentNode(new MockToken("c",1,0));
+
+        stack.declCst(ident, 10, new TypeNode(new MockToken("entier",1,0)), false);
+        stack.affecterVal(ident, 99);
+
+        assertThat(stack.val(ident), is(10));
+    }
+
+    @Test
+    public void givenVcst__whenAffecterVal__thenBecomesCst() {
+        Stack stack = new Stack();
+        IdentNode ident = new IdentNode(new MockToken("v",1,0));
+
+        stack.declCst(ident, null, new TypeNode(new MockToken("entier",1,0)), true);
+        stack.affecterVal(ident, 5);
+
+        assertThat(stack.val(ident), is(5));
+        assertTrue(stack.objet(ident).isCst());
+    }
+
+    @Test
+    public void givenStack__whenDeclMeth__thenMethodIsOnTop() {
+        Stack stack = new Stack();
+        IdentNode ident = new IdentNode(new MockToken("m",1,0));
+
+        stack.declMeth(ident, "body", new TypeNode(new MockToken("vide",1,0)));
+
+        assertThat(stack.peek().getIdent().getName(), is("m"));
+        assertTrue(stack.peek().getObj().isMeth());
+    }
+
+    @Test
+    public void givenStack__whenValOfUnknownIdent__thenNullReturned() {
+        Stack stack = new Stack();
+        Object val = stack.val(new IdentNode(new MockToken("unknown",1,0)));
+
+        assertThat(val, is(nullValue()));
+    }
+
+    @Test
+    public void givenEmptyStack__whenPrint__thenEmptyStackPrinted() {
+        Stack stack = new Stack();
+
+        String output = stack.print();
+
+        assertThat(output, containsString("[Empty Stack]"));
+        assertThat(output, containsString("STACK DUMP"));
+    }
+
+
+
+
+
+
+
 
 }

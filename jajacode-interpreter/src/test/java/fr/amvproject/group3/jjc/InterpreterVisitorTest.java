@@ -1,4 +1,4 @@
-package fr.amvproject.group3;
+package fr.amvproject.group3.jjc;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -9,6 +9,50 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import fr.amvproject.group3.jjc.Interpreter;
 
 public class InterpreterVisitorTest {
+
+    @Test
+    public void givenSimpleAdditionCodeWithCstwhenInterpretthenStackHaveResult() throws Exception {
+        // Given
+        /*
+            class Test {
+                final int x = 2;
+                int y = 3;
+                main {
+                    x = x + y;
+                    write(x);
+                }
+            }
+        */
+        String code = """
+            1 init
+            2 push(2)
+            3 new(x, entier, cst, 0)
+            4 push(3)
+            5 new(y, entier, var, 0)
+            6 load(x)
+            7 load(y)
+            8 add
+            9 store(x)
+            10 load(x)
+            11 write
+            12 push(0)
+            13 swap
+            14 pop
+            15 swap
+            16 pop
+            17 pop
+            18 jcstop
+            """;
+
+        // When
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();
+
+        // Then
+        String output = interpreter.getOutputBuffer().get(0);
+        assertThat(output, is("5"));
+
+    }
 
     // ######################## ARIMTHMETIC ########################
 
@@ -49,7 +93,7 @@ public class InterpreterVisitorTest {
         // When
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
         // Then
         String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("5"));
@@ -92,7 +136,7 @@ public class InterpreterVisitorTest {
         // When
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
         // Then
         String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("-1"));
@@ -135,7 +179,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
         // Then
         String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("6"));
@@ -178,7 +222,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -225,7 +269,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -270,7 +314,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -317,7 +361,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -362,7 +406,6 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -408,7 +451,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -453,7 +496,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -504,7 +547,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -547,7 +590,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -590,7 +633,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -653,7 +696,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -697,7 +740,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -744,7 +787,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -789,7 +832,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -835,7 +878,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -880,7 +923,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -920,7 +963,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -959,7 +1002,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -972,7 +1015,7 @@ public class InterpreterVisitorTest {
         /*
             class C {
                     int x = 5 ;
-                
+
                 int fct(int v) {
                     int y = 5 + v;
                     write(y) ;
@@ -1018,7 +1061,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -1032,7 +1075,7 @@ public class InterpreterVisitorTest {
         /*
             class C {
                     int x = 5 ;
-                
+
                 int fct(int v) {
                     int y = 5 + v;
                     return y ;
@@ -1078,7 +1121,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -1091,7 +1134,7 @@ public class InterpreterVisitorTest {
         /*
             class C {
                     int x = 5 ;
-                
+
                 int fct(int v) {
                     int y = 5 + v;
                     return y ;
@@ -1139,7 +1182,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -1153,7 +1196,7 @@ public class InterpreterVisitorTest {
             class C {
                     int x = 5 ;
                     int nt[3] ;
-    
+
                 main {
                     nt[0] = x ;
                     write(nt[0]);
@@ -1183,7 +1226,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -1196,7 +1239,7 @@ public class InterpreterVisitorTest {
         /*
             class C {
                     boolean nt[2] ;
-    
+
                 main {
                     nt[0] = true ;
                     nt[1] = false ;
@@ -1226,7 +1269,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -1240,7 +1283,7 @@ public class InterpreterVisitorTest {
             class C {
                     int nt[3] ;
                     int i = 0 ;
-    
+
                 main {
                     while (3 > i) {
                         nt[i] = i * 10 ;
@@ -1283,7 +1326,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -1297,7 +1340,7 @@ public class InterpreterVisitorTest {
             class C {
                     int tab1[1] ;
                     int tab2[1] ;
-    
+
                 main {
                     tab1[0] = 10 ;
                     tab2[0] += tab1[0] ;
@@ -1332,7 +1375,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -1345,8 +1388,8 @@ public class InterpreterVisitorTest {
         /*
             class C {
                     int tab1[1] ;
-                    
-    
+
+
                 main {
                     tab1[0] = 10 ;
                     tab1[0]++ ;
@@ -1376,7 +1419,7 @@ public class InterpreterVisitorTest {
 
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -1421,7 +1464,7 @@ public class InterpreterVisitorTest {
         /*
             class C {
                 int tab1[1];
-                
+
                 main {
                     tab1[0] = 10;
                     write(tab1[0]);
@@ -1457,7 +1500,7 @@ public class InterpreterVisitorTest {
         /*
             class C {
                 int tab1[1];
-                
+
                 main {
                     write(tab1[0]);    // 1. Valeur initiale
                     tab1[0] = 10;
@@ -1511,7 +1554,7 @@ public class InterpreterVisitorTest {
         /*
             class C {
                 int nt[5];
-                
+
                 main {
                     int size = length(nt);
                     write(size);
@@ -1538,7 +1581,7 @@ public class InterpreterVisitorTest {
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
 
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -1568,7 +1611,7 @@ public class InterpreterVisitorTest {
                     write(res1);
                 }
                 }
-                
+
                 """;
         */
         String code = """ 
@@ -1623,7 +1666,7 @@ public class InterpreterVisitorTest {
                 """;
         Interpreter interpreter = new Interpreter(code);
         interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
@@ -2112,7 +2155,7 @@ public class InterpreterVisitorTest {
                 """;
          Interpreter interpreter = new Interpreter(code);
          interpreter.run();
-        
+
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);

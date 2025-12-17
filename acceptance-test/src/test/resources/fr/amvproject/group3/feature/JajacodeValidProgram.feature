@@ -1,6 +1,14 @@
-# Created by clonestriker at 20/11/2025
-Feature: # Enter feature name here
-  # Enter feature description here
+# Created at 25/11/2025
+@jajacode @valid
+Feature: Jajacode Valid Programs
+  Vérifie que l'interpréteur JajaCode exécute correctement les programmes compilés et produit le bon résultat.
 
-  Scenario: # Enter scenario name here
-    # Enter steps here
+  Scenario Outline: Execution Jajacode produit le résultat attendu pour <file>
+    Given Un programme Minijaja du fichier <file>
+    When Compilation du programme
+    And Verification du programme compilé
+    Then le résultat final doit être correct jcc <out>
+
+  Examples:
+    | file          | out           |
+    | minijaja1.mjj | jajacode1.out |
