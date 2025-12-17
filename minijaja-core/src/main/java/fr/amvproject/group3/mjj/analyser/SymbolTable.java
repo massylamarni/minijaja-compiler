@@ -49,6 +49,10 @@ public class SymbolTable {
     return sym;
   }
 
+  public void reset() {
+    symbols.clear();
+  }
+
   /* Print */
   
   public void print() {

@@ -1,5 +1,10 @@
 package fr.amvproject.group3.jjc;
 
+import java.util.List;
+import java.util.Set;
+
+import fr.amvproject.group3.exceptions.BreakPointHit;
+import fr.amvproject.group3.exceptions.PausePointHit;
 import fr.amvproject.group3.exceptions.SemanticException;
 import fr.amvproject.group3.exceptions.collectors.RuntimeErrorsCollector;
 import fr.amvproject.group3.exceptions.collectors.SemanticErrorsCollector;
@@ -7,8 +12,6 @@ import fr.amvproject.group3.exceptions.listeners.LexicalErrorsListener;
 import fr.amvproject.group3.exceptions.listeners.SyntaxicErrorsListener;
 import fr.amvproject.group3.jjc.utils.AstOperations.AstWrapper;
 import fr.amvproject.group3.jjc.analyser.SemanticVisitor;
-import fr.amvproject.group3.jjc.exceptions.BreakPointHit;
-import fr.amvproject.group3.jjc.exceptions.PausePointHit;
 import fr.amvproject.group3.jjc.utils.AstOperations;
 
 public class Interpreter {
@@ -17,15 +20,32 @@ public class Interpreter {
   private SemanticVisitor semanticVisitor = new SemanticVisitor();
   private Stack stack = interpreterVisitor.getStack();
   private ExecutionContext ctx = interpreterVisitor.getCtx();
+  private List<String> outputBuffer = interpreterVisitor.getOutputBuffer();
   private RuntimeErrorsCollector runtimeErrorsCollector = new RuntimeErrorsCollector();
   private SemanticErrorsCollector semanticErrorsCollector = new SemanticErrorsCollector();
 
   public Stack getStack() {
     return stack;
   }
+  
+  public SemanticVisitor getSemanticVisitor() {
+    return semanticVisitor;
+  }
 
-  public Interpreter(String mjjProgram) {
-    astWrapper = AstOperations.getAstFromString(mjjProgram);
+  public List<String> getOutputBuffer() {
+    return outputBuffer;
+  }
+
+  public Interpreter(String program) {
+    setProgram(program);
+  }
+
+  public void setProgram(String program) {
+    try {
+      astWrapper = AstOperations.getAstFromString(program);
+    } catch (Exception e) {
+      // TODO: handle exception
+    }
   }
 
   public LexicalErrorsListener getLexicalErrorsListener() {
@@ -44,7 +64,7 @@ public class Interpreter {
     return runtimeErrorsCollector;
   }
 
-  private void runSemanticAnalysis() {
+  public void runSemanticAnalysis() {
     try {
       astWrapper.ast.accept(semanticVisitor);
     } catch (SemanticException e) {
@@ -52,33 +72,29 @@ public class Interpreter {
     }
   }
 
-  public void restart() {
-    ctx.softReset();
-    interpreterVisitor.resetCurrentAddress();
-    runtimeErrorsCollector = new RuntimeErrorsCollector(); // TODO .reset()
-    semanticErrorsCollector = new SemanticErrorsCollector();
-  }
-
   public void run() {
     runSemanticAnalysis();
     try {
-      ctx.disableDebug();
+      disableDebug();
       astWrapper.ast.accept(interpreterVisitor);
     } catch (fr.amvproject.group3.exceptions.RuntimeException e) {
       runtimeErrorsCollector.add(e.getMessage(), e.getLine(), e.getColumn());
     }
+    onLastInstruction();
   }
 
   public void runWithDebug() {
     runSemanticAnalysis();
     try {
-      ctx.enableDebug();
+      enableDebug();
+      partialReset();
       astWrapper.ast.accept(interpreterVisitor);
     } catch (BreakPointHit e) {
-      System.out.println(e);
+      throw e;
     } catch (fr.amvproject.group3.exceptions.RuntimeException e) {
       runtimeErrorsCollector.add(e.getMessage(), e.getLine(), e.getColumn());
     }
+    onLastInstruction();
   }
 
   public void resume() {
@@ -90,24 +106,35 @@ public class Interpreter {
   public void stepForward() {
     try {
       ctx.ignoreNextBreakpoint();
+      partialReset();
       astWrapper.ast.accept(interpreterVisitor);
     } catch (PausePointHit e) {
-      System.out.println(e);
+      throw e;
     } catch (fr.amvproject.group3.exceptions.RuntimeException e) {
-      System.out.println(e);
+      runtimeErrorsCollector.add(e.getMessage(), e.getLine(), e.getColumn());
     }
+    onLastInstruction();
   }
 
   public void stepBackward() {
     try {
       ctx.decBreakPointHitLine();
+      partialReset();
       interpreterVisitor.resetCurrentAddress();
       astWrapper.ast.accept(interpreterVisitor);
     } catch (PausePointHit e) {
-      System.out.println(e);
+      throw e;
     } catch (fr.amvproject.group3.exceptions.RuntimeException e) {
-      System.out.println(e);
+      runtimeErrorsCollector.add(e.getMessage(), e.getLine(), e.getColumn());
     }
+  }
+
+  public void onLastInstruction() {
+    if (ctx.isExecutionSuccessful()) reset();
+  }
+
+  public Set<Integer> getBreakpoints() {
+    return ctx.getBreakpoints();
   }
 
   public void addBreakPoint(int line) {
@@ -116,5 +143,27 @@ public class Interpreter {
 
   public void removeBreakpoint(int line) {
     ctx.removeBreakpoint(line);
+  }
+
+  public void disableDebug() {
+    ctx.disableDebug();
+  }
+
+  public void enableDebug() {
+    ctx.enableDebug();
+  }
+
+  public void partialReset() {
+    outputBuffer.clear();
+    runtimeErrorsCollector.reset();
+    semanticErrorsCollector.reset();
+  }
+
+  public void reset() {
+    ctx.softReset();
+    outputBuffer.clear();
+    interpreterVisitor.resetCurrentAddress();
+    runtimeErrorsCollector.reset();
+    semanticErrorsCollector.reset();
   }
 }

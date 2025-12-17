@@ -201,6 +201,10 @@ public class Stack extends StackManager {
     return new TypeMemNode("void");
   }
 
+  public void reset() {
+    queue.clear();
+  }
+
   /* Print stack */
 
   public String print() {

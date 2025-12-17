@@ -1,12 +1,9 @@
 package fr.amvproject.group3.exceptions.collectors;
 
 import fr.amvproject.group3.exceptions.RuntimeException;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -15,84 +12,73 @@ import static org.hamcrest.Matchers.*;
 public class RuntimeErrorsCollectorTest {
 
     private RuntimeErrorsCollector collector;
-    private ByteArrayOutputStream outCaptor;
-    private ByteArrayOutputStream errCaptor;
-    private PrintStream originalOut;
-    private PrintStream originalErr;
 
     @Before
     public void setUp() {
         collector = new RuntimeErrorsCollector();
-
-        originalOut = System.out;
-        originalErr = System.err;
-
-        outCaptor = new ByteArrayOutputStream();
-        errCaptor = new ByteArrayOutputStream();
-
-        System.setOut(new PrintStream(outCaptor));
-        System.setErr(new PrintStream(errCaptor));
-    }
-
-    @After
-    public void tearDown() {
-        System.setOut(originalOut);
-        System.setErr(originalErr);
     }
 
     @Test
     public void givenEmptyCollector_when_HasErrors_then_ReturnsFalse() {
-        boolean hasErrors = collector.hasErrors();
-        assertThat(hasErrors, is(false));
+        assertThat(collector.hasErrors(), is(false));
     }
 
     @Test
     public void givenErrorAdded_when_HasErrors_then_ReturnsTrue() {
         collector.add("division by zero", 10, 5);
 
-        boolean hasErrors = collector.hasErrors();
-
-        assertThat(hasErrors, is(true));
+        assertThat(collector.hasErrors(), is(true));
     }
 
     @Test
-    public void givenErrorAdded_when_GetErrors_then_ListContainsRuntimeException() {
+    public void givenErrorAdded_when_GetErrors_then_ErrorIsCorrectlyStored() {
         collector.add("null pointer", 3, 7);
 
         List<RuntimeException> errors = collector.getErrors();
 
         assertThat(errors, hasSize(1));
-        assertThat(errors.get(0).getMessage(), is("null pointer"));
-        assertThat(errors.get(0).getLine(), is(3));
-        assertThat(errors.get(0).getColumn(), is(7));
+        RuntimeException error = errors.get(0);
+        assertThat(error.getMessage(), is("null pointer"));
+        assertThat(error.getLine(), is(3));
+        assertThat(error.getColumn(), is(7));
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void givenGetErrors_when_ModifyingReturnedList_then_ExceptionThrown() {
         collector.add("error", 1, 1);
-        List<RuntimeException> errors = collector.getErrors();
 
-        errors.add(new RuntimeException("other", 2, 2));
+        collector.getErrors().add(new RuntimeException("other", 2, 2));
     }
 
     @Test
-    public void givenNoErrors_when_PrintAll_then_PrintsNoRuntimeErrorsMessage() {
-        collector.printAll();
+    public void givenGetRuntimeExceptions_when_ModifyingReturnedList_then_ListIsModified() {
+        collector.add("error", 1, 1);
 
-        assertThat(outCaptor.toString().trim(), is("No runtime errors."));
-        assertThat(errCaptor.toString(), is(emptyString()));
+        collector.getRuntimeExceptions()
+                .add(new RuntimeException("other", 2, 2));
+
+        assertThat(collector.getRuntimeExceptions(), hasSize(2));
     }
 
     @Test
-    public void givenMultipleErrors_when_PrintAll_then_PrintsAllErrorsOnErr() {
+    public void givenMultipleErrors_when_ToMessage_then_MessageContainsAllErrors() {
         collector.add("error A", 1, 2);
         collector.add("error B", 3, 4);
 
-        collector.printAll();
+        String message = collector.toMessage();
 
-        String errOutput = errCaptor.toString();
-        assertThat(errOutput, containsString("=== runtime errors (2) ==="));
-        assertThat(errOutput, containsString("[1:2]error A"));
-        assertThat(errOutput, containsString("[3:4]error B"));
+        assertThat(message, containsString("Runtime Exception:"));
+        assertThat(message, containsString("error A"));
+        assertThat(message, containsString("error B"));
+    }
+
+    @Test
+    public void givenErrorsAdded_when_Reset_then_CollectorIsEmpty() {
+        collector.add("error", 1, 1);
+
+        collector.reset();
+
+        assertThat(collector.hasErrors(), is(false));
+        assertThat(collector.getErrors(), empty());
     }
 }

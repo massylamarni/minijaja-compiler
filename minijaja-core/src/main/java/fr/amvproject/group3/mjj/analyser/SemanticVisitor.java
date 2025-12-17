@@ -32,12 +32,23 @@ import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
 import fr.amvproject.group3.mjj.utils.NodeOperations;
 
 public class SemanticVisitor implements AstVisitor<TypeNode> {
-  SymbolTable symbolTable = new SymbolTable();
-  ScopeManager scopeManager = new ScopeManager(symbolTable);
-  CompileTimeVisitor compileTimeVisitor = new CompileTimeVisitor(scopeManager);
+  private SymbolTable symbolTable = new SymbolTable();
+  private ScopeManager scopeManager = new ScopeManager(symbolTable);
+  private CompileTimeVisitor compileTimeVisitor = new CompileTimeVisitor(scopeManager);
+  private List<Integer> exploredLines = new ArrayList<>();
 
   public SymbolTable getSymbolTable() {
     return symbolTable;
+  }
+
+  public List<Integer> getExploredLines() {
+    return exploredLines;
+  }
+
+  public void reset() {
+    symbolTable.reset();
+    scopeManager.reset();
+    exploredLines.clear();
   }
 
   /* Checks */
@@ -75,6 +86,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
     Symbols leftSym = scopeManager.lookup(identNode);
     ExpNode evaluatedRightExpNode;
     try {
+      if (rightExpNode instanceof BinaryExpNode || rightExpNode instanceof UnaryExpNode) return;
       evaluatedRightExpNode = (ExpNode) rightExpNode.accept(compileTimeVisitor);
 
       if (leftSym instanceof ClassSymbol) throw new SemanticException("Can't affact a new value to a class !", identNode.getLine(), identNode.getColumn());
@@ -112,6 +124,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitProgram(ProgramNode node) {
+    reset();
     for (ClassNode classeNode : node.getClasses()) {
       classeNode.accept(this);
     }
@@ -120,6 +133,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitClass(ClassNode node) {
+    exploredLines.add(node.getLine());
     checkIfExistsToDeclare(node.getIdent());
     symbolTable.addSymbol(node.getIdent());
 
@@ -148,6 +162,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitVar(VarNode node) {
+    exploredLines.add(node.getLine());
     checkIfExistsToDeclare(node.getIdent());
     checkIfObjCompatible(node.getIdent(), node.getInitExp());
     checkIfTypeCompatible(new TypeNode(node.getType().getName()), node.getInitExp(), node.getIdent());
@@ -158,6 +173,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitCst(CstNode node) {
+    exploredLines.add(node.getLine());
     checkIfExistsToDeclare(node.getIdent());
     checkIfObjCompatible(node.getIdent(), node.getInitExp());
     checkIfTypeCompatible(new TypeNode(node.getType().getName()), node.getInitExp(), node.getIdent());
@@ -168,6 +184,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitTable(TableNode node) {
+    exploredLines.add(node.getLine());
     checkIfExistsToDeclare(node.getIdent());
     ExpNode sizeExpValue = checkIfTabIndexIsInteger(node.getSizeExp(), node.getIdent());
 
@@ -177,6 +194,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitMethod(MethodNode node) {
+    exploredLines.add(node.getLine());
     MethodSymbol sym = (MethodSymbol) symbolTable.lookup(node.getIdent());
 
     scopeManager.newScope();
@@ -207,9 +225,10 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
     // Check if return value types match declared return type
     for (InstrNode instrNode : node.getInstrs().getList()) {
-      if (!instrNode.accept(this).getName().equals(node.getReturnType().getName())) {
-        ReturnNode returnNode = (ReturnNode) instrNode;
-        throw new SemanticException("Return expression does not match the declared method type " + node.getReturnType().getName(), returnNode.getLine(), returnNode.getColumn());
+      if (instrNode instanceof ReturnNode returnNode) {
+        if (!instrNode.accept(this).getName().equals(node.getReturnType().getName())) {
+          throw new SemanticException("Return expression does not match the declared method type " + node.getReturnType().getName(), returnNode.getLine(), returnNode.getColumn());
+        }
       }
     }
     scopeManager.exitScope();
@@ -220,6 +239,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitMain(MainNode node) {
+    exploredLines.add(node.getLine());
     scopeManager.newScope();
     node.getVars().accept(this);
     node.getInstrs().accept(this);
@@ -234,6 +254,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitParam(ParamNode node) {
+    exploredLines.add(node.getLine());
     checkIfExistsToDeclare(node.getIdent());
     TypeNode typeNode = new TypeNode(node.getType().getName());
     symbolTable.addSymbol(node.getIdent(), typeNode);
@@ -255,6 +276,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitBinaryExp(BinaryExpNode node) {
+    exploredLines.add(node.getLine());
     TypeNode leftExpTypeValue = node.getLeftExp().accept(this);
     TypeNode rightExpTypeValue = node.getRightExp().accept(this);
 
@@ -274,6 +296,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitUnaryExp(UnaryExpNode node) {
+    exploredLines.add(node.getLine());
     TypeNode expTypeValue = node.getExp().accept(this);
 
     if (expTypeValue.isInt()&& node.getOp().isNot()) {
@@ -289,6 +312,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitAssign(AssignNode node) {
+    exploredLines.add(node.getLine());
     TypeNode leftValueNodeType = node.getLeftValueNode().accept(this);
     if (node.getLeftValueNode() instanceof IdentNode identNode) {
       checkIfObjCompatible(identNode, node.getExp());
@@ -314,6 +338,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitLength(LengthNode node) {
+    exploredLines.add(node.getLine());
     node.getIdent().accept(this);
     Symbols sym = scopeManager.lookup(node.getIdent());
     if (sym instanceof ClassSymbol) {
@@ -333,6 +358,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitIf(IfNode node) {
+    exploredLines.add(node.getLine());
     TypeNode expTypeValue = node.getCondExp().accept(this);
     if (!expTypeValue.isBoolean()) {
       throw new SemanticException("Incompatible expression for If, expecting Boolean, " + expTypeValue + " given", node.getLine(), node.getColumn());
@@ -352,6 +378,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitWhile(WhileNode node) {
+    exploredLines.add(node.getLine());
     TypeNode expTypeValue = node.getCondExp().accept(this);
     if (!expTypeValue.isBoolean()) {
       throw new SemanticException("Incompatible expression for While, expecting Boolean, " + expTypeValue + " given", node.getLine(), node.getColumn());
@@ -364,6 +391,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitWrite(WriteNode node) {
+    exploredLines.add(node.getLine());
     node.getExp().accept(this);
     if (node.getExp() instanceof IdentNode identNode) {
       Symbols sym = scopeManager.lookup(identNode);
@@ -382,6 +410,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitReturn(ReturnNode node) {
+    exploredLines.add(node.getLine());
     return node.getExp().accept(this);
   }
 
@@ -409,6 +438,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   @Override
   public TypeNode visitCallExp(CallExpNode node) {
+    exploredLines.add(node.getLine());
     MethodSymbol sym = (MethodSymbol) scopeManager.lookup(node.getIdent());
 
     node.getIdent().accept(this);

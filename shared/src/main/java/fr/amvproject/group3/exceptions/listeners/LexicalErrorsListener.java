@@ -23,7 +23,7 @@ public class LexicalErrorsListener extends BaseErrorListener {
 
         @Override public String toString() {
             String token = offending == null ? "" : (" offending=" + offending);
-            return "line [" + line + ":" + charPositionInLine + " ] " + msg + token;
+            return "[" + line + ":" + charPositionInLine + " ] " + msg + token;
         }
     }
 
@@ -38,22 +38,21 @@ public class LexicalErrorsListener extends BaseErrorListener {
                             RecognitionException e) {
         String off = (offendingSymbol == null) ? null : offendingSymbol.toString();
         errors.add(new LexicalError(line, charPositionInLine, msg, off));
-        // IMPORTANT : ne pas lancer d'exception ici -> on collecte juste
     }
 
     public boolean hasErrors() { return !errors.isEmpty(); }
     public List<LexicalError> getErrors() { return List.copyOf(errors); }
 
-    public void printAll() {
-        for (LexicalError se : errors) System.err.println(se);
-    }
-
     public String toMessage() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Parsing resulted in ").append(errors.size()).append(" errors.\n");
+        sb.append("Lexing resulted in ").append(errors.size()).append(" errors.\n");
         for (LexicalError se : errors) {
             sb.append(se.toString()).append("\n");
         }
         return sb.toString();
+    }
+
+    public void reset() {
+        errors.clear();
     }
 }

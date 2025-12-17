@@ -1,0 +1,17 @@
+package fr.amvproject.group3.ui.icons;
+
+public enum IconType {
+  RUN_WITH_DEBUG,
+  RUN,
+  COMPILE,
+  DEBUG_CONTINUE,
+  DEBUG_PAUSE,
+  DEBUG_RESTART,
+  DEBUG_STEP_IN,
+  DEBUG_STEP_OUT,
+  DEBUG_STOP,
+  SEARCH,
+  CLOSE,
+  BREAKPOINT,
+  INVALID_BREAKPOINT
+}

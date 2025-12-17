@@ -83,10 +83,8 @@ public class MiniJajaParserTest {
 
         assertThat(tree.getChild(0).getText(), is("meth"));
         assertThat(tree.getChild(1).getText(), is("("));
-        assertThat(tree.getChild(2).getText(), is("1"));
-        assertThat(tree.getChild(3).getText(), is(","));
-        assertThat(tree.getChild(4).getText(), is("2"));
-        assertThat(tree.getChild(5).getText(), is(")"));
+        assertThat(tree.getChild(2).getText(), is("1,2"));
+        assertThat(tree.getChild(3).getText(), is(")"));
     }
 
     // Test pour une expression complexe
@@ -321,14 +319,17 @@ public class MiniJajaParserTest {
         MiniJajaParser.VarContext varCtx = parser.var();
 
         assertThat(varCtx, notNullValue());
-        assertThat(varCtx.typemeth().getText(), is("int"));
-        assertThat(varCtx.ident().getText(), is("arr"));
-        assertThat(varCtx.getChild(2).getText(), is("="));
-        assertThat(varCtx.getChild(3).getText(), is("new"));
-        assertThat(varCtx.getChild(4).getText(), is("int"));
-        assertThat(varCtx.getChild(5).getText(), is("["));
-        assertThat(varCtx.getChild(6).getText(), is("10"));
-        assertThat(varCtx.getChild(7).getText(), is("]"));
+
+        assertThat(varCtx.getChild(0).getText(), is("int"));
+        assertThat(varCtx.getChild(1).getText(), is("["));
+        assertThat(varCtx.getChild(2).getText(), is("]"));
+        assertThat(varCtx.getChild(3).getText(), is("arr"));
+        assertThat(varCtx.getChild(4).getText(), is("="));
+        assertThat(varCtx.getChild(5).getText(), is("new"));
+        assertThat(varCtx.getChild(6).getText(), is("int"));
+        assertThat(varCtx.getChild(7).getText(), is("["));
+        assertThat(varCtx.getChild(8).getText(), is("10"));
+        assertThat(varCtx.getChild(9).getText(), is("]"));
     }
 
     // Test pour une expression avec négation

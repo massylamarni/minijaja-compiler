@@ -1,12 +1,9 @@
 package fr.amvproject.group3.exceptions.collectors;
 
 import fr.amvproject.group3.exceptions.SemanticException;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -15,84 +12,73 @@ import static org.hamcrest.Matchers.*;
 public class SemanticErrorsCollectorTest {
 
     private SemanticErrorsCollector collector;
-    private ByteArrayOutputStream outCaptor;
-    private ByteArrayOutputStream errCaptor;
-    private PrintStream originalOut;
-    private PrintStream originalErr;
 
     @Before
     public void setUp() {
         collector = new SemanticErrorsCollector();
-
-        originalOut = System.out;
-        originalErr = System.err;
-
-        outCaptor = new ByteArrayOutputStream();
-        errCaptor = new ByteArrayOutputStream();
-
-        System.setOut(new PrintStream(outCaptor));
-        System.setErr(new PrintStream(errCaptor));
-    }
-
-    @After
-    public void tearDown() {
-        System.setOut(originalOut);
-        System.setErr(originalErr);
     }
 
     @Test
     public void givenEmptyCollector_when_HasErrors_then_ReturnsFalse() {
-        boolean hasErrors = collector.hasErrors();
-        assertThat(hasErrors, is(false));
+        assertThat(collector.hasErrors(), is(false));
     }
 
     @Test
     public void givenErrorAdded_when_HasErrors_then_ReturnsTrue() {
         collector.add("type mismatch", 4, 8);
 
-        boolean hasErrors = collector.hasErrors();
-
-        assertThat(hasErrors, is(true));
+        assertThat(collector.hasErrors(), is(true));
     }
 
     @Test
-    public void givenErrorAdded_when_GetErrors_then_ListContainsSemanticException() {
+    public void givenErrorAdded_when_GetErrors_then_ErrorIsCorrectlyStored() {
         collector.add("undeclared variable", 12, 3);
 
         List<SemanticException> errors = collector.getErrors();
 
         assertThat(errors, hasSize(1));
-        assertThat(errors.get(0).getMessage(), is("undeclared variable"));
-        assertThat(errors.get(0).getLine(), is(12));
-        assertThat(errors.get(0).getColumn(), is(3));
+        SemanticException error = errors.get(0);
+        assertThat(error.getMessage(), is("undeclared variable"));
+        assertThat(error.getLine(), is(12));
+        assertThat(error.getColumn(), is(3));
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void givenGetErrors_when_ModifyingReturnedList_then_ExceptionThrown() {
         collector.add("semantic error", 1, 1);
-        List<SemanticException> errors = collector.getErrors();
 
-        errors.add(new SemanticException("other", 2, 2));
+        collector.getErrors().add(new SemanticException("other", 2, 2));
     }
 
     @Test
-    public void givenNoErrors_when_PrintAll_then_PrintsNoSemanticErrorsMessage() {
-        collector.printAll();
+    public void givenGetSemanticExceptions_when_ModifyingReturnedList_then_ListIsModified() {
+        collector.add("error", 1, 1);
 
-        assertThat(outCaptor.toString().trim(), is("No semantic errors."));
-        assertThat(errCaptor.toString(), is(emptyString()));
+        collector.getSemanticExceptions()
+                .add(new SemanticException("other", 2, 2));
+
+        assertThat(collector.getSemanticExceptions(), hasSize(2));
     }
 
     @Test
-    public void givenMultipleErrors_when_PrintAll_then_PrintsAllErrorsOnErr() {
+    public void givenMultipleErrors_when_ToMessage_then_MessageContainsAllErrors() {
         collector.add("error A", 2, 5);
         collector.add("error B", 6, 9);
 
-        collector.printAll();
+        String message = collector.toMessage();
 
-        String errOutput = errCaptor.toString();
-        assertThat(errOutput, containsString("=== Semantic errors (2) ==="));
-        assertThat(errOutput, containsString("[2:5]error A"));
-        assertThat(errOutput, containsString("[6:9]error B"));
+        assertThat(message, containsString("Semantic Exceptions:"));
+        assertThat(message, containsString("error A"));
+        assertThat(message, containsString("error B"));
+    }
+
+    @Test
+    public void givenErrorsAdded_when_Reset_then_CollectorIsEmpty() {
+        collector.add("error", 1, 1);
+
+        collector.reset();
+
+        assertThat(collector.hasErrors(), is(false));
+        assertThat(collector.getErrors(), empty());
     }
 }

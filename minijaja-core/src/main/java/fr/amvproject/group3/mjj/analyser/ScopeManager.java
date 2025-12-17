@@ -44,4 +44,10 @@ public class ScopeManager {
     }
     return null;
   }
+
+  public void reset() {
+    scopeDepth = 0;
+    symbolTableRef = stack.peekLast();
+    while (stack.size() > 1) stack.pop();
+  }
 }
