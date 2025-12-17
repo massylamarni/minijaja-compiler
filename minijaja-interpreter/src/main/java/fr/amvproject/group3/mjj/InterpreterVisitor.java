@@ -339,11 +339,11 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         ctx.recordNode(node);
         Object value = evalExp(node.getExp());
         if (node.getLeftValueNode() instanceof IdentNode identNode) {
-            stack.affecterVal(identNode, value);
+            scopeManager.affecterVal(identNode, value);
         } else if (node.getLeftValueNode() instanceof ArrayAccessNode arrayAccessNode) {
             int index = (int) evalExp(arrayAccessNode.getIndexExp());
             try {
-                stack.affecterValT(arrayAccessNode.getIdent(), index, value);
+                scopeManager.affecterValT(arrayAccessNode.getIdent(), index, value);
             } catch (Exception e) {
                 throw new fr.amvproject.group3.exceptions.RuntimeException("Index out of bounds", node.getLine(), node.getColumn());
             }   
@@ -546,7 +546,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitIdent(IdentNode node) {
-        return stack.val(node);
+        return scopeManager.val(node);
     }
 
     /**
@@ -560,7 +560,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         Object indexObj = evalExp(node.getIndexExp());
         int index = (int) indexObj;
         try {
-            return stack.valT(node.getIdent(), index);
+            return scopeManager.valT(node.getIdent(), index);
         } catch (Exception e) {
             throw new fr.amvproject.group3.exceptions.RuntimeException("Index out of bounds", node.getLine(), node.getColumn());
         }

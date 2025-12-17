@@ -62,6 +62,22 @@ public class ScopeManager {
     return null;
   }
 
+  public void affecterVal(IdentNode identNode, Object value) {
+    for (Stack stack : stackOfStacks) {
+      if (stack.val(identNode) != null) {
+        stack.affecterVal(identNode, value);
+      }
+    }
+  }
+
+  public void affecterValT(IdentNode identNode, int index, Object value) {
+    for (Stack stack : stackOfStacks) {
+      if (stack.val(identNode) != null) {
+        stack.affecterValT(identNode, index, value);
+      }
+    }
+  }  
+
   public void affecterValClassQuad(Object value) {
     stackOfStacks.peekLast().affecterVal(getClassQuad().getIdent(), value);
   }

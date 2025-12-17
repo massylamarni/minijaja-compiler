@@ -168,11 +168,9 @@ public class InterpreterVisitor implements AstVisitor<Object> {
   public Object visitNew(NewNode node) {
     if (node.getObj().isVar()) {
       stack.identVal(node.getIdent(), node.getType(), (int) node.getValueNode().accept(this));
-    } else if (node.getObj().isCst()) {
+    } else if (node.getObj().isCst() || node.getObj().isVcst()) {
       Quad quad = stack.pop();
-      if (quad.getObj().isVcst()) {
-        stack.declCst(node.getIdent(), quad.getValue(), node.getType(), true);
-      }
+      stack.declCst(node.getIdent(), quad.getValue(), node.getType(), node.getObj().isVcst());
     } else if (node.getObj().isMeth()) {
       Quad quad = stack.pop();
       stack.declMeth(node.getIdent(), quad.getValue(), node.getType());

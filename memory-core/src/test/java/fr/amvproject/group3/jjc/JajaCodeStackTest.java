@@ -272,7 +272,7 @@ public class JajaCodeStackTest {
         stack.push("c", 3);
 
         assertThat(stack.peek().getIdent().getName(), is("c"));
-        assertThat(stack.peekTail().getIdent().getName(), is("a"));
+        assertThat(stack.getClassQuad().getIdent().getName(), is("a"));
         assertThat(stack.getQueue().size(), is(3));
     }
 

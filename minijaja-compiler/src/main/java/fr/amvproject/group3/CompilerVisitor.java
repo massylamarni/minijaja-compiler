@@ -66,7 +66,7 @@ public class CompilerVisitor implements fr.amvproject.group3.mjj.ast.AstVisitor<
   }
 
   private ObjNode objMapper(String obj) {
-    if (!obj.equals("var") && !obj.equals("cst") && !obj.equals("tab") && !obj.equals("meth")) throw new IllegalArgumentException("ObjType incorrect");
+    if (!obj.equals("var") && !obj.equals("cst") && !obj.equals("vcst") && !obj.equals("tab") && !obj.equals("meth")) throw new IllegalArgumentException("ObjType incorrect");
     return new ObjNode(obj, 0, 0);
   }
 
@@ -150,7 +150,7 @@ public class CompilerVisitor implements fr.amvproject.group3.mjj.ast.AstVisitor<
     List<ClassNode> pe = node.getInitExp() != null ? node.getInitExp().accept(this) : new ArrayList<>();
     classNodes.addAll(pe);
     classNodes.add(newClass(new NewNode(new IdentNode(node.getIdent().getIdentToken()),
-        typeMapper(node.getType()), objMapper("cst"), new IntLiteralNode("0", 0, 0))));
+        typeMapper(node.getType()), objMapper(node.isVcst() ? "vcst" : "cst"), new IntLiteralNode("0", 0, 0))));
 
     return classNodes;
   }

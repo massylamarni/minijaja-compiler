@@ -10,6 +10,7 @@ public class ObjNode extends AstNode {
     VAR("var"),
     TAB("tab"),
     CST("cst"),
+    VCST("vcst"),
     METH("meth");
 
     private final String name;
@@ -61,6 +62,10 @@ public class ObjNode extends AstNode {
 
   public boolean isCst() {
     return obj == ObjName.CST;
+  }
+
+  public boolean isVcst() {
+    return obj == ObjName.VCST;
   }
 
   public boolean isTab() {

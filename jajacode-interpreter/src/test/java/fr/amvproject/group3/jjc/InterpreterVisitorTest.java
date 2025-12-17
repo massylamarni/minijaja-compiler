@@ -15,7 +15,7 @@ public class InterpreterVisitorTest {
         // Given
         /*
             class Test {
-                final int x = 2;
+                final int x;
                 int y = 3;
                 main {
                     x = x + y;
@@ -25,10 +25,10 @@ public class InterpreterVisitorTest {
         */
         String code = """
             1 init
-            2 push(2)
-            3 new(x, entier, cst, 0)
+            2 push(0)
+            3 new(x, entier, vcst, 0)
             4 push(3)
-            5 new(y, entier, var, 0)
+            5 new(y, entier, var, 0) 
             6 load(x)
             7 load(y)
             8 add
@@ -50,7 +50,7 @@ public class InterpreterVisitorTest {
 
         // Then
         String output = interpreter.getOutputBuffer().get(0);
-        assertThat(output, is("5"));
+        assertThat(output, is("3"));
 
     }
 
