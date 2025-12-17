@@ -14,7 +14,6 @@ import fr.amvproject.group3.mjj.analyser.symbols.Symbols;
 import fr.amvproject.group3.mjj.analyser.symbols.TableSymbol;
 import fr.amvproject.group3.mjj.analyser.symbols.VarSymbol;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
-import fr.amvproject.group3.utils.StringSaver;
 
 public class SymbolTable {
   private final Map<IdentNode, Symbols> symbols = new LinkedHashMap<>();
@@ -43,9 +42,10 @@ public class SymbolTable {
     symbols.put(identNode, new MethodSymbol(identNode, returnType, paramsType));
   }
 
-  public Symbols recordUsage(IdentNode ident, int scope) {
-    Symbols sym = symbols.get(ident);
-    sym.addLineOfUsage(ident.getLine());
+  public Symbols recordUsage(IdentNode identNode, int scope) {
+    Symbols sym = symbols.get(identNode);
+    if (sym == null) return null;
+    sym.addLineOfUsage(identNode.getLine());
     sym.addScopeOfUsage(scope);
     return sym;
   }
@@ -56,17 +56,14 @@ public class SymbolTable {
 
   /* Print */
   
-  public void print() {
+  public String print() {
     StringBuilder sb = new StringBuilder();
-
-    // CSV header
-    sb.append("Name,Type,Obj,Size,Params,DeclLine,UsageLines\n");
 
     for (Symbols sym : symbols.values()) {
       sb.append(sym.print());
     }
 
-    StringSaver.save(sb.toString(), "symbolTable.csv", "main");
+    return sb.toString();
   }
   
 }

@@ -42,6 +42,10 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
     return symbolTable;
   }
 
+  public ScopeManager getScopeManager() {
+    return scopeManager;
+  }
+
   public List<Integer> getExploredLines() {
     return exploredLines;
   }
@@ -140,10 +144,8 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
     checkIfExistsToDeclare(node.getIdent());
     symbolTable.addSymbol(node.getIdent());
 
-    scopeManager.newScope();
     node.getDecls().accept(this);
     node.getMain().accept(this);
-    scopeManager.exitScope();
     return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
@@ -203,8 +205,7 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
   public SymbolIdentity visitMethod(MethodNode node) {
     exploredLines.add(node.getLine());
     MethodSymbol sym = (MethodSymbol) symbolTable.lookup(node.getIdent());
-
-    scopeManager.newScope();
+    symbolTable = scopeManager.newScope();
     List<SymbolIdentity> paramsTypeValue = new ArrayList<>();
     for (ParamNode paramNode : node.getParams().getList()) {
       paramsTypeValue.add(paramNode.accept(this));
@@ -238,7 +239,7 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
         }
       }
     }
-    scopeManager.exitScope();
+    symbolTable = scopeManager.exitScope();
 
     symbolTable.addSymbol(node.getIdent(), new TypeNode(node.getReturnType().getName()), paramsTypeValue);
     return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
@@ -247,10 +248,10 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
   @Override
   public SymbolIdentity visitMain(MainNode node) {
     exploredLines.add(node.getLine());
-    scopeManager.newScope();
+    symbolTable = scopeManager.newScope();
     node.getVars().accept(this);
     node.getInstrs().accept(this);
-    scopeManager.exitScope();
+    symbolTable = scopeManager.exitScope();
     return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
@@ -371,14 +372,10 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
       throw new SemanticException("Incompatible expression for If, expecting Boolean, " + symId + " given", node.getLine(), node.getColumn());
     }
     if (node.getThenInstrs() != null) {
-      scopeManager.newScope();
       node.getThenInstrs().accept(this);
-      scopeManager.exitScope();
     }
     if (node.getElseInstrs() != null) {
-      scopeManager.newScope();
       node.getElseInstrs().accept(this);
-      scopeManager.exitScope();
     }
     return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
@@ -390,9 +387,9 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
     if (!symId.getTypeNode().isBoolean()) {
       throw new SemanticException("Incompatible expression for While, expecting Boolean, " + symId + " given", node.getLine(), node.getColumn());
     }
-    scopeManager.newScope();
+    symbolTable = scopeManager.newScope();
     node.getInstrs().accept(this);
-    scopeManager.exitScope();
+    symbolTable = scopeManager.exitScope();
     return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
@@ -464,6 +461,10 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
       }
     }
 
+    if (listExpTypeValue.size() != symParamsTypeValue.size()) {
+      throw new SemanticException("Method " + node.getIdent().getName() + " uses different parameter count from the declared one, at line " + sym.getLine(), node.getLine(), node.getColumn());
+    }
+
     return new SymbolIdentity(sym.getTypeNode(), new ObjNode("meth_call", node.getLine(), node.getColumn()));
   }
 
@@ -496,7 +497,7 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
   @Override
   public SymbolIdentity visitIdent(IdentNode node) {
     checkIfExistsToUse(node);
-    Symbols sym = symbolTable.recordUsage(node, scopeManager.getScopeDepth());
+    Symbols sym = scopeManager.recordUsage(node);
     return new SymbolIdentity(sym.getTypeNode(), sym.getObjNode());
   }
 }
