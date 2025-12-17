@@ -317,7 +317,7 @@ public class MinijajaStackTest {
         ParamsNode params = new ParamsNode(paramList);
         stack.declMeth(new MethodNode(returnType, identMeth, params, null, null));
         // When
-        ParamsNode resultParams = stack.parametre(identMeth);
+        ParamsNode resultParams = stack.parametre(identMeth, 0);
         // Then
         assertThat(resultParams.getList().size(),is(2));
     }
@@ -335,7 +335,7 @@ public class MinijajaStackTest {
         ParamsNode params = new ParamsNode(paramList);
         stack.declMeth(new MethodNode(returnType, identMeth, params, new VarsNode(null), null));
         // When
-        VarsNode resultVars = stack.declaration(identMeth);
+        VarsNode resultVars = stack.declaration(identMeth, 0);
         // Then
         assertThat(resultVars,notNullValue());
     }
@@ -354,7 +354,7 @@ public class MinijajaStackTest {
 
         stack.declMeth(new MethodNode(returnType, identMeth, params, null, new InstrsNode(null)));
         // When
-        InstrsNode resultInstrs = stack.corps(identMeth);
+        InstrsNode resultInstrs = stack.corps(identMeth, 0);
         // Then
         assertThat(resultInstrs,is(notNullValue()));
     }

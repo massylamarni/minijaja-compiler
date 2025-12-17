@@ -238,11 +238,15 @@ public class InterpreterVisitor implements AstVisitor<Object> {
             List<ExpNode> listExpNodes = (node.getListExp() != null) ? node.getListExp().getList() : new ArrayList<>();
 
             if (listParamNodes.size() == listExpNodes.size()) {
-                for (int i = 0; i < listExpNodes.size(); i++) {
-                    ParamNode param = listParamNodes.get(i);
-                    ExpNode argExp = listExpNodes.get(i);
-                    if (param.getType().isInt() && evalExp(argExp) instanceof Integer) isMethodFound = true;
-                    else if (param.getType().isBoolean() && evalExp(argExp) instanceof Boolean) isMethodFound = true;
+                if (listParamNodes.size() == 0) {
+                    isMethodFound = true;
+                } else {
+                    for (int i = 0; i < listExpNodes.size(); i++) {
+                        ParamNode param = listParamNodes.get(i);
+                        ExpNode argExp = listExpNodes.get(i);
+                        if (param.getType().isInt() && evalExp(argExp) instanceof Integer) isMethodFound = true;
+                        else if (param.getType().isBoolean() && evalExp(argExp) instanceof Boolean) isMethodFound = true;
+                    }
                 }
             }
 
