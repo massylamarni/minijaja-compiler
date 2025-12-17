@@ -1,20 +1,21 @@
-package fr.amvproject.group3;
-
-import static org.junit.Assert.*;
+package fr.amvproject.group3.jjc;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+import fr.amvproject.group3.JajaCodeLexer;
+import fr.amvproject.group3.JajaCodeParser;
+import fr.amvproject.group3.jjc.ast.nodes.literals.NopLiteral;
+import fr.amvproject.group3.jjc.ast.nodes.program.ClassNode;
+import fr.amvproject.group3.jjc.utils.NodeOperations;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import fr.amvproject.group3.jjc.InterpreterVisitor;
 import fr.amvproject.group3.jjc.ast.AstBuilderVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.program.ProgramNode;
 
@@ -2477,6 +2478,57 @@ public class InterpreterVisitorTest {
         // Then
         String output = outContent.toString().trim();
         assertThat(output, is("120"));
+    }
+
+    @Test
+    public void givenProgramWithNop__whenInterpret__thenAddressIncrements() {
+        // Given
+        String code = """
+            1 init
+            2 nop
+            3 jcstop
+            """;
+
+        ProgramNode program = buildAstFromCode(code);
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+
+        // When
+        program.accept(interpreter);
+
+        // Then
+        assertThat("Stack should remain empty", interpreter.getStack().getQueue().size(), is(0));
+        // currentAddress should be 3 (after init + nop)
+        int currentAddress = getCurrentAddress(interpreter);
+        assertThat("currentAddress should be 3 after nop", currentAddress, is(3));
+    }
+
+    @Test
+    public void givenProgramWithJcstop__whenInterpret__thenStackEmpty() {
+        // Given
+        String code = """
+            1 jcstop
+            """;
+
+        ProgramNode program = buildAstFromCode(code);
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+
+        // When
+        program.accept(interpreter);
+
+        // Then
+        assertThat("Stack should remain empty after jcstop", interpreter.getStack().getQueue().size(), is(0));
+        int currentAddress = getCurrentAddress(interpreter);
+        assertThat("currentAddress should remain 1 after jcstop", currentAddress, is(1));
+    }
+
+    private int getCurrentAddress(InterpreterVisitor visitor) {
+        try {
+            var field = InterpreterVisitor.class.getDeclaredField("currentAddress");
+            field.setAccessible(true);
+            return field.getInt(visitor);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

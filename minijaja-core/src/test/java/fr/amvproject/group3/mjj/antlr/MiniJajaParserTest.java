@@ -18,7 +18,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class MiniJajaParserTest {
 
-
+    // Test pour une expression arithmétique simple
     @Test
     public void givenSimpleOperation__whenParse__thenCorrectTree() {
         // Given
@@ -28,8 +28,10 @@ public class MiniJajaParserTest {
         MiniJajaLexer lexer = new MiniJajaLexer(cs);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         MiniJajaParser parser = new MiniJajaParser(tokens);
+
         // When
         ParseTree tree = parser.exp();
+
         // Then
         assertThat(tree, notNullValue());
         MiniJajaParser.ExpOrContext expOr = (MiniJajaParser.ExpOrContext) tree.getChild(0);
@@ -44,6 +46,7 @@ public class MiniJajaParserTest {
         assertThat(expAdd.getChild(2).getText(), is("1"));
     }
 
+    // Test pour une affectation
     @Test
     public void givenAssign__whenParse__thenCorrectTree() {
         String input = "x = 5;";
@@ -56,6 +59,7 @@ public class MiniJajaParserTest {
         assertThat(tree.getChild(2).getText(), is("5"));
     }
 
+    // Test pour une déclaration de variable
     @Test
     public void givenVarDeclaration__whenParse__thenCorrectTree() {
         String input = "int y = 10;";
@@ -69,6 +73,7 @@ public class MiniJajaParserTest {
         assertThat(tree.getChild(2).getChild(1).getText(), is("10"));
     }
 
+    // Test pour un appel de méthode
     @Test
     public void givenMethodCall__whenParse__thenCorrect() {
         String input = "meth(1, 2)";
@@ -77,22 +82,22 @@ public class MiniJajaParserTest {
 
         assertThat(tree.getChild(0).getText(), is("meth"));
         assertThat(tree.getChild(1).getText(), is("("));
-        assertThat(tree.getChild(2).getText(), is("1,2"));
-        assertThat(tree.getChild(3).getText(), is(")"));
+        assertThat(tree.getChild(2).getText(), is("1"));
+        assertThat(tree.getChild(3).getText(), is(","));
+        assertThat(tree.getChild(4).getText(), is("2"));
+        assertThat(tree.getChild(5).getText(), is(")"));
     }
 
+    // Test pour une expression complexe
     @Test
     public void givenComplexExpression__whenParse__thenCorrect() {
-        // Given
         String input = "(1 + 2) * 3";
         MiniJajaParser parser = new MiniJajaParser(
                 new CommonTokenStream(new MiniJajaLexer(CharStreams.fromString(input)))
         );
 
-        // When
         MiniJajaParser.ExpContext expCtx = parser.exp();
 
-        // Then
         assertThat(expCtx, notNullValue());
 
         MiniJajaParser.ExpMulContext expMulCtx =
@@ -103,19 +108,16 @@ public class MiniJajaParserTest {
         assertThat(expMulCtx.expUnary(1).getText(), is("3"));
     }
 
-
+    // Test pour une instruction conditionnelle
     @Test
     public void givenIfStatement__whenParse__thenCorrect() {
-        // Given
         String input = "if (x > 5) { x = 1; }";
         MiniJajaParser parser = new MiniJajaParser(
                 new CommonTokenStream(new MiniJajaLexer(CharStreams.fromString(input)))
         );
 
-        // When
         MiniJajaParser.InstrContext instrCtx = parser.instr();
 
-        // Then
         assertNotNull(instrCtx.IF());
         assertEquals("if", instrCtx.IF().getText());
 
@@ -134,7 +136,6 @@ public class MiniJajaParserTest {
         MiniJajaParser.InstrsContext instrsCtx = instrCtx.instrs(0);
         assertNotNull(instrsCtx);
 
-        // Première (et seule) instruction à l’intérieur du bloc
         MiniJajaParser.InstrContext innerInstr = instrsCtx.instr(0);
         assertNotNull(innerInstr);
 
@@ -143,19 +144,16 @@ public class MiniJajaParserTest {
         assertThat(innerInstr.exp().getText(), is("1"));
     }
 
-
+    // Test pour une boucle while
     @Test
     public void givenWhileLoop_whenParse_thenCorrect() {
-        // Given
         String input = "while (x > 10) { x = x + 1; }";
         MiniJajaParser parser = new MiniJajaParser(
                 new CommonTokenStream(new MiniJajaLexer(CharStreams.fromString(input)))
         );
 
-        // When
         MiniJajaParser.InstrContext instrCtx = parser.instr();
 
-        // Then
         assertThat(instrCtx, notNullValue());
         assertThat(instrCtx.WHILE(), notNullValue());
         assertThat(instrCtx.WHILE().getText(), is("while"));
@@ -192,19 +190,16 @@ public class MiniJajaParserTest {
         assertThat(rhsParts, hasItems("x", "+", "1"));
     }
 
-
+    // Test pour une déclaration de méthode
     @Test
     public void givenMethodDeclaration_whenParse_thenCorrect() {
-        // Given
         String input = "int sum(int a, int b) { int r; r = a + b; }";
         MiniJajaParser parser = new MiniJajaParser(
                 new CommonTokenStream(new MiniJajaLexer(CharStreams.fromString(input)))
         );
 
-        // When
         MiniJajaParser.MethodeContext methodeCtx = parser.methode();
 
-        // Then
         assertThat(methodeCtx, notNullValue());
         assertThat(methodeCtx.ident().getText(), is("sum"));
         assertThat(methodeCtx.typemeth().getText(), is("int"));
@@ -248,7 +243,7 @@ public class MiniJajaParserTest {
         assertThat(rhsParts, hasItems("a", "+", "b"));
     }
 
-
+    // Test pour un programme simple
     @Test
     public void givenSimpleProgram_whenParse_thenCorrect() {
         String input = """
@@ -294,5 +289,76 @@ public class MiniJajaParserTest {
         assertThat(assignInstr.exp().getText(), is("5"));
     }
 
+    // Test pour une expression logique
+    @Test
+    public void givenLogicalExpression_whenParse_thenCorrect() {
+        String input = "true && false";
+        MiniJajaParser parser = new MiniJajaParser(
+                new CommonTokenStream(new MiniJajaLexer(CharStreams.fromString(input)))
+        );
 
+        MiniJajaParser.ExpContext expCtx = parser.exp();
+
+        assertThat(expCtx, notNullValue());
+
+        MiniJajaParser.ExpAndContext expAndCtx = expCtx.expOr().expAnd(0);
+
+        assertThat(expAndCtx.getChildCount(), is(3));
+        assertThat(expAndCtx.getChild(0).getText(), is("true"));
+        assertThat(expAndCtx.getChild(1).getText(), is("&&"));
+        assertThat(expAndCtx.getChild(2).getText(), is("false"));
+    }
+
+    // Test pour une déclaration de tableau
+    @Test
+    public void givenArrayDeclaration_whenParse_thenCorrect() {
+        String input = "int[] arr = new int[10];";
+        MiniJajaParser parser = new MiniJajaParser(
+                new CommonTokenStream(new MiniJajaLexer(CharStreams.fromString(input)))
+        );
+
+        MiniJajaParser.VarContext varCtx = parser.var();
+
+        assertThat(varCtx, notNullValue());
+        assertThat(varCtx.typemeth().getText(), is("int"));
+        assertThat(varCtx.ident().getText(), is("arr"));
+        assertThat(varCtx.getChild(2).getText(), is("="));
+        assertThat(varCtx.getChild(3).getText(), is("new"));
+        assertThat(varCtx.getChild(4).getText(), is("int"));
+        assertThat(varCtx.getChild(5).getText(), is("["));
+        assertThat(varCtx.getChild(6).getText(), is("10"));
+        assertThat(varCtx.getChild(7).getText(), is("]"));
+    }
+
+    // Test pour une expression avec négation
+    @Test
+    public void givenNegationExpression_whenParse_thenCorrect() {
+        String input = "!(x > 5)";
+        MiniJajaParser parser = new MiniJajaParser(
+                new CommonTokenStream(new MiniJajaLexer(CharStreams.fromString(input)))
+        );
+
+        MiniJajaParser.ExpContext expCtx = parser.exp();
+
+        assertThat(expCtx, notNullValue());
+
+        String treeText = expCtx.toStringTree(parser);
+        assertThat(treeText, containsString("!"));
+        assertThat(treeText, containsString("x"));
+        assertThat(treeText, containsString(">"));
+        assertThat(treeText, containsString("5"));
+    }
+
+    // Test pour une expression avec opérateur ternaire
+    @Test
+    public void givenTernaryExpression_whenParse__thenCorrect() {
+        String input = "x > 5 ? 10 : 20";
+        MiniJajaParser parser = new MiniJajaParser(
+                new CommonTokenStream(new MiniJajaLexer(CharStreams.fromString(input)))
+        );
+
+        MiniJajaParser.ExpContext expCtx = parser.exp();
+
+        assertThat(expCtx, notNullValue());
+    }
 }
