@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import fr.amvproject.group3.mjj.analyser.nodes.SymbolIdentity;
+import fr.amvproject.group3.mjj.analyser.nodes.SymbolSignature;
 import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
 import fr.amvproject.group3.mjj.analyser.nodes.ObjNode;
 import fr.amvproject.group3.mjj.analyser.symbols.ClassSymbol;
@@ -14,38 +15,47 @@ import fr.amvproject.group3.mjj.analyser.symbols.Symbols;
 import fr.amvproject.group3.mjj.analyser.symbols.TableSymbol;
 import fr.amvproject.group3.mjj.analyser.symbols.VarSymbol;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
+import fr.amvproject.group3.mjj.utils.SemanticOperations;
 
 public class SymbolTable {
-  private final Map<IdentNode, Symbols> symbols = new LinkedHashMap<>();
+  private final Map<SymbolSignature, Symbols> symbols = new LinkedHashMap<>();
 
-  public Symbols lookup(IdentNode identNode) {
-    return symbols.get(identNode);
+  public Symbols lookup(SymbolSignature symbolSignature) {
+    return symbols.get(symbolSignature);
   }
 
   public void addSymbol(IdentNode identNode) {
-    symbols.put(identNode, new ClassSymbol(identNode));
+    symbols.put(new SymbolSignature(identNode), new ClassSymbol(identNode));
   }
 
   public void addSymbol(IdentNode identNode, TypeNode typeNode, ObjNode objNode) {
     if (objNode.isVar()) {
-      symbols.put(identNode, new VarSymbol(identNode, typeNode));
+      symbols.put(new SymbolSignature(identNode), new VarSymbol(identNode, typeNode));
     } else {
-      symbols.put(identNode, new TableSymbol(identNode, typeNode));
+      symbols.put(new SymbolSignature(identNode), new TableSymbol(identNode, typeNode));
     }
   }
 
   public void addSymbol(IdentNode identNode, TypeNode typeNode, boolean isVcst) {
-    symbols.put(identNode, new CstSymbol(identNode, typeNode, isVcst));
+    symbols.put(new SymbolSignature(identNode), new CstSymbol(identNode, typeNode, isVcst));
   }
 
   public void addSymbol(IdentNode identNode, TypeNode returnType, List<SymbolIdentity> paramsType) {
-    symbols.put(identNode, new MethodSymbol(identNode, returnType, paramsType));
+    symbols.put(new SymbolSignature(identNode, SemanticOperations.getHashFromSymIdList(paramsType)), new MethodSymbol(identNode, returnType, paramsType));
   }
 
   public Symbols recordUsage(IdentNode identNode, int scope) {
-    Symbols sym = symbols.get(identNode);
+    Symbols sym = symbols.get(new SymbolSignature(identNode));
     if (sym == null) return null;
     sym.addLineOfUsage(identNode.getLine());
+    sym.addScopeOfUsage(scope);
+    return sym;
+  }
+
+  public Symbols recordUsage(SymbolSignature symS, int scope) {
+    Symbols sym = symbols.get(symS);
+    if (sym == null) return null;
+    sym.addLineOfUsage(symS.getIdentNode().getLine());
     sym.addScopeOfUsage(scope);
     return sym;
   }

@@ -1,5 +1,7 @@
 package fr.amvproject.group3.mjj.analyser.nodes;
 
+import java.util.Objects;
+
 public class SymbolIdentity {
   private final TypeNode typeNode;
   private final ObjNode objNode;
@@ -22,6 +24,19 @@ public class SymbolIdentity {
     if (this.objNode.isClass() || this.objNode.isArrPointer() || this.objNode.isMethPointer()) return false;
     if (!other.objNode.isVar()) return false;
     return true;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(typeNode, objNode);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof SymbolIdentity symId) {
+      return typeNode.sameAs(symId.getTypeNode()) && objNode == symId.getObjNode();
+    }
+    return false;
   }
   
 }

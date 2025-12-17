@@ -5,6 +5,7 @@ import java.util.List;
 
 import fr.amvproject.group3.exceptions.SemanticException;
 import fr.amvproject.group3.mjj.analyser.nodes.SymbolIdentity;
+import fr.amvproject.group3.mjj.analyser.nodes.SymbolSignature;
 import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
 import fr.amvproject.group3.mjj.analyser.nodes.ObjNode;
 import fr.amvproject.group3.mjj.analyser.symbols.ClassSymbol;
@@ -32,6 +33,7 @@ import fr.amvproject.group3.mjj.ast.nodes.other.UnaryOpNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
 import fr.amvproject.group3.mjj.utils.NodeOperations;
+import fr.amvproject.group3.mjj.utils.SemanticOperations;
 
 public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
   private SymbolTable symbolTable = new SymbolTable();
@@ -60,7 +62,7 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
 
   // Class | Var | Cst | Tab
   private void checkIfExistsToDeclare(IdentNode identNode) {
-    Symbols sym = symbolTable.lookup(identNode);
+    Symbols sym = symbolTable.lookup(new SymbolSignature(identNode));
     if (sym != null) {
       throw new SemanticException("Symbol " + identNode.getName() + " already declared at line" + sym.getLine(), identNode.getLine(), identNode.getColumn());
     }
@@ -68,12 +70,23 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
 
   // Class | Var | Cst | Tab
   private Symbols checkIfExistsToUse(IdentNode identNode) {
-    Symbols sym = scopeManager.lookup(identNode);
+    Symbols sym = scopeManager.lookup(new SymbolSignature(identNode));
 
     if (sym == null) {
       throw new SemanticException("Symbol " + identNode.getName() + " is referenced, but never declared", identNode.getLine(), identNode.getColumn());
     }
     if (sym instanceof ClassSymbol) throw new SemanticException("Can't use a class in an expression", identNode.getLine(), identNode.getColumn());
+    
+    return sym;
+  }
+
+  private Symbols checkIfExistsToUse(SymbolSignature symS) {
+    Symbols sym = scopeManager.lookup(symS);
+
+    if (sym == null) {
+      throw new SemanticException("Symbol " + symS.getIdentNode().getName() + " is referenced, but never declared", symS.getIdentNode().getLine(), symS.getIdentNode().getColumn());
+    }
+    if (sym instanceof ClassSymbol) throw new SemanticException("Can't use a class in an expression", symS.getIdentNode().getLine(), symS.getIdentNode().getColumn());
     
     return sym;
   }
@@ -144,8 +157,12 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
     checkIfExistsToDeclare(node.getIdent());
     symbolTable.addSymbol(node.getIdent());
 
+    symbolTable = scopeManager.newScope();
+
     node.getDecls().accept(this);
     node.getMain().accept(this);
+
+    symbolTable = scopeManager.exitScope();
     return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 
@@ -204,7 +221,8 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
   @Override
   public SymbolIdentity visitMethod(MethodNode node) {
     exploredLines.add(node.getLine());
-    MethodSymbol sym = (MethodSymbol) symbolTable.lookup(node.getIdent());
+    MethodSymbol sym = (MethodSymbol) symbolTable.lookup(new SymbolSignature(node.getIdent()));
+
     symbolTable = scopeManager.newScope();
     List<SymbolIdentity> paramsTypeValue = new ArrayList<>();
     for (ParamNode paramNode : node.getParams().getList()) {
@@ -216,15 +234,17 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
       boolean hasSameParamsType = true;
       List<SymbolIdentity> symParamsTypeValue = sym.getParamsType();
 
-      for (int i = 0; i < paramsTypeValue.size(); i++) {
-        if (!paramsTypeValue.get(i).IsParamCompatibleWith(symParamsTypeValue.get(i))) {
-          hasSameParamsType = false;
-          break;
+      if (paramsTypeValue.size() == symParamsTypeValue.size()) {
+        for (int i = 0; i < paramsTypeValue.size(); i++) {
+          if (!paramsTypeValue.get(i).IsParamCompatibleWith(symParamsTypeValue.get(i))) {
+            hasSameParamsType = false;
+            break;
+          }
         }
-      }
 
-      if (paramsTypeValue.size() == symParamsTypeValue.size() && hasSameParamsType) {
-        throw new SemanticException("Symbol " + node.getIdent().getName() + " already declared at line " + sym.getLine(), node.getLine(), node.getColumn());
+        if (hasSameParamsType) {
+          throw new SemanticException("Symbol " + node.getIdent().getName() + " already declared at line " + sym.getLine(), node.getLine(), node.getColumn());
+        }
       }
     }
 
@@ -348,7 +368,7 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
   public SymbolIdentity visitLength(LengthNode node) {
     exploredLines.add(node.getLine());
     node.getIdent().accept(this);
-    Symbols sym = scopeManager.lookup(node.getIdent());
+    Symbols sym = scopeManager.lookup(new SymbolSignature(node.getIdent()));
     if (sym instanceof ClassSymbol) {
       throw new SemanticException("Incompatible parameter for Length, expecting Array pointer, Class given", node.getLine(), node.getColumn());
     }
@@ -398,7 +418,7 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
     exploredLines.add(node.getLine());
     node.getExp().accept(this);
     if (node.getExp() instanceof IdentNode identNode) {
-      Symbols sym = scopeManager.lookup(identNode);
+      Symbols sym = scopeManager.lookup(new SymbolSignature(identNode));
       if (sym instanceof ClassSymbol) {
         throw new SemanticException("Incompatible parameter for Length, expecting, Variable, Final or Array access, Class given", node.getLine(), node.getColumn());
       }
@@ -445,27 +465,28 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
   @Override
   public SymbolIdentity visitCallExp(CallExpNode node) {
     exploredLines.add(node.getLine());
-    MethodSymbol sym = (MethodSymbol) scopeManager.lookup(node.getIdent());
 
-    node.getIdent().accept(this);
 
-    List<SymbolIdentity> listExpTypeValue = new ArrayList<>();
+    List<SymbolIdentity> listExpSymId = new ArrayList<>();
     for (ExpNode expNode : node.getListExp().getList()) {
-      listExpTypeValue.add(expNode.accept(this));
+      listExpSymId.add(expNode.accept(this));
     }
 
-    List<SymbolIdentity> symParamsTypeValue = sym.getParamsType();
-    for (int i = 0; i < listExpTypeValue.size(); i++) {
-      if (!listExpTypeValue.get(i).IsParamCompatibleWith(symParamsTypeValue.get(i))) {
-        throw new SemanticException("Method " + node.getIdent().getName() + " uses different parameter type from the declared one, at line " + sym.getLine(), node.getLine(), node.getColumn());
+    SymbolSignature methodSymS = new SymbolSignature(node.getIdent(), SemanticOperations.getHashFromSymIdList(listExpSymId));
+    MethodSymbol methodSymbol = (MethodSymbol) checkIfExistsToUse(methodSymS);
+    scopeManager.recordUsage(methodSymS);
+    List<SymbolIdentity> symParamsTypeValue = methodSymbol.getParamsType();
+
+    if (listExpSymId.size() != symParamsTypeValue.size()) {
+      throw new SemanticException("Method " + node.getIdent().getName() + " uses different parameter count from the declared one, at line " + methodSymbol.getLine(), node.getLine(), node.getColumn());
+    }
+
+    for (int j = 0; j < listExpSymId.size(); j++) {
+      if (!listExpSymId.get(j).IsParamCompatibleWith(symParamsTypeValue.get(j))) {
+        throw new SemanticException("Method " + node.getIdent().getName() + " uses different parameter type from the declared one, at line " + methodSymbol.getLine(), node.getLine(), node.getColumn());
       }
     }
-
-    if (listExpTypeValue.size() != symParamsTypeValue.size()) {
-      throw new SemanticException("Method " + node.getIdent().getName() + " uses different parameter count from the declared one, at line " + sym.getLine(), node.getLine(), node.getColumn());
-    }
-
-    return new SymbolIdentity(sym.getTypeNode(), new ObjNode("meth_call", node.getLine(), node.getColumn()));
+    return new SymbolIdentity(methodSymbol.getTypeNode(), new ObjNode("meth_call", node.getLine(), node.getColumn()));
   }
 
   @Override

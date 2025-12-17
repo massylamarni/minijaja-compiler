@@ -3,6 +3,7 @@ package fr.amvproject.group3.mjj.analyser;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import fr.amvproject.group3.mjj.analyser.nodes.SymbolSignature;
 import fr.amvproject.group3.mjj.analyser.symbols.Symbols;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
 
@@ -39,9 +40,9 @@ public class ScopeManager {
     return symbolTableRef;
   }
 
-  public Symbols lookup(IdentNode identNode) {
+  public Symbols lookup(SymbolSignature symbolSignature) {
     for (SymbolTable symbolTable : stack) {
-      Symbols sym = symbolTable.lookup(identNode);
+      Symbols sym = symbolTable.lookup(symbolSignature);
       if (sym != null) return sym;
     }
     return null;
@@ -50,6 +51,14 @@ public class ScopeManager {
   public Symbols recordUsage(IdentNode identNode) {
     for (SymbolTable symbolTable : stack) {
       Symbols sym = symbolTable.recordUsage(identNode, scopeDepth);
+      if (sym != null) return sym;
+    }
+    return null;
+  }
+
+  public Symbols recordUsage(SymbolSignature symS) {
+    for (SymbolTable symbolTable : stack) {
+      Symbols sym = symbolTable.recordUsage(symS, scopeDepth);
       if (sym != null) return sym;
     }
     return null;

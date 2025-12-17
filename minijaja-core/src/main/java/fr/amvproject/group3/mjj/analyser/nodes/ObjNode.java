@@ -1,5 +1,7 @@
 package fr.amvproject.group3.mjj.analyser.nodes;
 
+import java.util.Objects;
+
 import fr.amvproject.group3.mjj.ast.AstNode;
 import fr.amvproject.group3.mjj.ast.AstVisitor;
 
@@ -93,5 +95,18 @@ public class ObjNode extends AstNode {
   @Override
   public <T> T accept(AstVisitor<T> visitor) {
     return null;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(obj.name);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof ObjNode objNode) {
+      return this.obj == objNode.obj;
+    }
+    return false;
   }
 }
