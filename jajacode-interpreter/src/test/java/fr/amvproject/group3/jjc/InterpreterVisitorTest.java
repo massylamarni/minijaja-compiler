@@ -10,6 +10,50 @@ import fr.amvproject.group3.jjc.Interpreter;
 
 public class InterpreterVisitorTest {
 
+    @Test
+    public void givenSimpleAdditionCodeWithCstwhenInterpretthenStackHaveResult() throws Exception {
+        // Given
+        /*
+            class Test {
+                final int x = 2;
+                int y = 3;
+                main {
+                    x = x + y;
+                    write(x);
+                }
+            }
+        */
+        String code = """
+            1 init
+            2 push(2)
+            3 new(x, entier, cst, 0)
+            4 push(3)
+            5 new(y, entier, var, 0)
+            6 load(x)
+            7 load(y)
+            8 add
+            9 store(x)
+            10 load(x)
+            11 write
+            12 push(0)
+            13 swap
+            14 pop
+            15 swap
+            16 pop
+            17 pop
+            18 jcstop
+            """;
+
+        // When
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();
+
+        // Then
+        String output = interpreter.getOutputBuffer().get(0);
+        assertThat(output, is("5"));
+
+    }
+
     // ######################## ARIMTHMETIC ########################
 
     @Test
