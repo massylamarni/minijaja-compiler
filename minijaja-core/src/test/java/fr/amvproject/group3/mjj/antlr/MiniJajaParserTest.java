@@ -50,7 +50,8 @@ public class MiniJajaParserTest {
     @Test
     public void givenAssign__whenParse__thenCorrectTree() {
         String input = "x = 5;";
-        MiniJajaParser parser = new MiniJajaParser(new CommonTokenStream(new MiniJajaLexer(CharStreams.fromString(input))));
+        MiniJajaParser parser = new MiniJajaParser(
+                new CommonTokenStream(new MiniJajaLexer(CharStreams.fromString(input))));
         ParseTree tree = parser.instr();
 
         assertThat(tree, notNullValue());
