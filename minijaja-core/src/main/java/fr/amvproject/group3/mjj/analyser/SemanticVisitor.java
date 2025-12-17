@@ -123,13 +123,13 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
     if (leftExpObj.isMethPointer()) throw new SemanticException("Method pointer not compatible with " + rightExpObj.getName() + " !", line, column);
     else if (leftExpObj.isArrPointer()) {
       if (!rightExpObj.isArrPointer()) throw new SemanticException("Table pointer not compatible with " + rightExpObj.getName() + " !", line, column);
-    } else if (!(leftExpObj.isVar() || leftExpObj.isArrAccess() || leftExpObj.isMethCall() || leftExpObj.isVcst() || leftExpObj.isLiteral())) {
+    } else if (!(leftExpObj.isVar() || leftExpObj.isArrAccess() || leftExpObj.isMethCall() || leftExpObj.isCst() || leftExpObj.isVcst() || leftExpObj.isLiteral())) {
       throw new SemanticException("Class can't be used in an expression !", line, column);
     }
     if (rightExpObj.isMethPointer()) throw new SemanticException("Can't use a method pointer in an expression", line, column);
     else if (rightExpObj.isArrPointer()) {
       if (!leftExpObj.isArrPointer()) throw new SemanticException("Table pointer not compatible with " + rightExpObj.getName() + " !", line, column);
-    } else if (!(rightExpObj.isCst() || rightExpObj.isVar() || rightExpObj.isArrAccess() || rightExpObj.isMethCall() || rightExpObj.isVcst() || rightExpObj.isLiteral())) {
+    } else if (!(rightExpObj.isVar() || rightExpObj.isArrAccess() || rightExpObj.isMethCall() || rightExpObj.isCst() || rightExpObj.isVcst() || rightExpObj.isLiteral())) {
       throw new SemanticException("Class can't be used in an expression !", line, column);
     }
   }
