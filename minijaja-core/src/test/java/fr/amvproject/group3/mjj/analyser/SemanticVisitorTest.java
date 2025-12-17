@@ -22,12 +22,15 @@ import org.junit.Test;
 
 import fr.amvproject.group3.exceptions.SemanticException;
 import fr.amvproject.group3.mjj.analyser.nodes.SymbolIdentity;
+import fr.amvproject.group3.mjj.analyser.nodes.SymbolSignature;
 import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
 import fr.amvproject.group3.mjj.analyser.nodes.ObjNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.*;
 import fr.amvproject.group3.mjj.ast.nodes.intermediate.*;
 import fr.amvproject.group3.mjj.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
+import fr.amvproject.group3.mjj.utils.NodeOperations.MockToken;
+import fr.amvproject.group3.mjj.utils.SemanticOperations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,7 +66,7 @@ public class SemanticVisitorTest {
 
         // Then
         assertThat(type.getTypeNode().getName(), is("void"));
-        assertThat(visitor.getSymbolTable().lookup(ident).getTypeNode().getName(), is("int"));
+        assertThat(visitor.getSymbolTable().lookup(new SymbolSignature(ident)).getTypeNode().getName(), is("int"));
     }
 
 
@@ -303,7 +306,7 @@ public class SemanticVisitorTest {
         visitor.visitCst(cst);
 
         // Then
-        CstSymbol sym = (CstSymbol) visitor.getSymbolTable().lookup(id);
+        CstSymbol sym = (CstSymbol) visitor.getSymbolTable().lookup(new SymbolSignature(id));
         assertThat(sym.getTypeNode().getName(), is("int"));
         assertThat(sym.isVcst(), is(false));
     }
@@ -343,7 +346,7 @@ public class SemanticVisitorTest {
         visitor.visitMethod(method);
 
         // Then
-        MethodSymbol sym = (MethodSymbol) visitor.getSymbolTable().lookup(id);
+        MethodSymbol sym = (MethodSymbol) visitor.getSymbolTable().lookup(new SymbolSignature(id, SemanticOperations.getHashFromSymIdList(new ArrayList<>())));
         assertThat(sym.getTypeNode().getName(), is("int"));
         assertThat(sym.getParamsType().size(), is(0));
     }
@@ -411,11 +414,16 @@ public class SemanticVisitorTest {
                 new InstrsNode(Arrays.asList(new ReturnNode(new MockToken("return",1,1),new IntLiteralNode(new MockToken("1",1,1)))))
         );
 
+        List<SymbolIdentity> paramsTypeValue = new ArrayList<>();
+        for (ParamNode paramNode : params.getList()) {
+            paramsTypeValue.add(paramNode.accept(visitor));
+        }
+
         // When
         visitor.visitMethod(method);
 
         // Then
-        MethodSymbol sym = (MethodSymbol) visitor.getSymbolTable().lookup(id);
+        MethodSymbol sym = (MethodSymbol) visitor.getSymbolTable().lookup(new SymbolSignature(id, SemanticOperations.getHashFromSymIdList(paramsTypeValue)));
         assertThat(sym.getParamsType().size(), is(2));
         assertThat(sym.getParamsType().get(0).getTypeNode().getName(), is("int"));
         assertThat(sym.getParamsType().get(1).getTypeNode().getName(), is("int"));

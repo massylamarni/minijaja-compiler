@@ -221,13 +221,14 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
   @Override
   public SymbolIdentity visitMethod(MethodNode node) {
     exploredLines.add(node.getLine());
-    MethodSymbol sym = (MethodSymbol) symbolTable.lookup(new SymbolSignature(node.getIdent()));
 
     symbolTable = scopeManager.newScope();
     List<SymbolIdentity> paramsTypeValue = new ArrayList<>();
     for (ParamNode paramNode : node.getParams().getList()) {
       paramsTypeValue.add(paramNode.accept(this));
     }
+
+    MethodSymbol sym = (MethodSymbol) scopeManager.lookup(new SymbolSignature(node.getIdent(), SemanticOperations.getHashFromSymIdList(paramsTypeValue)));
 
     // Check if method with same parameter type exists
     if (sym != null) {

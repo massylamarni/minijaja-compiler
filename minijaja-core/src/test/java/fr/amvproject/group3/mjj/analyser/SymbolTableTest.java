@@ -1,10 +1,12 @@
 package fr.amvproject.group3.mjj.analyser;
 
 import fr.amvproject.group3.mjj.analyser.nodes.SymbolIdentity;
+import fr.amvproject.group3.mjj.analyser.nodes.SymbolSignature;
 import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
 import fr.amvproject.group3.mjj.analyser.nodes.ObjNode;
 import fr.amvproject.group3.mjj.analyser.symbols.*;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
+import fr.amvproject.group3.mjj.utils.SemanticOperations;
 import fr.amvproject.group3.mjj.utils.NodeOperations.MockToken;
 
 import org.junit.Ignore;
@@ -25,7 +27,7 @@ public class SymbolTableTest {
 
         // When
         table.addSymbol(ident);
-        Symbols result = table.lookup(ident);
+        Symbols result = table.lookup(new SymbolSignature(ident));
 
         // Then
         assertThat(result, is(notNullValue()));
@@ -42,7 +44,7 @@ public class SymbolTableTest {
 
         // When
         table.addSymbol(ident, type, new ObjNode("var", 0, 0));
-        Symbols result = table.lookup(ident);
+        Symbols result = table.lookup(new SymbolSignature(ident));
 
         // Then
         assertThat(result, is(notNullValue()));
@@ -59,7 +61,7 @@ public class SymbolTableTest {
 
         // When
         table.addSymbol(ident, type, true);
-        Symbols result = table.lookup(ident);
+        Symbols result = table.lookup(new SymbolSignature(ident));
 
         // Then
         assertThat(result, is(notNullValue()));
@@ -78,7 +80,7 @@ public class SymbolTableTest {
 
         // When
         table.addSymbol(ident, returnType, params);
-        Symbols result = table.lookup(ident);
+        Symbols result = table.lookup(new SymbolSignature(ident, SemanticOperations.getHashFromSymIdList(params)));
 
         // Then
         assertThat(result, is(notNullValue()));

@@ -2,6 +2,7 @@ package fr.amvproject.group3.mjj.analyser;
 
 import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
 import fr.amvproject.group3.mjj.analyser.nodes.ObjNode;
+import fr.amvproject.group3.mjj.analyser.nodes.SymbolSignature;
 import fr.amvproject.group3.mjj.analyser.symbols.Symbols;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
 
@@ -69,7 +70,7 @@ public class ScopeManagerTest {
         root.addSymbol(ident, type, new ObjNode("var", 0, 0));
 
         // When
-        Symbols result = scopeManager.lookup(ident);
+        Symbols result = scopeManager.lookup(new SymbolSignature(ident));
 
         // Then
         assertThat(result, is(notNullValue()));
@@ -88,7 +89,7 @@ public class ScopeManagerTest {
         scopeManager.newScope(); // go to child scope
 
         // When
-        Symbols result = scopeManager.lookup(ident);
+        Symbols result = scopeManager.lookup(new SymbolSignature(ident));
 
         // Then
         assertThat(result, is(notNullValue()));
@@ -103,7 +104,7 @@ public class ScopeManagerTest {
         IdentNode ident = new IdentNode(new MockToken("unknown", 99,0));
 
         // When
-        Symbols result = scopeManager.lookup(ident);
+        Symbols result = scopeManager.lookup(new SymbolSignature(ident));
 
         // Then
         assertThat(result, is(nullValue()));
