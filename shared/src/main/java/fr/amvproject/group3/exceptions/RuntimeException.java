@@ -20,6 +20,6 @@ public class RuntimeException extends java.lang.RuntimeException {
 
   @Override
   public String toString() {
-    return "[" + line + ":" + column + " ] " + super.getMessage();
+    return "[" + line + ":" + column + "] " + super.getMessage();
   }
 }

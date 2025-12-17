@@ -1,5 +1,7 @@
 package fr.amvproject.group3.ui.workbench.nodes;
 
+import java.util.List;
+
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 
@@ -49,6 +51,7 @@ public class EditorView extends CodeArea {
   }
 
   private void setBreakpointHandler(InteractiveWrapper langWrapper) {
+    List<Integer> breakpoints = langWrapper.getInterpreterWrapper().getExploredLines();
     this.setParagraphGraphicFactory(line -> {
       HBox h = new HBox();
       h.setSpacing(5);
@@ -59,7 +62,7 @@ public class EditorView extends CodeArea {
       Label lineNumberView = new Label(String.valueOf(relevantLine));
       lineNumberView.getStyleClass().add("editor-line-number");
 
-      boolean isValidBreakpoint = langWrapper.getInterpreterWrapper().getExploredLines().contains(relevantLine);
+      boolean isValidBreakpoint = breakpoints.contains(relevantLine);
       SVGPath breakpointView = isValidBreakpoint ? SvgIcons.breakPointIcon() : SvgIcons.invalidBreakPointIcon();
       breakpointView.setVisible(langWrapper.getInterpreterWrapper().getBreakpoints().contains(relevantLine));
       breakpointView.setFill(isValidBreakpoint ? Color.RED : Color.GREY);

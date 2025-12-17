@@ -2,18 +2,19 @@ package fr.amvproject.group3.mjj.analyser.symbols;
 
 import java.util.List;
 
+import fr.amvproject.group3.mjj.analyser.nodes.SymbolIdentity;
 import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
 
 public class MethodSymbol extends Symbols {
-  private final List<TypeNode> paramsType;
+  private final List<SymbolIdentity> paramsType;
 
-  public MethodSymbol(IdentNode ident, TypeNode returnType, List<TypeNode> paramsType) {
+  public MethodSymbol(IdentNode ident, TypeNode returnType, List<SymbolIdentity> paramsType) {
     super(ident, returnType);
     this.paramsType = paramsType;
   }
 
-  public List<TypeNode> getParamsType() {
+  public List<SymbolIdentity> getParamsType() {
     return paramsType;
   }
 
@@ -37,8 +38,8 @@ public class MethodSymbol extends Symbols {
   private final StringBuilder getParams(MethodSymbol sym) {
     StringBuilder params = new StringBuilder();
     if (!sym.getParamsType().isEmpty()) {
-      for (TypeNode type : sym.getParamsType()) {
-        params.append(type.getName()).append(";");
+      for (SymbolIdentity si : sym.getParamsType()) {
+        params.append(si.getTypeNode().getName()).append(";");
       }
       if (!params.isEmpty()) params.setLength(params.length() - 1); // remove trailing semicolon
     } else {

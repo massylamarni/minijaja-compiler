@@ -45,76 +45,41 @@ public class InterpreterWrapper {
   }
 
   public void restart() {
-    try {
-      if (isMjj) mjjInterpreter.reset();
-      else jjcInterpreter.reset();
-      EditorUtils.resetLineHighlighting(viewsWrapper.getEditorView());
-      runWithDebug();
-    } catch (BreakPointHit bph) {
-      setBreakPointHit(bph.getLine());
-    } catch (PausePointHit pph) {
-      setBreakPointHit(pph.getLine());
-    }
+    if (isMjj) mjjInterpreter.reset();
+    else jjcInterpreter.reset();
+    EditorUtils.resetLineHighlighting(viewsWrapper.getEditorView());
+    runWithDebug();
   }
 
   public void run() {
-    try {
-      if (isMjj) mjjInterpreter.run();
-      else jjcInterpreter.run();
-      onEof();
-    } catch (BreakPointHit bph) {
-      setBreakPointHit(bph.getLine());
-    } catch (PausePointHit pph) {
-      setBreakPointHit(pph.getLine());
-    }
+    if (isMjj) mjjInterpreter.run();
+    else jjcInterpreter.run();
+    if (!checkForExceptions()) onEof();
   }
 
   public void runWithDebug() {
-    try {
-      viewsWrapper.getToggleStates().showDebugToolBar();
-      if (isMjj) mjjInterpreter.runWithDebug();
-      else jjcInterpreter.runWithDebug();
-      onEof();
-    } catch (BreakPointHit bph) {
-      setBreakPointHit(bph.getLine());
-    } catch (PausePointHit pph) {
-      setBreakPointHit(pph.getLine());
-    }
+    viewsWrapper.getToggleStates().showDebugToolBar();
+    if (isMjj) mjjInterpreter.runWithDebug();
+    else jjcInterpreter.runWithDebug();
+    if (!checkForExceptions()) onEof();
   }
 
   public void resume() {
-    try {
-      if (isMjj) mjjInterpreter.resume();
-      else jjcInterpreter.resume();
-      onEof();
-    } catch (BreakPointHit bph) {
-      setBreakPointHit(bph.getLine());
-    } catch (PausePointHit pph) {
-      setBreakPointHit(pph.getLine());
-    }
+    if (isMjj) mjjInterpreter.resume();
+    else jjcInterpreter.resume();
+    if (!checkForExceptions()) onEof();
   }
 
   public void stepForward() {
-    try {
-      if (isMjj) mjjInterpreter.stepForward();
-      else jjcInterpreter.stepForward();
-      onEof();
-    } catch (BreakPointHit bph) {
-      setBreakPointHit(bph.getLine());
-    } catch (PausePointHit pph) {
-      setBreakPointHit(pph.getLine());
-    }
+    if (isMjj) mjjInterpreter.stepForward();
+    else jjcInterpreter.stepForward();
+    if (!checkForExceptions()) onEof();
   }
 
   public void stepBackward() {
-    try {
-      if (isMjj) mjjInterpreter.stepBackward();
-      else jjcInterpreter.stepBackward();
-    } catch (BreakPointHit bph) {
-      setBreakPointHit(bph.getLine());
-    } catch (PausePointHit pph) {
-      setBreakPointHit(pph.getLine());
-    }
+    if (isMjj) mjjInterpreter.stepBackward();
+    else jjcInterpreter.stepBackward();
+    if (!checkForExceptions()) onEof();
   }
 
   public Set<Integer> getBreakpoints() {
@@ -233,17 +198,44 @@ public class InterpreterWrapper {
           viewsWrapper.writeInTerminal(output, false);
         }
       }
-      if (!printErrors()) viewsWrapper.setProgramSuccess("Program executed successfully !");
-      else viewsWrapper.setProgramFailed("Program terminated with errors !");
     } else {
       if (jjcInterpreter.getOutputBuffer().size() != 0) {
         for (String output : jjcInterpreter.getOutputBuffer()) {
           viewsWrapper.writeInTerminal(output, false);
         }
       }
-      if (!printErrors()) viewsWrapper.setProgramSuccess("Program executed successfully !");
-      else viewsWrapper.setProgramFailed("Program terminated with errors !");
     }
+    viewsWrapper.setProgramSuccess("Program executed successfully !");
+  }
+
+  private boolean checkForExceptions() {
+    boolean hasException = false;
+    if (printErrors()) {
+      viewsWrapper.setProgramFailed("Program terminated with errors !");
+      return true;
+    }
+    if (isMjj) {
+      BreakPointHit breakPointHit = mjjInterpreter.getBreakPointHit();
+      PausePointHit pausePointHit = mjjInterpreter.getPausePointHit();
+      if (breakPointHit != null) {
+        setBreakPointHit(breakPointHit.getLine());
+        hasException = true;
+      } else if (pausePointHit != null) {
+        setBreakPointHit(pausePointHit.getLine());
+        hasException = true;
+      }
+    } else {
+      BreakPointHit breakPointHit = jjcInterpreter.getBreakPointHit();
+      PausePointHit pausePointHit = jjcInterpreter.getPausePointHit();
+      if (breakPointHit != null) {
+        setBreakPointHit(breakPointHit.getLine());
+        hasException = true;
+      } else if (pausePointHit != null) {
+        setBreakPointHit(pausePointHit.getLine());
+        hasException = true;
+      }
+    }
+    return hasException;
   }
 
   public void reset() {
