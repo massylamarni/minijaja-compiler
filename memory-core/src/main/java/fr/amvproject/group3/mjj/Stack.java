@@ -211,7 +211,8 @@ public class Stack extends StackManager {
   }
 
   // Return params of method
-  public ParamsNode parametre(IdentNode ident) {
+  public ParamsNode parametre(IdentNode ident, int depth) {
+    int currentDepth = 0;
     for (int i = queue.size() - 1; i >= 0; i--) {
       Quad quad = queue.get(i);
       if (quad.getIdent().sameAs(ident) &&
@@ -219,14 +220,15 @@ public class Stack extends StackManager {
           (quad.getValue() instanceof MethodNode methodNode) &&
           methodNode.getIdent().sameAs(ident) &&
           methodNode.getReturnType().sameAs((TypeMethNode) quad.getType())) {
-        return methodNode.getParams();
+        if (currentDepth++ == depth) return methodNode.getParams();
       }
     }
     return null;
   }
 
   // Return declarations of method
-  public VarsNode declaration(IdentNode ident) {
+  public VarsNode declaration(IdentNode ident, int depth) {
+    int currentDepth = 0;
     for (int i = queue.size() - 1; i >= 0; i--) {
       Quad quad = queue.get(i);
       if (quad.getIdent().sameAs(ident) &&
@@ -234,14 +236,15 @@ public class Stack extends StackManager {
           (quad.getValue() instanceof MethodNode methodNode) &&
           methodNode.getIdent().sameAs(ident) &&
           methodNode.getReturnType().sameAs((TypeMethNode) quad.getType())) {
-        return methodNode.getVars();
+        if (currentDepth++ == depth) return methodNode.getVars();
       }
     }
     return null;
   }
 
   // Return instructions of method
-  public InstrsNode corps(IdentNode ident) {
+  public InstrsNode corps(IdentNode ident, int depth) {
+    int currentDepth = 0;
     for (int i = queue.size() - 1; i >= 0; i--) {
       Quad quad = queue.get(i);
       if (quad.getIdent().sameAs(ident) &&
@@ -249,7 +252,7 @@ public class Stack extends StackManager {
           (quad.getValue() instanceof MethodNode methodNode) &&
           methodNode.getIdent().sameAs(ident) &&
           methodNode.getReturnType().sameAs((TypeMethNode) quad.getType())) {
-        return methodNode.getInstrs();
+        if (currentDepth++ == depth) return methodNode.getInstrs();
       }
     }
     return null;

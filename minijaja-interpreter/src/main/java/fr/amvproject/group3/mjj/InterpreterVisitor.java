@@ -229,40 +229,58 @@ public class InterpreterVisitor implements AstVisitor<Object> {
             throw new fr.amvproject.group3.exceptions.RuntimeException("Infinite recursion detected !", node.getLine(), node.getColumn());
         }
 
-        ParamsNode paramsNode = stack.parametre(node.getIdent());
-        List<ParamNode> listParamNodes = paramsNode.getList();
-        List<ExpNode> listExpNodes = (node.getListExp() != null) ? node.getListExp().getList() : new ArrayList<>();
+        boolean isMethodFound = false;
+        int depth = 0;
+        while (true) {
+            ParamsNode paramsNode = stack.parametre(node.getIdent(), depth);
+            if (paramsNode == null) break;
+            List<ParamNode> listParamNodes = paramsNode.getList();
+            List<ExpNode> listExpNodes = (node.getListExp() != null) ? node.getListExp().getList() : new ArrayList<>();
 
-        // ExpParam - declaration des paramètres
-        if (!listParamNodes.isEmpty()) {
-            for (int i = 0; i < listExpNodes.size(); i++) {
-                ParamNode param = listParamNodes.get(i);
-                ExpNode argExp = listExpNodes.get(i);
-                stack.declVar(param.getIdent(), evalExp(argExp), new TypeMethNode(param.getType().getTypeToken()));
-                
+            if (listParamNodes.size() == listExpNodes.size()) {
+                for (int i = 0; i < listExpNodes.size(); i++) {
+                    ParamNode param = listParamNodes.get(i);
+                    ExpNode argExp = listExpNodes.get(i);
+                    if (param.getType().isInt() && evalExp(argExp) instanceof Integer) isMethodFound = true;
+                    else if (param.getType().isBoolean() && evalExp(argExp) instanceof Boolean) isMethodFound = true;
+                }
+            }
+
+            if (isMethodFound) {
+                // ExpParam - declaration des paramètres
+                if (!listParamNodes.isEmpty()) {
+                    for (int i = 0; i < listExpNodes.size(); i++) {
+                        ParamNode param = listParamNodes.get(i);
+                        ExpNode argExp = listExpNodes.get(i);
+                        stack.declVar(param.getIdent(), evalExp(argExp), new TypeMethNode(param.getType().getTypeToken()));
+                    }
+                }
+
+                // declaration des variables locales
+                VarsNode varsNode = stack.declaration(node.getIdent(), depth);
+                List<VarDeclNode> listVarDeclNodes = varsNode.getList();
+                if (varsNode != null && !listVarDeclNodes.isEmpty()) {
+                    varsNode.accept(this);
+                }
+
+                // execute les iss
+                InstrsNode instrsNode = stack.corps(node.getIdent(), depth);
+                instrsNode.accept(this);
+
+                // retrait
+                if (varsNode != null && !listVarDeclNodes.isEmpty()) {
+                    retraitVars(varsNode);
+                }
+                retraitParams(paramsNode);
+                break;
+            } else {
+                depth++;
             }
         }
-
-        // declaration des variables locales
-        VarsNode varsNode = stack.declaration(node.getIdent());
-        List<VarDeclNode> listVarDeclNodes = varsNode.getList();
-        if (varsNode != null && !listVarDeclNodes.isEmpty()) {
-            varsNode.accept(this);
-        }
-
-        // execute les iss
-        InstrsNode instrsNode = stack.corps(node.getIdent());
-        instrsNode.accept(this);
 
         // on recupere la valeur de retour
         IdentNode returnIdentNode = stack.peekTail().getIdent();
         Object returnValue = stack.val(returnIdentNode);
-
-        // retrait
-        if (varsNode != null && !listVarDeclNodes.isEmpty()) {
-            retraitVars(varsNode);
-        }
-        retraitParams(paramsNode);
 
         return returnValue;
     }
