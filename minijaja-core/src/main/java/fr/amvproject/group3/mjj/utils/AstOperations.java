@@ -47,7 +47,15 @@ public class AstOperations {
     MiniJajaParser.ProgramContext tree = parser.program();
 
     AstBuilderVisitor astBuilderVisitor = new AstBuilderVisitor();
-    return new AstWrapper(astBuilderVisitor.visit(tree), lexicalErrorsListener, syntaxicErrorsListener);
+
+    AstNode ast = null;
+    try {
+      ast = astBuilderVisitor.visit(tree);
+    } catch (Exception e) {
+      // TODO: handle exception
+    }
+
+    return new AstWrapper(ast, lexicalErrorsListener, syntaxicErrorsListener);
   }
 
   public static AstWrapper getAstFromFile(String path) throws IOException {

@@ -22,11 +22,8 @@ public class Compiler {
   }
 
   public void setProgram(String program) {
-    try {
-      astWrapper = AstOperations.getAstFromString(program);
-    } catch (Exception e) {
-      // TODO: handle exception
-    }
+    AstWrapper newAstWrapper = AstOperations.getAstFromString(program);
+    astWrapper = newAstWrapper.ast != null ? newAstWrapper : new AstWrapper(astWrapper.ast, newAstWrapper.lexicalErrorsListener, newAstWrapper.syntaxicErrorsListener);
   }
 
   public LexicalErrorsListener getLexicalErrorsListener() {
@@ -50,7 +47,7 @@ public class Compiler {
   }
 
   public void compile() {
-    // runSemanticAnalysis();
+    runSemanticAnalysis();
     compilerVisitor.reset();
     compiledProgramNode = new ProgramNode(astWrapper.ast.accept(compilerVisitor));
   }
