@@ -1,7 +1,10 @@
 package fr.amvproject.group3.mjj;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.Iterator;
+import java.util.List;
 
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.InstrsNode;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.ParamsNode;
@@ -123,6 +126,24 @@ public class ScopeManager {
 
   public Quad getClassQuad() {
     return stackOfStacks.peekLast().getClassQuad();
+  }
+
+  public Stack getFlatStack() {
+    Stack flatStack = new Stack();
+    List<Object> flatHeapQueue = new ArrayList<>();
+
+    for (Iterator<Stack> it = stackOfStacks.descendingIterator(); it.hasNext();) {
+      Stack stack = it.next();
+      List<Quad> queue = stack.getQueue();
+      for (int i = 0; i < queue.size(); i++) {
+        flatStack.push(queue.get(i));
+      }
+      for (int i = 0; i < stack.getHeap().getQueue().size(); i++) {
+        flatHeapQueue.add(stack.getHeap().getQueue().get(i));
+      }
+    }
+    flatStack.getHeap().setQueue(flatHeapQueue);
+    return flatStack;
   }
 
   public void reset() {

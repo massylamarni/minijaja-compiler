@@ -59,7 +59,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     private List<String> outputBuffer = new ArrayList<>();
 
     public Stack getStack() {
-        return stack;
+        return scopeManager.getFlatStack();
     }
 
     public ExecutionContext getCtx() {
