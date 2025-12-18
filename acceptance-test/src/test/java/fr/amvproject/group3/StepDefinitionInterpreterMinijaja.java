@@ -36,18 +36,14 @@ public class StepDefinitionInterpreterMinijaja {
 
     @When("Interpretation du programme minijaja")
     public void interpretationDuProgrammeMinijaja() {
-        baseStepsUtility.originalOut = System.out;
-        baseStepsUtility.outputCaptor = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(baseStepsUtility.outputCaptor));
 
         ProgramNode program = buildAstFromCode(baseStepsUtility.currentFileContent);
-        // When
+
         InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            program.accept(interpreter);
-        }finally {
-            System.setOut(baseStepsUtility.originalOut);
-        }
-        baseStepsUtility.executionResultMiniJaja = baseStepsUtility.outputCaptor.toString().trim();
+        program.accept(interpreter);
+
+        baseStepsUtility.executionResultMiniJaja =
+                String.join("", interpreter.getOutputBuffer()).trim();
     }
+
 }

@@ -33,18 +33,16 @@ public class StepDefinitionCompilator {
 
     @And("Execution du programme compilé")
     public void executionDuProgrammeCompilé() {
-        baseStepsUtility.originalOut = System.out;
-        baseStepsUtility.outputCaptor = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(baseStepsUtility.outputCaptor));
-        // When
+
         InterpreterVisitor interpreter = new InterpreterVisitor();
-        try {
-            baseStepsUtility.currentCompileCode.accept(interpreter);
-        }finally {
-            System.setOut(baseStepsUtility.originalOut);
-        }
-        baseStepsUtility.executionResultJajacode = baseStepsUtility.outputCaptor.toString().trim();
+
+        // When
+        baseStepsUtility.currentCompileCode.accept(interpreter);
+
+        baseStepsUtility.executionResultJajacode =
+                String.join("", interpreter.getOutputBuffer()).trim();
     }
+
 
 
     @And("Verification du programme compilé")
