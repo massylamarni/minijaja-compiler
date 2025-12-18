@@ -36,6 +36,6 @@ adresse : NOMBRE ;
 oper : oper2 | oper1;
 oper1 : NEG | NOT;
 oper2 : ADD | SUB | MUL | DIV | CMP | SUP | OR | AND ;
-type : INT | BOOLEAN;
+type : INT | BOOLEAN | VIDE;
 sorte : VAR | METH | CST | TAB;
 
