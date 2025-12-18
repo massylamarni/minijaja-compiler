@@ -17,7 +17,7 @@
         <module>jajacode-interpreter</module>
         <module>acceptance-test</module>
     </modules>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1</version>
 
     <name>miniJaja-project</name>
 
@@ -130,7 +130,7 @@
         <developerConnection>
             scm:git:https://disc.univ-fcomte.fr/cr700-gitlab/projet-amv-2025/groupe-3
         </developerConnection>
-      <tag>HEAD</tag>
+      <tag>miniJaja-project-1.1</tag>
   </scm>
 </project>
 
