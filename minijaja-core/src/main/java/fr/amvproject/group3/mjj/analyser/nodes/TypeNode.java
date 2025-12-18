@@ -1,5 +1,7 @@
 package fr.amvproject.group3.mjj.analyser.nodes;
 
+import java.util.Objects;
+
 public class TypeNode {
   protected enum TypeName {
     INT("int"),
@@ -55,5 +57,18 @@ public class TypeNode {
 
   public boolean sameAs(TypeNode other) {
     return this.type == other.type;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(type.name);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof TypeNode typeNode) {
+      return this.type == typeNode.type;
+    }
+    return false;
   }
 }

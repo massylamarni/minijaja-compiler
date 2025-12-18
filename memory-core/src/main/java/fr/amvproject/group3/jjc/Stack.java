@@ -51,7 +51,7 @@ public class Stack extends StackManager {
     return queue.get(queue.size() - 1);
   }
 
-  public Quad peekTail() {
+  public Quad getClassQuad() {
     if (queue.isEmpty()) return null;
     return queue.get(0);
   }
@@ -199,6 +199,10 @@ public class Stack extends StackManager {
     if (node.isBoolean()) return new TypeMemNode("boolean");
     if (node.isString()) return new TypeMemNode("string");
     return new TypeMemNode("void");
+  }
+
+  public void reset() {
+    queue.clear();
   }
 
   /* Print stack */

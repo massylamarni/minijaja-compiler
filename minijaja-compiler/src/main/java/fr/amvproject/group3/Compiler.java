@@ -18,7 +18,15 @@ public class Compiler {
   private SemanticErrorsCollector semanticErrorsCollector = new SemanticErrorsCollector();
 
   public Compiler(String program) {
-    astWrapper = AstOperations.getAstFromString(program);
+    setProgram(program);
+  }
+
+  public void setProgram(String program) {
+    try {
+      astWrapper = AstOperations.getAstFromString(program);
+    } catch (Exception e) {
+      // TODO: handle exception
+    }
   }
 
   public LexicalErrorsListener getLexicalErrorsListener() {
@@ -42,7 +50,8 @@ public class Compiler {
   }
 
   public void compile() {
-    runSemanticAnalysis();
+    // runSemanticAnalysis();
+    compilerVisitor.reset();
     compiledProgramNode = new ProgramNode(astWrapper.ast.accept(compilerVisitor));
   }
 

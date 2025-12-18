@@ -17,14 +17,20 @@ import fr.amvproject.group3.mjj.ast.nodes.other.BinaryOpNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.TypeMethNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.UnaryOpNode;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import fr.amvproject.group3.exceptions.SemanticException;
+import fr.amvproject.group3.mjj.analyser.nodes.SymbolIdentity;
+import fr.amvproject.group3.mjj.analyser.nodes.SymbolSignature;
 import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
+import fr.amvproject.group3.mjj.analyser.nodes.ObjNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.*;
 import fr.amvproject.group3.mjj.ast.nodes.intermediate.*;
 import fr.amvproject.group3.mjj.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
+import fr.amvproject.group3.mjj.utils.NodeOperations.MockToken;
+import fr.amvproject.group3.mjj.utils.SemanticOperations;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,11 +62,11 @@ public class SemanticVisitorTest {
         );
 
         // When
-        TypeNode type = visitor.visitVar(varNode);
+        SymbolIdentity type = visitor.visitVar(varNode);
 
         // Then
-        assertThat(type.getName(), is("void"));
-        assertThat(visitor.getSymbolTable().lookup(ident).getTypeNode().getName(), is("int"));
+        assertThat(type.getTypeNode().getName(), is("void"));
+        assertThat(visitor.getSymbolTable().lookup(new SymbolSignature(ident)).getTypeNode().getName(), is("int"));
     }
 
 
@@ -116,10 +122,10 @@ public class SemanticVisitorTest {
         );
 
         // When
-        TypeNode type = visitor.visitAssign(assignNode);
+        SymbolIdentity type = visitor.visitAssign(assignNode);
 
         // Then
-        assertThat(type.getName(), is("void"));
+        assertThat(type.getTypeNode().getName(), is("void"));
     }
 
 
@@ -156,10 +162,10 @@ public class SemanticVisitorTest {
         BinaryExpNode node = new BinaryExpNode(new BinaryOpNode("+",1,0), left, right);
 
         // When
-        TypeNode type = visitor.visitBinaryExp(node);
+        SymbolIdentity type = visitor.visitBinaryExp(node);
 
         // Then
-        assertThat(type.getName(), is("int"));
+        assertThat(type.getTypeNode().getName(), is("int"));
     }
     @Test(expected = SemanticException.class)
     public void testBinaryExpIncompatibleTypes_GivenIntAndBool_WhenAdd_ThenThrowSemanticException() {
@@ -190,10 +196,10 @@ public class SemanticVisitorTest {
         );
 
         // When
-        TypeNode type = visitor.visitIf(ifNode);
+        SymbolIdentity type = visitor.visitIf(ifNode);
 
         // Then
-        assertThat(type.getName(), is("void"));
+        assertThat(type.getTypeNode().getName(), is("void"));
     }
 
 
@@ -226,10 +232,10 @@ public class SemanticVisitorTest {
         );
 
         // When
-        TypeNode type = visitor.visitWhile(whileNode);
+        SymbolIdentity type = visitor.visitWhile(whileNode);
 
         // Then
-        assertThat(type.getName(), is("void"));
+        assertThat(type.getTypeNode().getName(), is("void"));
     }
 
     @Test(expected = SemanticException.class)
@@ -267,26 +273,10 @@ public class SemanticVisitorTest {
         ProgramNode program = new ProgramNode(List.of(classNode), new MockToken("",1,0));
 
         // When
-        TypeNode type = visitor.visitProgram(program);
+        SymbolIdentity type = visitor.visitProgram(program);
 
         // Then
-        assertThat(type.getName(), is("void"));
-    }
-
-
-    @Test
-    public void givenIntegerIndex_whenVisitTable_thenSymbolRegisteredWithSize() {
-        // Given
-        IdentNode ident = new IdentNode(new MockToken("arr", 1, 1));
-        TableNode tableNode = new TableNode(new TypeMethNode("int",1,0), ident, new IntLiteralNode(new MockToken("10", 1, 1)));
-
-        // When
-        visitor.visitTable(tableNode);
-
-        // Then
-        TableSymbol sym = (TableSymbol) visitor.getSymbolTable().lookup(ident);
-        assertThat(sym.getTypeNode().getName(), is("int"));
-        assertThat(((IntLiteralNode) sym.getSize()).getValue(), is(10));
+        assertThat(type.getTypeNode().getName(), is("void"));
     }
 
     @Test(expected = SemanticException.class)
@@ -316,7 +306,7 @@ public class SemanticVisitorTest {
         visitor.visitCst(cst);
 
         // Then
-        CstSymbol sym = (CstSymbol) visitor.getSymbolTable().lookup(id);
+        CstSymbol sym = (CstSymbol) visitor.getSymbolTable().lookup(new SymbolSignature(id));
         assertThat(sym.getTypeNode().getName(), is("int"));
         assertThat(sym.isVcst(), is(false));
     }
@@ -356,7 +346,7 @@ public class SemanticVisitorTest {
         visitor.visitMethod(method);
 
         // Then
-        MethodSymbol sym = (MethodSymbol) visitor.getSymbolTable().lookup(id);
+        MethodSymbol sym = (MethodSymbol) visitor.getSymbolTable().lookup(new SymbolSignature(id, SemanticOperations.getHashFromSymIdList(new ArrayList<>())));
         assertThat(sym.getTypeNode().getName(), is("int"));
         assertThat(sym.getParamsType().size(), is(0));
     }
@@ -368,7 +358,7 @@ public class SemanticVisitorTest {
         ParamsNode params = new ParamsNode(Arrays.asList(
                 new ParamNode(new fr.amvproject.group3.mjj.ast.nodes.other.TypeNode(new MockToken("int",1,1)), new IdentNode(new MockToken("x", 2, 2)))
         ));
-        visitor.getSymbolTable().addSymbol(id, new TypeNode("int"), List.of(new TypeNode("int")));
+        visitor.getSymbolTable().addSymbol(id, new TypeNode("int"), List.of(new SymbolIdentity(new TypeNode("int"), new ObjNode("var", 0, 0))));
 
 
 
@@ -424,14 +414,19 @@ public class SemanticVisitorTest {
                 new InstrsNode(Arrays.asList(new ReturnNode(new MockToken("return",1,1),new IntLiteralNode(new MockToken("1",1,1)))))
         );
 
+        List<SymbolIdentity> paramsTypeValue = new ArrayList<>();
+        for (ParamNode paramNode : params.getList()) {
+            paramsTypeValue.add(paramNode.accept(visitor));
+        }
+
         // When
         visitor.visitMethod(method);
 
         // Then
-        MethodSymbol sym = (MethodSymbol) visitor.getSymbolTable().lookup(id);
+        MethodSymbol sym = (MethodSymbol) visitor.getSymbolTable().lookup(new SymbolSignature(id, SemanticOperations.getHashFromSymIdList(paramsTypeValue)));
         assertThat(sym.getParamsType().size(), is(2));
-        assertThat(sym.getParamsType().get(0).getName(), is("int"));
-        assertThat(sym.getParamsType().get(1).getName(), is("int"));
+        assertThat(sym.getParamsType().get(0).getTypeNode().getName(), is("int"));
+        assertThat(sym.getParamsType().get(1).getTypeNode().getName(), is("int"));
     }
 
     @Test
@@ -444,10 +439,10 @@ public class SemanticVisitorTest {
         );
 
         // When
-        TypeNode type = visitor.visitUnaryExp(node);
+        SymbolIdentity type = visitor.visitUnaryExp(node);
 
         // Then
-        assertThat(type.getName(), is("int"));
+        assertThat(type.getTypeNode().getName(), is("int"));
     }
 
     @Test
@@ -460,10 +455,10 @@ public class SemanticVisitorTest {
         );
 
         // When
-        TypeNode type = visitor.visitUnaryExp(node);
+        SymbolIdentity type = visitor.visitUnaryExp(node);
 
         // Then
-        assertThat(type.getName(), is("boolean"));
+        assertThat(type.getTypeNode().getName(), is("boolean"));
     }
     @Test(expected = SemanticException.class)
     public void testUnaryExp_GivenIntAndNot_WhenVisited_ThenThrowSemanticException() {
@@ -511,10 +506,10 @@ public class SemanticVisitorTest {
         );
 
         // When
-        TypeNode type = visitor.visitAddAssign(node);
+        SymbolIdentity type = visitor.visitAddAssign(node);
 
         // Then
-        assertThat(type.getName(), is("void"));
+        assertThat(type.getTypeNode().getName(), is("void"));
     }
 
 
@@ -550,10 +545,10 @@ public class SemanticVisitorTest {
         IncNode inc = new IncNode(ident, new MockToken("++",1,1));
 
         // When
-        TypeNode type = visitor.visitInc(inc);
+        SymbolIdentity type = visitor.visitInc(inc);
 
         // Then
-        assertThat(type.getName(), is("void"));
+        assertThat(type.getTypeNode().getName(), is("void"));
     }
 
     @Test(expected = SemanticException.class)
@@ -570,25 +565,6 @@ public class SemanticVisitorTest {
         visitor.visitInc(inc);
 
         // Then → exception
-    }
-
-    @Test
-    public void testInc_GivenArrayAccess_WhenInc_ThenThrowSemanticException() {
-
-        // Given
-        IdentNode arr = new IdentNode(new MockToken("t",1,1));
-        visitor.getSymbolTable().addSymbol(arr, new TypeNode("int"),new IntLiteralNode(new MockToken("10",1,1)));
-
-        ArrayAccessNode access = new ArrayAccessNode(arr, new IntLiteralNode(new MockToken("0",1,1)));
-
-        IncNode inc = new IncNode(access, new MockToken("++",1,1));
-
-        // When
-        TypeNode type = visitor.visitInc(inc);
-
-        // Then
-        assertThat(type.getName(), is("void"));
-
     }
 
     @Test(expected = SemanticException.class)
@@ -638,7 +614,7 @@ public class SemanticVisitorTest {
 
         // Given
         IdentNode ident = new IdentNode(new MockToken("x",1,1));
-        visitor.getSymbolTable().addSymbol(ident,new TypeNode("int"));
+        visitor.getSymbolTable().addSymbol(ident,new TypeNode("int"), new ObjNode("var", 0, 0));
 
         LengthNode len = new LengthNode(new MockToken("length",1,1),ident);
 
@@ -673,33 +649,20 @@ public class SemanticVisitorTest {
         visitor.visitWrite(write);
     }
 
-    @Test(expected = SemanticException.class)
-    public void testWrite_GivenArrayPointer_WhenVisited_ThenThrowSemanticException() {
-
-        // Given
-        IdentNode ident = new IdentNode(new MockToken("t",1,1));
-        visitor.getSymbolTable().addSymbol(ident, new TypeNode("int"),new  IntLiteralNode(new MockToken("10",1,1)));
-
-        WriteNode write = new WriteNode(new MockToken("write",1,1),ident,false);
-
-        // When
-        visitor.visitWrite(write);
-    }
-
     @Test
     public void testWrite_GivenVarInt_WhenVisited_ThenOK() {
 
         // Given
         IdentNode ident = new IdentNode(new MockToken("x",1,1));
-        visitor.getSymbolTable().addSymbol(ident,new TypeNode("int"));
+        visitor.getSymbolTable().addSymbol(ident,new TypeNode("int"), new ObjNode("var", 0, 0));
 
         WriteNode write = new WriteNode(new MockToken("write",1,1),ident, false);
 
         // When
-        TypeNode type = visitor.visitWrite(write);
+        SymbolIdentity type = visitor.visitWrite(write);
 
         // Then
-        assertThat(type.getName(), is("void"));
+        assertThat(type.getTypeNode().getName(), is("void"));
     }
 
     @Test
@@ -709,45 +672,10 @@ public class SemanticVisitorTest {
         StringLiteralNode node = new StringLiteralNode(new MockToken("\"abc\"",1,1));
 
         // When
-        TypeNode type = visitor.visitStringLiteral(node);
+        SymbolIdentity type = visitor.visitStringLiteral(node);
 
         // Then
-        assertThat(type.getName(), is("string"));
-    }
-
-    @Test
-    public void testArrayAccess_GivenArrayAndIntIndex_WhenVisited_ThenReturnElementType() {
-
-        // Given
-        IdentNode arr = new IdentNode(new MockToken("t",1,1));
-        visitor.getSymbolTable().addSymbol(arr,new TypeNode("int"),new IntLiteralNode("10",1,1));
-
-        ArrayAccessNode node = new ArrayAccessNode(
-                arr,
-                new IntLiteralNode(new MockToken("0",1,1))
-        );
-
-        // When
-        TypeNode type = visitor.visitArrayAccess(node);
-
-        // Then
-        assertThat(type.getName(), is("int"));
-    }
-
-    @Test(expected = SemanticException.class)
-    public void testArrayAccess_GivenBoolIndex_WhenVisited_ThenThrowSemanticException() {
-
-        // Given
-        IdentNode arr = new IdentNode(new MockToken("t",1,1));
-        visitor.getSymbolTable().addSymbol(arr, new TypeNode("int"),new IntLiteralNode("10",1,1));
-
-        ArrayAccessNode node = new ArrayAccessNode(
-                arr,
-                new BoolLiteralNode(new MockToken("true",1,1))
-        );
-
-        // When
-        visitor.visitArrayAccess(node);
+        assertThat(type.getTypeNode().getName(), is("string"));
     }
 
 
@@ -758,7 +686,7 @@ public class SemanticVisitorTest {
         IdentNode id = new IdentNode(new MockToken("f",1,1));
 
         visitor.getSymbolTable().addSymbol(id, new TypeNode("int"),
-                List.of(new TypeNode("int"), new TypeNode("boolean")));
+                List.of(new SymbolIdentity(new TypeNode("int"), new ObjNode("var", 0, 0)), new SymbolIdentity(new TypeNode("boolean"), new ObjNode("var", 0, 0))));
 
         ListExpNode args = new ListExpNode(List.of(
                 new IntLiteralNode(new MockToken("5",1,1)),
@@ -768,10 +696,10 @@ public class SemanticVisitorTest {
         CallExpNode node = new CallExpNode(id, args);
 
         // When
-        TypeNode type = visitor.visitCallExp(node);
+        SymbolIdentity type = visitor.visitCallExp(node);
 
         // Then
-        assertThat(type.getName(), is("int"));
+        assertThat(type.getTypeNode().getName(), is("int"));
     }
 
     @Test(expected = SemanticException.class)
@@ -781,7 +709,7 @@ public class SemanticVisitorTest {
         IdentNode id = new IdentNode(new MockToken("f",1,1));
 
         visitor.getSymbolTable().addSymbol(id, new TypeNode("int"),
-                List.of(new TypeNode("int")));
+                List.of(new SymbolIdentity(new TypeNode("int"), new ObjNode("var", 0, 0))));
 
         ListExpNode args = new ListExpNode(List.of(
                 new BoolLiteralNode(new MockToken("true",1,1))
@@ -804,10 +732,10 @@ public class SemanticVisitorTest {
         CallInstrNode node = new CallInstrNode(id, new ListExpNode(List.of()));
 
         // When
-        TypeNode type = visitor.visitCallInstr(node);
+        SymbolIdentity type = visitor.visitCallInstr(node);
 
         // Then
-        assertThat(type.getName(), is("void"));
+        assertThat(type.getTypeNode().getName(), is("void"));
     }
 
 

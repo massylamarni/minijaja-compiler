@@ -119,7 +119,7 @@ public class App {
     jjcInterpreter.resume();
     jjcInterpreter.stepForward();
     jjcInterpreter.stepForward();
-    jjcInterpreter.restart();
+    jjcInterpreter.reset();
     jjcInterpreter.runWithDebug();
     jjcInterpreter.resume();
     jjcInterpreter.stepForward();

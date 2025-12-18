@@ -7,27 +7,35 @@ import java.util.List;
 import fr.amvproject.group3.exceptions.SemanticException;
 
 public class SemanticErrorsCollector {
-    private final List<SemanticException> errors = new ArrayList<>();
+    private final List<SemanticException> semanticExceptions = new ArrayList<>();
+
+    public List<SemanticException> getSemanticExceptions() {
+      return semanticExceptions;
+    }
 
     public synchronized void add(String message, int line, int column) {
-        errors.add(new SemanticException(message, line, column));
+        semanticExceptions.add(new SemanticException(message, line, column));
     }
 
     public synchronized boolean hasErrors() {
-        return !errors.isEmpty();
+        return !semanticExceptions.isEmpty();
     }
 
     public synchronized List<SemanticException> getErrors() {
-        return Collections.unmodifiableList(errors);
+        return Collections.unmodifiableList(semanticExceptions);
     }
 
-    public synchronized void printAll() {
-        if (errors.isEmpty()) {
-            System.out.println("No semantic errors.");
-            return;
+    public String toMessage() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Semantic Exceptions: ");
+        for (RuntimeException se : semanticExceptions) {
+            sb.append(se.toString()).append("\n");
         }
-        System.err.println("=== Semantic errors (" + errors.size() + ") ===");
-        for (SemanticException e : errors) System.err.println("["+e.getLine()+":"+e.getColumn()+"]"+e.getMessage() );
+        return sb.toString();
+    }
+
+    public void reset() {
+        semanticExceptions.clear();
     }
 }
 

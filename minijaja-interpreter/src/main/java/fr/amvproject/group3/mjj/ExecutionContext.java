@@ -3,9 +3,9 @@ package fr.amvproject.group3.mjj;
 import java.util.HashSet;
 import java.util.Set;
 
+import fr.amvproject.group3.exceptions.BreakPointHit;
+import fr.amvproject.group3.exceptions.PausePointHit;
 import fr.amvproject.group3.mjj.ast.AstNode;
-import fr.amvproject.group3.mjj.exceptions.BreakPointHit;
-import fr.amvproject.group3.mjj.exceptions.PausePointHit;
 
 public class ExecutionContext {
     private AstNode currentNode;
@@ -17,6 +17,7 @@ public class ExecutionContext {
     private int previouslyHitBreakpointLine = -1;
     private boolean ignoreNextBreakpoint = false;
     private boolean ignoreBreakpoints = true;
+    private boolean isExecutionSuccessful = false;
 
     public ExecutionContext(Stack stack) {
         this.stack = stack;
@@ -42,6 +43,10 @@ public class ExecutionContext {
       return isPaused;
     }
 
+    public boolean isExecutionSuccessful() {
+      return isExecutionSuccessful;
+    }
+
     public void setCurrentNode(AstNode node) {
         currentNode = node;
     }
@@ -52,6 +57,10 @@ public class ExecutionContext {
 
     public void setIsPaused(boolean isPaused) {
         this.isPaused = isPaused;
+    }
+
+    public void setIsExecutionSuccessful(boolean isExecutionSuccessful) {
+      this.isExecutionSuccessful = isExecutionSuccessful;
     }
 
     public void addBreakPoint(int line) {
@@ -76,13 +85,19 @@ public class ExecutionContext {
       }
     }
 
+    public void resetMemory() {
+      stack.reset();
+      stack.getHeap().reset();
+    }
+
     public void softReset() {
       currentNode = null;
       previousNode = null;
-      // stack.reset();
+      resetMemory();
       isPaused = false;
       breakPointHitLine = 0;
       previouslyHitBreakpointLine = -1;
+      isExecutionSuccessful = false;
     }
 
     /* Advanced */
@@ -98,13 +113,13 @@ public class ExecutionContext {
         breakPointHitLine = 0;
         if (isPaused()) {
           breakPointHitLine = node.getLine();
-          throw new PausePointHit(currentNode);
+          throw new PausePointHit(currentNode.getClass().getName(), currentNode.getLine(), currentNode.getColumn());
         }
         if (hasBreakpoint() && !ignoreBreakpoints && node.getLine() != previouslyHitBreakpointLine) {
           setIsPaused(true);
           breakPointHitLine = node.getLine();
           previouslyHitBreakpointLine = node.getLine();
-          throw new BreakPointHit(currentNode);
+          throw new BreakPointHit(currentNode.getClass().getName(), currentNode.getLine(), currentNode.getColumn());
         }
       }
     }

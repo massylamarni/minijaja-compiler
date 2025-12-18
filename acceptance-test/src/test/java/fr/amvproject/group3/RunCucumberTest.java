@@ -27,7 +27,6 @@ public class RunCucumberTest {
                         errBaos = new ByteArrayOutputStream();
                         System.setErr(new PrintStream(errBaos));
                 } catch (Exception ignore) {
-                        // best-effort silence
                 }
         }
 
@@ -37,7 +36,6 @@ public class RunCucumberTest {
                         if (originalErr != null) {
                                 System.setErr(originalErr);
                         }
-                        // Optionally the captured stderr is available in errBaos.toString()
                 } catch (Exception ignore) {
                 }
         }

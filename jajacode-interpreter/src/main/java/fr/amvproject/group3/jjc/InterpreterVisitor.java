@@ -1,6 +1,8 @@
 package fr.amvproject.group3.jjc;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import fr.amvproject.group3.jjc.ast.AstVisitor;
@@ -46,6 +48,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
   private Stack stack = new Stack();
   private ExecutionContext ctx = new ExecutionContext(stack); // final
   private int currentAddress = 1;
+  private List<String> outputBuffer = new ArrayList<>();
 
   public Stack getStack() {
     return stack;
@@ -53,6 +56,10 @@ public class InterpreterVisitor implements AstVisitor<Object> {
 
   public ExecutionContext getCtx() {
     return ctx;
+  }
+
+  public List<String> getOutputBuffer() {
+    return outputBuffer;
   }
 
   public void resetCurrentAddress() {
@@ -74,6 +81,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
       ctx.recordNode(instrNode);
       instrNode.accept(this);
     }
+    ctx.setIsExecutionSuccessful(true);
     return null;
   }
 
@@ -137,9 +145,9 @@ public class InterpreterVisitor implements AstVisitor<Object> {
   public Object visitWrite(WriteLiteral literal) {
     Quad quad = stack.pop();
     if (literal.isLn()) {
-      System.out.println(quad.getValue());  // TODO Use output buffer instead
+      outputBuffer.add(String.valueOf(quad.getValue()) + '\n');
     } else {
-      System.out.print(quad.getValue());
+      outputBuffer.add(String.valueOf(quad.getValue()));
     }
     currentAddress++;
     return null;
@@ -160,11 +168,9 @@ public class InterpreterVisitor implements AstVisitor<Object> {
   public Object visitNew(NewNode node) {
     if (node.getObj().isVar()) {
       stack.identVal(node.getIdent(), node.getType(), (int) node.getValueNode().accept(this));
-    } else if (node.getObj().isCst()) {
+    } else if (node.getObj().isCst() || node.getObj().isVcst()) {
       Quad quad = stack.pop();
-      if (quad.getObj().isVcst()) {
-        stack.declCst(node.getIdent(), quad.getValue(), node.getType(), true);
-      }
+      stack.declCst(node.getIdent(), quad.getValue(), node.getType(), node.getObj().isVcst());
     } else if (node.getObj().isMeth()) {
       Quad quad = stack.pop();
       stack.declMeth(node.getIdent(), quad.getValue(), node.getType());

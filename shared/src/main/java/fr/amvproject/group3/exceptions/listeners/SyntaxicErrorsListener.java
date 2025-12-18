@@ -23,7 +23,7 @@ public class SyntaxicErrorsListener extends BaseErrorListener {
 
         @Override public String toString() {
             String token = offending == null ? "" : (" offending=" + offending);
-            return "line [" + line + ":" + charPositionInLine + " ] " + msg + token;
+            return "[" + line + ":" + charPositionInLine + " ] " + msg + token;
         }
     }
 
@@ -38,15 +38,10 @@ public class SyntaxicErrorsListener extends BaseErrorListener {
                             RecognitionException e) {
         String off = (offendingSymbol == null) ? null : offendingSymbol.toString();
         errors.add(new SyntaxError(line, charPositionInLine, msg, off));
-        // IMPORTANT : ne pas lancer d'exception ici -> on collecte juste
     }
 
     public boolean hasErrors() { return !errors.isEmpty(); }
     public List<SyntaxError> getErrors() { return List.copyOf(errors); }
-
-    public void printAll() {
-        for (SyntaxError se : errors) System.err.println(se);
-    }
 
     public String toMessage() {
         StringBuilder sb = new StringBuilder();
@@ -55,5 +50,9 @@ public class SyntaxicErrorsListener extends BaseErrorListener {
             sb.append(se.toString()).append("\n");
         }
         return sb.toString();
+    }
+
+    public void reset() {
+        errors.clear();
     }
 }

@@ -27,13 +27,17 @@ import fr.amvproject.group3.jjc.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.jjc.ast.nodes.program.ProgramNode;
 
 public class SemanticVisitor implements AstVisitor<TypeNode> {
-  SymbolTable symbolTable = new SymbolTable();
-  ScopeManager scopeManager = new ScopeManager(symbolTable);
+  private SymbolTable symbolTable = new SymbolTable();
   private List<ValueNode> pushStack = new ArrayList<>();
   private int currentAddress = 1;
+  private List<Integer> exploredLines = new ArrayList<>();
 
   public SymbolTable getSymbolTable() {
     return symbolTable;
+  }
+
+  public List<Integer> getExploredLines() {
+    return exploredLines;
   }
 
   private TypeNode typeMapper(fr.amvproject.group3.jjc.ast.nodes.other.TypeNode node) {
@@ -68,7 +72,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   // Class | Var | Cst | Tab
   private Symbols checkIfExistsToUse(IdentNode identNode) {
-    Symbols sym = scopeManager.lookup(identNode);
+    Symbols sym = symbolTable.lookup(identNode);
 
     if (sym == null) {
       throw new SemanticException("Symbol " + identNode.getName() + " is referenced, but never declared", identNode.getLine(), identNode.getColumn());
@@ -92,16 +96,27 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
 
   /* Visitors */
 
+  public void reset() {
+    symbolTable.reset();
+    exploredLines.clear();
+    currentAddress = 1;
+  }
+
   @Override
   public TypeNode visitProgram(ProgramNode node) {
+    reset();
+    /*
     Map<Integer, InstrNode> instrsMap = new HashMap<>();
     for (ClassNode classe : node.getClasses()) {
       instrsMap.put(classe.getAddress().getValue(), classe.getInstr());
     }
     while (!(instrsMap.get(currentAddress) instanceof JcstopLiteral) && currentAddress >= 1 && currentAddress <= instrsMap.size()) {
       InstrNode instrNode = instrsMap.get(currentAddress);
+      exploredLines.add(instrNode.getLine());
       instrNode.accept(this);
     }
+    exploredLines.add(currentAddress);
+    */
     return new TypeNode("void");
   }
 
@@ -235,7 +250,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   
   @Override
   public TypeNode visitGoto(GotoNode node) {
-    currentAddress = node.getAddress().getValue();
+    currentAddress++;
     return new TypeNode("void");
   }
   
@@ -292,7 +307,7 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   @Override
   public TypeNode visitIdent(IdentNode node) {
     checkIfExistsToUse(node);
-    return symbolTable.recordUsage(node, scopeManager.getScopeDepth()).getTypeNode();
+    return symbolTable.recordUsage(node, 1).getTypeNode();
   }
 
   @Override

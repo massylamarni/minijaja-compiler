@@ -13,10 +13,11 @@
     <name>gui</name>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <javafx.version>21.0.4</javafx.version>
+        <javafx.version>22.0.2</javafx.version>
+        <javafx.platform>${os.detected.name}</javafx.platform>
     </properties>
 
     <dependencies>
@@ -51,7 +52,21 @@
             <version>1.1-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.fxmisc.richtext</groupId>
+            <artifactId>richtextfx</artifactId>
+            <version>0.10.0</version>
+        </dependency>
+
+
         <!-- JavaFX dependencies -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>${javafx.version}</version>
+            <classifier>${javafx.platform}</classifier>
+        </dependency>
+
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -89,7 +104,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>fr.amvproject.group3.gui.MainApp</mainClass> <!-- Replace with your main class -->
+                    <mainClass>fr.amvproject.group3.MainFx</mainClass> 
                 </configuration>
             </plugin>
         </plugins>

@@ -53,8 +53,10 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     private static final int LOOP_LIMIT = 1000000;
     private static final int RECURSION_LIMIT = 100;
     private int recursionCount = 0;
-    private final Stack stack = new Stack();
+    private Stack stack = new Stack();
+    private final ScopeManager scopeManager = new ScopeManager(stack);
     private ExecutionContext ctx = new ExecutionContext(stack); // final
+    private List<String> outputBuffer = new ArrayList<>();
 
     public Stack getStack() {
         return stack;
@@ -64,13 +66,20 @@ public class InterpreterVisitor implements AstVisitor<Object> {
       return ctx;
     }
 
+    public List<String> getOutputBuffer() {
+      return outputBuffer;
+    }
+
     // ========== PROGRAM ==========
     @Override
     public Object visitProgram(ProgramNode node) {
+        scopeManager.reset();
+        stack = scopeManager.getStackRef();
         ctx.recordNode(node);
         for (ClassNode classe : node.getClasses()) {
             classe.accept(this);
         }
+        ctx.setIsExecutionSuccessful(true);
         return null;
     }
 
@@ -87,12 +96,14 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         ctx.recordNode(node);
         stack.declVar(node.getIdent(), null, new TypeMethNode("void", node.getLine(), node.getColumn()));
         
+        stack = scopeManager.newScope();
         node.getDecls().accept(this);
         node.getMain().accept(this);
 
         retraitDecls(node.getDecls());
         stack.retirerDecl(node.getIdent());
-        
+
+        stack = scopeManager.exitScope();
         return null;
     }
 
@@ -187,9 +198,12 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     @Override
     public Object visitMain(MainNode node) {
         ctx.recordNode(node);
+
+        stack = scopeManager.newScope();
         node.getVars().accept(this);
         node.getInstrs().accept(this);
         retraitVars(node.getVars());
+        stack = scopeManager.exitScope();
         
         return null;
     }
@@ -203,9 +217,8 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     @Override
     public Object visitReturn(ReturnNode node) {
         ctx.recordNode(node);
-        IdentNode classVar = stack.peekTail().getIdent();
         Object returnValue = evalExp(node.getExp());
-        stack.affecterVal(classVar, returnValue); // La valeur de retour est sauvegardé dans la classe
+        scopeManager.affecterValClassQuad(returnValue); // La valeur de retour est sauvegardé dans la classe
         
         return null;
     }
@@ -222,43 +235,63 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         if (recursionCount++ > RECURSION_LIMIT) {
             throw new fr.amvproject.group3.exceptions.RuntimeException("Infinite recursion detected !", node.getLine(), node.getColumn());
         }
+        stack = scopeManager.exitScope();
 
-        ParamsNode paramsNode = stack.parametre(node.getIdent());
-        List<ParamNode> listParamNodes = paramsNode.getList();
-        List<ExpNode> listExpNodes = (node.getListExp() != null) ? node.getListExp().getList() : new ArrayList<>();
+        boolean isMethodFound = false;
+        int depth = 0;
+        while (true) {
+            ParamsNode paramsNode = stack.parametre(node.getIdent(), depth);
+            if (paramsNode == null) break;
+            List<ParamNode> listParamNodes = paramsNode.getList();
+            List<ExpNode> listExpNodes = (node.getListExp() != null) ? node.getListExp().getList() : new ArrayList<>();
 
-        // ExpParam - declaration des paramètres
-        if (!listParamNodes.isEmpty()) {
-            for (int i = 0; i < listExpNodes.size(); i++) {
-                ParamNode param = listParamNodes.get(i);
-                ExpNode argExp = listExpNodes.get(i);
-                stack.declVar(param.getIdent(), evalExp(argExp), new TypeMethNode(param.getType().getTypeToken()));
-                
+            if (listParamNodes.size() == listExpNodes.size()) {
+                if (listParamNodes.size() == 0) {
+                    isMethodFound = true;
+                } else {
+                    for (int i = 0; i < listExpNodes.size(); i++) {
+                        ParamNode param = listParamNodes.get(i);
+                        ExpNode argExp = listExpNodes.get(i);
+                        if (param.getType().isInt() && evalExp(argExp) instanceof Integer) isMethodFound = true;
+                        else if (param.getType().isBoolean() && evalExp(argExp) instanceof Boolean) isMethodFound = true;
+                    }
+                }
+            }
+
+            if (isMethodFound) {
+                // ExpParam - declaration des paramètres
+                if (!listParamNodes.isEmpty()) {
+                    for (int i = 0; i < listExpNodes.size(); i++) {
+                        ParamNode param = listParamNodes.get(i);
+                        ExpNode argExp = listExpNodes.get(i);
+                        stack.declVar(param.getIdent(), evalExp(argExp), new TypeMethNode(param.getType().getTypeToken()));
+                    }
+                }
+
+                // declaration des variables locales
+                VarsNode varsNode = stack.declaration(node.getIdent(), depth);
+                List<VarDeclNode> listVarDeclNodes = varsNode.getList();
+                if (varsNode != null && !listVarDeclNodes.isEmpty()) {
+                    varsNode.accept(this);
+                }
+
+                // execute les iss
+                InstrsNode instrsNode = stack.corps(node.getIdent(), depth);
+                instrsNode.accept(this);
+
+                // retrait
+                if (varsNode != null && !listVarDeclNodes.isEmpty()) {
+                    retraitVars(varsNode);
+                }
+                retraitParams(paramsNode);
+                break;
+            } else {
+                depth++;
             }
         }
+        stack = scopeManager.backToScope();
 
-        // declaration des variables locales
-        VarsNode varsNode = stack.declaration(node.getIdent());
-        List<VarDeclNode> listVarDeclNodes = varsNode.getList();
-        if (varsNode != null && !listVarDeclNodes.isEmpty()) {
-            varsNode.accept(this);
-        }
-
-        // execute les iss
-        InstrsNode instrsNode = stack.corps(node.getIdent());
-        instrsNode.accept(this);
-
-        // on recupere la valeur de retour
-        IdentNode returnIdentNode = stack.peekTail().getIdent();
-        Object returnValue = stack.val(returnIdentNode);
-
-        // retrait
-        if (varsNode != null && !listVarDeclNodes.isEmpty()) {
-            retraitVars(varsNode);
-        }
-        retraitParams(paramsNode);
-
-        return returnValue;
+        return scopeManager.valClassQuad();
     }
 
     /**
@@ -306,11 +339,11 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         ctx.recordNode(node);
         Object value = evalExp(node.getExp());
         if (node.getLeftValueNode() instanceof IdentNode identNode) {
-            stack.affecterVal(identNode, value);
+            scopeManager.affecterVal(identNode, value);
         } else if (node.getLeftValueNode() instanceof ArrayAccessNode arrayAccessNode) {
             int index = (int) evalExp(arrayAccessNode.getIndexExp());
             try {
-                stack.affecterValT(arrayAccessNode.getIdent(), index, value);
+                scopeManager.affecterValT(arrayAccessNode.getIdent(), index, value);
             } catch (Exception e) {
                 throw new fr.amvproject.group3.exceptions.RuntimeException("Index out of bounds", node.getLine(), node.getColumn());
             }   
@@ -416,9 +449,9 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         ctx.recordNode(node);
         Object value = evalExp(node.getExp());
         if (node.isLn()) {
-            System.out.println(value);  // TODO Write in an output buffer instead
+            outputBuffer.add(String.valueOf(value) + '\n');
         } else {
-            System.out.print(value);
+            outputBuffer.add(String.valueOf(value));
         }
         return null;
     }
@@ -513,7 +546,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitIdent(IdentNode node) {
-        return stack.val(node);
+        return scopeManager.val(node);
     }
 
     /**
@@ -527,7 +560,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         Object indexObj = evalExp(node.getIndexExp());
         int index = (int) indexObj;
         try {
-            return stack.valT(node.getIdent(), index);
+            return scopeManager.valT(node.getIdent(), index);
         } catch (Exception e) {
             throw new fr.amvproject.group3.exceptions.RuntimeException("Index out of bounds", node.getLine(), node.getColumn());
         }

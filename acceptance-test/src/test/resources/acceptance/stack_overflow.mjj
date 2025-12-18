@@ -4,7 +4,8 @@ class C {
     };
   
     main {
-        // Un test simple
+        // Appelle la fonction récursive pour provoquer un overflow
+        infiniteRec();
     }
 
    

@@ -46,13 +46,6 @@ public class AstOperations {
 
     JajaCodeParser.ProgramContext tree = parser.program();
 
-    if (lexicalErrorsListener.hasErrors()) {
-      lexicalErrorsListener.printAll();
-    }
-    if (syntaxicErrorsListener.hasErrors()) {
-      syntaxicErrorsListener.printAll();
-    }
-
     AstBuilderVisitor astBuilderVisitor = new AstBuilderVisitor();
     return new AstWrapper(astBuilderVisitor.visit(tree), lexicalErrorsListener, syntaxicErrorsListener);
   }

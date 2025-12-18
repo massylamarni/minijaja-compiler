@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
+import fr.amvproject.group3.mjj.analyser.nodes.ObjNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
 
 public abstract class Symbols {
@@ -26,6 +27,15 @@ public abstract class Symbols {
     return typeNode;
   }
 
+  public ObjNode getObjNode() {
+    if (this instanceof VarSymbol) return new ObjNode("var", getLine(), getColumn());
+    if (this instanceof CstSymbol cstSymbol) return new ObjNode(cstSymbol.isVcst() ? "vcst" : "cst", getLine(), getColumn());
+    if (this instanceof TableSymbol) return new ObjNode("arr_pointer", getLine(), getColumn());
+    if (this instanceof MethodSymbol) return new ObjNode("meth_pointer", getLine(), getColumn());
+    if (this instanceof ClassSymbol) return new ObjNode("class", getLine(), getColumn());
+    return new ObjNode("literal", getLine(), getColumn()); 
+  }
+
   public List<Integer> getLinesOfUsage() {
     return linesOfUsage;
   }
@@ -46,9 +56,9 @@ public abstract class Symbols {
     return identNode.getColumn();
   }
 
-    public List<Integer> getScopesOfUsage() {
-        return scopesOfUsage;
-    }
+  public List<Integer> getScopesOfUsage() {
+      return scopesOfUsage;
+  }
 
     public abstract String print();
 }

@@ -29,4 +29,9 @@ public class ArrayInfoNode {
     refCount = 0;
     size = 0;
   }
+
+  @Override
+  public String toString() {
+    return "size: " + size + ", refCount: " + refCount;
+  }
 }

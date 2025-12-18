@@ -34,12 +34,10 @@ public class StepDefinitionErrors {
                 throw new RuntimeException("AST non généré en raison d'erreurs");
             }
 
-            // Run semantic analysis on the AST to detect semantic/typing errors
             try {
                 SemanticVisitor semanticVisitor = new SemanticVisitor();
                 ast.accept(semanticVisitor);
             } catch (SemanticException se) {
-                // register semantic error as compile exception for the test
                 compileException = se;
                 return;
             }
@@ -48,7 +46,7 @@ public class StepDefinitionErrors {
             base.currentCompileCode = new ProgramNode(ast.accept(compilerVisitor), new MockToken("", 1, 0));
             compileException = null;
         } catch (Exception e) {
-            
+
             compileException = e;
         }
     }

@@ -41,7 +41,7 @@ instr : ident1 ASSIGN exp
 
 listexp : (exp (COMMA exp)*)? ;
 
-// Operator precedence (highest → lowest):
+// Operator precedence (highest -> lowest):
 // unary (!, -), multiplicative (*, /), additive (+, -), relational (==, >), logical (&&, ||)
 exp: expOr;
 expOr: expAnd (OR expAnd)*;

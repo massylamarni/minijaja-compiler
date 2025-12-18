@@ -5,12 +5,10 @@ import java.util.List;
 
 import fr.amvproject.group3.nodes.TypeMemNode;
 import fr.amvproject.group3.nodes.PointerNode;
+import fr.amvproject.group3.mjj.utils.NodeConsts;
 import fr.amvproject.group3.nodes.ArrayInfoNode;
 
 public class Heap {
-  private static final int DEFAULT_INT_VALUE = 0;
-  private static final boolean DEFAULT_BOOL_VALUE = false;
-  private static final Void DEFAULT_VOID_VALUE = null;
 
   private List<Object> queue = new ArrayList<>();
   private int nextAddress = 0;
@@ -26,13 +24,13 @@ public class Heap {
     queue.add(new ArrayInfoNode(size, 1));
     if (type.isInt()) {
       for (int i = 0; i < size; i++)
-        queue.add(DEFAULT_INT_VALUE);
+        queue.add(NodeConsts.DEFAULT_INT_NODE.getValue());
     } else if (type.isBoolean()) {
       for (int i = 0; i < size; i++)
-        queue.add(DEFAULT_BOOL_VALUE);
+        queue.add(NodeConsts.DEFAULT_BOOL_NODE.getValue());
     } else { // Void
       for (int i = 0; i < size; i++)
-        queue.add(DEFAULT_VOID_VALUE);
+        queue.add(NodeConsts.DEFAULT_VOID_NODE);
     }
     nextAddress += size + 1; // Update nextAddress: size + 1 for the size header
     return new PointerNode(address + 1); // Return address of first element (after size header)
@@ -45,7 +43,7 @@ public class Heap {
     checkIfInBlock(pointerNode, 0); // Will never happen if semantic analysis is correct
     int blockSize = (int) getSize(pointerNode);
     for (int i = 0; i < blockSize; i++) {
-      queue.set(pointerNode.getAddress() + i, DEFAULT_VOID_VALUE);
+      queue.set(pointerNode.getAddress() + i, NodeConsts.DEFAULT_VOID_NODE);
     }
     getArrayInfoNode(pointerNode).destroy();
   }
@@ -83,8 +81,6 @@ public class Heap {
     return getArrayInfoNode(pointerNode).getSize();
   }
 
-  // --- Getters for inspection ---
-
   public List<Object> getQueue() {
     return queue;
   }
@@ -101,32 +97,24 @@ public class Heap {
     return reverseQueue;
   }
 
+  public void reset() {
+    queue.clear();
+    nextAddress = 0;
+  }
+
   /* Print Heap */
 
   public String print() {
     StringBuilder sb = new StringBuilder();
-    sb.append("===== HEAP =====\n");
 
     if (queue.isEmpty()) {
       sb.append("[Empty Heap]\n");
     } else {
-      int address = 0;
-      int blockStartAddress = 1;
-      int blockSize;
       for (Object value : queue) {
-        if (address == blockStartAddress - 1) {
-          sb.append("#");
-          blockSize = (int) value;
-          blockStartAddress = blockStartAddress + blockSize + 1;
-        } else {
-          sb.append("@");
-        }
-        sb.append(address).append(": ").append(value).append("\n");
-        address++;
+        sb.append(value).append("\n");
       }
     }
 
-    sb.append("======================\n");
     return sb.toString();
   }
 }

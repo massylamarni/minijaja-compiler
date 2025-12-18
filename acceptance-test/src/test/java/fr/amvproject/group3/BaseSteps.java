@@ -39,7 +39,6 @@ public class BaseSteps {
         if (baseStepsUtility == null) {
             baseStepsUtility = new BaseStepsUtility();
         }
-        // fail-fast if an exception was captured during compilation/execution
         if (baseStepsUtility.lastException != null) {
             StringWriter sw = new StringWriter();
             baseStepsUtility.lastException.printStackTrace(new PrintWriter(sw));
@@ -52,7 +51,6 @@ public class BaseSteps {
         }
 
         String expected = baseStepsUtility.loadExpected(baseStepsUtility.currentFilename);
-        // normalize line endings before comparison
         expected = expected.replace("\r\n", "\n").replace("\r", "\n");
         if (baseStepsUtility.executionResultMiniJaja != null) {
             String actual = baseStepsUtility.executionResultMiniJaja.replace("\r\n", "\n").replace("\r", "\n");
