@@ -5,7 +5,7 @@
     <parent>
         <groupId>fr.amvproject.group3</groupId>
         <artifactId>miniJaja-project</artifactId>
-        <version>1.1</version>
+        <version>1.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>interface</artifactId>
@@ -23,32 +23,32 @@
         <dependency>
             <groupId>fr.amvproject.group3</groupId>
             <artifactId>minijaja-core</artifactId>
-            <version>1.1</version>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>fr.amvproject.group3</groupId>
             <artifactId>minijaja-compiler</artifactId>
-            <version>1.1</version>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>fr.amvproject.group3</groupId>
             <artifactId>minijaja-interpreter</artifactId>
-            <version>1.1</version>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>fr.amvproject.group3</groupId>
             <artifactId>jajacode-core</artifactId>
-            <version>1.1</version>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>fr.amvproject.group3</groupId>
             <artifactId>jajacode-interpreter</artifactId>
-            <version>1.1</version>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>fr.amvproject.group3</groupId>
             <artifactId>memory-core</artifactId>
-            <version>1.1</version>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
