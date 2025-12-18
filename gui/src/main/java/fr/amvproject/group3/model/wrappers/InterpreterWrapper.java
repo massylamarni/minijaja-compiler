@@ -109,13 +109,11 @@ public class InterpreterWrapper {
     if (isMjj) {
       mjjPreviousBreakpointHitLine = mjjBreakpointHitLine;
       mjjBreakpointHitLine = line;
-      viewsWrapper.writeInTerminal("Breakpoint hit at line " + line, false);
       updateMemoryViews();
       EditorUtils.highlightLine(this, viewsWrapper.getEditorView());
     } else {
       jjcPreviousBreakpointHitLine = jjcBreakpointHitLine;
       jjcBreakpointHitLine = line;
-      viewsWrapper.writeInTerminal("Breakpoint hit at line " + line, false);
       updateMemoryViews();
       EditorUtils.highlightLine(this, viewsWrapper.getEditorView());
     }
@@ -155,36 +153,36 @@ public class InterpreterWrapper {
     boolean hasErrors = false;
     if (isMjj) {
       if (mjjInterpreter.getLexicalErrorsListener().hasErrors()) {
-        viewsWrapper.writeInTerminal(mjjInterpreter.getLexicalErrorsListener().toMessage(), false);
+        viewsWrapper.writeInTerminal(mjjInterpreter.getLexicalErrorsListener().toMessage(), false, true);
         hasErrors = true;
       }
       if (mjjInterpreter.getSyntaxicErrorsListener().hasErrors()) {
-        viewsWrapper.writeInTerminal(mjjInterpreter.getSyntaxicErrorsListener().toMessage(), false);
+        viewsWrapper.writeInTerminal(mjjInterpreter.getSyntaxicErrorsListener().toMessage(), false, true);
         hasErrors = true;
       }
       if (mjjInterpreter.getRuntimeErrorsCollector().hasErrors()) {
-        viewsWrapper.writeInTerminal(mjjInterpreter.getRuntimeErrorsCollector().toMessage(), false);
+        viewsWrapper.writeInTerminal(mjjInterpreter.getRuntimeErrorsCollector().toMessage(), false, true);
         hasErrors = true;
       }
       if (mjjInterpreter.getSemanticErrorsCollector().hasErrors()) {
-        viewsWrapper.writeInTerminal(mjjInterpreter.getSemanticErrorsCollector().toMessage(), false);
+        viewsWrapper.writeInTerminal(mjjInterpreter.getSemanticErrorsCollector().toMessage(), false, true);
         hasErrors = true;
       }
     } else {
       if (jjcInterpreter.getLexicalErrorsListener().hasErrors()) {
-        viewsWrapper.writeInTerminal(jjcInterpreter.getLexicalErrorsListener().toMessage(), false);
+        viewsWrapper.writeInTerminal(jjcInterpreter.getLexicalErrorsListener().toMessage(), false, true);
         hasErrors = true;
       }
       if (jjcInterpreter.getSyntaxicErrorsListener().hasErrors()) {
-        viewsWrapper.writeInTerminal(jjcInterpreter.getSyntaxicErrorsListener().toMessage(), false);
+        viewsWrapper.writeInTerminal(jjcInterpreter.getSyntaxicErrorsListener().toMessage(), false, true);
         hasErrors = true;
       }
       if (jjcInterpreter.getRuntimeErrorsCollector().hasErrors()) {
         hasErrors = true;
-        viewsWrapper.writeInTerminal(jjcInterpreter.getRuntimeErrorsCollector().toMessage(), false);
+        viewsWrapper.writeInTerminal(jjcInterpreter.getRuntimeErrorsCollector().toMessage(), false, true);
       }
       if (jjcInterpreter.getSemanticErrorsCollector().hasErrors()) {
-        viewsWrapper.writeInTerminal(jjcInterpreter.getSemanticErrorsCollector().toMessage(), false);
+        viewsWrapper.writeInTerminal(jjcInterpreter.getSemanticErrorsCollector().toMessage(), false, true);
         hasErrors = true;
       }
     }
@@ -195,13 +193,17 @@ public class InterpreterWrapper {
     if (isMjj) {
       if (mjjInterpreter.getOutputBuffer().size() != 0) {
         for (String output : mjjInterpreter.getOutputBuffer()) {
-          viewsWrapper.writeInTerminal(output, false);
+          boolean isLn = output.endsWith("\n");
+          if (isLn && output.length() >= 1) output = output.substring(0, output.length() - 1);
+          viewsWrapper.writeInTerminal(output, false, isLn);
         }
       }
     } else {
       if (jjcInterpreter.getOutputBuffer().size() != 0) {
         for (String output : jjcInterpreter.getOutputBuffer()) {
-          viewsWrapper.writeInTerminal(output, false);
+          boolean isLn = output.endsWith("\n");
+          if (isLn && output.length() >= 1) output = output.substring(0, output.length() - 1);
+          viewsWrapper.writeInTerminal(output, false, isLn);
         }
       }
     }

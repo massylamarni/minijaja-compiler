@@ -76,22 +76,22 @@ public class ViewsWrapper {
     }
   }
 
-  public void writeInTerminal(String text, boolean isReset) {
+  public void writeInTerminal(String text, boolean isReset, boolean isLn) {
     toggleStates.terminalView.openTerminal();
-    getTerminalBodyView().addOutput(text);
+    getTerminalBodyView().addOutput(text, isLn);
     if (isReset) getTerminalBodyView().resetOutput();
   }
 
   public void setProgramSuccess(String text) {
     toggleStates.hideDebugToolBar();
     EditorUtils.resetLineHighlighting(getEditorView());
-    writeInTerminal(text, true);
+    writeInTerminal(text, true, true);
   }
 
   public void setProgramFailed(String text) {
     toggleStates.hideDebugToolBar();
     EditorUtils.resetLineHighlighting(getEditorView());
-    writeInTerminal(text, true);
+    writeInTerminal(text, true, true);
   }
 
   public void reset() {
