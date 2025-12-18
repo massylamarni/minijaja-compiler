@@ -1,5 +1,6 @@
 package fr.amvproject.group3.mjj;
 
+import fr.amvproject.group3.Heap;
 import fr.amvproject.group3.mjj.Quad;
 import fr.amvproject.group3.mjj.Stack;
 import fr.amvproject.group3.mjj.ast.AstNode;
@@ -44,7 +45,7 @@ public class MinijajaStackTest {
         MockToken typeMethToken1 = new MockToken("void", 0, 0);
         MockToken typeMethToken2 = new MockToken("int", 0, 0);
 
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         stack.push(new Quad(new IdentNode(identToken1), null, new ObjNode("var"), new TypeMethNode(typeMethToken1)));
         stack.push(new Quad(new IdentNode(identToken2), 2, new ObjNode("var"), new TypeMethNode(typeMethToken2)));
         stack.push(new Quad(new IdentNode(identToken3), 3, new ObjNode("var"), new TypeMethNode(typeMethToken2)));
@@ -62,7 +63,7 @@ public class MinijajaStackTest {
     @Test
     public void givenStack__whenValOfX__thenSameSizeQueueSameOrder() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         stack.push(new Quad(new IdentNode(new MockToken("Test",1,0)), null, new ObjNode("var"), new TypeMethNode(new MockToken("void",1,0))));
         stack.push(new Quad(new IdentNode(new MockToken("x",2,0)), 2, new ObjNode("var"), new TypeMethNode(new MockToken("int",1,0))));
         stack.push(new Quad(new IdentNode(new MockToken("y",3,0)), 3, new ObjNode("var"), new TypeMethNode(new MockToken("int",1,0))));
@@ -80,7 +81,7 @@ public class MinijajaStackTest {
     @Test
     public void givenStack__whenMultipleSort__thenSameSizeQueueSameOrder() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         stack.push(new Quad(new IdentNode(new MockToken("Test",1,0)), null, new ObjNode("var"),  new TypeMethNode(new MockToken("void",1,0))));
         stack.push(new Quad(new IdentNode(new MockToken("x",2,0)), 2, new ObjNode("var"), new TypeMethNode(new MockToken("int",1,0))));
         stack.push(new Quad(new IdentNode(new MockToken("y",3,0)), 3, new ObjNode("var"), new TypeMethNode(new MockToken("int",1,0))));
@@ -102,7 +103,7 @@ public class MinijajaStackTest {
     @Test
     public void givenStack__whenDeclVar__thenVarIsDeclOnTop() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         stack.push(new Quad(new IdentNode(new MockToken("Test",1,0)), null, new ObjNode("var"),  new TypeMethNode(new MockToken("void",1,0))));
         IdentNode ident = new IdentNode(new MockToken("z", 4,0));
         // When
@@ -117,7 +118,7 @@ public class MinijajaStackTest {
     @Test
     public void givenStack__whenDeclCst__thenVarIsDeclOnTop() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         stack.push(new Quad(new IdentNode(new MockToken("Test",1,0)), null, new ObjNode("var"),  new TypeMethNode(new MockToken("void",1,0))));
         IdentNode ident = new IdentNode(new MockToken("T", 5,0));
         // When
@@ -131,7 +132,7 @@ public class MinijajaStackTest {
     @Test
     public void givenStack__whenDeclTab__thenTabIsDeclOnTop() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         stack.push(new Quad(new IdentNode(new MockToken("Test",1,0)), null, new ObjNode("var"),  new TypeMethNode(new MockToken("void",1,0))));
 
         IdentNode ident = new IdentNode(new MockToken("arr", 18,0));
@@ -149,7 +150,7 @@ public class MinijajaStackTest {
     @Test
     public void givenStack__whenAffecterVal__thenValueIsUpdated() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         IdentNode ident = new IdentNode(new MockToken("x",2,0));
         stack.push(new Quad(new IdentNode(new MockToken("x",2,0)), 2, new ObjNode("var"), new TypeMethNode(new MockToken("int",1,0))));
         stack.push(new Quad(new IdentNode(new MockToken("x",2,0)), 3, new ObjNode("var"), new TypeMethNode(new MockToken("int",1,0))));
@@ -163,7 +164,7 @@ public class MinijajaStackTest {
     @Test
     public void givenStack__whenValT__thenArrayValueIsReturned() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         IdentNode ident = new IdentNode(new MockToken("arr", 6,0));
         stack.declTab(ident, 5, new TypeMethNode(new MockToken("int",1,0)));
         stack.affecterValT(ident, 2, 10);
@@ -176,7 +177,7 @@ public class MinijajaStackTest {
     @Test
     public void givenStack__whenAffecterValT__thenArrayValueIsUpdated() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         IdentNode ident = new IdentNode(new MockToken("arr", 6,0));
         stack.declTab(ident, 5, new TypeMethNode(new MockToken("int",1,0)));
         // When
@@ -188,7 +189,7 @@ public class MinijajaStackTest {
     @Test
     public void givenStack__whenLongT__thenArrayLengthIsReturned() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         IdentNode ident = new IdentNode(new MockToken("arr", 6,0));
         stack.declTab(ident, 5, new TypeMethNode(new MockToken("int",1,0)));
         // When
@@ -200,7 +201,7 @@ public class MinijajaStackTest {
     @Test
     public void givenStack__whenRetirerDecl__thenDeclarationIsRemoved() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         IdentNode ident = new IdentNode(new MockToken("x",2,0));
         stack.declVar(ident, 2, new TypeMethNode(new MockToken("int",1,0)));
         // When
@@ -212,7 +213,7 @@ public class MinijajaStackTest {
     @Test
     public void givenStack__whenSwap__thenTopTwoElementsAreSwapped() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         stack.push(new Quad(new IdentNode(new MockToken("x",2,0)), 2, new ObjNode("var"), new TypeMethNode(new MockToken("int",1,0))));
         stack.push(new Quad(new IdentNode(new MockToken("y",3,0)), 3, new ObjNode("var"), new TypeMethNode(new MockToken("int",1,0))));
         // When
@@ -229,7 +230,7 @@ public class MinijajaStackTest {
     @Test
     public void givenStack__whenDeclMeth__thenMethIsOnTop() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         IdentNode identMeth = new IdentNode(new MockToken("maMethode", 1,0));
         TypeMethNode returnType = new TypeMethNode(new MockToken("int",1,0));
 
@@ -249,7 +250,7 @@ public class MinijajaStackTest {
     @Test
     public void givenStack__whenIdentVal__thenValueIsReplacedAtDepth() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         stack.declVar(new IdentNode(new MockToken("x",2,0)), 2, new TypeMethNode(new MockToken("int",1,0)));
         stack.declVar(new IdentNode(new MockToken("y",3,0)), 3, new TypeMethNode(new MockToken("int",1,0)));
         // When
@@ -264,7 +265,7 @@ public class MinijajaStackTest {
 
     @Test
     public void givenStack__whenAffecterType__thenTypeIsUpdated() {
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         // Given
         stack.declVar(new IdentNode(new MockToken("x",2,0)), 2, new TypeMethNode(new MockToken("int",1,0)));
         // When
@@ -276,7 +277,7 @@ public class MinijajaStackTest {
     @Test
     public void givenStack__whenExpParam__thenParamsAreDeclared() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
 
         List<ParamNode> paramList = new ArrayList<>();
         paramList.add(new ParamNode(
@@ -329,7 +330,7 @@ public class MinijajaStackTest {
     @Test
     public void givenStack__whenObjet__thenObjTypeIsReturned() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         stack.declVar(new IdentNode(new MockToken("x",2,0)), 2, new TypeMethNode(new MockToken("int",1,0)));
         // When
         ObjNode obj = stack.objet(new IdentNode(new MockToken("x",2,0)));
@@ -340,7 +341,7 @@ public class MinijajaStackTest {
     @Test
     public void givenStack__whenParametre__thenParamsAreReturned() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         IdentNode identMeth = new IdentNode(new MockToken("maMethode", 1,0));
         TypeMethNode returnType = new TypeMethNode(new MockToken("int",1,0));
 
@@ -358,7 +359,7 @@ public class MinijajaStackTest {
     @Test
     public void givenStack__whenDeclaration__thenVarsAreReturned() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         IdentNode identMeth = new IdentNode(new MockToken("maMethode", 1,0));
         TypeMethNode returnType = new TypeMethNode(new MockToken("int",1,0));
 
@@ -376,7 +377,7 @@ public class MinijajaStackTest {
     @Test
     public void givenStack__whenCorps__thenInstrsAreReturned() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         IdentNode identMeth = new IdentNode(new MockToken("maMethode", 1,0));
         TypeMethNode returnType = new TypeMethNode(new MockToken("int",1,0));
 

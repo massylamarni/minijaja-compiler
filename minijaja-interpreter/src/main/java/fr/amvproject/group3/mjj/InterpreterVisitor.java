@@ -3,6 +3,7 @@ package fr.amvproject.group3.mjj;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.amvproject.group3.Heap;
 import fr.amvproject.group3.mjj.ast.AstVisitor;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.DeclsNode;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.InstrsNode;
@@ -53,7 +54,8 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     private static final int LOOP_LIMIT = 1000000;
     private static final int RECURSION_LIMIT = 100;
     private int recursionCount = 0;
-    private Stack stack = new Stack();
+    private Heap heap = new Heap();
+    private Stack stack = new Stack(heap);
     private final ScopeManager scopeManager = new ScopeManager(stack);
     private ExecutionContext ctx = new ExecutionContext(stack); // final
     private List<String> outputBuffer = new ArrayList<>();

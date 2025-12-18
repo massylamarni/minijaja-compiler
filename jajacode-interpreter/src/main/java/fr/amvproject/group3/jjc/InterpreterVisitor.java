@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fr.amvproject.group3.Heap;
 import fr.amvproject.group3.jjc.ast.AstVisitor;
 import fr.amvproject.group3.jjc.ast.nodes.finals.AddressNode;
 import fr.amvproject.group3.jjc.ast.nodes.finals.BoolLiteralNode;
@@ -45,7 +46,8 @@ public class InterpreterVisitor implements AstVisitor<Object> {
   private static final int LOOP_LIMIT = 1000000;
   private static final int RECURSION_LIMIT = 10000;
   private int iterationCount = 0;
-  private Stack stack = new Stack();
+  private Heap heap = new Heap();
+  private Stack stack = new Stack(heap);
   private ExecutionContext ctx = new ExecutionContext(stack); // final
   private int currentAddress = 1;
   private List<String> outputBuffer = new ArrayList<>();

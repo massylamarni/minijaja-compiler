@@ -1,5 +1,6 @@
 package fr.amvproject.group3.jjc;
 
+import fr.amvproject.group3.Heap;
 import fr.amvproject.group3.exceptions.BreakPointHit;
 import fr.amvproject.group3.exceptions.PausePointHit;
 import fr.amvproject.group3.jjc.ast.AstNode;
@@ -17,10 +18,12 @@ public class ExecutionContextTest {
 
     private ExecutionContext ctx;
     private Stack stack;
+    private Heap heap;
 
     @Before
     public void setUp() {
-        stack = new Stack();
+        heap = new Heap();
+        stack = new Stack(heap);
         ctx = new ExecutionContext(stack);
     }
 

@@ -21,14 +21,14 @@ import fr.amvproject.group3.Heap;
 
 public class Stack extends StackManager {
   private List<Quad> queue = super.getQueue();
-  private Heap heap = new Heap();
+  private Heap heap;
+
+  public Stack(Heap heap) {
+    this.heap = heap;
+  }
 
   public Heap getHeap() {
     return heap;
-  }
-
-  public void setQueue(List<Quad> queue) {
-    this.queue = queue;
   }
 
   // --- Stack Operations ---

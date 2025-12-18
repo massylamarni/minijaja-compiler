@@ -13,10 +13,6 @@ public class Heap {
   private List<Object> queue = new ArrayList<>();
   private int nextAddress = 0;
 
-  public void setQueue(List<Object> queue) {
-    this.queue = queue;
-  }
-
   private void checkIfInBlock(PointerNode pointerNode, int index) {
     if (pointerNode.getAddress() < 0 || pointerNode.getAddress() >= nextAddress || index < 0 || index > getSize(pointerNode) - 1)
       throw new IndexOutOfBoundsException();

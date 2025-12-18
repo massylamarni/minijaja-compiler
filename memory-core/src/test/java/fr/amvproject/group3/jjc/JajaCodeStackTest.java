@@ -1,5 +1,6 @@
 package fr.amvproject.group3.jjc;
 
+import fr.amvproject.group3.Heap;
 import fr.amvproject.group3.jjc.Quad;
 import fr.amvproject.group3.jjc.Stack;
 import fr.amvproject.group3.jjc.ast.nodes.finals.IdentNode;
@@ -28,7 +29,7 @@ public class JajaCodeStackTest {
         MockToken typeToken1 = new MockToken("vide", 0, 0);
         MockToken typeToken2 = new MockToken("entier", 0, 0);
 
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         stack.push(new Quad(new IdentNode(identToken1), null, new ObjNode("var"), new TypeNode(typeToken1)));
         stack.push(new Quad(new IdentNode(identToken2), 2, new ObjNode("var"), new TypeNode(typeToken2)));
         stack.push(new Quad(new IdentNode(identToken3), 3, new ObjNode("var"), new TypeNode(typeToken2)));
@@ -47,7 +48,7 @@ public class JajaCodeStackTest {
     @Test
     public void givenStack__whenValOfX__thenSameSizeQueueSameOrder() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         stack.push(new Quad(new IdentNode(new MockToken("Test",1,0)), null, new ObjNode("var"), new TypeNode(new MockToken("vide",1,0))));
         stack.push(new Quad(new IdentNode(new MockToken("x",2,0)), 2, new ObjNode("var"), new TypeNode(new MockToken("entier",1,0))));
         stack.push(new Quad(new IdentNode(new MockToken("y",3,0)), 3, new ObjNode("var"), new TypeNode(new MockToken("entier",1,0))));
@@ -66,7 +67,7 @@ public class JajaCodeStackTest {
     @Test
     public void givenStack__whenMultipleSort__thenSameSizeQueueSameOrder() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         stack.push(new Quad(new IdentNode(new MockToken("Test",1,0)), null, new ObjNode("var"), new TypeNode(new MockToken("vide",1,0))));
         stack.push(new Quad(new IdentNode(new MockToken("x",2,0)), 2, new ObjNode("var"), new TypeNode(new MockToken("entier",1,0))));
         stack.push(new Quad(new IdentNode(new MockToken("y",3,0)), 3, new ObjNode("var"), new TypeNode(new MockToken("entier",1,0))));
@@ -87,7 +88,7 @@ public class JajaCodeStackTest {
     @Test
     public void givenStack__whenDeclVar__thenVarIsDeclOnTop() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         stack.push(new Quad(new IdentNode(new MockToken("Test",1,0)), null, new ObjNode("var"), new TypeNode(new MockToken("vide",1,0))));
         IdentNode ident = new IdentNode(new MockToken("z",4,0));
 
@@ -104,7 +105,7 @@ public class JajaCodeStackTest {
     @Test
     public void givenStack__whenDeclCst__thenVarIsDeclOnTop() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         stack.push(new Quad(new IdentNode(new MockToken("Test",1,0)), null, new ObjNode("var"), new TypeNode(new MockToken("vide",1,0))));
         IdentNode ident = new IdentNode(new MockToken("T",5,0));
 
@@ -120,7 +121,7 @@ public class JajaCodeStackTest {
     @Test
     public void givenStack__whenDeclTab__thenTabIsDeclOnTop() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         stack.push(new Quad(new IdentNode(new MockToken("Test",1,0)), null, new ObjNode("var"), new TypeNode(new MockToken("vide",1,0))));
         IdentNode ident = new IdentNode(new MockToken("arr",18,0));
 
@@ -137,7 +138,7 @@ public class JajaCodeStackTest {
     @Test
     public void givenStack__whenAffecterVal__thenValueIsUpdated() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         IdentNode ident = new IdentNode(new MockToken("x",2,0));
         stack.push(new Quad(ident, 2, new ObjNode("var"), new TypeNode(new MockToken("entier",1,0))));
         stack.push(new Quad(ident, 3, new ObjNode("var"), new TypeNode(new MockToken("entier",1,0))));
@@ -152,7 +153,7 @@ public class JajaCodeStackTest {
     @Test
     public void givenStack__whenValT__thenArrayValueIsReturned() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         IdentNode ident = new IdentNode(new MockToken("arr",6,0));
         stack.declTab(ident, 5, new TypeNode(new MockToken("entier",1,0)));
         stack.affecterValT(ident, 2, 10);
@@ -167,7 +168,7 @@ public class JajaCodeStackTest {
     @Test
     public void givenStack__whenAffecterValT__thenArrayValueIsUpdated() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         IdentNode ident = new IdentNode(new MockToken("arr",6,0));
         stack.declTab(ident, 5, new TypeNode(new MockToken("entier",1,0)));
 
@@ -181,7 +182,7 @@ public class JajaCodeStackTest {
     @Test
     public void givenStack__whenLongT__thenArrayLengthIsReturned() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         IdentNode ident = new IdentNode(new MockToken("arr",6,0));
         stack.declTab(ident, 5, new TypeNode(new MockToken("entier",1,0)));
 
@@ -195,7 +196,7 @@ public class JajaCodeStackTest {
     @Test
     public void givenStack__whenRetirerDecl__thenDeclarationIsRemoved() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         IdentNode ident = new IdentNode(new MockToken("x",2,0));
         stack.declVar(ident, 2, new TypeNode(new MockToken("entier",1,0)));
 
@@ -209,7 +210,7 @@ public class JajaCodeStackTest {
     @Test
     public void givenStack__whenSwap__thenTopTwoElementsAreSwapped() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         stack.push(new Quad(new IdentNode(new MockToken("x",2,0)), 2, new ObjNode("var"), new TypeNode(new MockToken("entier",1,0))));
         stack.push(new Quad(new IdentNode(new MockToken("y",3,0)), 3, new ObjNode("var"), new TypeNode(new MockToken("entier",1,0))));
 
@@ -224,7 +225,7 @@ public class JajaCodeStackTest {
     @Test
     public void givenStack__whenAffecterType__thenTypeIsUpdated() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         stack.declVar(new IdentNode(new MockToken("x",2,0)), 2, new TypeNode(new MockToken("entier",1,0)));
 
         // When
@@ -237,7 +238,7 @@ public class JajaCodeStackTest {
     @Test
     public void givenStack__whenObjet__thenObjTypeIsReturned() {
         // Given
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         stack.declVar(new IdentNode(new MockToken("x",2,0)), 2, new TypeNode(new MockToken("entier",1,0)));
 
         // When
@@ -249,7 +250,7 @@ public class JajaCodeStackTest {
 
     @Test
     public void givenStack__whenPushWithNameAndValue__thenQuadIsAdded() {
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
 
         stack.push("x", 42);
 
@@ -261,12 +262,12 @@ public class JajaCodeStackTest {
 
     @Test(expected = IllegalStateException.class)
     public void givenEmptyStack__whenPop__thenExceptionIsThrown() {
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         stack.pop();
     }
     @Test
     public void givenStack__whenPeekAndPeekTail__thenCorrectElementsReturned() {
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         stack.push("a", 1);
         stack.push("b", 2);
         stack.push("c", 3);
@@ -278,7 +279,7 @@ public class JajaCodeStackTest {
 
     @Test(expected = IllegalStateException.class)
     public void givenStackWithOneElement__whenSwap__thenExceptionIsThrown() {
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         stack.push("x", 1);
 
         stack.swap();
@@ -286,7 +287,7 @@ public class JajaCodeStackTest {
 
     @Test
     public void givenStack__whenIdentVal__thenQuadIsReplacedAtDepth() {
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         IdentNode a = new IdentNode(new MockToken("a",1,0));
         IdentNode b = new IdentNode(new MockToken("b",2,0));
 
@@ -303,7 +304,7 @@ public class JajaCodeStackTest {
 
     @Test
     public void givenCst__whenAffecterVal__thenValueIsNotChanged() {
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         IdentNode ident = new IdentNode(new MockToken("c",1,0));
 
         stack.declCst(ident, 10, new TypeNode(new MockToken("entier",1,0)), false);
@@ -314,7 +315,7 @@ public class JajaCodeStackTest {
 
     @Test
     public void givenVcst__whenAffecterVal__thenBecomesCst() {
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         IdentNode ident = new IdentNode(new MockToken("v",1,0));
 
         stack.declCst(ident, null, new TypeNode(new MockToken("entier",1,0)), true);
@@ -326,7 +327,7 @@ public class JajaCodeStackTest {
 
     @Test
     public void givenStack__whenDeclMeth__thenMethodIsOnTop() {
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         IdentNode ident = new IdentNode(new MockToken("m",1,0));
 
         stack.declMeth(ident, "body", new TypeNode(new MockToken("vide",1,0)));
@@ -337,7 +338,7 @@ public class JajaCodeStackTest {
 
     @Test
     public void givenStack__whenValOfUnknownIdent__thenNullReturned() {
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
         Object val = stack.val(new IdentNode(new MockToken("unknown",1,0)));
 
         assertThat(val, is(nullValue()));
@@ -345,7 +346,7 @@ public class JajaCodeStackTest {
 
     @Test
     public void givenEmptyStack__whenPrint__thenEmptyStackPrinted() {
-        Stack stack = new Stack();
+        Stack stack = new Stack(new Heap());
 
         String output = stack.print();
 

@@ -1,5 +1,6 @@
 package fr.amvproject.group3.mjj;
 
+import fr.amvproject.group3.Heap;
 import fr.amvproject.group3.exceptions.BreakPointHit;
 import fr.amvproject.group3.exceptions.PausePointHit;
 import fr.amvproject.group3.mjj.ast.AstNode;
@@ -13,12 +14,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class ExecutionContextTest {
 
     private ExecutionContext ctx;
+    private Heap heap;
     private Stack stack;
 
     @Before
     public void setUp() {
         // Given
-        stack = new Stack();
+        heap = new Heap();
+        stack = new Stack(heap);
         ctx = new ExecutionContext(stack);
     }
 
