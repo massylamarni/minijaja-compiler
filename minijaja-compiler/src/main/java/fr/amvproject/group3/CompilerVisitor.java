@@ -185,11 +185,12 @@ public class CompilerVisitor implements fr.amvproject.group3.mjj.ast.AstVisitor<
     List<ClassNode> pens = node.getParams().accept(this);
     List<ClassNode> pdvs = node.getVars().accept(this);
     List<ClassNode> piss = node.getInstrs().accept(this);
+    ClassNode pv = isVoid ? newClass(new PushNode(new IntLiteralNode("0", 0, 0))) : null;
     List<ClassNode> prdvs = visitRDecl(node.getVars().getList().size());
     classNodes.addAll(pens);
     classNodes.addAll(pdvs);
     classNodes.addAll(piss);
-    if (isVoid) classNodes.add(newClass(new PushNode(new IntLiteralNode("0", 0, 0))));
+    if (isVoid) classNodes.add(pv);
     classNodes.addAll(prdvs);
     classNodes.add(newClass(new SwapLiteral()));
     classNodes.add(newClass(new ReturnLiteral()));

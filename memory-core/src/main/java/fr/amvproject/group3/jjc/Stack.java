@@ -145,7 +145,7 @@ public class Stack extends StackManager {
           queue.set(i, new Quad(ident, value, new ObjNode("cst"), quad.getType()));
           return;
         } else if (quad.getObj().isTab()) {
-          heap.removeRef((PointerNode) quad.getValue(), new TypeMemNode(((TypeNode) quad.getType()).getName())); // RetirerTas
+          heap.removeRef((PointerNode) quad.getValue(), typeMapper((TypeNode) quad.getType())); // RetirerTas
           heap.addRef((PointerNode) value);
           queue.set(i, new Quad(ident, value, new ObjNode("tab"), quad.getType()));
           return;
