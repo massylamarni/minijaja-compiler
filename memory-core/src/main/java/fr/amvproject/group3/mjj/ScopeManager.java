@@ -57,11 +57,19 @@ public class ScopeManager {
       Object value = stack.val(identNode);
       if (value != null) return value;
     }
+    for (Stack stack : stackOfExitedStacks) {
+      Object value = stack.val(identNode);
+      if (value != null) return value;
+    }
     return null;
   }
 
   public Object valT(IdentNode identNode, int index) {
     for (Stack stack : stackOfStacks) {
+      Object value = stack.valT(identNode, index);
+      if (value != null) return value;
+    }
+    for (Stack stack : stackOfExitedStacks) {
       Object value = stack.valT(identNode, index);
       if (value != null) return value;
     }
@@ -73,11 +81,19 @@ public class ScopeManager {
       Object value = stack.longT(identNode);
       if (value != null) return value;
     }
+    for (Stack stack : stackOfExitedStacks) {
+      Object value = stack.longT(identNode);
+      if (value != null) return value;
+    }
     return null;
   }
 
   public ParamsNode parametre(IdentNode identNode, int depth) {
     for (Stack stack : stackOfStacks) {
+      ParamsNode value = stack.parametre(identNode, depth);
+      if (value != null) return value;
+    }
+    for (Stack stack : stackOfExitedStacks) {
       ParamsNode value = stack.parametre(identNode, depth);
       if (value != null) return value;
     }
@@ -89,11 +105,19 @@ public class ScopeManager {
       VarsNode value = stack.declaration(identNode, depth);
       if (value != null) return value;
     }
+    for (Stack stack : stackOfExitedStacks) {
+      VarsNode value = stack.declaration(identNode, depth);
+      if (value != null) return value;
+    }
     return null;
   }
 
   public InstrsNode corps(IdentNode identNode, int depth) {
     for (Stack stack : stackOfStacks) {
+      InstrsNode value = stack.corps(identNode, depth);
+      if (value != null) return value;
+    }
+    for (Stack stack : stackOfExitedStacks) {
       InstrsNode value = stack.corps(identNode, depth);
       if (value != null) return value;
     }
