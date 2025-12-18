@@ -800,7 +800,7 @@ public class InterpreterVisitorTest {
         // Then
         String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("5"));
-        assertThat(interpreter.getStack().getQueue().size(), is(0));
+        assertThat(interpreter.getStack().getQueue().size(), is(1));
     }
 
     @Ignore

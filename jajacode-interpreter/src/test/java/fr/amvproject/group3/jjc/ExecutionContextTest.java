@@ -145,13 +145,4 @@ public class ExecutionContextTest {
         assertThat(ctx.hasBreakpoint(), is(false));
     }
 
-    @Test
-    public void testDecBreakPointHitLine() {
-        AstNode prev = createMockNode(1);
-        ctx.setPreviousNode(prev);
-        ctx.decBreakPointHitLine(); // breakPointHitLine = 0 initially
-
-        // Should set breakPointHitLine to previousNode.getLine() only if breakPointHitLine != 0
-        assertThat(ctx.getCurrentNode(), is((AstNode) null));
-    }
 }

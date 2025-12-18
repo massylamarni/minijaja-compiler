@@ -3,6 +3,9 @@ package fr.amvproject.group3.mjj;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import fr.amvproject.group3.mjj.ast.nodes.abstracts.InstrsNode;
+import fr.amvproject.group3.mjj.ast.nodes.abstracts.ParamsNode;
+import fr.amvproject.group3.mjj.ast.nodes.abstracts.VarsNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
 
 public class ScopeManager {
@@ -57,6 +60,38 @@ public class ScopeManager {
   public Object valT(IdentNode identNode, int index) {
     for (Stack stack : stackOfStacks) {
       Object value = stack.valT(identNode, index);
+      if (value != null) return value;
+    }
+    return null;
+  }
+
+  public Object longT(IdentNode identNode) {
+    for (Stack stack : stackOfStacks) {
+      Object value = stack.longT(identNode);
+      if (value != null) return value;
+    }
+    return null;
+  }
+
+  public ParamsNode parametre(IdentNode identNode, int depth) {
+    for (Stack stack : stackOfStacks) {
+      ParamsNode value = stack.parametre(identNode, depth);
+      if (value != null) return value;
+    }
+    return null;
+  }
+
+  public VarsNode declaration(IdentNode identNode, int depth) {
+    for (Stack stack : stackOfStacks) {
+      VarsNode value = stack.declaration(identNode, depth);
+      if (value != null) return value;
+    }
+    return null;
+  }
+
+  public InstrsNode corps(IdentNode identNode, int depth) {
+    for (Stack stack : stackOfStacks) {
+      InstrsNode value = stack.corps(identNode, depth);
       if (value != null) return value;
     }
     return null;

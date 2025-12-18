@@ -113,7 +113,6 @@ public class Interpreter {
 
   public void resume() {
     ctx.setIsPaused(false);
-    ctx.ignoreNextBreakpoint();
     if(ctx.isExecutionSuccessful()) reset();
     else partialReset();
     try {
@@ -128,7 +127,6 @@ public class Interpreter {
   public void stepForward() {
     if(ctx.isExecutionSuccessful()) reset();
     else partialReset();
-    ctx.ignoreNextBreakpoint();
     try {
       astWrapper.ast.accept(interpreterVisitor);
     } catch (PausePointHit e) {
@@ -142,7 +140,7 @@ public class Interpreter {
     if(ctx.isExecutionSuccessful()) reset();
     else partialReset();
     ctx.disableDebug();
-    ctx.decBreakPointHitLine();
+    ctx.decrInstrCountUntilPreviousInstr();
     try {
       astWrapper.ast.accept(interpreterVisitor);
     } catch (PausePointHit e) {
@@ -174,6 +172,7 @@ public class Interpreter {
   
   public void partialReset() {
     ctx.resetMemory();
+    ctx.resetInstrCounter();
   }
 
   public void reset() {

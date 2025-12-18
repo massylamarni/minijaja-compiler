@@ -14,7 +14,8 @@ public class ExecutionContext {
     private boolean isPaused = false;
     private Set<Integer> breakpoints = new HashSet<>();
     private int breakPointHitLine = 0;
-    private int previouslyHitBreakpointLine = -1;
+    private int intrCountUntilPreviousInstr = 0;
+    private int currentInstrCount = 0;
     private boolean ignoreNextBreakpoint = false;
     private boolean ignoreBreakpoints = true;
     private boolean isExecutionSuccessful = false;
@@ -79,10 +80,14 @@ public class ExecutionContext {
       ignoreNextBreakpoint = true;
     }
 
-    public void decBreakPointHitLine() {
-      if (previousNode != null && breakPointHitLine != 0) {
-        breakPointHitLine = previousNode.getLine();
+    public void decrInstrCountUntilPreviousInstr() {
+      if (previousNode != null && intrCountUntilPreviousInstr != 0) {
+        intrCountUntilPreviousInstr = intrCountUntilPreviousInstr - 2;
       }
+    }
+
+    public void resetInstrCounter() {
+      currentInstrCount = 0;
     }
 
     public void resetMemory() {
@@ -96,7 +101,8 @@ public class ExecutionContext {
       resetMemory();
       isPaused = false;
       breakPointHitLine = 0;
-      previouslyHitBreakpointLine = -1;
+      intrCountUntilPreviousInstr = 0;
+      currentInstrCount = 0;
       isExecutionSuccessful = false;
     }
 
@@ -105,7 +111,7 @@ public class ExecutionContext {
     public void recordNode(AstNode node) {
       setPreviousNode(currentNode);
       currentNode = node;
-      if (node.getLine() >= breakPointHitLine) {
+      if (currentInstrCount++ >= intrCountUntilPreviousInstr) {
         if (ignoreNextBreakpoint) {
           ignoreNextBreakpoint = false;
           return;
@@ -113,12 +119,13 @@ public class ExecutionContext {
         breakPointHitLine = 0;
         if (isPaused()) {
           breakPointHitLine = node.getLine();
+          intrCountUntilPreviousInstr = currentInstrCount;
           throw new PausePointHit(currentNode.getClass().getName(), currentNode.getLine(), currentNode.getColumn());
         }
-        if (hasBreakpoint() && !ignoreBreakpoints && node.getLine() != previouslyHitBreakpointLine) {
+        if (hasBreakpoint() && !ignoreBreakpoints) {
           setIsPaused(true);
           breakPointHitLine = node.getLine();
-          previouslyHitBreakpointLine = node.getLine();
+          intrCountUntilPreviousInstr = currentInstrCount;
           throw new BreakPointHit(currentNode.getClass().getName(), currentNode.getLine(), currentNode.getColumn());
         }
       }
@@ -135,6 +142,7 @@ public class ExecutionContext {
 
     public void disableDebug() {
       ignoreBreakpoints = true;
+
     }
 
 }

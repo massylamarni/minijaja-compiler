@@ -240,7 +240,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         boolean isMethodFound = false;
         int depth = 0;
         while (true) {
-            ParamsNode paramsNode = stack.parametre(node.getIdent(), depth);
+            ParamsNode paramsNode = scopeManager.parametre(node.getIdent(), depth);
             if (paramsNode == null) break;
             List<ParamNode> listParamNodes = paramsNode.getList();
             List<ExpNode> listExpNodes = (node.getListExp() != null) ? node.getListExp().getList() : new ArrayList<>();
@@ -269,14 +269,14 @@ public class InterpreterVisitor implements AstVisitor<Object> {
                 }
 
                 // declaration des variables locales
-                VarsNode varsNode = stack.declaration(node.getIdent(), depth);
+                VarsNode varsNode = scopeManager.declaration(node.getIdent(), depth);
                 List<VarDeclNode> listVarDeclNodes = varsNode.getList();
                 if (varsNode != null && !listVarDeclNodes.isEmpty()) {
                     varsNode.accept(this);
                 }
 
                 // execute les iss
-                InstrsNode instrsNode = stack.corps(node.getIdent(), depth);
+                InstrsNode instrsNode = scopeManager.corps(node.getIdent(), depth);
                 instrsNode.accept(this);
 
                 // retrait
@@ -385,7 +385,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     @Override
     public Object visitLength(LengthNode node) {
         try {
-            return stack.longT(node.getIdent());
+            return scopeManager.longT(node.getIdent());
         } catch (Exception e) {
             throw new fr.amvproject.group3.exceptions.RuntimeException("Index out of bounds", node.getLine(), node.getColumn());
         }
