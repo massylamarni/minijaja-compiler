@@ -248,6 +248,7 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
         }
       }
     }
+    scopeManager.addSymbolToParentScope(node.getIdent(), new TypeNode(node.getReturnType().getName()), paramsTypeValue);
 
     node.getParams().accept(this);
     node.getVars().accept(this);
@@ -262,7 +263,6 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
     }
     symbolTable = scopeManager.exitScope();
 
-    symbolTable.addSymbol(node.getIdent(), new TypeNode(node.getReturnType().getName()), paramsTypeValue);
     return new SymbolIdentity(new TypeNode("void"), new ObjNode("literal", node.getLine(), node.getColumn()));
   }
 

@@ -481,9 +481,6 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     public Object visitBinaryExp(BinaryExpNode node) {
         Object left = evalExp(node.getLeftExp());
         Object right = evalExp(node.getRightExp());
-        System.out.print(left);
-        System.out.print(" " + node.getOp().getOp().getName() + " ");
-        System.out.println(right);
 
         switch (node.getOp().getOp()) {
             case AND: return (boolean) left && (boolean) right;
@@ -554,7 +551,6 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitIdent(IdentNode node) {
-        System.out.println(node.getName() + ": " + scopeManager.val(node));
         return scopeManager.val(node);
     }
 

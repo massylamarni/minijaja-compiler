@@ -2,8 +2,11 @@ package fr.amvproject.group3.mjj.analyser;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.List;
 
+import fr.amvproject.group3.mjj.analyser.nodes.SymbolIdentity;
 import fr.amvproject.group3.mjj.analyser.nodes.SymbolSignature;
+import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
 import fr.amvproject.group3.mjj.analyser.symbols.Symbols;
 import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
 
@@ -62,6 +65,12 @@ public class ScopeManager {
       if (sym != null) return sym;
     }
     return null;
+  }
+
+  public void addSymbolToParentScope(IdentNode identNode, TypeNode returnType, List<SymbolIdentity> paramsType) {
+    SymbolTable tempStack = stack.pop();
+    stack.peek().addSymbol(identNode, returnType, paramsType);
+    stack.push(tempStack);
   }
 
   public void reset() {

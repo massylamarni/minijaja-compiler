@@ -31,7 +31,6 @@ public class ScopeManager {
   }
 
   public Stack newScope() {
-    System.out.println("newScope, " + "ss: " + stackOfStacks.size() + ", es: " + stackOfExitedStacks.size());
     Stack newStack = new Stack();
     stackOfStacks.push(newStack);
     stackRef = newStack;
@@ -40,7 +39,6 @@ public class ScopeManager {
   }
 
   public Stack backToScope() {
-    System.out.println("backToScope " + "ss: " + stackOfStacks.size() + ", es: " + stackOfExitedStacks.size());
     stackOfStacks.push(stackOfExitedStacks.pop());
     stackRef = stackOfStacks.peek();
     scopeDepth++;
@@ -48,7 +46,6 @@ public class ScopeManager {
   }
 
   public Stack exitScope() {
-    System.out.println("exitScope" + "ss: " + stackOfStacks.size() + ", es: " + stackOfExitedStacks.size());
     stackOfExitedStacks.push(stackOfStacks.pop());
     stackRef = stackOfStacks.peek();
     scopeDepth--;
@@ -56,7 +53,6 @@ public class ScopeManager {
   }
 
   public Stack deleteScope() {
-    System.out.println("deleteScope" + "ss: " + stackOfStacks.size() + ", es: " + stackOfExitedStacks.size());
     stackOfStacks.pop();
     stackRef = stackOfStacks.peek();
     scopeDepth--;
@@ -161,32 +157,5 @@ public class ScopeManager {
     scopeDepth = 0;
     stackRef = stackOfStacks.peekLast();
     while (stackOfStacks.size() > 1) stackOfStacks.pop();
-  }
-
-  public void printScopes() {
-    int scopeIndex = 0;
-    for (Iterator<Stack> it = stackOfStacks.descendingIterator(); it.hasNext();) {
-      System.out.println("--- Current Scopes --- stack: " + scopeIndex);
-      Stack stack = it.next();
-      System.out.println("Scope " + scopeIndex + " (depth " + (stackOfStacks.size() - 1 - scopeIndex) + "):");
-      printStack(stack);
-      scopeIndex++;
-    }
-    if (!stackOfExitedStacks.isEmpty()) {
-      int exitedIndex = 0;
-      for (Stack stack : stackOfExitedStacks) {
-        System.out.println("--- Exited Scopes --- stack: " + exitedIndex);
-        printStack(stack);
-        exitedIndex++;
-      }
-    }
-    System.out.println("-----------------------------------------");
-  }
-
-  private void printStack(Stack stack) {
-    List<Quad> queue = stack.getQueue();
-    for (int i = 0; i < queue.size(); i++) {
-      System.out.println(queue.get(i).print(i));
-    }
   }
 }
