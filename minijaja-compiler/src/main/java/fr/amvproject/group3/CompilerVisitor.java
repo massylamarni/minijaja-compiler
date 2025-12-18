@@ -26,7 +26,6 @@ import fr.amvproject.group3.jjc.ast.nodes.other.TypeNode;
 import fr.amvproject.group3.jjc.ast.nodes.other.UnaryOpNode;
 import fr.amvproject.group3.jjc.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.ArrayAccessNode;
-import fr.amvproject.group3.mjj.ast.nodes.finals.ParamNode;
 import fr.amvproject.group3.jjc.ast.nodes.instrs.IfNode;
 import fr.amvproject.group3.jjc.ast.nodes.instrs.IncNode;
 import fr.amvproject.group3.jjc.ast.nodes.instrs.InvokeNode;
@@ -178,10 +177,11 @@ public class CompilerVisitor implements fr.amvproject.group3.mjj.ast.AstVisitor<
     int nprdvs = visitRDecl(node.getVars().getList().size()).size();
     counterSilencer--;
 
+    boolean isVoid = node.getReturnType().isVoid();
     classNodes.add(newClass(new PushNode(new IntLiteralNode(String.valueOf(instrBlockCount + 3), 0, 0))));
     classNodes.add(newClass(new NewNode(new IdentNode(node.getIdent().getIdentToken()),
         typeMapper(node.getReturnType()), objMapper("meth"), new IntLiteralNode("0", 0, 0))));
-    classNodes.add(newClass(new GotoNode(new AddressNode(String.valueOf(instrBlockCount + npens + npdvs + npiss + nprdvs + 5), 0, 0))));
+    classNodes.add(newClass(new GotoNode(new AddressNode(String.valueOf(instrBlockCount + npens + npdvs + npiss + nprdvs + (isVoid ? 6 : 5)), 0, 0))));
     List<ClassNode> pens = node.getParams().accept(this);
     List<ClassNode> pdvs = node.getVars().accept(this);
     List<ClassNode> piss = node.getInstrs().accept(this);
@@ -189,7 +189,7 @@ public class CompilerVisitor implements fr.amvproject.group3.mjj.ast.AstVisitor<
     classNodes.addAll(pens);
     classNodes.addAll(pdvs);
     classNodes.addAll(piss);
-    if (node.getReturnType().isVoid()) classNodes.add(newClass(new PushNode(new IntLiteralNode("0", 0, 0))));
+    if (isVoid) classNodes.add(newClass(new PushNode(new IntLiteralNode("0", 0, 0))));
     classNodes.addAll(prdvs);
     classNodes.add(newClass(new SwapLiteral()));
     classNodes.add(newClass(new ReturnLiteral()));
@@ -213,8 +213,8 @@ public class CompilerVisitor implements fr.amvproject.group3.mjj.ast.AstVisitor<
   @Override
   public List<ClassNode> visitParams(fr.amvproject.group3.mjj.ast.nodes.abstracts.ParamsNode node) {
     List<ClassNode> classNodes = new ArrayList<>();
-    for (ParamNode paramNode : node.getList()) {
-      classNodes.addAll(paramNode.accept(this));
+    for (int i = node.getList().size() - 1; i >= 0; i--) {
+      classNodes.addAll(node.getList().get(i).accept(this));
     }
     k = 0;
     return classNodes;
