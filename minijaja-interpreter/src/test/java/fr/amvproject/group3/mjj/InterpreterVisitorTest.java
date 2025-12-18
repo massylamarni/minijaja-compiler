@@ -1055,4 +1055,72 @@ public class InterpreterVisitorTest {
         String output = interpreter.getOutputBuffer().get(0);
         assertThat(output, is("120"));
     }
+
+    @Test
+    public void testQuickSort() {
+        String code = """
+            class Test {
+                    int tab[5];
+                    int partition(int low, int high) {
+                        int pivot = tab[high];
+                        int i = low - 1;
+                        int j = low;
+                        int tmp = 0;
+            
+                        while (high > j) {
+                            if (pivot > tab[j]) {
+                                i++;
+                                tmp = tab[i];
+                                tab[i] = tab[j];
+                                tab[j] = tmp;
+                            };
+                            j++;
+                        };
+            
+                        tmp = tab[i + 1];
+                        tab[i + 1] = tab[high];
+                        tab[high] = tmp;
+            
+                        return i + 1;
+                    };
+            
+                    int quickSort(int low, int high) {
+                    int pi ;
+                        if (high > low) {
+                            pi = partition(low, high);
+                            quickSort(low, pi - 1);
+                            quickSort(pi + 1, high);
+                        };
+                        return 0;
+                    };
+            
+                    main {
+                        // Initialisation
+                        tab[0] = 5;
+                        tab[1] = 1;
+                        tab[2] = 4;
+                        tab[3] = 2;
+                        tab[4] = 3;
+            
+                        quickSort(0, 4);
+            
+                        // Vérification
+                        write(tab[0]);
+                        write(tab[1]);
+                        write(tab[2]);
+                        write(tab[3]);
+                        write(tab[4]);
+                    }
+                    }
+        """;
+
+        Interpreter interpreter = new Interpreter(code);
+        interpreter.run();
+
+        assertThat(interpreter.getOutputBuffer().get(0), is("1"));
+        assertThat(interpreter.getOutputBuffer().get(1), is("2"));
+        assertThat(interpreter.getOutputBuffer().get(2), is("3"));
+        assertThat(interpreter.getOutputBuffer().get(3), is("4"));
+        assertThat(interpreter.getOutputBuffer().get(4), is("5"));
+    }
 }
