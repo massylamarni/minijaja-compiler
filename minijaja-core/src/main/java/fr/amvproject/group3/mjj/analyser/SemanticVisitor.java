@@ -259,6 +259,8 @@ public class SemanticVisitor implements AstVisitor<SymbolIdentity> {
         if (!instrNode.accept(this).getTypeNode().getName().equals(node.getReturnType().getName())) {
           throw new SemanticException("Return expression does not match the declared method type " + node.getReturnType().getName(), returnNode.getLine(), returnNode.getColumn());
         }
+      } else {
+        instrNode.accept(this);
       }
     }
     symbolTable = scopeManager.exitScope();
