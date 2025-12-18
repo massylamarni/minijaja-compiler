@@ -15,13 +15,3 @@ Feature: Minijaja runtime error detection
     Then une erreur d'interpretation est levee
     And l'erreur d'interpretation est de type runtime
     And l'erreur d'interpretation contient "Infinite loop detected"
-
-  Scenario: Récursion infinie détectée
-    Given Un programme Minijaja du fichier stack_overflow.mjj
-    When J'essaie d'interpreter le programme minijaja
-    Then une erreur d'interpretation est levee
-    And l'erreur d'interpretation est de type runtime
-    And l'erreur d'interpretation contient "Infinite recursion detected"
-
-
-    

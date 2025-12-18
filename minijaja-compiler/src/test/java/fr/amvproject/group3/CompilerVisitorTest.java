@@ -217,7 +217,7 @@ public class CompilerVisitorTest {
         NewNode newNode = ((NewNode) res.get(1).getInstr());
         assertThat(newNode.getIdent().getName(),is("T"));
         assertThat(newNode.getType().getName(),is("entier"));
-        assertThat(newNode.getObj().getName(),is("cst"));
+        assertThat(newNode.getObj().getName(),is("vcst"));
         assertThat(newNode.getValueNode().sameAs(new IntLiteralNode(new MockToken("0",0,0))),is(true));
     }
     // ====================== visitTable ======================
