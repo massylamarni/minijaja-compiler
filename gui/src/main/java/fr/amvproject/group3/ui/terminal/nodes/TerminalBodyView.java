@@ -7,7 +7,11 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 public class TerminalBodyView extends VBox {
-  public TerminalBodyView(InteractiveWrapper langWrapper) {
+
+    private HBox currentLine;
+
+
+    public TerminalBodyView(InteractiveWrapper langWrapper) {
     langWrapper.getViewsWrapper().setTerminalBodyView(this);
 
     this.getStyleClass().add("terminal-body");
@@ -16,14 +20,34 @@ public class TerminalBodyView extends VBox {
     resetOutput();
   }
 
-  public void addOutput(String output) {
-    Label terminalOutput = new Label(output);
-    terminalOutput.getStyleClass().add("terminal-output");
+    public void addOutput(String output) {
+        if (currentLine == null) {
+            startNewLine();
+        }
 
-    this.getChildren().add(terminalOutput);
-  }
+        String[] parts = output.split("\n", -1);
 
-  public void resetOutput() {
+        for (int i = 0; i < parts.length; i++) {
+            if (!parts[i].isEmpty()) {
+                Label terminalOutput = new Label(parts[i]);
+                terminalOutput.getStyleClass().add("terminal-output");
+                currentLine.getChildren().add(terminalOutput);
+            }
+            if (i < parts.length - 1) {
+                startNewLine();
+            }
+        }
+    }
+
+
+    private void startNewLine() {
+        currentLine = new HBox();
+        currentLine.getStyleClass().add("terminal-output");
+        this.getChildren().add(currentLine);
+    }
+
+
+    public void resetOutput() {
     HBox terminalDefaultOutput = new HBox();
 
     Label terminalUserOutput = new Label("user@USER:");

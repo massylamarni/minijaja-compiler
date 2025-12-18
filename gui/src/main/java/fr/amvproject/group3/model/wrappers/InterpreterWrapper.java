@@ -205,13 +205,13 @@ public class InterpreterWrapper {
         }
       }
     }
-    viewsWrapper.setProgramSuccess("Program executed successfully !");
+    viewsWrapper.setProgramSuccess("\nProgram executed successfully !");
   }
 
   private boolean checkForExceptions() {
     boolean hasException = false;
     if (printErrors()) {
-      viewsWrapper.setProgramFailed("Program terminated with errors !");
+      viewsWrapper.setProgramFailed("\nProgram terminated with errors !");
       return true;
     }
     if (isMjj) {
