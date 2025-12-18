@@ -9,7 +9,6 @@ import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
 import fr.amvproject.group3.mjj.utils.SemanticOperations;
 import fr.amvproject.group3.mjj.utils.NodeOperations.MockToken;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;

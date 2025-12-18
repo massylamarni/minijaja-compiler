@@ -1,13 +1,10 @@
 package fr.amvproject.group3;
 
 import fr.amvproject.group3.jjc.Interpreter;
-import fr.amvproject.group3.jjc.ast.nodes.program.ProgramNode;
 import io.cucumber.java.en.When;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then; // Added for @Then annotation
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException; // Added for IOException
 import java.io.PrintStream;
 
 import static org.hamcrest.MatcherAssert.assertThat; // Added for assertThat
@@ -15,7 +12,6 @@ import static org.hamcrest.Matchers.*; // Added for Hamcrest matchers
 
 public class StepDefinitionInterpreterJajacode {
 
-    private final BaseStepsUtility base = BaseStepsUtility.getInstance();
     private final BaseStepsUtilityJcc jccState = BaseStepsUtilityJcc.getInstance();
 
 

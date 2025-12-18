@@ -352,7 +352,7 @@ public class AstNodeTest {
 
         // Then
         assertThat(incNode, is(notNullValue()));
-        assertThat(((IdentNode) incNode.getLeftValueNode()).getName(), is("x")); // TODO Handle array case
+        assertThat(((IdentNode) incNode.getLeftValueNode()).getName(), is("x")); // Handle array case
     }
 
     // ====================== CallInstrNode ======================

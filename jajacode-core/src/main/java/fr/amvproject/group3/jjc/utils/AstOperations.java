@@ -52,7 +52,7 @@ public class AstOperations {
     try {
       ast = astBuilderVisitor.visit(tree);
     } catch (Exception e) {
-      // TODO: handle exception
+      // Ignore exception
     }
 
     return new AstWrapper(ast, lexicalErrorsListener, syntaxicErrorsListener);

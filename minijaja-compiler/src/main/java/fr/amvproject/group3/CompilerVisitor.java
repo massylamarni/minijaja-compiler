@@ -437,14 +437,12 @@ public class CompilerVisitor implements fr.amvproject.group3.mjj.ast.AstVisitor<
 
   @Override
   public List<ClassNode> visitType(fr.amvproject.group3.mjj.ast.nodes.other.TypeNode node) {
-    List<ClassNode> classNodes = new ArrayList<>();
-    return classNodes;
+    return new ArrayList<>();
   }
 
   @Override
   public List<ClassNode> visitTypeMeth(fr.amvproject.group3.mjj.ast.nodes.other.TypeMethNode node) {
-    List<ClassNode> classNodes = new ArrayList<>();
-    return classNodes;
+    return new ArrayList<>();
   }
 
   @Override

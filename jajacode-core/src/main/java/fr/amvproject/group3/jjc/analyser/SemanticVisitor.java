@@ -1,9 +1,7 @@
 package fr.amvproject.group3.jjc.analyser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import fr.amvproject.group3.exceptions.SemanticException;
 import fr.amvproject.group3.jjc.analyser.nodes.TypeNode;
@@ -40,6 +38,10 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
     return exploredLines;
   }
 
+  public int getCurrentAddress() {
+    return currentAddress;
+  }
+
   private TypeNode typeMapper(fr.amvproject.group3.jjc.ast.nodes.other.TypeNode node) {
     if (node.isInt()) return new TypeNode("int");
     if (node.isBoolean()) return new TypeNode("boolean");
@@ -48,14 +50,14 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   }
 
   private ValueNode peek(InstrNode instrNode) {
-    if (pushStack.size() <= 0) {
+    if (pushStack.isEmpty()) {
       throw new SemanticException("Stack is probably empty", instrNode.getLine(), instrNode.getColumn());
     } 
     return pushStack.get(pushStack.size() - 1);
   }
 
   private ValueNode pop(InstrNode instrNode) {
-    if (pushStack.size() <= 0) {
+    if (pushStack.isEmpty()) {
       throw new SemanticException("Stack is probably empty", instrNode.getLine(), instrNode.getColumn());
     } 
     return pushStack.remove(pushStack.size() - 1);
@@ -239,11 +241,6 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   
   @Override
   public TypeNode visitStore(StoreNode node) {
-    if (node.isA()) {
-
-    } else {
-      
-    }
     currentAddress++;
     return new TypeNode("void");
   }
@@ -262,12 +259,6 @@ public class SemanticVisitor implements AstVisitor<TypeNode> {
   
   @Override
   public TypeNode visitInc(IncNode node) {
-    if (node.isA()) {
-      
-    } else {
-
-    }
-    
     currentAddress++;
     return new TypeNode("void");
   }

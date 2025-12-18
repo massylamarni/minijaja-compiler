@@ -1,7 +1,6 @@
 package fr.amvproject.group3;
 
 import io.cucumber.java.ParameterType;
-import io.cucumber.java.PendingException;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 

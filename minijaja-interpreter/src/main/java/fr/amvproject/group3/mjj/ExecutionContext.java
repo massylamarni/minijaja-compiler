@@ -13,7 +13,6 @@ public class ExecutionContext {
     private Stack stack;
     private boolean isPaused = false;
     private Set<Integer> breakpoints = new HashSet<>();
-    private int breakPointHitLine = 0;
     private int intrCountUntilPreviousInstr = 0;
     private int currentInstrCount = 0;
     private boolean ignoreNextBreakpoint = false;
@@ -100,7 +99,6 @@ public class ExecutionContext {
       previousNode = null;
       resetMemory();
       isPaused = false;
-      breakPointHitLine = 0;
       intrCountUntilPreviousInstr = 0;
       currentInstrCount = 0;
       isExecutionSuccessful = false;
@@ -116,15 +114,12 @@ public class ExecutionContext {
           ignoreNextBreakpoint = false;
           return;
         }
-        breakPointHitLine = 0;
         if (isPaused()) {
-          breakPointHitLine = node.getLine();
           intrCountUntilPreviousInstr = currentInstrCount;
           throw new PausePointHit(currentNode.getClass().getName(), currentNode.getLine(), currentNode.getColumn());
         }
         if (hasBreakpoint() && !ignoreBreakpoints) {
           setIsPaused(true);
-          breakPointHitLine = node.getLine();
           intrCountUntilPreviousInstr = currentInstrCount;
           throw new BreakPointHit(currentNode.getClass().getName(), currentNode.getLine(), currentNode.getColumn());
         }

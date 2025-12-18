@@ -1,10 +1,6 @@
 package fr.amvproject.group3;
 
-import fr.amvproject.group3.jjc.ExecutionContext;
-import fr.amvproject.group3.JajaCodeLexer;
-import fr.amvproject.group3.JajaCodeParser;
 import fr.amvproject.group3.jjc.Interpreter;
-import fr.amvproject.group3.jjc.InterpreterVisitor;
 import fr.amvproject.group3.jjc.ast.AstBuilderVisitor;
 import fr.amvproject.group3.jjc.ast.AstNode;
 import fr.amvproject.group3.jjc.ast.nodes.program.ProgramNode;
@@ -17,7 +13,6 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import fr.amvproject.group3.exceptions.SemanticException;
-import fr.amvproject.group3.exceptions.RuntimeException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -108,21 +103,9 @@ public class BaseStepsJcc {
             }
         }
     }
-    /*
-    @Then("le résultat final doit être correct jcc")
-    public void le_résultat_final_doit_être_correct() throws IOException {
-        if (jjcState.lastException != null) {
-            throw new AssertionError("Une exception inattendue s'est produite lors de l'interprétation: " + jjcState.lastException.getMessage(), jjcState.lastException);
-        }
-
-        String expectedOutput = base.loadExpected(jjcState.currentFilename);
-        assertThat("Le résultat de l'interprétation JajaCode ne correspond pas à l'attendu.", jjcState.executionResult, is(equalTo(expectedOutput)));
-    }
-    */
     @Then("Une erreur de compilation doit être détectée")
     public void uneErreurDeCompilationDoitÊtreDétectée() {
         assertThat(jjcState.lastException, is(notNullValue()));
-       // assertThat(jjcState.lastException, instanceOf(IllegalArgumentException.class));
     }
 
     @Then("le résultat final doit être correct jcc {outfile}")

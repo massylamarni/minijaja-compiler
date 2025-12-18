@@ -10,6 +10,7 @@ import fr.amvproject.group3.mjj.utils.AstOperations.AstWrapper;
 import fr.amvproject.group3.model.wrappers.InterpreterWrapper;
 
 public class EditorUtils {
+  private EditorUtils() {}
   public static void highlightLine(InterpreterWrapper interpreterWrapper, CodeArea area) {
     if (interpreterWrapper.getPreviousBreakpointHitLine() != -1) {
       area.setParagraphStyle(interpreterWrapper.getPreviousBreakpointHitLine() - 1, Collections.emptyList());
@@ -44,7 +45,7 @@ public class EditorUtils {
         }
       }
     } catch (Exception e) {
-      return null; // TODO: handle exception
+      return null; // Ignore exception
     }
   } 
 }

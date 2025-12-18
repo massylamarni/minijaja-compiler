@@ -19,16 +19,7 @@ public class ActionButtonView extends Button {
       case DEBUG_RESTART:
         icon.setFill(Color.web("#80c080"));
         break;
-      case DEBUG_CONTINUE:
-        icon.setFill(Color.web("#6699cc"));
-        break;
-      case DEBUG_PAUSE:
-        icon.setFill(Color.web("#6699cc"));
-        break;
-      case DEBUG_STEP_IN:
-        icon.setFill(Color.web("#6699cc"));
-        break;
-      case DEBUG_STEP_OUT:
+      case DEBUG_CONTINUE, DEBUG_PAUSE, DEBUG_STEP_IN, DEBUG_STEP_OUT:
         icon.setFill(Color.web("#6699cc"));
         break;
       
@@ -53,7 +44,7 @@ public class ActionButtonView extends Button {
       case DEBUG_STOP: return SvgIcons.debugStopIcon();
       case SEARCH: return SvgIcons.searchIcon();
       case CLOSE: return SvgIcons.closeIcon();
-      default: return null;
+      default: return SvgIcons.closeIcon();
     }
   }
 }

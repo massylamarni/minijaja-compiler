@@ -5,7 +5,6 @@ import fr.amvproject.group3.jjc.ast.nodes.program.ProgramNode;
 import fr.amvproject.group3.jjc.utils.NodeOperations;
 import fr.amvproject.group3.mjj.ast.AstNode;
 import fr.amvproject.group3.mjj.utils.AstOperations;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;

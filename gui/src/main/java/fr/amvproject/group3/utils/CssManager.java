@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import fr.amvproject.group3.settings.Settings;
 
 public class CssManager {
+  private CssManager() {}
 
   public static void generate(String outputPath) {
     String cssString = StyleSheet.CSS_TEMPLATE
@@ -45,7 +46,7 @@ public class CssManager {
     try {
       Files.writeString(Path.of(outputPath), cssString);
     } catch (IOException e) {
-      e.printStackTrace();
+      // Ignore exception, paths are hardcoded
     }
   }
 }

@@ -1,12 +1,9 @@
 package fr.amvproject.group3;
 
-import fr.amvproject.group3.CompilerVisitor;
 import fr.amvproject.group3.mjj.analyser.SemanticVisitor;
 import fr.amvproject.group3.exceptions.SemanticException;
 import fr.amvproject.group3.jjc.ast.nodes.program.ProgramNode;
 import fr.amvproject.group3.mjj.ast.AstNode;
-import fr.amvproject.group3.mjj.utils.AstOperations;
-import fr.amvproject.group3.mjj.utils.AstOperations.AstWrapper;
 import fr.amvproject.group3.mjj.utils.NodeOperations.MockToken;
 
 import io.cucumber.java.en.Then;

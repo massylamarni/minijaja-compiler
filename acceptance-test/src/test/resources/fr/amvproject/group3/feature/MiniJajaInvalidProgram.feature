@@ -1,4 +1,3 @@
-# Created by Gemini at 17/12/2025
 Feature: Minijaja interpret invalid program
 
 

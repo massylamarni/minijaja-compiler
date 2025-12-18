@@ -3,7 +3,6 @@ package fr.amvproject.group3.mjj.analyser;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import static fr.amvproject.group3.mjj.utils.NodeOperations.MockToken;
 
 import fr.amvproject.group3.mjj.analyser.symbols.*;
 import fr.amvproject.group3.mjj.ast.nodes.abstracts.*;
@@ -17,7 +16,6 @@ import fr.amvproject.group3.mjj.ast.nodes.other.BinaryOpNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.TypeMethNode;
 import fr.amvproject.group3.mjj.ast.nodes.other.UnaryOpNode;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import fr.amvproject.group3.exceptions.SemanticException;
@@ -26,7 +24,6 @@ import fr.amvproject.group3.mjj.analyser.nodes.SymbolSignature;
 import fr.amvproject.group3.mjj.analyser.nodes.TypeNode;
 import fr.amvproject.group3.mjj.analyser.nodes.ObjNode;
 import fr.amvproject.group3.mjj.ast.nodes.finals.*;
-import fr.amvproject.group3.mjj.ast.nodes.intermediate.*;
 import fr.amvproject.group3.mjj.ast.nodes.program.ClassNode;
 import fr.amvproject.group3.mjj.ast.nodes.program.ProgramNode;
 import fr.amvproject.group3.mjj.utils.NodeOperations.MockToken;

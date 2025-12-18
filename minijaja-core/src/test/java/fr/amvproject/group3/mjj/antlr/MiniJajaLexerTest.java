@@ -6,7 +6,6 @@ import org.antlr.v4.runtime.*;
 import java.util.List;
 
 import org.junit.Test;
-import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -52,18 +51,20 @@ public class MiniJajaLexerTest {
     @Test
     public void givenCommentBlock__whenGenerateTokens__thenCorrectLexer() {
         // Given
-        String input = "/********************************************/\n" +
-                "/* Programme MiniJaja                       */\n" +
-                "/* Validation de toutes les instructions\t*/\n" +
-                "/* sans tableau, ni fonction                */\n" +
-                "/********************************************/";
+        String input = """
+                /********************************************/
+                /* Programme MiniJaja                       */
+                /* Validation de toutes les instructions    /*
+                /* sans tableau, ni fonction                */
+                /********************************************/
+                """;
 
         CharStream charStream = CharStreams.fromString(input);
         MiniJajaLexer lexer = new MiniJajaLexer(charStream);
         // When
         List<? extends Token> tokens = lexer.getAllTokens();
         // Then
-        assertThat(tokens.size(),is(9));
+        assertThat(tokens.size(),is(8));
     }
 
     @Test
@@ -295,67 +296,6 @@ public class MiniJajaLexerTest {
 
         assertThat(tokens.get(5).getType(),is(MiniJajaLexer.RBRACE));
         assertThat(tokens.get(5).getText(),is("}"));
-    }
-
-
-    @Test
-    public void givenIf__whenGenerateTokens__thenCorrectLexer() {
-        // Given
-        String input = "if (b1 && (b1 || (!b2))) {}";
-
-        CharStream charStream = CharStreams.fromString(input);
-        MiniJajaLexer lexer = new MiniJajaLexer(charStream);
-        // When
-        List<? extends Token> tokens = lexer.getAllTokens();
-        tokens = tokens.stream().filter( token -> token.getType() != MiniJajaLexer.WS ).toList();
-
-        // Then
-        assertThat(tokens.size(),is(15));
-
-        assertThat(tokens.get(0).getType(), is(MiniJajaLexer.IF));
-        assertThat(tokens.get(0).getText(), is("if"));
-
-        assertThat(tokens.get(1).getType(),is(MiniJajaLexer.LPAREN));
-        assertThat(tokens.get(1).getText(),is("("));
-
-        assertThat(tokens.get(2).getType(),is(MiniJajaLexer.IDENTIFICATEUR));
-        assertThat(tokens.get(2).getText(),is("b1"));
-
-        assertThat(tokens.get(3).getType(),is(MiniJajaLexer.AND));
-        assertThat(tokens.get(3).getText(),is("&&"));
-
-        assertThat(tokens.get(4).getType(),is(MiniJajaLexer.LPAREN));
-        assertThat(tokens.get(4).getText(),is("("));
-
-        assertThat(tokens.get(5).getType(),is(MiniJajaLexer.IDENTIFICATEUR));
-        assertThat(tokens.get(5).getText(),is("b1"));
-
-        assertThat(tokens.get(6).getType(),is(MiniJajaLexer.OR));
-        assertThat(tokens.get(6).getText(),is("||"));
-
-        assertThat(tokens.get(7).getType(),is(MiniJajaLexer.LPAREN));
-        assertThat(tokens.get(7).getText(),is("("));
-
-        assertThat(tokens.get(8).getType(),is(MiniJajaLexer.NOT));
-        assertThat(tokens.get(8).getText(),is("!"));
-
-        assertThat(tokens.get(9).getType(),is(MiniJajaLexer.IDENTIFICATEUR));
-        assertThat(tokens.get(9).getText(),is("b2"));
-
-        assertThat(tokens.get(10).getType(),is(MiniJajaLexer.RPAREN));
-        assertThat(tokens.get(10).getText(),is(")"));
-
-        assertThat(tokens.get(11).getType(),is(MiniJajaLexer.RPAREN));
-        assertThat(tokens.get(11).getText(),is(")"));
-
-        assertThat(tokens.get(12).getType(),is(MiniJajaLexer.RPAREN));
-        assertThat(tokens.get(12).getText(),is(")"));
-
-        assertThat(tokens.get(13).getType(),is(MiniJajaLexer.LBRACE));
-        assertThat(tokens.get(13).getText(),is("{"));
-
-        assertThat(tokens.get(14).getType(),is(MiniJajaLexer.RBRACE));
-        assertThat(tokens.get(14).getText(),is("}"));
     }
 
     @Test

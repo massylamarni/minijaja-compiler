@@ -9,9 +9,6 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
 
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
 import static fr.amvproject.group3.mjj.utils.NodeOperations.MockToken;
 
 public class StepDefinitionCompilator {

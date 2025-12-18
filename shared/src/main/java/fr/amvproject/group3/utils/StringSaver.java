@@ -24,7 +24,7 @@ public class StringSaver {
         LOGGER.info(() -> "File saved successfully to " + filePath.toAbsolutePath());
       }
     } catch (IOException e) {
-      e.printStackTrace();
+      // Ignore exception, paths are hardcoded
     }
   }
 }
