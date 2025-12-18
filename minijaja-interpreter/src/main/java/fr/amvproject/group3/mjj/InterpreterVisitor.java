@@ -235,7 +235,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
         if (recursionCount++ > RECURSION_LIMIT) {
             throw new fr.amvproject.group3.exceptions.RuntimeException("Infinite recursion detected !", node.getLine(), node.getColumn());
         }
-        stack = scopeManager.exitScope();
+        if (scopeManager.getScopeDepth() == 2) stack = scopeManager.exitScope();
 
         boolean isMethodFound = false;
         int depth = 0;
@@ -251,22 +251,24 @@ public class InterpreterVisitor implements AstVisitor<Object> {
                 } else {
                     for (int i = 0; i < listExpNodes.size(); i++) {
                         ParamNode param = listParamNodes.get(i);
-                        ExpNode argExp = listExpNodes.get(i);
-                        if (param.getType().isInt() && evalExp(argExp) instanceof Integer) isMethodFound = true;
-                        else if (param.getType().isBoolean() && evalExp(argExp) instanceof Boolean) isMethodFound = true;
+                        Object argExpValue = evalExp(listExpNodes.get(i)) ;
+                        if (param.getType().isInt() && argExpValue instanceof Integer) isMethodFound = true;
+                        else if (param.getType().isBoolean() && argExpValue instanceof Boolean) isMethodFound = true;
                     }
                 }
             }
 
             if (isMethodFound) {
+                stack = scopeManager.newScope();
                 // ExpParam - declaration des paramètres
                 if (!listParamNodes.isEmpty()) {
                     for (int i = 0; i < listExpNodes.size(); i++) {
                         ParamNode param = listParamNodes.get(i);
-                        ExpNode argExp = listExpNodes.get(i);
-                        stack.declVar(param.getIdent(), evalExp(argExp), new TypeMethNode(param.getType().getTypeToken()));
+                        Object argExpValue = evalExp(listExpNodes.get(i));
+                        stack.declVar(param.getIdent(), argExpValue, new TypeMethNode(param.getType().getTypeToken()));
                     }
                 }
+                stack = scopeManager.newScope();
 
                 // declaration des variables locales
                 VarsNode varsNode = scopeManager.declaration(node.getIdent(), depth);
@@ -283,14 +285,17 @@ public class InterpreterVisitor implements AstVisitor<Object> {
                 if (varsNode != null && !listVarDeclNodes.isEmpty()) {
                     retraitVars(varsNode);
                 }
+                stack = scopeManager.deleteScope();
                 retraitParams(paramsNode);
+                stack = scopeManager.deleteScope();
                 break;
             } else {
                 depth++;
             }
         }
-        stack = scopeManager.backToScope();
+        if (scopeManager.getScopeDepth() == 1) stack = scopeManager.backToScope();
 
+        recursionCount--;
         return scopeManager.valClassQuad();
     }
 
@@ -476,6 +481,9 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     public Object visitBinaryExp(BinaryExpNode node) {
         Object left = evalExp(node.getLeftExp());
         Object right = evalExp(node.getRightExp());
+        System.out.print(left);
+        System.out.print(" " + node.getOp().getOp().getName() + " ");
+        System.out.println(right);
 
         switch (node.getOp().getOp()) {
             case AND: return (boolean) left && (boolean) right;
@@ -546,6 +554,7 @@ public class InterpreterVisitor implements AstVisitor<Object> {
      */
     @Override
     public Object visitIdent(IdentNode node) {
+        System.out.println(node.getName() + ": " + scopeManager.val(node));
         return scopeManager.val(node);
     }
 
