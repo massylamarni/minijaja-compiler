@@ -1,0 +1,125 @@
+package fr.amvproject.group3.mjj.ast.nodes.other;
+
+import org.antlr.v4.runtime.Token;
+
+import fr.amvproject.group3.mjj.ast.AstNode;
+import fr.amvproject.group3.mjj.ast.AstVisitor;
+
+public class BinaryOpNode extends AstNode {
+  public enum BinaryOpName {
+    AND("&&"),
+    OR("||"),
+    EQ("=="),
+    GT(">"),
+    ADD("+"),
+    SUB("-"),
+    MUL("*"),
+    DIV("/");
+
+    private final String name;
+
+    BinaryOpName(String name) {
+      this.name = name;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public static BinaryOpName fromString(String name) {
+      for (BinaryOpName binaryOp : values()) {
+        if (binaryOp.name.equals(name)) {
+          return binaryOp;
+        }
+      }
+      throw new IllegalArgumentException("Type non valide : " + name);
+    }
+  }
+
+  private final BinaryOpName binaryOp;
+  private final Token binaryOpToken;
+
+  public BinaryOpNode(Token binaryOpToken) {
+    super(binaryOpToken.getLine(), binaryOpToken.getCharPositionInLine());
+    this.binaryOpToken = binaryOpToken;
+    this.binaryOp = BinaryOpName.fromString(binaryOpToken.getText());
+  }
+
+  // Helper
+  public BinaryOpNode(String op, int line, int column) {
+    super(line, column);
+    this.binaryOpToken = null;
+    this.binaryOp = BinaryOpName.fromString(op);
+  }
+
+  public Token getBinaryOpToken() {
+    return binaryOpToken;
+  }
+
+  public BinaryOpName getOp() {
+    return binaryOp;
+  }
+
+  public boolean isAnd() {
+    return binaryOp == BinaryOpName.AND;
+  }
+
+  public boolean isOr() {
+    return binaryOp == BinaryOpName.OR;
+  }
+
+  public boolean isEq() {
+    return binaryOp == BinaryOpName.EQ;
+  }
+
+  public boolean isGt() {
+    return binaryOp == BinaryOpName.GT;
+  }
+
+  public boolean isAdd() {
+    return binaryOp == BinaryOpName.ADD;
+  }
+
+  public boolean isSub() {
+    return binaryOp == BinaryOpName.SUB;
+  }
+
+  public boolean isMul() {
+    return binaryOp == BinaryOpName.MUL;
+  }
+
+  public boolean isDiv() {
+    return binaryOp == BinaryOpName.DIV;
+  }
+
+  public boolean takesInteger() {
+    return binaryOp == BinaryOpName.ADD || binaryOp == BinaryOpName.SUB || binaryOp == BinaryOpName.MUL
+        || binaryOp == BinaryOpName.DIV || binaryOp == BinaryOpName.GT || binaryOp == BinaryOpName.EQ;
+  }
+
+  public boolean takesBoolean() {
+    return binaryOp == BinaryOpName.AND || binaryOp == BinaryOpName.OR || binaryOp == BinaryOpName.EQ;
+  }
+
+  public boolean givesInteger() {
+    return binaryOp == BinaryOpName.ADD || binaryOp == BinaryOpName.SUB || binaryOp == BinaryOpName.MUL
+        || binaryOp == BinaryOpName.DIV;
+  }
+
+  public boolean givesBoolean() {
+    return binaryOp == BinaryOpName.AND || binaryOp == BinaryOpName.OR || binaryOp == BinaryOpName.EQ;
+  }
+
+  @Override
+  public boolean sameAs(AstNode other) {
+    if (other instanceof BinaryOpNode binaryOpNode) {
+      return this.binaryOp == binaryOpNode.binaryOp;
+    }
+    return false;
+  }
+
+  @Override
+  public <T> T accept(AstVisitor<T> visitor) {
+    return visitor.visitBinaryOp(this);
+  }
+}

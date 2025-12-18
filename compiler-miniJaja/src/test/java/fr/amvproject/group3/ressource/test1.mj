@@ -1,6 +1,0 @@
-class C {
-  int x;
-  int y = 10;
-  main {
-  }
-}

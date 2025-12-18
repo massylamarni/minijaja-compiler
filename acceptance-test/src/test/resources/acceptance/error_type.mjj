@@ -1,0 +1,6 @@
+class C {
+  int x = 0;
+  main {
+    x = true;
+  }
+}

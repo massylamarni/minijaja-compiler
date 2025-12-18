@@ -1,7 +1,0 @@
-class C {
-  void p() { write("hello"); };
-  main {
-    p();
-    write("done");
-  }
-}

@@ -1,0 +1,39 @@
+package fr.amvproject.group3.mjj.ast.nodes.exprs;
+
+import fr.amvproject.group3.mjj.ast.AstNode;
+import fr.amvproject.group3.mjj.ast.AstVisitor;
+import fr.amvproject.group3.mjj.ast.nodes.abstracts.ListExpNode;
+import fr.amvproject.group3.mjj.ast.nodes.finals.IdentNode;
+import fr.amvproject.group3.mjj.ast.nodes.intermediate.ExpNode;
+
+public class CallExpNode extends ExpNode {
+    private final IdentNode identNode;
+    private final ListExpNode listExpNode;
+
+    public CallExpNode(IdentNode identNode, ListExpNode listExpNode) {
+        super(identNode.getLine(), identNode.getColumn());
+        this.identNode = identNode;
+        this.listExpNode = listExpNode;
+    }
+
+    public IdentNode getIdent() {
+        return identNode;
+    }
+
+    public ListExpNode getListExp() {
+        return listExpNode;
+    }
+
+    @Override
+    public boolean sameAs(AstNode other) {
+        if (other instanceof CallExpNode callExpNode) {
+            return this.identNode.sameAs(callExpNode.identNode) && this.listExpNode.sameAs(callExpNode.listExpNode);
+        }
+        return false;
+    }
+
+    @Override
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visitCallExp(this);
+    }
+}

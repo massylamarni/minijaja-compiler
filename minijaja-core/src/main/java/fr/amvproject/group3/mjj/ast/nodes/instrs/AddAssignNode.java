@@ -1,0 +1,47 @@
+package fr.amvproject.group3.mjj.ast.nodes.instrs;
+
+import org.antlr.v4.runtime.Token;
+
+import fr.amvproject.group3.mjj.ast.AstNode;
+import fr.amvproject.group3.mjj.ast.AstVisitor;
+import fr.amvproject.group3.mjj.ast.nodes.intermediate.ExpNode;
+import fr.amvproject.group3.mjj.ast.nodes.intermediate.InstrNode;
+import fr.amvproject.group3.mjj.ast.nodes.intermediate.LeftValueNode;
+
+public class AddAssignNode extends InstrNode {
+    private final LeftValueNode leftValueNode;
+    private final Token addAssignToken;
+    private final ExpNode expNode;
+
+    public AddAssignNode(LeftValueNode leftValueNode, Token addAssignToken, ExpNode expNode) {
+        super(addAssignToken.getLine(), addAssignToken.getCharPositionInLine());
+        this.leftValueNode = leftValueNode;
+        this.addAssignToken = addAssignToken;
+        this.expNode = expNode;
+    }
+
+    public LeftValueNode getLeftValueNode() {
+        return leftValueNode;
+    }
+
+    public Token getAddAssignToken() {
+      return addAssignToken;
+    }
+
+    public ExpNode getExp() {
+        return expNode;
+    }
+
+    @Override
+    public boolean sameAs(AstNode other) {
+        if (other instanceof AddAssignNode addAssignNode) {
+            return this.leftValueNode.sameAs(addAssignNode.leftValueNode) && this.expNode.sameAs(addAssignNode.expNode);
+        }
+        return false;
+    }
+
+    @Override
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visitAddAssign(this);
+    }
+}

@@ -1,0 +1,8 @@
+class C {
+  int x = 10;
+
+  main {
+    x = 1 / 0; // division par zéro
+    
+  }
+}
