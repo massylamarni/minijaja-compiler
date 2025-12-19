@@ -24,7 +24,7 @@ public class ExecutionContextTest {
     public void setUp() {
         heap = new Heap();
         stack = new Stack(heap);
-        ctx = new ExecutionContext(stack);
+        ctx = new ExecutionContext(stack, heap);
     }
 
     private AstNode createMockNode(int line) {
