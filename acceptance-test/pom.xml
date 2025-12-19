@@ -3,7 +3,7 @@
     <parent>
         <groupId>fr.amvproject.group3</groupId>
         <artifactId>miniJaja-project</artifactId>
-        <version>1.2-SNAPSHOT</version>
+        <version>2.0</version>
     </parent>
 
     <artifactId>acceptance-test</artifactId>
@@ -36,19 +36,19 @@
         <dependency>
             <groupId>fr.amvproject.group3</groupId>
             <artifactId>minijaja-core</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>2.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>fr.amvproject.group3</groupId>
             <artifactId>minijaja-compiler</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>2.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>fr.amvproject.group3</groupId>
             <artifactId>jajacode-interpreter</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>2.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -68,7 +68,7 @@
         <dependency>
             <groupId>fr.amvproject.group3</groupId>
             <artifactId>minijaja-interpreter</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>2.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
