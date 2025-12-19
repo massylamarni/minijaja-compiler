@@ -3,6 +3,7 @@ package fr.amvproject.group3.mjj;
 import java.util.List;
 import java.util.Set;
 
+import fr.amvproject.group3.Heap;
 import fr.amvproject.group3.exceptions.BreakPointHit;
 import fr.amvproject.group3.exceptions.PausePointHit;
 import fr.amvproject.group3.exceptions.SemanticException;
@@ -27,6 +28,10 @@ public class Interpreter {
 
   public Stack getStack() {
     return interpreterVisitor.getStack();
+  }
+
+  public Heap getHeap() {
+    return interpreterVisitor.getHeap();
   }
 
   public SemanticVisitor getSemanticVisitor() {

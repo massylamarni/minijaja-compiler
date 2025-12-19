@@ -3,6 +3,7 @@ package fr.amvproject.group3.mjj;
 import java.util.HashSet;
 import java.util.Set;
 
+import fr.amvproject.group3.Heap;
 import fr.amvproject.group3.exceptions.BreakPointHit;
 import fr.amvproject.group3.exceptions.PausePointHit;
 import fr.amvproject.group3.mjj.ast.AstNode;
@@ -11,6 +12,7 @@ public class ExecutionContext {
     private AstNode currentNode;
     private AstNode previousNode;
     private Stack stack;
+    private Heap heap;
     private boolean isPaused = false;
     private Set<Integer> breakpoints = new HashSet<>();
     private int intrCountUntilPreviousInstr = 0;
@@ -19,8 +21,9 @@ public class ExecutionContext {
     private boolean ignoreBreakpoints = true;
     private boolean isExecutionSuccessful = false;
 
-    public ExecutionContext(Stack stack) {
-        this.stack = stack;
+    public ExecutionContext(Stack stack, Heap heap) {
+      this.stack = stack;
+      this.heap = heap;
     }
 
     public AstNode getCurrentNode() {
@@ -33,6 +36,10 @@ public class ExecutionContext {
 
     public Stack getStack() {
       return stack;
+    }
+
+    public Heap getHeap() {
+      return heap;
     }
 
     public Set<Integer> getBreakpoints() {
@@ -91,7 +98,7 @@ public class ExecutionContext {
 
     public void resetMemory() {
       stack.reset();
-      stack.getHeap().reset();
+      heap.reset();
     }
 
     public void softReset() {

@@ -44,6 +44,12 @@ public class InterpreterWrapper {
     }
   }
 
+  public void stop() {
+    if (isMjj) mjjInterpreter.reset();
+    else jjcInterpreter.reset();
+    viewsWrapper.setProgramSuccess("");
+  }
+
   public void restart() {
     if (isMjj) mjjInterpreter.reset();
     else jjcInterpreter.reset();
@@ -134,10 +140,10 @@ public class InterpreterWrapper {
   public void updateMemoryViews() {
     if (isMjj) {
       viewsWrapper.getStackView().buildMjjStack(mjjInterpreter.getStack());
-      viewsWrapper.getHeapView().buildHeap(mjjInterpreter.getStack().getHeap());
+      viewsWrapper.getHeapView().buildHeap(mjjInterpreter.getHeap());
     } else {
       viewsWrapper.getStackView().buildJjcStack(jjcInterpreter.getStack());
-      viewsWrapper.getHeapView().buildHeap(jjcInterpreter.getStack().getHeap());
+      viewsWrapper.getHeapView().buildHeap(jjcInterpreter.getHeap());
     }
   }
 

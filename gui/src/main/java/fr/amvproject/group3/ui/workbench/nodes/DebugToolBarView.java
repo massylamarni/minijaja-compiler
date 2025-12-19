@@ -24,7 +24,7 @@ public class DebugToolBarView extends HBox {
     stepInButton.setOnAction(e -> langWrapper.getInterpreterWrapper().stepForward());
     stepOutButton.setOnAction(e -> langWrapper.getInterpreterWrapper().stepBackward());
     restartButton.setOnAction(e -> langWrapper.getInterpreterWrapper().restart());
-    stopButton.setOnAction(e -> langWrapper.getInterpreterWrapper().restart());
+    stopButton.setOnAction(e -> langWrapper.getInterpreterWrapper().stop());
 
     this.getChildren().addAll(
       continueButton,

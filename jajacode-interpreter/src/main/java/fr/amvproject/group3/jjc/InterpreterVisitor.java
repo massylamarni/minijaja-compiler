@@ -48,12 +48,16 @@ public class InterpreterVisitor implements AstVisitor<Object> {
   private int iterationCount = 0;
   private Heap heap = new Heap();
   private Stack stack = new Stack(heap);
-  private ExecutionContext ctx = new ExecutionContext(stack); // final
+  private ExecutionContext ctx = new ExecutionContext(stack, heap); // final
   private int currentAddress = 1;
   private List<String> outputBuffer = new ArrayList<>();
 
   public Stack getStack() {
     return stack;
+  }
+
+  public Heap getHeap() {
+    return heap;
   }
 
   public ExecutionContext getCtx() {

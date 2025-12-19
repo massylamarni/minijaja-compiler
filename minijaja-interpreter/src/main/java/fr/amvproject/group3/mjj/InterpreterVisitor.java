@@ -56,12 +56,16 @@ public class InterpreterVisitor implements AstVisitor<Object> {
     private int recursionCount = 0;
     private Heap heap = new Heap();
     private Stack stack = new Stack(heap);
-    private final ScopeManager scopeManager = new ScopeManager(stack);
-    private ExecutionContext ctx = new ExecutionContext(stack); // final
+    private final ScopeManager scopeManager = new ScopeManager(stack, heap);
+    private ExecutionContext ctx = new ExecutionContext(stack, heap); // final
     private List<String> outputBuffer = new ArrayList<>();
 
     public Stack getStack() {
         return scopeManager.getFlatStack();
+    }
+
+    public Heap getHeap() {
+      return heap;
     }
 
     public ExecutionContext getCtx() {

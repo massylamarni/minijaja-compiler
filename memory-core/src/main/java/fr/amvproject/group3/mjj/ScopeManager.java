@@ -15,8 +15,8 @@ public class ScopeManager {
   private Deque<Stack> stackOfStacks = new ArrayDeque<>();
   private Deque<Stack> stackOfExitedStacks = new ArrayDeque<>();
   private Stack stackRef;
+  private Heap heapRef;
   private int scopeDepth = 0;
-  private Heap heap = new Heap();
 
   public Stack getStackRef() {
     return stackRef;
@@ -26,13 +26,14 @@ public class ScopeManager {
     return scopeDepth;
   }
 
-  public ScopeManager(Stack stack) {
+  public ScopeManager(Stack stack, Heap heap) {
     this.stackRef = stack;
+    this.heapRef = heap;
     stackOfStacks.push(stack);
   }
 
   public Stack newScope() {
-    Stack newStack = new Stack(heap);
+    Stack newStack = new Stack(heapRef);
     stackOfStacks.push(newStack);
     stackRef = newStack;
     scopeDepth++;
@@ -137,7 +138,7 @@ public class ScopeManager {
   }
 
   public Stack getFlatStack() {
-    Stack flatStack = new Stack(heap);
+    Stack flatStack = new Stack(heapRef);
 
     for (Iterator<Stack> it = stackOfStacks.descendingIterator(); it.hasNext();) {
       Stack stack = it.next();

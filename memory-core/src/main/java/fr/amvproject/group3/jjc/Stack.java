@@ -18,10 +18,6 @@ public class Stack extends StackManager {
     this.heap = heap;
   }
 
-  public Heap getHeap() {
-    return heap;
-  }
-
   // --- Stack Operations ---
   public void push(Quad q) {
     queue.add(q);
