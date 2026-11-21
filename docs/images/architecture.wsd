@@ -1,5 +1,22 @@
 @startuml
 skinparam defaultTextAlignment center
+skinparam backgroundColor transparent
+<style>
+root {
+  BackgroundColor #1E1E1E
+  FontColor #White
+}
+arrow {
+  LineColor #White
+  FontColor #White
+}
+rectangle, component, artifact, card {
+  BackgroundColor #282A2E
+  LineColor #White
+  FontColor #White
+}
+}
+</style>
 
 rectangle "GUI (JavaFX)" as gui {
   component "MiniJaja editor" as mje
