@@ -1,0 +1,65 @@
+@startuml
+skinparam defaultTextAlignment center
+
+rectangle "GUI (JavaFX)" as gui {
+  component "MiniJaja editor" as mje
+  component "JajaCode editor" as jce
+  component "Console" as console
+  component "Memory view" as mv
+  component "Heap view" as hv
+}
+
+artifact "User input" as usrin
+artifact "MiniJaja code" as mjc
+artifact "MiniJaja AST" as mjast
+artifact "JajaCode code" as jcc
+artifact "JajaCode AST" as jcast
+component "Lexer & Parser\n(minijaja-core)" as mjlp
+component "Lexer & Parser\n(jajacode-core)" as jclp
+component "Semantic analyser\n(minijaja-semantic-analyser)" as mjs
+component "Semantic analyser\n(jajacode-semantic-analyser)" as jcs
+component "MiniJaja interpreter\n(minijaja-interpreter)" as mji
+component "JajaCode interpreter\n(jajacode-interpreter)" as jci
+component "Compiler\n(minijaja-compiler)" as comp
+component "Memory model\nstack / heap\n(memory-core)" as mem
+component "Symbol table\n(*-semantic-analyser)" as st
+card "Result" as result
+card "Error" as error
+
+error --> console
+result --> console
+mem --> mv
+mem --> hv
+
+usrin --> mje
+usrin --> jce
+mje --> mjc
+jce --> jcc
+
+mjc --> mjlp
+mjlp --> mjast
+
+mjast --> mjs
+mjs --> mji
+mjs --> comp
+comp --> jcc
+comp --> jcast
+jcc --> jclp
+jclp --> jcast
+jcast --> jcs
+jcs --> jci
+
+mjs <--> st
+jcs <--> st
+mji <--> mem
+jci <--> mem
+mji ..> result
+jci ..> result
+
+mjlp ..> error
+jclp ..> error
+mjs ..> error
+jcs ..> error
+mji ..> error
+jci ..> error
+@enduml
