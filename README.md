@@ -161,4 +161,4 @@ Also see [docs/grammar.md](docs/grammar.md) for the full grammar and instruction
 
 ## Architecture
 
-![Architecture](docs/images/architecture.svg)
+![Architecture](docs/images/architecture_dk.svg)
