@@ -15,7 +15,6 @@ rectangle, component, artifact, card {
   LineColor #White
   FontColor #White
 }
-}
 </style>
 
 rectangle "GUI (JavaFX)" as gui {
